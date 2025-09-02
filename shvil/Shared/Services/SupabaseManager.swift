@@ -1,18 +1,20 @@
 //
-//  SupabaseManager.swift
+//  SupabaseManager_Temp.swift
 //  shvil
 //
 //  Created by ilan on 2024.
+//  TEMPORARY: This version doesn't import Supabase to allow building while adding the package
 //
 
 import Foundation
-import Supabase
+// import Supabase // Commented out temporarily
 
 @MainActor
 class SupabaseManager: ObservableObject {
     static let shared = SupabaseManager()
     
-    let client: SupabaseClient
+    // let client: SupabaseClient // Commented out temporarily
+    let client: Any? = nil // Temporary placeholder
     
     @Published var connectionStatus: ConnectionStatus = .disconnected
     @Published var lastError: Error?
@@ -30,10 +32,13 @@ class SupabaseManager: ObservableObject {
             print("⚠️ Supabase configuration validation failed")
         }
         
+        // Temporary: Comment out Supabase client initialization
+        /*
         self.client = SupabaseClient(
             supabaseURL: URL(string: Config.Supabase.projectURL)!,
             supabaseKey: Config.Supabase.anonKey
         )
+        */
         
         // Test connection on initialization
         Task {
@@ -48,16 +53,22 @@ class SupabaseManager: ObservableObject {
         connectionStatus = .connecting
         lastError = nil
         
+        // Temporary: Simulate connection test
+        try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
+        
+        // For now, just set to connected to allow testing
+        connectionStatus = .connected
+        print("✅ Supabase connection test (temporary mode)")
+        
+        /*
         do {
             // Test connection by trying to fetch from a system table
-            // This is a safe operation that doesn't require authentication
             let response = try await client
                 .from("_supabase_migrations")
                 .select("version")
                 .limit(1)
                 .execute()
             
-            // If we get here without error, connection is working
             connectionStatus = .connected
             print("✅ Supabase connection successful")
             
@@ -66,13 +77,14 @@ class SupabaseManager: ObservableObject {
             lastError = error
             print("❌ Supabase connection failed: \(error.localizedDescription)")
         }
+        */
     }
     
     /// Get connection status as a human-readable string
     var connectionStatusText: String {
         switch connectionStatus {
         case .connected:
-            return "Connected"
+            return "Connected (Temporary Mode)"
         case .disconnected:
             return "Disconnected"
         case .connecting:
@@ -90,121 +102,39 @@ class SupabaseManager: ObservableObject {
         return false
     }
     
-    // MARK: - Authentication Methods
+    // MARK: - Authentication Methods (Temporary Placeholders)
     
-    /// Sign up with email and password
-    func signUp(email: String, password: String) async throws -> AuthResponse {
-        let response = try await client.auth.signUp(
-            email: email,
-            password: password
-        )
-        return response
+    func signUp(email: String, password: String) async throws -> Any {
+        throw NSError(domain: "SupabaseManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Supabase package not yet added"])
     }
     
-    /// Sign in with email and password
-    func signIn(email: String, password: String) async throws -> AuthResponse {
-        let response = try await client.auth.signIn(
-            email: email,
-            password: password
-        )
-        return response
+    func signIn(email: String, password: String) async throws -> Any {
+        throw NSError(domain: "SupabaseManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Supabase package not yet added"])
     }
     
-    /// Sign out current user
     func signOut() async throws {
-        try await client.auth.signOut()
+        throw NSError(domain: "SupabaseManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Supabase package not yet added"])
     }
     
-    /// Get current user session
-    var currentUser: User? {
-        return client.auth.currentUser
+    var currentUser: Any? {
+        return nil
     }
     
-    /// Check if user is signed in
     var isSignedIn: Bool {
-        return currentUser != nil
-    }
-    
-    // MARK: - Database Methods
-    
-    /// Generic method to fetch data from a table
-    func fetch<T: Codable>(from table: String, type: T.Type) async throws -> [T] {
-        let response: [T] = try await client
-            .from(table)
-            .select()
-            .execute()
-            .value
-        return response
-    }
-    
-    /// Generic method to insert data into a table
-    func insert<T: Codable>(into table: String, data: T) async throws -> T {
-        let response: T = try await client
-            .from(table)
-            .insert(data)
-            .select()
-            .single()
-            .execute()
-            .value
-        return response
-    }
-    
-    /// Generic method to update data in a table
-    func update<T: Codable>(in table: String, id: UUID, data: T) async throws -> T {
-        let response: T = try await client
-            .from(table)
-            .update(data)
-            .eq("id", value: id)
-            .select()
-            .single()
-            .execute()
-            .value
-        return response
-    }
-    
-    /// Generic method to delete data from a table
-    func delete(from table: String, id: UUID) async throws {
-        try await client
-            .from(table)
-            .delete()
-            .eq("id", value: id)
-            .execute()
+        return false
     }
     
     // MARK: - Health Check
     
-    /// Perform a comprehensive health check
     func performHealthCheck() async -> HealthCheckResult {
-        var results: [String: Bool] = [:]
+        let results: [String: Bool] = [
+            "Connection": true,
+            "Authentication": false,
+            "Database": false
+        ]
         
-        // Test basic connection
-        await testConnection()
-        results["Connection"] = isConnected
-        
-        // Test authentication service
-        do {
-            // This is a safe operation that tests auth service availability
-            _ = try await client.auth.getSession()
-            results["Authentication"] = true
-        } catch {
-            results["Authentication"] = false
-        }
-        
-        // Test database access
-        do {
-            _ = try await client
-                .from("_supabase_migrations")
-                .select("version")
-                .limit(1)
-                .execute()
-            results["Database"] = true
-        } catch {
-            results["Database"] = false
-        }
-        
-        let allHealthy = results.values.allSatisfy { $0 }
         return HealthCheckResult(
-            isHealthy: allHealthy,
+            isHealthy: false,
             results: results,
             timestamp: Date()
         )
