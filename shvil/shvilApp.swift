@@ -17,26 +17,17 @@ struct ShvilApp: App {
     
     var body: some Scene {
         WindowGroup {
-            Group {
-                if authManager.shouldShowWelcome {
-                    WelcomeView()
-                } else if authManager.shouldShowOnboarding {
-                    OnboardingView()
-                } else if authManager.isGuest {
-                    GuestModeView()
-                } else {
-                    ContentView()
+            // Temporarily bypass authentication to test the main UI
+            ContentView()
+                .environmentObject(locationService)
+                .environmentObject(supabaseManager)
+                .environmentObject(authManager)
+                .environmentObject(searchService)
+                .environmentObject(navigationService)
+                .onAppear {
+                    // Initialize services
+                    locationService.requestLocationPermission()
                 }
-            }
-            .environmentObject(locationService)
-            .environmentObject(supabaseManager)
-            .environmentObject(authManager)
-            .environmentObject(searchService)
-            .environmentObject(navigationService)
-            .onAppear {
-                // Initialize services
-                locationService.requestLocationPermission()
-            }
         }
     }
 }

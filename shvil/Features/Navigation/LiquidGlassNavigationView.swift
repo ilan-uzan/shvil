@@ -186,8 +186,14 @@ struct LiquidGlassMapView: View {
     var body: some View {
         ZStack {
             // Map
-            Map(coordinateRegion: $region, showsUserLocation: true, userTrackingMode: .constant(.follow))
-                .ignoresSafeArea()
+            Map(position: .constant(.region(region)), interactionModes: .all) {
+                if let userLocation = locationService.currentLocation {
+                    Marker("You", coordinate: userLocation.coordinate)
+                        .tint(.blue)
+                }
+            }
+            .mapStyle(.standard(elevation: .realistic))
+            .ignoresSafeArea()
             
             // Map Overlays
             VStack {
