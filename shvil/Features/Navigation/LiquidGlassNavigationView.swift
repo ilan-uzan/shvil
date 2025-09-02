@@ -354,17 +354,7 @@ struct NavigationStepCard: View {
 }
 
 // MARK: - Transport Mode Icon Extension
-extension TransportMode {
-    var mapIcon: String {
-        switch self {
-        case .car: return "car.fill"
-        case .bike: return "bicycle"
-        case .walking: return "figure.walk"
-        case .transit: return "bus.fill"
-        case .truck: return "truck.box.fill"
-        }
-    }
-}
+// Note: TransportMode.icon is already defined in NavigationService.swift
 
 // MARK: - Maneuver Type Icon Extension
 extension ManeuverType {
@@ -393,7 +383,7 @@ struct TransportModeButton: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {
-                Image(systemName: mode.mapIcon)
+                Image(systemName: mode.icon)
                     .font(.system(size: 16, weight: .medium))
                 Text(mode.shortName)
                     .font(LiquidGlassDesign.Typography.caption)
