@@ -8,10 +8,35 @@
 import SwiftUI
 
 @main
-struct shvilApp: App {
+struct ShvilApp: App {
+    @StateObject private var locationService = LocationService.shared
+    @StateObject private var supabaseManager = SupabaseManager.shared
+    @StateObject private var authManager = AuthenticationManager.shared
+    @StateObject private var searchService = SearchService.shared
+    @StateObject private var navigationService = NavigationService.shared
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            Group {
+                if authManager.shouldShowWelcome {
+                    WelcomeView()
+                } else if authManager.shouldShowOnboarding {
+                    OnboardingView()
+                } else if authManager.isGuest {
+                    GuestModeView()
+                } else {
+                    ContentView()
+                }
+            }
+            .environmentObject(locationService)
+            .environmentObject(supabaseManager)
+            .environmentObject(authManager)
+            .environmentObject(searchService)
+            .environmentObject(navigationService)
+            .onAppear {
+                // Initialize services
+                locationService.requestLocationPermission()
+            }
         }
     }
 }

@@ -8,34 +8,52 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject private var locationService: LocationService
+    @EnvironmentObject private var supabaseManager: SupabaseManager
+    @EnvironmentObject private var authManager: AuthenticationManager
+    @EnvironmentObject private var navigationService: NavigationService
+    
     var body: some View {
-        NavigationView {
-            VStack(spacing: 30) {
-                Image(systemName: "globe")
-                    .imageScale(.large)
-                    .foregroundStyle(.tint)
-                
-                Text("Welcome to Shvil!")
-                    .font(.title)
-                    .fontWeight(.bold)
-                
-                Text("Your iOS app with Supabase integration")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                
-                NavigationLink(destination: SupabaseTestView()) {
-                    HStack {
-                        Image(systemName: "link")
-                        Text("Test Supabase Connection")
-                    }
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+        TabView {
+            // Home/Map Tab
+            ShvilNavigationView()
+                .tabItem {
+                    Image(systemName: "map")
+                    Text("Map")
                 }
+            
+            // Search Tab
+            SearchView()
+                .tabItem {
+                    Image(systemName: "magnifyingglass")
+                    Text("Search")
+                }
+            
+            // Saved Places Tab
+            NavigationView {
+                VStack {
+                    Text("Saved Places")
+                        .font(.title)
+                        .fontWeight(.bold)
+                    
+                    Text("Saved places functionality coming soon...")
+                        .foregroundColor(.secondary)
+                }
+                .navigationTitle("Saved Places")
             }
-            .padding()
-            .navigationTitle("Shvil")
+            .tabItem {
+                Image(systemName: "star")
+                Text("Saved")
+            }
+            
+            // Settings Tab
+            NavigationView {
+                SettingsView()
+            }
+            .tabItem {
+                Image(systemName: "gear")
+                Text("Settings")
+            }
         }
     }
 }
