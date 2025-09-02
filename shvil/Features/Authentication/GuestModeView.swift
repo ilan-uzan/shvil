@@ -130,7 +130,7 @@ struct GuestModeView: View {
         } message: {
             Text("Shvil needs location access to provide navigation. Please enable it in Settings.")
         }
-        .onChange(of: locationService.authorizationStatus) { status in
+        .onChange(of: locationService.authorizationStatus) { _, status in
             if status == .denied || status == .restricted {
                 showPermissionAlert = true
             }

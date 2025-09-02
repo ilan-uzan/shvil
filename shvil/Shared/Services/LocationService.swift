@@ -83,7 +83,7 @@ class LocationService: NSObject, ObservableObject {
 
 // MARK: - CLLocationManagerDelegate
 extension LocationService: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         
         // Filter out old or inaccurate locations
@@ -92,42 +92,52 @@ extension LocationService: CLLocationManagerDelegate {
             return
         }
         
-        currentLocation = location
-        locationError = nil
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        if let clError = error as? CLError {
-            switch clError.code {
-            case .denied:
-                locationError = .permissionDenied
-            case .locationUnknown:
-                locationError = .locationUnknown
-            case .network:
-                locationError = .networkError
-            default:
-                locationError = .unknown
-            }
-        } else {
-            locationError = .unknown
+        Task { @MainActor in
+            currentLocation = location
+            locationError = nil
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        authorizationStatus = status
+    nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        let errorToSet: LocationError
         
-        switch status {
-        case .authorizedWhenInUse, .authorizedAlways:
-            isLocationEnabled = true
-            startLocationUpdates()
-        case .denied, .restricted:
-            isLocationEnabled = false
-            locationError = .permissionDenied
-        case .notDetermined:
-            isLocationEnabled = false
-        @unknown default:
-            isLocationEnabled = false
-            locationError = .unknown
+        if let clError = error as? CLError {
+            switch clError.code {
+            case .denied:
+                errorToSet = .permissionDenied
+            case .locationUnknown:
+                errorToSet = .locationUnknown
+            case .network:
+                errorToSet = .networkError
+            default:
+                errorToSet = .unknown
+            }
+        } else {
+            errorToSet = .unknown
+        }
+        
+        Task { @MainActor in
+            locationError = errorToSet
+        }
+    }
+    
+    nonisolated func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        Task { @MainActor in
+            authorizationStatus = status
+            
+            switch status {
+            case .authorizedWhenInUse, .authorizedAlways:
+                isLocationEnabled = true
+                startLocationUpdates()
+            case .denied, .restricted:
+                isLocationEnabled = false
+                locationError = .permissionDenied
+            case .notDetermined:
+                isLocationEnabled = false
+            @unknown default:
+                isLocationEnabled = false
+                locationError = .unknown
+            }
         }
     }
 }
