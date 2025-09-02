@@ -32,13 +32,8 @@ class SupabaseManager: ObservableObject {
             print("⚠️ Supabase configuration validation failed")
         }
         
-        // Temporary: Comment out Supabase client initialization
-        /*
-        self.client = SupabaseClient(
-            supabaseURL: URL(string: Config.Supabase.projectURL)!,
-            supabaseKey: Config.Supabase.anonKey
-        )
-        */
+        // Temporary: Supabase client initialization commented out
+        // Will be restored after adding Supabase package
         
         // Test connection on initialization
         Task {

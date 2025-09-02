@@ -8,10 +8,19 @@
 import SwiftUI
 
 @main
-struct shvilApp: App {
+struct ShvilApp: App {
+    @StateObject private var locationService = LocationService.shared
+    @StateObject private var supabaseManager = SupabaseManager.shared
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(locationService)
+                .environmentObject(supabaseManager)
+                .onAppear {
+                    // Initialize services
+                    locationService.requestLocationPermission()
+                }
         }
     }
 }
