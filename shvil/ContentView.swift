@@ -77,21 +77,11 @@ struct ContentView: View {
             }
             
             // Search Tab
-            NavigationView {
-                VStack {
+            SearchView()
+                .tabItem {
+                    Image(systemName: "magnifyingglass")
                     Text("Search")
-                        .font(.title)
-                        .fontWeight(.bold)
-                    
-                    Text("Search functionality coming soon...")
-                        .foregroundColor(.secondary)
                 }
-                .navigationTitle("Search")
-            }
-            .tabItem {
-                Image(systemName: "magnifyingglass")
-                Text("Search")
-            }
             
             // Saved Places Tab
             NavigationView {

@@ -12,6 +12,7 @@ struct ShvilApp: App {
     @StateObject private var locationService = LocationService.shared
     @StateObject private var supabaseManager = SupabaseManager.shared
     @StateObject private var authManager = AuthenticationManager.shared
+    @StateObject private var searchService = SearchService.shared
     
     var body: some Scene {
         WindowGroup {
@@ -29,6 +30,7 @@ struct ShvilApp: App {
             .environmentObject(locationService)
             .environmentObject(supabaseManager)
             .environmentObject(authManager)
+            .environmentObject(searchService)
             .onAppear {
                 // Initialize services
                 locationService.requestLocationPermission()
