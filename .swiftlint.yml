@@ -1,0 +1,96 @@
+# SwiftLint Configuration for Shvil
+
+# Disabled rules
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+
+# Opt-in rules
+opt_in_rules:
+  - empty_count
+  - empty_string
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - closure_body_length
+  - function_body_length
+  - type_body_length
+  - file_length
+  - todo
+  - fixme
+
+# Included paths
+included:
+  - shvil
+
+# Excluded paths
+excluded:
+  - Pods
+  - .build
+  - shvil.xcodeproj
+  - .github
+
+# Line length configuration
+line_length:
+  warning: 120
+  error: 200
+
+# Function body length
+function_body_length:
+  warning: 50
+  error: 100
+
+# Type body length
+type_body_length:
+  warning: 300
+  error: 500
+
+# File length
+file_length:
+  warning: 500
+  error: 1000
+
+# Closure body length
+closure_body_length:
+  warning: 30
+  error: 50
+
+# Identifier name rules
+identifier_name:
+  min_length:
+    warning: 2
+    error: 1
+  max_length:
+    warning: 40
+    error: 60
+
+# Type name rules
+type_name:
+  min_length:
+    warning: 3
+    error: 1
+  max_length:
+    warning: 40
+    error: 60
+
+# Custom rules
+custom_rules:
+  # Prevent TODO/FIXME in production code
+  no_todos:
+    name: "No TODOs"
+    regex: "(TODO|FIXME|HACK|XXX)"
+    match_kinds:
+      - comment
+    message: "TODO/FIXME comments should be resolved before merging"
+    severity: warning
+  
+  # Enforce proper file headers
+  file_header:
+    name: "File Header"
+    regex: "^//\s*$"
+    match_kinds:
+      - comment
+    message: "Files should have proper header comments"
+    severity: warning
+
+# Reporter
+reporter: "xcode"
