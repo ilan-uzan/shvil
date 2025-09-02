@@ -14,7 +14,7 @@ struct ContentView: View {
     @EnvironmentObject private var navigationService: NavigationService
     
     var body: some View {
-        ModernTabView()
+        LiquidGlassNavigationView()
             .environmentObject(locationService)
             .environmentObject(supabaseManager)
             .environmentObject(authManager)

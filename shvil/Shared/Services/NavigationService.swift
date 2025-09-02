@@ -349,6 +349,7 @@ class NavigationService: NSObject, ObservableObject {
     @Published var currentStep: RouteStep?
     @Published var navigationError: NavigationError?
     @Published var routeOptions = RouteOptions.default
+    @Published var currentTransportMode: TransportMode = .car
     
     // MARK: - Private Properties
     private let directions = MKDirections()
@@ -360,6 +361,11 @@ class NavigationService: NSObject, ObservableObject {
     }
     
     // MARK: - Public Methods
+    
+    /// Set the current transport mode
+    func setTransportMode(_ mode: TransportMode) {
+        currentTransportMode = mode
+    }
     
     /// Calculate routes between two points
     func calculateRoutes(

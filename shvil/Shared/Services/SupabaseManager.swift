@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import Supabase
+import CoreLocation
 
 // MARK: - Connection Status
 enum ConnectionStatus {
@@ -165,6 +166,31 @@ class SupabaseManager: ObservableObject {
         }
     }
     
+
+    
+    /// Sync all data to server
+    func syncAllData() async {
+        if let profile = userProfile {
+            await syncUserProfile(profile)
+        }
+        
+        for place in savedPlaces {
+            await syncSavedPlace(place)
+        }
+        
+        for search in recentSearches {
+            await syncRecentSearch(search)
+        }
+    }
+    
+    /// Clear all local data
+    func clearLocalData() {
+        userProfile = nil
+        savedPlaces.removeAll()
+        recentSearches.removeAll()
+        saveLocalData()
+    }
+    
     // MARK: - Private Methods
     
     private func loadLocalData() {
@@ -307,6 +333,67 @@ struct UserProfile: Codable {
     let preferences: UserPreferences
     let createdAt: Date
     let updatedAt: Date
+}
+
+// MARK: - Saved Place Model
+struct SavedPlace: Identifiable, Codable {
+    let id: UUID
+    let name: String
+    let address: String?
+    let category: String
+    let emoji: String
+    let coordinate: CLLocationCoordinate2D
+    let distance: String?
+    let createdAt: Date
+    let updatedAt: Date
+    
+    // Custom Codable implementation for CLLocationCoordinate2D
+    private enum CodingKeys: String, CodingKey {
+        case id, name, address, category, emoji, distance, createdAt, updatedAt
+        case latitude, longitude
+    }
+    
+    init(id: UUID, name: String, address: String?, category: String, emoji: String, coordinate: CLLocationCoordinate2D, distance: String?, createdAt: Date, updatedAt: Date) {
+        self.id = id
+        self.name = name
+        self.address = address
+        self.category = category
+        self.emoji = emoji
+        self.coordinate = coordinate
+        self.distance = distance
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        address = try container.decodeIfPresent(String.self, forKey: .address)
+        category = try container.decode(String.self, forKey: .category)
+        emoji = try container.decode(String.self, forKey: .emoji)
+        distance = try container.decodeIfPresent(String.self, forKey: .distance)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        
+        let latitude = try container.decode(Double.self, forKey: .latitude)
+        let longitude = try container.decode(Double.self, forKey: .longitude)
+        coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encodeIfPresent(address, forKey: .address)
+        try container.encode(category, forKey: .category)
+        try container.encode(emoji, forKey: .emoji)
+        try container.encodeIfPresent(distance, forKey: .distance)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(updatedAt, forKey: .updatedAt)
+        try container.encode(coordinate.latitude, forKey: .latitude)
+        try container.encode(coordinate.longitude, forKey: .longitude)
+    }
 }
 
 // MARK: - User Preferences
