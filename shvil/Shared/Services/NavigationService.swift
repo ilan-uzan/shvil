@@ -37,6 +37,26 @@ enum TransportMode: String, CaseIterable, Codable {
         }
     }
     
+    var shortName: String {
+        switch self {
+        case .car: return "Car"
+        case .bike: return "Bike"
+        case .walking: return "Walk"
+        case .transit: return "Transit"
+        case .truck: return "Truck"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .car: return "Fastest route by car"
+        case .bike: return "Bike-friendly routes"
+        case .walking: return "Walking directions"
+        case .transit: return "Public transportation"
+        case .truck: return "Commercial vehicle routes"
+        }
+    }
+    
     var mapKitTransportType: MKDirectionsTransportType {
         switch self {
         case .car: return .automobile
@@ -393,6 +413,14 @@ class NavigationService: NSObject, ObservableObject {
         default:
             return .continueStraight
         }
+    }
+    
+    // MARK: - Additional Public Methods
+    
+    func setDestination(_ coordinate: CLLocationCoordinate2D) {
+        // This would be called from the search result detail view
+        // For now, just store the destination
+        // In a full implementation, this would trigger route calculation
     }
 }
 

@@ -36,10 +36,10 @@ struct WelcomeView: View {
                 
                 // Feature Highlights
                 VStack(spacing: 16) {
-                    FeatureRow(icon: "magnifyingglass", title: "Instant Search", description: "Find places quickly")
-                    FeatureRow(icon: "location.fill", title: "Smart Directions", description: "Driving and walking modes")
-                    FeatureRow(icon: "person.2.fill", title: "Community Reports", description: "Lightweight traffic alerts")
-                    FeatureRow(icon: "lock.shield.fill", title: "Privacy First", description: "Your data stays local")
+                    WelcomeFeatureRow(icon: "magnifyingglass", title: "Instant Search", description: "Find places quickly")
+                    WelcomeFeatureRow(icon: "location.fill", title: "Smart Directions", description: "Driving and walking modes")
+                    WelcomeFeatureRow(icon: "person.2.fill", title: "Community Reports", description: "Lightweight traffic alerts")
+                    WelcomeFeatureRow(icon: "lock.shield.fill", title: "Privacy First", description: "Your data stays local")
                 }
                 .padding(.horizontal)
                 
@@ -80,7 +80,7 @@ struct WelcomeView: View {
     }
 }
 
-struct FeatureRow: View {
+struct WelcomeFeatureRow: View {
     let icon: String
     let title: String
     let description: String
