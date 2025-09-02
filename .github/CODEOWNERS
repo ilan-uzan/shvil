@@ -1,0 +1,28 @@
+# Global owners
+* @ilan-uzan
+
+# Architecture and core files
+/ARCHITECTURE.md @ilan-uzan
+/EPICS.md @ilan-uzan
+/.github/ @ilan-uzan
+
+# App configuration
+/shvil.xcodeproj/ @ilan-uzan
+/Config.swift @ilan-uzan
+/SupabaseManager.swift @ilan-uzan
+
+# Core services
+/Shared/Services/ @ilan-uzan
+
+# Authentication and security
+/Features/Authentication/ @ilan-uzan
+/Shared/Models/User* @ilan-uzan
+
+# Privacy and data handling
+/Features/Settings/ @ilan-uzan
+/Shared/Utils/Privacy* @ilan-uzan
+
+# Performance critical components
+/Features/Navigation/ @ilan-uzan
+/Features/Home/ @ilan-uzan
+/Shared/Services/MapService.swift @ilan-uzan

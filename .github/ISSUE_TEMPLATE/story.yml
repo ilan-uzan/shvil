@@ -1,0 +1,105 @@
+name: Story
+description: User-visible feature with clear acceptance criteria
+title: "[STORY] "
+labels: ["story", "feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## User Story
+        This story represents a user-visible feature with clear acceptance criteria.
+
+  - type: textarea
+    id: user-story
+    attributes:
+      label: User Story
+      description: As a [user type], I want [goal] so that [benefit]
+      placeholder: As a [user type], I want [goal] so that [benefit]
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Specific, testable criteria that must be met
+      placeholder: |
+        - [ ] Given [context], when [action], then [expected result]
+        - [ ] Given [context], when [action], then [expected result]
+        - [ ] Given [context], when [action], then [expected result]
+    validations:
+      required: true
+
+  - type: textarea
+    id: definition-of-done
+    attributes:
+      label: Definition of Done
+      description: Technical requirements for completion
+      placeholder: |
+        - [ ] Code reviewed
+        - [ ] Unit tests written
+        - [ ] Accessibility tested
+        - [ ] Performance verified
+        - [ ] Privacy review completed
+    validations:
+      required: true
+
+  - type: textarea
+    id: test-plan
+    attributes:
+      label: Test Plan
+      description: How to test this feature
+      placeholder: |
+        1. Test step 1
+        2. Test step 2
+        3. Test step 3
+    validations:
+      required: true
+
+  - type: dropdown
+    id: epic
+    attributes:
+      label: Related Epic
+      description: Which epic does this story belong to?
+      options:
+        - EPIC-0: Project Scaffolding & CI
+        - EPIC-1: Authentication & Onboarding
+        - EPIC-2: Home Map
+        - EPIC-3: Search (Places)
+        - EPIC-4: Directions (Drive/Walk)
+        - EPIC-5: Navigation HUD
+        - EPIC-6: Community Reports
+        - EPIC-7: Saved Places & Recents
+        - EPIC-8: Offline Fallback
+        - EPIC-9: Settings
+        - EPIC-10: App Polish
+        - EPIC-11: Telemetry
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: Story priority level
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+
+  - type: textarea
+    id: design-notes
+    attributes:
+      label: Design Notes
+      description: UI/UX considerations, mockups, or design requirements
+      placeholder: Any design considerations, mockups, or UI/UX requirements
+
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: Technical Notes
+      description: Technical implementation details or considerations
+      placeholder: Any technical implementation details, architecture decisions, or considerations

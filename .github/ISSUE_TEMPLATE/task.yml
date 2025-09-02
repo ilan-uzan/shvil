@@ -1,0 +1,92 @@
+name: Task
+description: Single development action or technical task
+title: "[TASK] "
+labels: ["task", "development"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Development Task
+        This task represents a single development action or technical implementation.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: Clear description of what needs to be implemented
+      placeholder: Describe the specific technical task or implementation
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Specific criteria for task completion
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+
+  - type: dropdown
+    id: story
+    attributes:
+      label: Related Story
+      description: Which story does this task belong to?
+      options:
+        - TBD - Will be linked when story is created
+    validations:
+      required: true
+
+  - type: dropdown
+    id: task-type
+    attributes:
+      label: Task Type
+      description: Type of development task
+      options:
+        - Backend/API
+        - Frontend/UI
+        - Database/Schema
+        - Testing
+        - Documentation
+        - DevOps/CI
+        - Refactoring
+        - Bug Fix
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Complexity
+      description: Estimated complexity
+      options:
+        - Small (1-2 hours)
+        - Medium (half day)
+        - Large (1-2 days)
+        - Extra Large (3+ days)
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation-notes
+    attributes:
+      label: Implementation Notes
+      description: Technical details, approach, or considerations
+      placeholder: Any technical implementation details, approach, or considerations
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Other tasks or issues this depends on
+      placeholder: List any dependencies or prerequisites
+
+  - type: textarea
+    id: testing-notes
+    attributes:
+      label: Testing Notes
+      description: How to test this task
+      placeholder: Specific testing steps or verification methods

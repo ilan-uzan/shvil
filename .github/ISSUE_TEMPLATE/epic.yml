@@ -1,0 +1,70 @@
+name: Epic
+description: Cross-feature goal that spans multiple stories
+title: "[EPIC] "
+labels: ["epic", "planning"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Epic Overview
+        This epic represents a cross-feature goal that will be broken down into multiple stories and tasks.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Epic Description
+      description: High-level description of what this epic aims to achieve
+      placeholder: Describe the epic goal and its impact on the user experience
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Epic Acceptance Criteria
+      description: High-level criteria that must be met for this epic to be considered complete
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: stories
+    attributes:
+      label: Related Stories
+      description: List of stories that will be created to fulfill this epic
+      placeholder: |
+        - [ ] Story 1: Brief description
+        - [ ] Story 2: Brief description
+        - [ ] Story 3: Brief description
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: Epic priority level
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks & Dependencies
+      description: Known risks, dependencies, or blockers
+      placeholder: List any risks, dependencies, or potential blockers
+
+  - type: textarea
+    id: success-metrics
+    attributes:
+      label: Success Metrics
+      description: How will we measure the success of this epic?
+      placeholder: Define measurable outcomes
