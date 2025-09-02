@@ -67,7 +67,7 @@ struct ModernProfileView: View {
                         .font(.system(size: 60))
                         .foregroundColor(ShvilDesign.Colors.primary)
                 } else {
-                    Text(authManager.currentUser?.displayName.prefix(1).uppercased() ?? "U")
+                    Text(authManager.currentUser?.displayName?.prefix(1).uppercased() ?? "U")
                         .font(.system(size: 40, weight: .bold))
                         .foregroundColor(ShvilDesign.Colors.primary)
                 }

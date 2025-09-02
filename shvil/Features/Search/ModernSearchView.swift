@@ -315,7 +315,7 @@ struct ModernSearchView: View {
             Task {
                 try await Task.sleep(nanoseconds: 300_000_000) // 300ms
                 if searchText == newValue {
-                    await performSearch()
+                    performSearch()
                 }
             }
         }

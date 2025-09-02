@@ -59,6 +59,7 @@ struct ShvilDesign {
         // Body Text
         static let body = Font.body
         static let bodyEmphasized = Font.body.weight(.medium)
+        static let headline = Font.headline
         static let callout = Font.callout
         static let subheadline = Font.subheadline
         static let footnote = Font.footnote

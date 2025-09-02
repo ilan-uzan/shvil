@@ -145,35 +145,53 @@ struct ModernMapView: View {
     
     // MARK: - Transport Mode Selector
     private var transportModeSelector: some View {
-        HStack(spacing: ShvilDesign.Spacing.sm) {
-            ForEach(TransportMode.allCases, id: \.self) { mode in
-                Button(action: {
-                    withAnimation(ShvilDesign.Animation.spring) {
-                        selectedTransportMode = mode
-                    }
-                }) {
-                    VStack(spacing: 4) {
-                        Image(systemName: mode.icon)
-                            .font(.title3)
-                            .foregroundColor(selectedTransportMode == mode ? .white : ShvilDesign.Colors.primary)
-                        
-                        Text(mode.shortName)
-                            .font(ShvilDesign.Typography.caption2)
-                            .foregroundColor(selectedTransportMode == mode ? .white : ShvilDesign.Colors.primary)
-                    }
-                    .frame(width: 60, height: 50)
-                    .background(
-                        RoundedRectangle(cornerRadius: ShvilDesign.CornerRadius.medium)
-                            .fill(selectedTransportMode == mode ? ShvilDesign.Colors.primary : .ultraThinMaterial)
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
+        ScrollView(.horizontal, showsIndicators: false) {
+            transportModeButtons
         }
-        .padding(.horizontal, ShvilDesign.Spacing.sm)
         .padding(.vertical, ShvilDesign.Spacing.sm)
         .background(.ultraThinMaterial)
         .cornerRadius(ShvilDesign.CornerRadius.large)
+    }
+    
+    private var transportModeButtons: some View {
+        HStack(spacing: ShvilDesign.Spacing.sm) {
+            ForEach(TransportMode.allCases, id: \.self) { mode in
+                transportModeButton(for: mode)
+            }
+        }
+        .padding(.horizontal, ShvilDesign.Spacing.sm)
+    }
+    
+    private func transportModeButton(for mode: TransportMode) -> some View {
+        let isSelected = selectedTransportMode == mode
+        let foregroundColor = isSelected ? Color.white : ShvilDesign.Colors.primary
+        let backgroundColor = isSelected ? ShvilDesign.Colors.primary : Color.clear
+        
+        return Button(action: {
+            withAnimation(ShvilDesign.Animation.spring) {
+                selectedTransportMode = mode
+            }
+        }) {
+            VStack(spacing: 4) {
+                Image(systemName: mode.icon)
+                    .font(.title3)
+                    .foregroundColor(foregroundColor)
+                
+                Text(mode.shortName)
+                    .font(ShvilDesign.Typography.caption2)
+                    .foregroundColor(foregroundColor)
+            }
+            .frame(width: 60, height: 50)
+            .background(
+                RoundedRectangle(cornerRadius: ShvilDesign.CornerRadius.medium)
+                    .fill(backgroundColor)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: ShvilDesign.CornerRadius.medium)
+                            .stroke(.ultraThinMaterial, lineWidth: isSelected ? 0 : 1)
+                    )
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
     }
     
     // MARK: - Navigation Controls
@@ -289,7 +307,7 @@ struct ModernMapKitView: UIViewRepresentable {
         mapView.showsScale = false
         mapView.showsTraffic = true
         mapView.showsBuildings = true
-        mapView.showsPointsOfInterest = true
+        mapView.pointOfInterestFilter = .includingAll
         
         // Custom styling
         mapView.pointOfInterestFilter = .includingAll
@@ -343,7 +361,7 @@ struct ModernMapKitView: UIViewRepresentable {
             }
             
             if let markerView = annotationView as? MKMarkerAnnotationView {
-                markerView.markerTintColor = ShvilDesign.Colors.primary
+                markerView.markerTintColor = UIColor.systemBlue
                 markerView.glyphImage = UIImage(systemName: "mappin.circle.fill")
             }
             
