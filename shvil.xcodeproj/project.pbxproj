@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		EF209EBA2E6783070020183D /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EB92E6783070020183D /* Auth */; };
+		EF209EBC2E6783070020183D /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EBB2E6783070020183D /* Functions */; };
+		EF209EBE2E6783070020183D /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EBD2E6783070020183D /* PostgREST */; };
+		EF209EC02E6783070020183D /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EBF2E6783070020183D /* Realtime */; };
+		EF209EC22E6783070020183D /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EC12E6783070020183D /* Storage */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		EFAB63FA2E64EAD50069887C /* shvil.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = shvil.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +31,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF209EBE2E6783070020183D /* PostgREST in Frameworks */,
+				EF209EBC2E6783070020183D /* Functions in Frameworks */,
+				EF209EBA2E6783070020183D /* Auth in Frameworks */,
+				EF209EC22E6783070020183D /* Storage in Frameworks */,
+				EF209EC02E6783070020183D /* Realtime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +78,11 @@
 			);
 			name = shvil;
 			packageProductDependencies = (
+				EF209EB92E6783070020183D /* Auth */,
+				EF209EBB2E6783070020183D /* Functions */,
+				EF209EBD2E6783070020183D /* PostgREST */,
+				EF209EBF2E6783070020183D /* Realtime */,
+				EF209EC12E6783070020183D /* Storage */,
 			);
 			productName = shvil;
 			productReference = EFAB63FA2E64EAD50069887C /* shvil.app */;
@@ -94,6 +112,9 @@
 			);
 			mainGroup = EFAB63F12E64EAD50069887C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EFAB63FB2E64EAD50069887C /* Products */;
 			projectDirPath = "";
@@ -324,6 +345,45 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EF209EB92E6783070020183D /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		EF209EBB2E6783070020183D /* Functions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Functions;
+		};
+		EF209EBD2E6783070020183D /* PostgREST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = PostgREST;
+		};
+		EF209EBF2E6783070020183D /* Realtime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Realtime;
+		};
+		EF209EC12E6783070020183D /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Storage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EFAB63F22E64EAD50069887C /* Project object */;
 }

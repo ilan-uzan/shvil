@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Supabase
 
 // MARK: - Connection Status
 enum ConnectionStatus {
@@ -31,9 +32,16 @@ class SupabaseManager: ObservableObject {
     
     // MARK: - Private Properties
     private var cancellables = Set<AnyCancellable>()
+    private let supabaseClient: SupabaseClient
     
     // MARK: - Initialization
     private init() {
+        // Initialize Supabase client
+        supabaseClient = SupabaseClient(
+            supabaseURL: URL(string: Config.projectURL)!,
+            supabaseKey: Config.anonKey
+        )
+        
         connectionStatus = .disconnected
         loadLocalData()
     }
@@ -45,11 +53,9 @@ class SupabaseManager: ObservableObject {
         connectionStatus = .connecting
         
         do {
-            // Simulate connection test
-            try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+            // Test the connection by making a simple query
+            _ = try await supabaseClient.from("profiles").select("id").limit(1).execute()
             
-            // For now, we'll simulate a successful connection
-            // In a real implementation, this would test the actual Supabase connection
             connectionStatus = .connected
             isConnected = true
             lastError = nil
@@ -195,36 +201,100 @@ class SupabaseManager: ObservableObject {
         }
     }
     
-    // MARK: - Supabase Sync Methods (Placeholders)
+    // MARK: - Supabase Sync Methods
     
     private func syncUserProfile(_ profile: UserProfile) async {
-        // TODO: Implement Supabase sync
+        do {
+            _ = try await supabaseClient
+                .from("profiles")
+                .upsert(profile)
+                .execute()
+            print("Successfully synced user profile: \(profile.displayName)")
+        } catch {
+            print("Failed to sync user profile: \(error)")
+        }
     }
     
     private func fetchUserProfile() async -> UserProfile? {
-        // TODO: Implement Supabase fetch
-        return nil
+        do {
+            let response = try await supabaseClient
+                .from("profiles")
+                .select("*")
+                .single()
+                .execute()
+            
+            let profile = try JSONDecoder().decode(UserProfile.self, from: response.data)
+            print("Successfully fetched user profile: \(profile.displayName)")
+            return profile
+        } catch {
+            print("Failed to fetch user profile: \(error)")
+            return nil
+        }
     }
     
     private func syncSavedPlace(_ place: SavedPlace) async {
-        // TODO: Implement Supabase sync
+        do {
+            _ = try await supabaseClient
+                .from("saved_places")
+                .upsert(place)
+                .execute()
+            print("Successfully synced saved place: \(place.name)")
+        } catch {
+            print("Failed to sync saved place: \(error)")
+        }
     }
     
     private func deleteSavedPlace(_ place: SavedPlace) async {
-        // TODO: Implement Supabase delete
+        do {
+            _ = try await supabaseClient
+                .from("saved_places")
+                .delete()
+                .eq("id", value: place.id.uuidString)
+                .execute()
+            print("Successfully deleted saved place: \(place.name)")
+        } catch {
+            print("Failed to delete saved place: \(error)")
+        }
     }
     
     private func fetchSavedPlaces() async -> [SavedPlace] {
-        // TODO: Implement Supabase fetch
-        return []
+        do {
+            let response = try await supabaseClient
+                .from("saved_places")
+                .select("*")
+                .execute()
+            
+            let places = try JSONDecoder().decode([SavedPlace].self, from: response.data)
+            print("Successfully fetched \(places.count) saved places")
+            return places
+        } catch {
+            print("Failed to fetch saved places: \(error)")
+            return []
+        }
     }
     
     private func syncRecentSearch(_ search: SearchResult) async {
-        // TODO: Implement Supabase sync
+        do {
+            _ = try await supabaseClient
+                .from("recent_searches")
+                .upsert(search)
+                .execute()
+            print("Successfully synced recent search: \(search.title)")
+        } catch {
+            print("Failed to sync recent search: \(error)")
+        }
     }
     
     private func clearRecentSearchesFromServer() async {
-        // TODO: Implement Supabase clear
+        do {
+            _ = try await supabaseClient
+                .from("recent_searches")
+                .delete()
+                .execute()
+            print("Successfully cleared recent searches from Supabase")
+        } catch {
+            print("Failed to clear recent searches: \(error)")
+        }
     }
 }
 
