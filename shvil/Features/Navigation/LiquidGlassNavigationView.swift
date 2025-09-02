@@ -186,7 +186,7 @@ struct LiquidGlassMapView: View {
     var body: some View {
         ZStack {
             // Map
-            Map(position: .constant(.region(region)), interactionModes: .all) {
+            Map(position: .constant(.region(region))) {
                 if let userLocation = locationService.currentLocation {
                     Marker("You", coordinate: userLocation.coordinate)
                         .tint(.blue)
