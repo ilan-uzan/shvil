@@ -17,7 +17,7 @@ struct ShvilApp: App {
     
     var body: some Scene {
         WindowGroup {
-            // Temporarily bypass authentication to test the main UI
+            // Main app content
             ContentView()
                 .environmentObject(locationService)
                 .environmentObject(supabaseManager)
