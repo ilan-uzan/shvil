@@ -12,6 +12,7 @@
 		EF209EBE2E6783070020183D /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EBD2E6783070020183D /* PostgREST */; };
 		EF209EC02E6783070020183D /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EBF2E6783070020183D /* Realtime */; };
 		EF209EC22E6783070020183D /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EC12E6783070020183D /* Storage */; };
+		EF209EC72E6788830020183D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EC62E6788830020183D /* Supabase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 			files = (
 				EF209EBE2E6783070020183D /* PostgREST in Frameworks */,
 				EF209EBC2E6783070020183D /* Functions in Frameworks */,
+				EF209EC72E6788830020183D /* Supabase in Frameworks */,
 				EF209EBA2E6783070020183D /* Auth in Frameworks */,
 				EF209EC22E6783070020183D /* Storage in Frameworks */,
 				EF209EC02E6783070020183D /* Realtime in Frameworks */,
@@ -42,10 +44,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EF209EC32E67886D0020183D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		EFAB63F12E64EAD50069887C = {
 			isa = PBXGroup;
 			children = (
 				EFAB63FC2E64EAD50069887C /* shvil */,
+				EF209EC32E67886D0020183D /* Frameworks */,
 				EFAB63FB2E64EAD50069887C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -83,6 +93,7 @@
 				EF209EBD2E6783070020183D /* PostgREST */,
 				EF209EBF2E6783070020183D /* Realtime */,
 				EF209EC12E6783070020183D /* Storage */,
+				EF209EC62E6788830020183D /* Supabase */,
 			);
 			productName = shvil;
 			productReference = EFAB63FA2E64EAD50069887C /* shvil.app */;
@@ -382,6 +393,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Storage;
+		};
+		EF209EC62E6788830020183D /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

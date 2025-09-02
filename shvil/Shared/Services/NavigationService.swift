@@ -93,7 +93,7 @@ struct RouteOptions: Codable {
 
 // MARK: - Route Result
 struct RouteResult: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let transportMode: TransportMode
     let distance: CLLocationDistance
     let expectedTravelTime: TimeInterval
@@ -102,6 +102,18 @@ struct RouteResult: Identifiable, Codable {
     let tolls: [TollInfo]
     let gasStations: [GasStation]
     let trafficIncidents: [TrafficIncident]
+    
+    init(transportMode: TransportMode, distance: CLLocationDistance, expectedTravelTime: TimeInterval, polyline: [CLLocationCoordinate2D], steps: [RouteStep], tolls: [TollInfo], gasStations: [GasStation], trafficIncidents: [TrafficIncident]) {
+        self.id = UUID()
+        self.transportMode = transportMode
+        self.distance = distance
+        self.expectedTravelTime = expectedTravelTime
+        self.polyline = polyline
+        self.steps = steps
+        self.tolls = tolls
+        self.gasStations = gasStations
+        self.trafficIncidents = trafficIncidents
+    }
     
     var formattedDistance: String {
         let formatter = MKDistanceFormatter()
@@ -123,13 +135,23 @@ struct RouteResult: Identifiable, Codable {
 
 // MARK: - Route Step
 struct RouteStep: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let instructions: String
     let distance: CLLocationDistance
     let expectedTravelTime: TimeInterval
     let transportType: TransportMode
     let maneuverType: ManeuverType
     let coordinate: CLLocationCoordinate2D
+    
+    init(instructions: String, distance: CLLocationDistance, expectedTravelTime: TimeInterval, transportType: TransportMode, maneuverType: ManeuverType, coordinate: CLLocationCoordinate2D) {
+        self.id = UUID()
+        self.instructions = instructions
+        self.distance = distance
+        self.expectedTravelTime = expectedTravelTime
+        self.transportType = transportType
+        self.maneuverType = maneuverType
+        self.coordinate = coordinate
+    }
     
     var formattedDistance: String {
         let formatter = MKDistanceFormatter()
@@ -169,11 +191,19 @@ enum ManeuverType: String, Codable {
 
 // MARK: - Toll Information
 struct TollInfo: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let name: String
     let cost: Double
     let currency: String
     let coordinate: CLLocationCoordinate2D
+    
+    init(name: String, cost: Double, currency: String, coordinate: CLLocationCoordinate2D) {
+        self.id = UUID()
+        self.name = name
+        self.cost = cost
+        self.currency = currency
+        self.coordinate = coordinate
+    }
     
     var formattedCost: String {
         return "\(currency) \(String(format: "%.2f", cost))"
@@ -182,12 +212,21 @@ struct TollInfo: Identifiable, Codable {
 
 // MARK: - Gas Station
 struct GasStation: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let name: String
     let brand: String
     let coordinate: CLLocationCoordinate2D
     let gasPrices: [GasPrice]
     let amenities: [String]
+    
+    init(name: String, brand: String, coordinate: CLLocationCoordinate2D, gasPrices: [GasPrice], amenities: [String]) {
+        self.id = UUID()
+        self.name = name
+        self.brand = brand
+        self.coordinate = coordinate
+        self.gasPrices = gasPrices
+        self.amenities = amenities
+    }
     
     var lowestPrice: GasPrice? {
         gasPrices.min { $0.price < $1.price }
@@ -196,11 +235,19 @@ struct GasStation: Identifiable, Codable {
 
 // MARK: - Gas Price
 struct GasPrice: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let fuelType: FuelType
     let price: Double
     let currency: String
     let lastUpdated: Date
+    
+    init(fuelType: FuelType, price: Double, currency: String, lastUpdated: Date) {
+        self.id = UUID()
+        self.fuelType = fuelType
+        self.price = price
+        self.currency = currency
+        self.lastUpdated = lastUpdated
+    }
     
     var formattedPrice: String {
         return "\(currency) \(String(format: "%.3f", price))"
@@ -228,13 +275,23 @@ enum FuelType: String, CaseIterable, Codable {
 
 // MARK: - Traffic Incident
 struct TrafficIncident: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let type: IncidentType
     let severity: IncidentSeverity
     let description: String
     let coordinate: CLLocationCoordinate2D
     let startTime: Date
     let endTime: Date?
+    
+    init(type: IncidentType, severity: IncidentSeverity, description: String, coordinate: CLLocationCoordinate2D, startTime: Date, endTime: Date?) {
+        self.id = UUID()
+        self.type = type
+        self.severity = severity
+        self.description = description
+        self.coordinate = coordinate
+        self.startTime = startTime
+        self.endTime = endTime
+    }
     
     var isActive: Bool {
         let now = Date()

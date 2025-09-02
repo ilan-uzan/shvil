@@ -7,11 +7,7 @@
 
 import Foundation
 import Combine
-import PostgREST
-import Auth
-import Storage
-import Realtime
-import Functions
+import Supabase
 
 // MARK: - Connection Status
 enum ConnectionStatus {
@@ -36,14 +32,15 @@ class SupabaseManager: ObservableObject {
     
     // MARK: - Private Properties
     private var cancellables = Set<AnyCancellable>()
-    private let supabaseURL: URL
-    private let supabaseKey: String
+    private let supabaseClient: SupabaseClient
     
     // MARK: - Initialization
     private init() {
-        // Initialize Supabase configuration
-        supabaseURL = URL(string: Config.projectURL)!
-        supabaseKey = Config.anonKey
+        // Initialize Supabase client
+        supabaseClient = SupabaseClient(
+            supabaseURL: URL(string: Config.projectURL)!,
+            supabaseKey: Config.anonKey
+        )
         
         connectionStatus = .disconnected
         loadLocalData()
@@ -56,9 +53,8 @@ class SupabaseManager: ObservableObject {
         connectionStatus = .connecting
         
         do {
-            // Test the connection by making a simple query using PostgREST
-            let client = PostgRESTClient(url: supabaseURL, headers: ["apikey": supabaseKey])
-            _ = try await client.from("profiles").select("id").limit(1).execute()
+            // Test the connection by making a simple query
+            _ = try await supabaseClient.from("profiles").select("id").limit(1).execute()
             
             connectionStatus = .connected
             isConnected = true
@@ -209,8 +205,7 @@ class SupabaseManager: ObservableObject {
     
     private func syncUserProfile(_ profile: UserProfile) async {
         do {
-            let client = PostgRESTClient(url: supabaseURL, headers: ["apikey": supabaseKey])
-            _ = try await client
+            _ = try await supabaseClient
                 .from("profiles")
                 .upsert(profile)
                 .execute()
@@ -239,8 +234,7 @@ class SupabaseManager: ObservableObject {
     
     private func syncSavedPlace(_ place: SavedPlace) async {
         do {
-            let client = PostgRESTClient(url: supabaseURL, headers: ["apikey": supabaseKey])
-            _ = try await client
+            _ = try await supabaseClient
                 .from("saved_places")
                 .upsert(place)
                 .execute()
@@ -252,8 +246,7 @@ class SupabaseManager: ObservableObject {
     
     private func deleteSavedPlace(_ place: SavedPlace) async {
         do {
-            let client = PostgRESTClient(url: supabaseURL, headers: ["apikey": supabaseKey])
-            _ = try await client
+            _ = try await supabaseClient
                 .from("saved_places")
                 .delete()
                 .eq("id", value: place.id.uuidString)
@@ -266,8 +259,7 @@ class SupabaseManager: ObservableObject {
     
     private func fetchSavedPlaces() async -> [SavedPlace] {
         do {
-            let client = PostgRESTClient(url: supabaseURL, headers: ["apikey": supabaseKey])
-            let response = try await client
+            let response = try await supabaseClient
                 .from("saved_places")
                 .select("*")
                 .execute()
@@ -283,8 +275,7 @@ class SupabaseManager: ObservableObject {
     
     private func syncRecentSearch(_ search: SearchResult) async {
         do {
-            let client = PostgRESTClient(url: supabaseURL, headers: ["apikey": supabaseKey])
-            _ = try await client
+            _ = try await supabaseClient
                 .from("recent_searches")
                 .upsert(search)
                 .execute()
@@ -296,8 +287,7 @@ class SupabaseManager: ObservableObject {
     
     private func clearRecentSearchesFromServer() async {
         do {
-            let client = PostgRESTClient(url: supabaseURL, headers: ["apikey": supabaseKey])
-            _ = try await client
+            _ = try await supabaseClient
                 .from("recent_searches")
                 .delete()
                 .execute()
