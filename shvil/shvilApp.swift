@@ -11,16 +11,28 @@ import SwiftUI
 struct ShvilApp: App {
     @StateObject private var locationService = LocationService.shared
     @StateObject private var supabaseManager = SupabaseManager.shared
+    @StateObject private var authManager = AuthenticationManager.shared
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(locationService)
-                .environmentObject(supabaseManager)
-                .onAppear {
-                    // Initialize services
-                    locationService.requestLocationPermission()
+            Group {
+                if authManager.shouldShowWelcome {
+                    WelcomeView()
+                } else if authManager.shouldShowOnboarding {
+                    OnboardingView()
+                } else if authManager.isGuest {
+                    GuestModeView()
+                } else {
+                    ContentView()
                 }
+            }
+            .environmentObject(locationService)
+            .environmentObject(supabaseManager)
+            .environmentObject(authManager)
+            .onAppear {
+                // Initialize services
+                locationService.requestLocationPermission()
+            }
         }
     }
 }
