@@ -19,14 +19,21 @@ class SupabaseService: ObservableObject {
     private init() {
         // Use configuration system for proper setup
         guard let url = URL(string: Configuration.supabaseURL) else {
-            fatalError("Invalid Supabase URL: \(Configuration.supabaseURL)")
+            print("⚠️ WARNING: Invalid Supabase URL: \(Configuration.supabaseURL)")
+            // Create a dummy client for development
+            client = SupabaseClient(supabaseURL: URL(string: "https://placeholder.supabase.co")!, supabaseKey: "placeholder-key")
+            return
         }
 
         client = SupabaseClient(supabaseURL: url, supabaseKey: Configuration.supabaseAnonKey)
 
-        // Test connection
-        Task {
-            await testConnection()
+        // Test connection only if properly configured
+        if Configuration.isSupabaseConfigured {
+            Task {
+                await testConnection()
+            }
+        } else {
+            print("⚠️ WARNING: Supabase not configured. Using placeholder values.")
         }
     }
 
