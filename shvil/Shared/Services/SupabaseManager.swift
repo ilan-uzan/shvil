@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import Supabase
 import CoreLocation
+import SwiftUI
 
 // MARK: - Connection Status
 enum ConnectionStatus {
@@ -393,6 +394,36 @@ struct SavedPlace: Identifiable, Codable {
         try container.encode(updatedAt, forKey: .updatedAt)
         try container.encode(coordinate.latitude, forKey: .latitude)
         try container.encode(coordinate.longitude, forKey: .longitude)
+    }
+    
+    var categoryColor: Color {
+        switch category {
+        case "home": return .blue
+        case "work": return .green
+        case "restaurant": return .orange
+        case "gas": return .red
+        case "parking": return .purple
+        case "hotel": return .pink
+        case "shopping": return .cyan
+        case "entertainment": return .yellow
+        case "healthcare": return .mint
+        default: return .gray
+        }
+    }
+    
+    var categoryIcon: String {
+        switch category {
+        case "home": return "house.fill"
+        case "work": return "briefcase.fill"
+        case "restaurant": return "fork.knife"
+        case "gas": return "fuelpump.fill"
+        case "parking": return "p.circle.fill"
+        case "hotel": return "bed.double.fill"
+        case "shopping": return "bag.fill"
+        case "entertainment": return "gamecontroller.fill"
+        case "healthcare": return "cross.fill"
+        default: return "mappin.circle.fill"
+        }
     }
 }
 

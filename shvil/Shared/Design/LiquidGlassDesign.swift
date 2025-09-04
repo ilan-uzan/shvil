@@ -296,7 +296,15 @@ struct LiquidGlassTabBar: View {
         let icon: String
         let title: String
         let badge: String?
+        
+        init(icon: String, title: String, badge: String? = nil) {
+            self.icon = icon
+            self.title = title
+            self.badge = badge
+        }
     }
+    
+
     
     var body: some View {
         HStack(spacing: 0) {

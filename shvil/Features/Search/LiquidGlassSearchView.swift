@@ -326,49 +326,7 @@ enum SearchCategory: CaseIterable {
 }
 
 // MARK: - Quick Action Card
-struct QuickActionCard: View {
-    let icon: String
-    let title: String
-    let subtitle: String
-    let color: Color
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: LiquidGlassDesign.Spacing.sm) {
-                Image(systemName: icon)
-                    .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(.white)
-                    .frame(width: 48, height: 48)
-                    .background(
-                        Circle()
-                            .fill(color)
-                            .shadow(color: color.opacity(0.3), radius: 6, x: 0, y: 3)
-                    )
-                
-                VStack(spacing: 2) {
-                    Text(title)
-                        .font(LiquidGlassDesign.Typography.callout)
-                        .foregroundColor(LiquidGlassDesign.Colors.textPrimary)
-                        .multilineTextAlignment(.center)
-                    
-                    Text(subtitle)
-                        .font(LiquidGlassDesign.Typography.caption)
-                        .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
-                        .multilineTextAlignment(.center)
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(LiquidGlassDesign.Spacing.md)
-            .background(
-                RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.lg)
-                    .fill(LiquidGlassDesign.Colors.glassWhite)
-                    .shadow(color: LiquidGlassDesign.Shadows.light, radius: 6, x: 0, y: 3)
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}
+// Note: QuickActionCard is now defined in SharedComponents.swift
 
 // MARK: - Recent Search Card
 struct RecentSearchCard: View {
@@ -697,6 +655,8 @@ struct FilterOption {
     let title: String
     let icon: String
 }
+
+
 
 // MARK: - Preview
 #Preview {

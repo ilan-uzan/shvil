@@ -16,40 +16,36 @@ struct ContentView: View {
     @State private var selectedTab: Int = 0
     
     var body: some View {
-        ZStack {
-            // Background
-            LiquidGlassDesign.Colors.backgroundPrimary
-                .ignoresSafeArea()
+        VStack(spacing: 0) {
+            // Top Navigation Bar
+            topNavigationBar
             
-            VStack(spacing: 0) {
-                // Top Navigation Bar
-                topNavigationBar
+            // Content Area
+            TabView(selection: $selectedTab) {
+                // Map Tab
+                mapTabView
+                    .tag(0)
                 
-                // Content Area
-                TabView(selection: $selectedTab) {
-                    // Map Tab
-                    mapTabView
-                        .tag(0)
-                    
-                    // Search Tab
-                    searchTabView
-                        .tag(1)
-                    
-                    // Saved Places Tab
-                    savedPlacesTabView
-                        .tag(2)
-                    
-                    // Profile Tab
-                    profileTabView
-                        .tag(3)
-                }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                // Search Tab
+                searchTabView
+                    .tag(1)
                 
-                // Bottom Tab Bar
-                bottomTabBar
+                // Saved Places Tab
+                savedPlacesTabView
+                    .tag(2)
+                
+                // Profile Tab
+                profileTabView
+                    .tag(3)
             }
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            
+            // Bottom Tab Bar
+            bottomTabBar
         }
+        .background(Color(.systemBackground))
         .onAppear {
+            print("ContentView appeared - selectedTab: \(selectedTab)")
             locationService.requestLocationPermission()
         }
     }
@@ -61,11 +57,12 @@ struct ContentView: View {
             HStack(spacing: 8) {
                 Image(systemName: "location.fill")
                     .font(.title2)
-                    .foregroundColor(LiquidGlassDesign.Colors.liquidBlue)
+                    .foregroundColor(.blue)
                 
                 Text("Shvil")
-                    .font(LiquidGlassDesign.Typography.title2)
-                    .foregroundColor(LiquidGlassDesign.Colors.textPrimary)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
             }
             
             Spacer()
@@ -75,22 +72,19 @@ struct ContentView: View {
                 Button(action: {}) {
                     Image(systemName: "bell")
                         .font(.title3)
-                        .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
+                        .foregroundColor(.secondary)
                 }
                 
                 Button(action: {}) {
                     Image(systemName: "person.circle")
                         .font(.title3)
-                        .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
+                        .foregroundColor(.secondary)
                 }
             }
         }
-        .padding(.horizontal, LiquidGlassDesign.Spacing.md)
-        .padding(.vertical, LiquidGlassDesign.Spacing.sm)
-        .background(
-            RoundedRectangle(cornerRadius: 0)
-                .fill(.ultraThinMaterial)
-        )
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(Color(.systemBackground))
     }
     
     // MARK: - Map Tab View
@@ -98,20 +92,23 @@ struct ContentView: View {
         ZStack {
             // Map Background
             Rectangle()
-                .fill(LiquidGlassDesign.Colors.backgroundSecondary)
+                .fill(Color(.systemGray6))
                 .overlay(
                     VStack {
                         Image(systemName: "map.fill")
                             .font(.system(size: 60))
-                            .foregroundColor(LiquidGlassDesign.Colors.liquidBlue.opacity(0.3))
+                            .foregroundColor(.blue.opacity(0.3))
                         Text("Map View")
-                            .font(LiquidGlassDesign.Typography.title3)
-                            .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
+                            .font(.title3)
+                            .foregroundColor(.secondary)
                     }
                 )
+                .onAppear {
+                    print("Map tab view appeared")
+                }
             
             // Map Controls Overlay
-        VStack {
+            VStack {
                 Spacer()
                 
                 HStack {
@@ -126,8 +123,8 @@ struct ContentView: View {
                                 .frame(width: 50, height: 50)
                                 .background(
                                     Circle()
-                                        .fill(LiquidGlassDesign.Colors.liquidBlue)
-                                        .shadow(color: LiquidGlassDesign.Colors.liquidBlue.opacity(0.3), radius: 8, x: 0, y: 4)
+                                        .fill(.blue)
+                                        .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
                                 )
                         }
                         
@@ -139,12 +136,12 @@ struct ContentView: View {
                                 .frame(width: 50, height: 50)
                                 .background(
                                     Circle()
-                                        .fill(LiquidGlassDesign.Colors.liquidBlue)
-                                        .shadow(color: LiquidGlassDesign.Colors.liquidBlue.opacity(0.3), radius: 8, x: 0, y: 4)
+                                        .fill(.blue)
+                                        .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
                                 )
                         }
                     }
-                    .padding(.trailing, LiquidGlassDesign.Spacing.md)
+                    .padding(.trailing, 16)
                     .padding(.bottom, 100) // Above tab bar
                 }
             }
@@ -154,58 +151,59 @@ struct ContentView: View {
     // MARK: - Search Tab View
     private var searchTabView: some View {
         ScrollView {
-            VStack(spacing: LiquidGlassDesign.Spacing.md) {
+            VStack(spacing: 16) {
                 // Search Header
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Search")
-                        .font(LiquidGlassDesign.Typography.largeTitle)
-                        .foregroundColor(LiquidGlassDesign.Colors.textPrimary)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
                     
                     Text("Find places, addresses, and points of interest")
-                        .font(LiquidGlassDesign.Typography.body)
-                        .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
+                        .font(.body)
+                        .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, LiquidGlassDesign.Spacing.md)
+                .padding(.horizontal, 16)
                 
                 // Search Bar
                 HStack {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
+                        .foregroundColor(.secondary)
                     
                     TextField("Search for places...", text: .constant(""))
-                        .font(LiquidGlassDesign.Typography.body)
+                        .font(.body)
                     
                     Button(action: {}) {
                         Image(systemName: "mic.fill")
-                            .foregroundColor(LiquidGlassDesign.Colors.liquidBlue)
+                            .foregroundColor(.blue)
                     }
                 }
-                .padding(LiquidGlassDesign.Spacing.md)
+                .padding(16)
                 .background(
-                    RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.lg)
-                        .fill(LiquidGlassDesign.Colors.glassWhite)
-                        .shadow(color: LiquidGlassDesign.Shadows.light, radius: 8, x: 0, y: 2)
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(.systemGray6))
+                        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 2)
                 )
-                .padding(.horizontal, LiquidGlassDesign.Spacing.md)
+                .padding(.horizontal, 16)
                 
                 // Quick Actions
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: LiquidGlassDesign.Spacing.md) {
-                    QuickActionCard(icon: "house.fill", title: "Home", subtitle: "Set your home address", color: LiquidGlassDesign.Colors.liquidBlue, action: {})
-                    QuickActionCard(icon: "briefcase.fill", title: "Work", subtitle: "Set your work address", color: LiquidGlassDesign.Colors.accentGreen, action: {})
-                    QuickActionCard(icon: "heart.fill", title: "Favorites", subtitle: "Your saved places", color: LiquidGlassDesign.Colors.accentRed, action: {})
-                    QuickActionCard(icon: "clock.fill", title: "Recent", subtitle: "Recently searched", color: LiquidGlassDesign.Colors.accentOrange, action: {})
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 16) {
+                    QuickActionCard(icon: "house.fill", title: "Home", subtitle: "Set your home address", color: .blue, action: {})
+                    QuickActionCard(icon: "briefcase.fill", title: "Work", subtitle: "Set your work address", color: .green, action: {})
+                    QuickActionCard(icon: "heart.fill", title: "Favorites", subtitle: "Your saved places", color: .red, action: {})
+                    QuickActionCard(icon: "clock.fill", title: "Recent", subtitle: "Recently searched", color: .orange, action: {})
                 }
-                .padding(.horizontal, LiquidGlassDesign.Spacing.md)
+                .padding(.horizontal, 16)
             }
-            .padding(.top, LiquidGlassDesign.Spacing.md)
+            .padding(.top, 16)
         }
     }
     
     // MARK: - Saved Places Tab View
     private var savedPlacesTabView: some View {
         ScrollView {
-            VStack(spacing: LiquidGlassDesign.Spacing.md) {
+            VStack(spacing: 16) {
                 // Header
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Saved Places")
@@ -217,7 +215,7 @@ struct ContentView: View {
                         .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, LiquidGlassDesign.Spacing.md)
+                .padding(.horizontal, 16)
                 
                 // Saved Places List
                 LazyVStack(spacing: LiquidGlassDesign.Spacing.sm) {
@@ -238,9 +236,9 @@ struct ContentView: View {
                         )
                     }
                 }
-                .padding(.horizontal, LiquidGlassDesign.Spacing.md)
+                .padding(.horizontal, 16)
             }
-            .padding(.top, LiquidGlassDesign.Spacing.md)
+            .padding(.top, 16)
         }
     }
     
@@ -249,7 +247,7 @@ struct ContentView: View {
         ScrollView {
             VStack(spacing: LiquidGlassDesign.Spacing.lg) {
                 // Profile Header
-                VStack(spacing: LiquidGlassDesign.Spacing.md) {
+                VStack(spacing: 16) {
                     // Profile Picture
                     Circle()
                         .fill(LiquidGlassDesign.Colors.liquidBlue)
@@ -274,7 +272,7 @@ struct ContentView: View {
                 .padding(.top, LiquidGlassDesign.Spacing.lg)
                 
                 // Settings Sections
-                VStack(spacing: LiquidGlassDesign.Spacing.md) {
+                VStack(spacing: 16) {
                     SettingsSection(title: "Navigation") {
                         SettingsRow(icon: "car.fill", title: "Transport Mode", subtitle: "Car", color: LiquidGlassDesign.Colors.liquidBlue, action: {})
                         SettingsRow(icon: "speaker.wave.2.fill", title: "Voice Guidance", subtitle: "On", color: LiquidGlassDesign.Colors.accentGreen, action: {})
@@ -291,7 +289,7 @@ struct ContentView: View {
                         SettingsRow(icon: "questionmark.circle.fill", title: "Help & Support", subtitle: "", color: LiquidGlassDesign.Colors.accentGreen, action: {})
                     }
                 }
-                .padding(.horizontal, LiquidGlassDesign.Spacing.md)
+                .padding(.horizontal, 16)
             }
         }
     }
@@ -311,27 +309,7 @@ struct ContentView: View {
 }
 
 // MARK: - Supporting Components
-
-struct SettingsSection<Content: View>: View {
-    let title: String
-    let content: Content
-    
-    init(title: String, @ViewBuilder content: () -> Content) {
-        self.title = title
-        self.content = content()
-    }
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: LiquidGlassDesign.Spacing.sm) {
-            Text(title)
-                .font(LiquidGlassDesign.Typography.headline)
-                .foregroundColor(LiquidGlassDesign.Colors.textPrimary)
-                .padding(.horizontal, LiquidGlassDesign.Spacing.md)
-            
-            content
-        }
-    }
-}
+// Note: SettingsSection is now defined in SharedComponents.swift
 
 #Preview {
     ContentView()

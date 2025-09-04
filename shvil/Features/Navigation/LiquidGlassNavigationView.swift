@@ -178,15 +178,17 @@ struct LiquidGlassNavigationView: View {
 struct LiquidGlassMapView: View {
     @EnvironmentObject private var locationService: LocationService
     @EnvironmentObject private var navigationService: NavigationService
-    @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
-        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+    @State private var mapPosition = MapCameraPosition.region(
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        )
     )
     
     var body: some View {
         ZStack {
             // Map
-            Map(position: .constant(.region(region))) {
+            Map(position: $mapPosition) {
                 if let userLocation = locationService.currentLocation {
                     Marker("You", coordinate: userLocation.coordinate)
                         .tint(.blue)
