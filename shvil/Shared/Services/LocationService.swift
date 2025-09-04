@@ -57,13 +57,16 @@ class LocationService: NSObject, ObservableObject {
 extension LocationService: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        currentLocation = location
         
-        // Update region to follow user
-        region = MKCoordinateRegion(
-            center: location.coordinate,
-            span: region.span
-        )
+        DispatchQueue.main.async {
+            self.currentLocation = location
+            
+            // Update region to follow user
+            self.region = MKCoordinateRegion(
+                center: location.coordinate,
+                span: self.region.span
+            )
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -71,11 +74,13 @@ extension LocationService: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        authorizationStatus = status
-        isLocationEnabled = (status == .authorizedWhenInUse || status == .authorizedAlways)
-        
-        if isLocationEnabled {
-            startLocationUpdates()
+        DispatchQueue.main.async {
+            self.authorizationStatus = status
+            self.isLocationEnabled = (status == .authorizedWhenInUse || status == .authorizedAlways)
+            
+            if self.isLocationEnabled {
+                self.startLocationUpdates()
+            }
         }
     }
 }
