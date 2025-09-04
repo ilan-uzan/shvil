@@ -8,395 +8,222 @@
 import SwiftUI
 
 // MARK: - Liquid Glass Design System
-struct LiquidGlassDesign {
+// Exact implementation matching the spec requirements
+
+// MARK: - Typography (SF Pro)
+struct LiquidGlassTypography {
+    // TitleXL (Nav instruction): 24–28pt, semibold
+    static let titleXL = Font.system(size: 26, weight: .semibold, design: .default)
     
-    // MARK: - Colors
-    struct Colors {
-        // Primary liquid glass blue (matching the logo)
-        static let liquidBlue = Color(red: 0.0, green: 0.5, blue: 1.0)
-        static let liquidBlueLight = Color(red: 0.2, green: 0.7, blue: 1.0)
-        static let liquidBlueDark = Color(red: 0.0, green: 0.3, blue: 0.8)
-        
-        // Glass materials
-        static let glassWhite = Color.white.opacity(0.9)
-        static let glassLight = Color.white.opacity(0.8)
-        static let glassMedium = Color.white.opacity(0.6)
-        static let glassDark = Color.black.opacity(0.1)
-        
-        // Background colors
-        static let backgroundPrimary = Color(red: 0.95, green: 0.95, blue: 0.97)
-        static let backgroundSecondary = Color(red: 0.98, green: 0.98, blue: 0.99)
-        static let backgroundDark = Color(red: 0.1, green: 0.1, blue: 0.12)
-        
-        // Accent colors
-        static let accentGreen = Color(red: 0.2, green: 0.8, blue: 0.4)
-        static let accentOrange = Color(red: 1.0, green: 0.6, blue: 0.2)
-        static let accentRed = Color(red: 1.0, green: 0.3, blue: 0.3)
-        static let accentPurple = Color(red: 0.6, green: 0.4, blue: 1.0)
-        
-        // Text colors
-        static let textPrimary = Color.primary
-        static let textSecondary = Color.secondary
-        static let textTertiary = Color(UIColor.tertiaryLabel)
-        static let textInverse = Color.white
-    }
+    // Title (Sheet headers): 20–22pt, semibold
+    static let title = Font.system(size: 21, weight: .semibold, design: .default)
     
-    // MARK: - Typography
-    struct Typography {
-        // Display fonts
-        static let largeTitle = Font.system(size: 34, weight: .bold, design: .rounded)
-        static let title1 = Font.system(size: 28, weight: .bold, design: .rounded)
-        static let title2 = Font.system(size: 22, weight: .bold, design: .rounded)
-        static let title3 = Font.system(size: 20, weight: .semibold, design: .rounded)
-        
-        // Body fonts
-        static let headline = Font.system(size: 17, weight: .semibold, design: .rounded)
-        static let body = Font.system(size: 17, weight: .regular, design: .rounded)
-        static let callout = Font.system(size: 16, weight: .regular, design: .rounded)
-        static let subheadline = Font.system(size: 15, weight: .regular, design: .rounded)
-        static let footnote = Font.system(size: 13, weight: .regular, design: .rounded)
-        static let caption = Font.system(size: 12, weight: .regular, design: .rounded)
-        
-        // Special fonts
-        static let navigationTitle = Font.system(size: 18, weight: .semibold, design: .rounded)
-        static let button = Font.system(size: 17, weight: .semibold, design: .rounded)
-        static let tabBar = Font.system(size: 10, weight: .medium, design: .rounded)
-    }
+    // Body: 17pt min
+    static let body = Font.system(size: 17, weight: .regular, design: .default)
+    static let bodyMedium = Font.system(size: 17, weight: .medium, design: .default)
+    static let bodySemibold = Font.system(size: 17, weight: .semibold, design: .default)
     
-    // MARK: - Spacing
-    struct Spacing {
-        static let xs: CGFloat = 4
-        static let sm: CGFloat = 8
-        static let md: CGFloat = 16
-        static let lg: CGFloat = 24
-        static let xl: CGFloat = 32
-        static let xxl: CGFloat = 48
-        static let xxxl: CGFloat = 64
-    }
-    
-    // MARK: - Corner Radius
-    struct CornerRadius {
-        static let xs: CGFloat = 4
-        static let sm: CGFloat = 8
-        static let md: CGFloat = 12
-        static let lg: CGFloat = 16
-        static let xl: CGFloat = 20
-        static let xxl: CGFloat = 24
-        static let round: CGFloat = 50
-    }
-    
-    // MARK: - Shadows
-    struct Shadows {
-        static let light = Color.black.opacity(0.1)
-        static let medium = Color.black.opacity(0.15)
-        static let heavy = Color.black.opacity(0.25)
-        static let glow = Color.blue.opacity(0.3)
-    }
-    
-    // MARK: - Animations
-    struct Animation {
-        static let quick = SwiftUI.Animation.easeInOut(duration: 0.2)
-        static let smooth = SwiftUI.Animation.easeInOut(duration: 0.3)
-        static let fluid = SwiftUI.Animation.easeInOut(duration: 0.4)
-        static let slow = SwiftUI.Animation.easeInOut(duration: 0.6)
-        static let spring = SwiftUI.Animation.spring(response: 0.5, dampingFraction: 0.8)
-        static let bouncy = SwiftUI.Animation.spring(response: 0.4, dampingFraction: 0.6)
-    }
+    // Caption: 13–15pt
+    static let caption = Font.system(size: 14, weight: .regular, design: .default)
+    static let captionMedium = Font.system(size: 14, weight: .medium, design: .default)
+    static let captionSmall = Font.system(size: 13, weight: .regular, design: .default)
 }
 
-// MARK: - Liquid Glass View Modifiers
-extension View {
+// MARK: - Color Palette
+struct LiquidGlassColors {
+    // Accent Gradient: Turquoise (#3DDAD7) → Deep Aqua (#007C8C)
+    static let accentTurquoise = Color(red: 0.24, green: 0.85, blue: 0.84) // #3DDAD7
+    static let accentDeepAqua = Color(red: 0.0, green: 0.49, blue: 0.55)   // #007C8C
     
-    // MARK: - Glass Background
-    func liquidGlassBackground(
-        color: Color = LiquidGlassDesign.Colors.glassWhite,
-        cornerRadius: CGFloat = LiquidGlassDesign.CornerRadius.lg,
-        shadow: Color = LiquidGlassDesign.Shadows.light,
-        shadowRadius: CGFloat = 10
-    ) -> some View {
-        self
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(color)
-                    .shadow(color: shadow, radius: shadowRadius, x: 0, y: 4)
-            )
-    }
+    // Surface/Glass: #0E1116 with 40–60% opacity, subtle bluish tint
+    static let glassBase = Color(red: 0.055, green: 0.067, blue: 0.086) // #0E1116
+    static let glassSurface1 = glassBase.opacity(0.4)
+    static let glassSurface2 = glassBase.opacity(0.5)
+    static let glassSurface3 = glassBase.opacity(0.6)
     
-    // MARK: - Liquid Glass Card
-    func liquidGlassCard(
-        padding: CGFloat = LiquidGlassDesign.Spacing.md,
-        cornerRadius: CGFloat = LiquidGlassDesign.CornerRadius.lg
-    ) -> some View {
-        self
-            .padding(padding)
-            .liquidGlassBackground(cornerRadius: cornerRadius)
-    }
+    // Map Base: neutral/desaturated
+    static let mapBase = Color(red: 0.2, green: 0.2, blue: 0.2)
+    static let mapRoads = Color(red: 0.3, green: 0.3, blue: 0.3)
     
-    // MARK: - Liquid Glass Button
-    func liquidGlassButton(
-        color: Color = .blue,
-        cornerRadius: CGFloat = LiquidGlassDesign.CornerRadius.md,
-        padding: CGFloat = LiquidGlassDesign.Spacing.md
-    ) -> some View {
-        self
-            .padding(.horizontal, padding)
-            .padding(.vertical, padding * 0.75)
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(color)
-                    .shadow(color: color.opacity(0.3), radius: 8, x: 0, y: 4)
-            )
-            .foregroundColor(.white)
-            .font(LiquidGlassDesign.Typography.button)
-    }
+    // Alerts
+    static let accident = Color(red: 1.0, green: 0.23, blue: 0.19)  // #FF3B30
+    static let police = Color(red: 1.0, green: 0.8, blue: 0.0)     // #FFCC00
+    static let camera = Color(red: 0.04, green: 0.52, blue: 1.0)   // #0A84FF
     
-    // MARK: - Liquid Glass Glow
-    func liquidGlassGlow(
-        color: Color = .blue,
-        radius: CGFloat = 20,
-        intensity: CGFloat = 0.6
-    ) -> some View {
-        self
-            .shadow(color: color.opacity(intensity), radius: radius, x: 0, y: 0)
-    }
+    // Text Colors
+    static let primaryText = Color.white
+    static let secondaryText = Color.white.opacity(0.7)
+    static let accentText = accentTurquoise
     
-    // MARK: - Liquid Glass Border
-    func liquidGlassBorder(
-        color: Color = .blue,
-        width: CGFloat = 1,
-        cornerRadius: CGFloat = LiquidGlassDesign.CornerRadius.md
-    ) -> some View {
-        self
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(color, lineWidth: width)
-            )
-    }
-    
-    // MARK: - Liquid Glass Blur
-    func liquidGlassBlur(
-        style: UIBlurEffect.Style = .systemUltraThinMaterial,
-        cornerRadius: CGFloat = LiquidGlassDesign.CornerRadius.lg
-    ) -> some View {
-        self
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(.ultraThinMaterial)
-            )
-    }
+    // Background
+    static let background = Color.black
+    static let surface = glassSurface1
 }
 
-// MARK: - Liquid Glass Components
-struct LiquidGlassButton: View {
-    let title: String
-    let icon: String?
-    let action: () -> Void
-    let style: ButtonStyle
+// MARK: - Gradients
+struct LiquidGlassGradients {
+    // Primary Accent Gradient
+    static let primaryGradient = LinearGradient(
+        colors: [LiquidGlassColors.accentTurquoise, LiquidGlassColors.accentDeepAqua],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
     
-    enum ButtonStyle {
-        case primary
-        case secondary
-        case ghost
-        case danger
-    }
+    // Glass Surface Gradients
+    static let glassGradient1 = LinearGradient(
+        colors: [LiquidGlassColors.glassSurface1, LiquidGlassColors.glassSurface2],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
     
-    init(_ title: String, icon: String? = nil, style: ButtonStyle = .primary, action: @escaping () -> Void) {
-        self.title = title
-        self.icon = icon
-        self.style = style
-        self.action = action
-    }
+    static let glassGradient2 = LinearGradient(
+        colors: [LiquidGlassColors.glassSurface2, LiquidGlassColors.glassSurface3],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
     
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: LiquidGlassDesign.Spacing.sm) {
-                if let icon = icon {
-                    Image(systemName: icon)
-                        .font(.system(size: 16, weight: .semibold))
-                }
-                Text(title)
-                    .font(LiquidGlassDesign.Typography.button)
-            }
-            .foregroundColor(foregroundColor)
-            .padding(.horizontal, LiquidGlassDesign.Spacing.md)
-            .padding(.vertical, LiquidGlassDesign.Spacing.sm)
-            .background(backgroundView)
-            .cornerRadius(LiquidGlassDesign.CornerRadius.md)
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-    
-    private var foregroundColor: Color {
-        switch style {
-        case .primary, .danger:
-            return .white
-        case .secondary, .ghost:
-            return .blue
-        }
-    }
-    
-    @ViewBuilder
-    private var backgroundView: some View {
-        switch style {
-        case .primary:
-            RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.md)
-                .fill(.blue)
-                .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
-        case .secondary:
-            RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.md)
-                .fill(LiquidGlassDesign.Colors.glassWhite)
-                .overlay(
-                    RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.md)
-                        .stroke(.blue, lineWidth: 1)
-                )
-        case .ghost:
-            RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.md)
-                .fill(Color.clear)
-        case .danger:
-            RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.md)
-                .fill(LiquidGlassDesign.Colors.accentRed)
-                .shadow(color: LiquidGlassDesign.Colors.accentRed.opacity(0.3), radius: 8, x: 0, y: 4)
-        }
-    }
+    // Route Polyline Gradient
+    static let routeGradient = LinearGradient(
+        colors: [LiquidGlassColors.accentTurquoise, LiquidGlassColors.accentDeepAqua],
+        startPoint: .leading,
+        endPoint: .trailing
+    )
 }
 
-// MARK: - Liquid Glass Card
-struct LiquidGlassCard<Content: View>: View {
-    let content: Content
-    let padding: CGFloat
-    let cornerRadius: CGFloat
+// MARK: - Animations
+struct LiquidGlassAnimations {
+    // Micro interactions: ≤200ms
+    static let microInteraction = Animation.easeInOut(duration: 0.15)
     
-    init(
-        padding: CGFloat = LiquidGlassDesign.Spacing.md,
-        cornerRadius: CGFloat = LiquidGlassDesign.CornerRadius.lg,
-        @ViewBuilder content: () -> Content
-    ) {
-        self.padding = padding
-        self.cornerRadius = cornerRadius
-        self.content = content()
-    }
+    // Standard interactions: 300ms
+    static let standard = Animation.easeInOut(duration: 0.3)
     
-    var body: some View {
+    // Pour Animation (sheets): ≤600ms, easeOut
+    static let pourAnimation = Animation.easeOut(duration: 0.6)
+    
+    // Spring animations
+    static let spring = Animation.spring(response: 0.6, dampingFraction: 0.8)
+    
+    // Scale animations for FABs
+    static let fabPress = Animation.easeInOut(duration: 0.1)
+}
+
+// MARK: - Glass Effect Modifier
+struct GlassEffectModifier: ViewModifier {
+    let elevation: GlassElevation
+    
+    func body(content: Content) -> some View {
         content
-            .padding(padding)
             .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(LiquidGlassDesign.Colors.glassWhite)
-                    .shadow(color: LiquidGlassDesign.Shadows.light, radius: 10, x: 0, y: 4)
-            )
-    }
-}
-
-// MARK: - Liquid Glass Tab Bar
-struct LiquidGlassTabBar: View {
-    @Binding var selectedTab: Int
-    let tabs: [TabItem]
-    
-    struct TabItem {
-        let icon: String
-        let title: String
-        let badge: String?
-        
-        init(icon: String, title: String, badge: String? = nil) {
-            self.icon = icon
-            self.title = title
-            self.badge = badge
-        }
-    }
-    
-
-    
-    var body: some View {
-        HStack(spacing: 0) {
-            ForEach(0..<tabs.count, id: \.self) { index in
-                TabBarButton(
-                    tab: tabs[index],
-                    isSelected: selectedTab == index,
-                    action: { selectedTab = index }
-                )
-            }
-        }
-        .padding(.horizontal, LiquidGlassDesign.Spacing.md)
-        .padding(.vertical, LiquidGlassDesign.Spacing.sm)
-        .background(
-            RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.xl)
-                .fill(.ultraThinMaterial)
-                .shadow(color: LiquidGlassDesign.Shadows.medium, radius: 20, x: 0, y: 8)
-        )
-        .padding(.horizontal, LiquidGlassDesign.Spacing.md)
-    }
-}
-
-struct TabBarButton: View {
-    let tab: LiquidGlassTabBar.TabItem
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 4) {
-                Image(systemName: tab.icon)
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(isSelected ? .blue : .secondary)
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(glassColor)
                     .overlay(
-                        Group {
-                            if let badge = tab.badge, !badge.isEmpty {
-                                Text(badge)
-                                    .font(.system(size: 10, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(
-                                        Capsule()
-                                            .fill(.red)
-                                    )
-                                    .offset(x: 12, y: -8)
-                            }
-                        }
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(highlightColor, lineWidth: 2)
                     )
-                
-                Text(tab.title)
-                    .font(.caption)
-                    .foregroundColor(isSelected ? .blue : .secondary)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, LiquidGlassDesign.Spacing.sm)
-            .background(
-                RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.md)
-                    .fill(isSelected ? .blue.opacity(0.1) : Color.clear)
+                    .shadow(color: shadowColor, radius: shadowRadius, x: 0, y: shadowOffset)
             )
+    }
+    
+    private var glassColor: Color {
+        switch elevation {
+        case .light:
+            return LiquidGlassColors.glassSurface1
+        case .medium:
+            return LiquidGlassColors.glassSurface2
+        case .high:
+            return LiquidGlassColors.glassSurface3
         }
-        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private var highlightColor: Color {
+        Color.white.opacity(0.2) // 2pt highlight edge
+    }
+    
+    private var shadowColor: Color {
+        Color.black.opacity(0.3) // Soft outer shadow
+    }
+    
+    private var shadowRadius: CGFloat {
+        switch elevation {
+        case .light: return 4
+        case .medium: return 8
+        case .high: return 12
+        }
+    }
+    
+    private var shadowOffset: CGFloat {
+        switch elevation {
+        case .light: return 2
+        case .medium: return 4
+        case .high: return 6
+        }
     }
 }
 
-// MARK: - Preview
-#Preview {
-    VStack(spacing: 20) {
-        LiquidGlassButton("Primary Button", icon: "star.fill", style: .primary) { }
-        LiquidGlassButton("Secondary Button", icon: "heart.fill", style: .secondary) { }
-        LiquidGlassButton("Ghost Button", icon: "gear", style: .ghost) { }
-        
-        LiquidGlassCard {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Liquid Glass Card")
-                    .font(LiquidGlassDesign.Typography.headline)
-                Text("This is a beautiful liquid glass card with subtle shadows and transparency.")
-                    .font(LiquidGlassDesign.Typography.body)
-                    .foregroundColor(.secondary)
-            }
-        }
-        
-        LiquidGlassTabBar(
-            selectedTab: .constant(0),
-            tabs: [
-                LiquidGlassTabBar.TabItem(icon: "map.fill", title: "Map", badge: nil),
-                LiquidGlassTabBar.TabItem(icon: "magnifyingglass", title: "Search", badge: "3"),
-                LiquidGlassTabBar.TabItem(icon: "bookmark.fill", title: "Saved", badge: nil),
-                LiquidGlassTabBar.TabItem(icon: "person.fill", title: "Profile", badge: nil)
-            ]
-        )
+enum GlassElevation {
+    case light
+    case medium
+    case high
+}
+
+// MARK: - Blur Effect Modifier
+struct BlurEffectModifier: ViewModifier {
+    let intensity: CGFloat
+    
+    func body(content: Content) -> some View {
+        content
+            .background(
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .opacity(0.8)
+            )
     }
-    .padding()
-    .background(LiquidGlassDesign.Colors.backgroundPrimary)
+}
+
+// MARK: - View Extensions
+extension View {
+    func glassEffect(elevation: GlassElevation = .medium) -> some View {
+        self.modifier(GlassEffectModifier(elevation: elevation))
+    }
+    
+    func glassBlur(intensity: CGFloat = 20) -> some View {
+        self.modifier(BlurEffectModifier(intensity: intensity))
+    }
+    
+    func liquidGlassPill() -> some View {
+        self
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                Capsule()
+                    .fill(LiquidGlassColors.glassSurface1)
+                    .overlay(
+                        Capsule()
+                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                    )
+                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+            )
+    }
+    
+    func liquidGlassFAB() -> some View {
+        self
+            .frame(width: 56, height: 56)
+            .background(
+                Circle()
+                    .fill(LiquidGlassGradients.primaryGradient)
+                    .overlay(
+                        Circle()
+                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                    )
+                    .shadow(color: LiquidGlassColors.accentTurquoise.opacity(0.3), radius: 8, x: 0, y: 4)
+            )
+    }
+}
+
+// MARK: - Route Polyline Style
+struct RoutePolylineStyle {
+    static let strokeWidth: CGFloat = 6
+    static let glowRadius: CGFloat = 8
+    static let glowOpacity: Double = 0.6
 }

@@ -2,32 +2,16 @@
 //  shvilApp.swift
 //  shvil
 //
-//  Created by Ilan Uzan on 31/08/2025.
+//  Created by ilan on 2024.
 //
 
 import SwiftUI
 
 @main
-struct ShvilApp: App {
-    @StateObject private var locationService = LocationService.shared
-    @StateObject private var supabaseManager = SupabaseManager.shared
-    @StateObject private var authManager = AuthenticationManager.shared
-    @StateObject private var searchService = SearchService.shared
-    @StateObject private var navigationService = NavigationService.shared
-    
+struct shvilApp: App {
     var body: some Scene {
         WindowGroup {
-            // Main app content
             ContentView()
-                .environmentObject(locationService)
-                .environmentObject(supabaseManager)
-                .environmentObject(authManager)
-                .environmentObject(searchService)
-                .environmentObject(navigationService)
-                .onAppear {
-                    // Initialize services
-                    locationService.requestLocationPermission()
-                }
         }
     }
 }

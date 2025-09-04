@@ -2,315 +2,484 @@
 //  ContentView.swift
 //  shvil
 //
-//  Created by Ilan Uzan on 31/08/2025.
+//  Created by ilan on 2024.
 //
 
 import SwiftUI
-import CoreLocation
+
+// SavedPlace is defined in SupabaseService.swift as a top-level struct
 
 struct ContentView: View {
-    @EnvironmentObject private var locationService: LocationService
-    @EnvironmentObject private var supabaseManager: SupabaseManager
-    @EnvironmentObject private var authManager: AuthenticationManager
-    @EnvironmentObject private var navigationService: NavigationService
-    @State private var selectedTab: Int = 0
+    @State private var selectedTab = 0
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Top Navigation Bar
-            topNavigationBar
-            
-            // Content Area
-            TabView(selection: $selectedTab) {
-                // Map Tab
-                mapTabView
-                    .tag(0)
-                
-                // Search Tab
-                searchTabView
-                    .tag(1)
-                
-                // Saved Places Tab
-                savedPlacesTabView
-                    .tag(2)
-                
-                // Profile Tab
-                profileTabView
-                    .tag(3)
-            }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            
-            // Bottom Tab Bar
-            bottomTabBar
+                TabView(selection: $selectedTab) {
+                    // Map Tab
+            MapView()
+                .tabItem {
+                    Image(systemName: "map.fill")
+                    Text("Map")
+                }
+                        .tag(0)
+                    
+                    // Search Tab
+            SearchView()
+                .tabItem {
+                    Image(systemName: "magnifyingglass")
+                    Text("Search")
+                }
+                        .tag(1)
+                    
+                    // Saved Places Tab
+            SavedPlacesView()
+                .tabItem {
+                    Image(systemName: "heart.fill")
+                    Text("Saved")
+                }
+                        .tag(2)
+                    
+                    // Profile Tab
+            ProfileView()
+                .tabItem {
+                    Image(systemName: "person.fill")
+                    Text("Profile")
+                }
+                        .tag(3)
         }
-        .background(Color(.systemBackground))
-        .onAppear {
-            print("ContentView appeared - selectedTab: \(selectedTab)")
-            locationService.requestLocationPermission()
+        .accentColor(LiquidGlassColors.accentText)
+    }
+}
+
+// MARK: - Placeholder Views (will be replaced with real implementations)
+
+// MARK: - Liquid Glass Search View
+struct SearchView: View {
+    @State private var searchText = ""
+    @State private var recentSearches = ["Coffee Shop", "Gas Station", "Restaurant"]
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 0) {
+                // Search Header
+                VStack(spacing: 16) {
+                    SearchPill(searchText: $searchText) {
+                        // Search focused
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
+                    
+                    if !searchText.isEmpty {
+                        // Search Results
+                        ScrollView {
+                            LazyVStack(spacing: 12) {
+                                ForEach(0..<5) { index in
+                                    SearchResultRow(
+                                        title: "Search result \(index + 1)",
+                                        subtitle: "123 Main St, City, State",
+                                        distance: "0.\(index + 1) miles away"
+                                    ) {
+                                        print("Result \(index + 1) selected")
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                        }
+                    } else {
+                        // Recent Searches
+                        VStack(alignment: .leading, spacing: 16) {
+                            HStack {
+                                Text("Recent Searches")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(LiquidGlassColors.primaryText)
+                                
+                                Spacer()
+                                
+                                Button("Clear") {
+                                    recentSearches.removeAll()
+                                }
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(LiquidGlassColors.accentText)
+                            }
+                            .padding(.horizontal, 20)
+                            
+                            LazyVStack(spacing: 8) {
+                                ForEach(recentSearches, id: \.self) { search in
+                                    RecentSearchRow(search: search) {
+                                        searchText = search
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                        }
+                    }
+                }
+                
+                Spacer()
+            }
+            .background(
+                LinearGradient(
+                    colors: [Color.blue.opacity(0.05), Color.purple.opacity(0.05)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .navigationBarHidden(true)
         }
     }
+}
+
+// MARK: - Search Result Row
+struct SearchResultRow: View {
+    let title: String
+    let subtitle: String
+    let distance: String
+    let onTap: () -> Void
+    @State private var isPressed = false
     
-    // MARK: - Top Navigation Bar
-    private var topNavigationBar: some View {
-        HStack {
-            // Logo/Title
-            HStack(spacing: 8) {
-                Image(systemName: "location.fill")
-                    .font(.title2)
-                    .foregroundColor(.blue)
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 16) {
+                Image(systemName: "location.circle.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(LiquidGlassColors.accentText)
                 
-                Text("Shvil")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .multilineTextAlignment(.leading)
+                    
+                    Text(subtitle)
+                        .font(.system(size: 14))
+                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .multilineTextAlignment(.leading)
             }
             
             Spacer()
             
-            // Action Buttons
-            HStack(spacing: 12) {
-                Button(action: {}) {
-                    Image(systemName: "bell")
-                        .font(.title3)
-                        .foregroundColor(.secondary)
-                }
-                
-                Button(action: {}) {
-                    Image(systemName: "person.circle")
-                        .font(.title3)
-                        .foregroundColor(.secondary)
-                }
+                Text(distance)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(LiquidGlassColors.secondaryText)
             }
+            .padding(16)
+            .glassEffect(elevation: .light)
+            .cornerRadius(12)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(Color(.systemBackground))
-    }
-    
-    // MARK: - Map Tab View
-    private var mapTabView: some View {
-        VStack {
-            // Map Background
-            Rectangle()
-                .fill(Color(.systemGray6))
-                .overlay(
-                    VStack {
-                        Image(systemName: "map.fill")
-                            .font(.system(size: 60))
-                            .foregroundColor(.blue.opacity(0.3))
-                        Text("Map View")
-                            .font(.title3)
-                            .foregroundColor(.secondary)
-                    }
-                )
-                .onAppear {
-                    print("Map tab view appeared")
-                }
-            
-            // Map Controls
-            HStack {
-                Spacer()
-                
-                VStack(spacing: 12) {
-                    // Location Button
-                    Button(action: {}) {
-                        Image(systemName: "location.fill")
-                            .font(.title3)
-                            .foregroundColor(.white)
-                            .frame(width: 50, height: 50)
-                            .background(
-                                Circle()
-                                    .fill(.blue)
-                                    .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
-                            )
-                    }
-                    
-                    // Search Button
-                    Button(action: {}) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.title3)
-                            .foregroundColor(.white)
-                            .frame(width: 50, height: 50)
-                            .background(
-                                Circle()
-                                    .fill(.blue)
-                                    .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
-                            )
-                    }
-                }
-                .padding(.trailing, 16)
-            }
-            .padding(.bottom, 20)
-        }
-    }
-    
-    // MARK: - Search Tab View
-    private var searchTabView: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                // Search Header
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Search")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
-                    
-                    Text("Find places, addresses, and points of interest")
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 16)
-                
-                // Search Bar
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.secondary)
-                    
-                    TextField("Search for places...", text: .constant(""))
-                        .font(.body)
-                    
-                    Button(action: {}) {
-                        Image(systemName: "mic.fill")
-                            .foregroundColor(.blue)
-                    }
-                }
-                .padding(16)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.systemGray6))
-                        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 2)
-                )
-                .padding(.horizontal, 16)
-                
-                // Quick Actions
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 16) {
-                    QuickActionCard(icon: "house.fill", title: "Home", subtitle: "Set your home address", color: .blue, action: {})
-                    QuickActionCard(icon: "briefcase.fill", title: "Work", subtitle: "Set your work address", color: .green, action: {})
-                    QuickActionCard(icon: "heart.fill", title: "Favorites", subtitle: "Your saved places", color: .red, action: {})
-                    QuickActionCard(icon: "clock.fill", title: "Recent", subtitle: "Recently searched", color: .orange, action: {})
-                }
-                .padding(.horizontal, 16)
-            }
-            .padding(.top, 16)
-        }
-    }
-    
-    // MARK: - Saved Places Tab View
-    private var savedPlacesTabView: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                // Header
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Saved Places")
-                        .font(LiquidGlassDesign.Typography.largeTitle)
-                        .foregroundColor(LiquidGlassDesign.Colors.textPrimary)
-                    
-                    Text("Your favorite locations")
-                        .font(LiquidGlassDesign.Typography.body)
-                        .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 16)
-                
-                // Saved Places List
-                LazyVStack(spacing: LiquidGlassDesign.Spacing.sm) {
-                    ForEach(0..<5) { index in
-                        SavedPlaceCard(
-                            place: SavedPlace(
-                                id: UUID(),
-                                name: "Home",
-                                address: "123 Main Street, City",
-                                category: "Home",
-                                emoji: "🏠",
-                                coordinate: CLLocationCoordinate2D(latitude: 34.052235, longitude: -118.243683),
-                                distance: "2.3 mi",
-                                createdAt: Date(),
-                                updatedAt: Date()
-                            ),
-                            action: {}
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-            }
-            .padding(.top, 16)
-        }
-    }
-    
-    // MARK: - Profile Tab View
-    private var profileTabView: some View {
-        ScrollView {
-            VStack(spacing: LiquidGlassDesign.Spacing.lg) {
-                // Profile Header
-                VStack(spacing: 16) {
-                    // Profile Picture
-                    Circle()
-                        .fill(LiquidGlassDesign.Colors.liquidBlue)
-                        .frame(width: 100, height: 100)
-                        .overlay(
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 40))
-                                .foregroundColor(.white)
-                        )
-                        .shadow(color: LiquidGlassDesign.Colors.liquidBlue.opacity(0.3), radius: 10, x: 0, y: 5)
-                    
-                    VStack(spacing: 4) {
-                        Text("Welcome to Shvil")
-                            .font(LiquidGlassDesign.Typography.title2)
-                            .foregroundColor(LiquidGlassDesign.Colors.textPrimary)
-                        
-                        Text("Your personal navigation assistant")
-                            .font(LiquidGlassDesign.Typography.body)
-                            .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
-                    }
-                }
-                .padding(.top, LiquidGlassDesign.Spacing.lg)
-                
-                // Settings Sections
-                VStack(spacing: 16) {
-                    SettingsSection(title: "Navigation") {
-                        SettingsRow(icon: "car.fill", title: "Transport Mode", subtitle: "Car", color: LiquidGlassDesign.Colors.liquidBlue, action: {})
-                        SettingsRow(icon: "speaker.wave.2.fill", title: "Voice Guidance", subtitle: "On", color: LiquidGlassDesign.Colors.accentGreen, action: {})
-                        SettingsRow(icon: "road.lanes", title: "Route Options", subtitle: "Fastest", color: LiquidGlassDesign.Colors.accentOrange, action: {})
-                    }
-                    
-                    SettingsSection(title: "Privacy") {
-                        SettingsRow(icon: "location.fill", title: "Location Services", subtitle: "Enabled", color: LiquidGlassDesign.Colors.liquidBlue, action: {})
-                        SettingsRow(icon: "eye.fill", title: "Data Collection", subtitle: "Minimal", color: LiquidGlassDesign.Colors.accentPurple, action: {})
-                    }
-                    
-                    SettingsSection(title: "About") {
-                        SettingsRow(icon: "info.circle.fill", title: "App Version", subtitle: "1.0.0", color: LiquidGlassDesign.Colors.liquidBlue, action: {})
-                        SettingsRow(icon: "questionmark.circle.fill", title: "Help & Support", subtitle: "", color: LiquidGlassDesign.Colors.accentGreen, action: {})
-                    }
-                }
-                .padding(.horizontal, 16)
-            }
-        }
-    }
-    
-    // MARK: - Bottom Tab Bar
-    private var bottomTabBar: some View {
-        LiquidGlassTabBar(
-            selectedTab: $selectedTab,
-            tabs: [
-                LiquidGlassTabBar.TabItem(icon: "map.fill", title: "Map", badge: nil),
-                LiquidGlassTabBar.TabItem(icon: "magnifyingglass", title: "Search", badge: nil),
-                LiquidGlassTabBar.TabItem(icon: "bookmark.fill", title: "Saved", badge: nil),
-                LiquidGlassTabBar.TabItem(icon: "person.fill", title: "Profile", badge: nil)
-            ]
-        )
+        .scaleEffect(isPressed ? 0.98 : 1.0)
+        .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
+        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
+            isPressed = pressing
+        }, perform: {})
     }
 }
 
-// MARK: - Supporting Components
-// Note: SettingsSection is now defined in SharedComponents.swift
+// MARK: - Recent Search Row
+struct RecentSearchRow: View {
+    let search: String
+    let onTap: () -> Void
+    @State private var isPressed = false
+    
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 12) {
+                Image(systemName: "clock")
+                    .font(.system(size: 16))
+                    .foregroundColor(LiquidGlassColors.secondaryText)
+                
+                Text(search)
+                    .font(.system(size: 16))
+                    .foregroundColor(LiquidGlassColors.primaryText)
+                
+                Spacer()
+                
+                Image(systemName: "arrow.up.left")
+                    .font(.system(size: 14))
+                    .foregroundColor(LiquidGlassColors.secondaryText)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(LiquidGlassColors.glassSurface1)
+            )
+        }
+        .scaleEffect(isPressed ? 0.98 : 1.0)
+        .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
+        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
+            isPressed = pressing
+        }, perform: {})
+    }
+}
+
+// MARK: - Liquid Glass Saved Places View
+struct SavedPlacesView: View {
+    @State private var savedPlaces: [SavedPlace] = []
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 0) {
+                if savedPlaces.isEmpty {
+                    // Empty State
+                    VStack(spacing: 24) {
+                        Image(systemName: "heart")
+                            .font(.system(size: 60))
+                            .foregroundColor(LiquidGlassColors.accentText.opacity(0.6))
+                    
+                    VStack(spacing: 12) {
+                            Text("No saved places yet")
+                                .font(.system(size: 24, weight: .semibold))
+                                .foregroundColor(LiquidGlassColors.primaryText)
+                            
+                            Text("Tap the heart icon to save places you love")
+                                .font(.system(size: 16))
+                                .foregroundColor(LiquidGlassColors.secondaryText)
+                                .multilineTextAlignment(.center)
+                        }
+                        
+                        Button(action: {
+                            print("Add first place tapped")
+                        }) {
+                            HStack {
+                                Image(systemName: "plus")
+                                Text("Add Your First Place")
+                            }
+                            .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 12)
+                            .background(LiquidGlassGradients.primaryGradient)
+                            .cornerRadius(25)
+                        }
+                    }
+                    .padding(40)
+                } else {
+                    // Saved Places List
+                    ScrollView {
+                        LazyVStack(spacing: 16) {
+                            ForEach(savedPlaces) { place in
+                                SavedPlaceRow(place: place) {
+                                    print("Place \(place.name) selected")
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
+                    }
+                }
+                
+                Spacer()
+            }
+            .background(
+                LinearGradient(
+                    colors: [Color.blue.opacity(0.05), Color.purple.opacity(0.05)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .navigationBarHidden(true)
+        }
+    }
+}
+
+// MARK: - Saved Place Model (moved to SupabaseService)
+
+// MARK: - Saved Place Row
+struct SavedPlaceRow: View {
+    let place: SavedPlace
+    let onTap: () -> Void
+    @State private var isPressed = false
+    
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 16) {
+                // Place Icon
+                Image(systemName: placeIcon)
+                    .font(.system(size: 24))
+                    .foregroundColor(placeColor)
+                    .frame(width: 32, height: 32)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(place.name)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .multilineTextAlignment(.leading)
+                    
+                    Text(place.address)
+                        .font(.system(size: 14))
+                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .multilineTextAlignment(.leading)
+                }
+                
+                Spacer()
+                
+                VStack(spacing: 4) {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(LiquidGlassColors.secondaryText)
+                    
+                    Text(placeTypeText)
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(placeColor)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(placeColor.opacity(0.1))
+                        .cornerRadius(4)
+                }
+            }
+            .padding(20)
+            .glassEffect(elevation: .medium)
+            .cornerRadius(16)
+        }
+        .scaleEffect(isPressed ? 0.98 : 1.0)
+        .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
+        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
+            isPressed = pressing
+        }, perform: {})
+    }
+    
+    private var placeIcon: String {
+        switch place.type {
+        case .home: return "house.fill"
+        case .work: return "building.2.fill"
+        case .favorite: return "heart.fill"
+        case .custom: return "location.fill"
+        }
+    }
+    
+    private var placeColor: Color {
+        switch place.type {
+        case .home: return LiquidGlassColors.accentText
+        case .work: return LiquidGlassColors.accentDeepAqua
+        case .favorite: return Color.pink
+        case .custom: return LiquidGlassColors.secondaryText
+        }
+    }
+    
+    private var placeTypeText: String {
+        switch place.type {
+        case .home: return "HOME"
+        case .work: return "WORK"
+        case .favorite: return "FAV"
+        case .custom: return "CUSTOM"
+        }
+    }
+}
+
+// MARK: - Liquid Glass Profile View
+struct ProfileView: View {
+    var body: some View {
+        NavigationView {
+        ScrollView {
+                VStack(spacing: 32) {
+                // Profile Header
+                    VStack(spacing: 20) {
+                    // Profile Picture
+                        ZStack {
+                    Circle()
+                                .fill(LiquidGlassGradients.primaryGradient)
+                                .frame(width: 120, height: 120)
+                                .glassEffect(elevation: .high)
+                            
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 50))
+                                .foregroundColor(.white)
+                        }
+                        
+                        VStack(spacing: 8) {
+                            Text("Welcome to Shvil")
+                                .font(.system(size: 28, weight: .bold))
+                                .foregroundColor(LiquidGlassColors.primaryText)
+                        
+                        Text("Your personal navigation assistant")
+                                .font(.system(size: 16))
+                                .foregroundColor(LiquidGlassColors.secondaryText)
+                                .multilineTextAlignment(.center)
+                        }
+                    }
+                    .padding(.top, 20)
+                    
+                    // Settings Section
+                    VStack(spacing: 16) {
+                        SettingsRow(
+                            icon: "gear",
+                            title: "Settings",
+                            subtitle: "App preferences and configuration"
+                        ) {
+                            print("Settings tapped")
+                        }
+                        
+                        SettingsRow(
+                            icon: "location.fill",
+                            title: "Location Services",
+                            subtitle: "Manage location permissions"
+                        ) {
+                            print("Location services tapped")
+                        }
+                        
+                        SettingsRow(
+                            icon: "person.2.fill",
+                            title: "Social Features",
+                            subtitle: "ETA sharing and friends on map"
+                        ) {
+                            print("Social features tapped")
+                        }
+                        
+                        SettingsRow(
+                            icon: "shield.fill",
+                            title: "Privacy & Security",
+                            subtitle: "Control your data and privacy"
+                        ) {
+                            print("Privacy tapped")
+                        }
+                        
+                        SettingsRow(
+                            icon: "questionmark.circle",
+                            title: "Help & Support",
+                            subtitle: "Get help and contact support"
+                        ) {
+                            print("Help tapped")
+                        }
+                        
+                        SettingsRow(
+                            icon: "info.circle",
+                            title: "About Shvil",
+                            subtitle: "Version 1.0.0"
+                        ) {
+                            print("About tapped")
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    
+                    // App Info
+                    VStack(spacing: 12) {
+                        Text("Shvil Minimal")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(LiquidGlassColors.primaryText)
+                        
+                        Text("Version 1.0.0 • Build 1")
+                            .font(.system(size: 14))
+                            .foregroundColor(LiquidGlassColors.secondaryText)
+                        
+                        Text("Built with ❤️ for iOS")
+                            .font(.system(size: 12))
+                            .foregroundColor(LiquidGlassColors.secondaryText)
+                    }
+                    .padding(.bottom, 40)
+                }
+            }
+            .background(
+                LinearGradient(
+                    colors: [Color.blue.opacity(0.05), Color.purple.opacity(0.05)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .navigationBarHidden(true)
+        }
+    }
+}
+
 
 #Preview {
     ContentView()
-        .environmentObject(LocationService.shared)
-        .environmentObject(SupabaseManager.shared)
-        .environmentObject(AuthenticationManager.shared)
-        .environmentObject(NavigationService.shared)
 }
