@@ -913,8 +913,8 @@ struct MapView: View {
         
         // This would typically check if the user has deviated from the current route
         // For now, we'll implement a basic check that could be enhanced with actual route tracking
-        let currentLocation = locationService.region.center
-        let routeDeviationThreshold: Double = 100 // meters
+        let _ = locationService.region.center
+        let _: Double = 100 // meters - routeDeviationThreshold
         
         // TODO: Implement actual route deviation detection
         // This would involve:
