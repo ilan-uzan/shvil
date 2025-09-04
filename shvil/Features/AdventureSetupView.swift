@@ -342,7 +342,7 @@ struct AdventureSetupView: View {
     // MARK: - Actions
     
     private func generateAdventure() {
-        guard let currentLocation = locationService.currentLocation else {
+        guard locationService.currentLocation != nil else {
             errorMessage = "Location access is required to create adventures."
             showError = true
             return
@@ -365,7 +365,7 @@ struct AdventureSetupView: View {
         
         Task {
             do {
-                let adventure = try await adventureKit.generateAdventure(input: input)
+                _ = try await adventureKit.generateAdventure(input: input)
                 isGenerating = false
                 // Navigate to adventure sheet or details
                 dismiss()

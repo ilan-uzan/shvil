@@ -63,8 +63,8 @@ class SocialKit: ObservableObject {
         return User(
             id: authUser.id,
             email: authUser.email ?? "",
-            displayName: authUser.userMetadata["display_name"] as? String ?? "",
-            avatarURL: authUser.userMetadata["avatar_url"] as? String,
+            displayName: (authUser.userMetadata["display_name"] as? String) ?? "",
+            avatarURL: (authUser.userMetadata["avatar_url"] as? String),
             createdAt: authUser.createdAt,
             updatedAt: authUser.updatedAt
         )
@@ -233,7 +233,7 @@ class SocialKit: ObservableObject {
             throw SocialError.notAuthenticated
         }
         
-        let locationUpdate = FriendLocation(
+        _ = FriendLocation(
             userId: userId,
             coordinate: location,
             timestamp: Date(),
@@ -261,7 +261,7 @@ class SocialKit: ObservableObject {
         let channelName = "eta:\(sessionId.uuidString)"
         let channel = client.realtimeV2.channel(channelName)
         
-        channel.onBroadcast(event: "position_update") { payload in
+        _ = channel.onBroadcast(event: "position_update") { payload in
             // Handle position updates
             print("Received position update: \(payload)")
         }
@@ -286,7 +286,7 @@ class SocialKit: ObservableObject {
         let channelName = "trip:\(tripId.uuidString)"
         let channel = client.realtimeV2.channel(channelName)
         
-        channel.onBroadcast(event: "presence_update") { payload in
+        _ = channel.onBroadcast(event: "presence_update") { payload in
             // Handle presence updates
             print("Received presence update: \(payload)")
         }
@@ -303,7 +303,7 @@ class SocialKit: ObservableObject {
         let channelName = "friends:locations"
         let channel = client.realtimeV2.channel(channelName)
         
-        channel.onBroadcast(event: "location_update") { payload in
+        _ = channel.onBroadcast(event: "location_update") { payload in
             // Handle friend location updates
             print("Received friend location update: \(payload)")
         }

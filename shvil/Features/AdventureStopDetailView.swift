@@ -379,7 +379,7 @@ struct AdventureStopDetailView: View {
     // MARK: - Actions
     
     private func navigateToStop() {
-        guard let coordinate = stop.coordinate else { return }
+        guard stop.coordinate != nil else { return }
         
         isNavigating = true
         // Start navigation to stop

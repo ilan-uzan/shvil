@@ -84,7 +84,7 @@ class RoutingEngine: ObservableObject {
     func selectRouteOption(_ option: RouteOption) {
         selectedRouteOption = option
         // Recalculate route with selected option
-        if let route = currentRoute {
+        if currentRoute != nil {
             // This would trigger a new route calculation with the selected option
             // Implementation depends on how route options are structured
         }

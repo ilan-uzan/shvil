@@ -25,7 +25,13 @@ class LocationService: NSObject, ObservableObject {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        isLocationEnabled = CLLocationManager.locationServicesEnabled()
+        // Check location services status asynchronously to avoid UI blocking
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let isEnabled = CLLocationManager.locationServicesEnabled()
+            DispatchQueue.main.async {
+                self?.isLocationEnabled = isEnabled
+            }
+        }
     }
     
     func requestLocationPermission() {

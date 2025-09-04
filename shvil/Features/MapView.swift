@@ -146,9 +146,7 @@ struct MapView: View {
                 .frame(width: geometry.size.width - 88, height: 52) // 32 + 32 + 12 + 12 = 88
                 .onChange(of: searchText) { _, newValue in
                     if !newValue.isEmpty {
-                        Task {
-                            await searchService.search(for: newValue)
-                        }
+                        searchService.search(for: newValue)
                     }
                 }
                 

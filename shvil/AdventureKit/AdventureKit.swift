@@ -441,7 +441,7 @@ public class AdventureKit: ObservableObject {
         var safeStops: [AdventureStop] = []
         
         for stop in plan.stops {
-            guard let coordinate = stop.coordinate else {
+            guard stop.coordinate != nil else {
                 safeStops.append(stop)
                 continue
             }

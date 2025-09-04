@@ -188,7 +188,7 @@ public class MapEngine: NSObject, ObservableObject {
 }
 
 // MARK: - MKLocalSearchCompleterDelegate
-extension MapEngine: @preconcurrency MKLocalSearchCompleterDelegate {
+extension MapEngine: MKLocalSearchCompleterDelegate {
     public nonisolated func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         let results = completer.results.map { completion in
             SearchResult(

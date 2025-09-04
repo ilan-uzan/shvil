@@ -449,7 +449,7 @@ extension Destination {
               let name = sqlite3_column_text(statement, 1),
               let address = sqlite3_column_text(statement, 2) else { return nil }
         
-        let id = UUID(uuidString: String(cString: idString))!
+        _ = UUID(uuidString: String(cString: idString))!
         let latitude = sqlite3_column_double(statement, 3)
         let longitude = sqlite3_column_double(statement, 4)
         let timestamp = Date(timeIntervalSince1970: sqlite3_column_double(statement, 5))
