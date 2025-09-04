@@ -335,7 +335,7 @@ struct SearchView: View {
 
 // MARK: - Search Category
 
-enum SearchCategory: String, CaseIterable {
+public enum SearchCategory: String, CaseIterable, Codable {
     case all
     case food
     case shopping

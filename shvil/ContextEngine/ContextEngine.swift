@@ -125,7 +125,7 @@ class ContextEngine: ObservableObject {
             suggestions.append(ContextSuggestion(
                 title: "Work",
                 subtitle: "Based on your morning routine",
-                type: .work,
+                type: .local,
                 relevanceScore: 0.9
             ))
         }
@@ -135,7 +135,7 @@ class ContextEngine: ObservableObject {
             suggestions.append(ContextSuggestion(
                 title: "Home",
                 subtitle: "Based on your evening routine",
-                type: .home,
+                type: .local,
                 relevanceScore: 0.9
             ))
         }
@@ -145,7 +145,7 @@ class ContextEngine: ObservableObject {
             suggestions.append(ContextSuggestion(
                 title: "Lunch",
                 subtitle: "Popular restaurants nearby",
-                type: .food,
+                type: .local,
                 relevanceScore: 0.7
             ))
         }
@@ -169,7 +169,7 @@ class ContextEngine: ObservableObject {
             suggestions.append(ContextSuggestion(
                 title: place.name,
                 subtitle: place.address,
-                type: .savedPlace,
+                type: .recent,
                 relevanceScore: 0.8
             ))
         }
@@ -188,7 +188,7 @@ class ContextEngine: ObservableObject {
         let frequencyMap = Dictionary(grouping: recent, by: { $0.name })
         let sortedByFrequency = frequencyMap.sorted { $0.value.count > $1.value.count }
 
-        for (name, destinations) in sortedByFrequency.prefix(2) {
+        for (_, destinations) in sortedByFrequency.prefix(2) {
             if let destination = destinations.first {
                 suggestions.append(ContextSuggestion(
                     title: destination.name,
@@ -257,13 +257,6 @@ struct ContextSuggestion: Identifiable {
     let relevanceScore: Double
 }
 
-enum SuggestionType {
-    case home
-    case work
-    case food
-    case savedPlace
-    case recent
-}
 
 struct SmartStop: Identifiable {
     let id = UUID()

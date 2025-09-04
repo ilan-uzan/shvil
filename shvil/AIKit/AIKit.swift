@@ -93,15 +93,13 @@ public class AIKit: ObservableObject {
 
     private func createAdventurePrompt(input: AdventureGenerationInput) -> String {
         """
-        Generate a personalized adventure plan for \(input.city) with the following parameters:
+        Generate a personalized adventure plan with the following parameters:
 
-        Theme: \(input.theme)
-        Duration: \(input.durationHours) hours
+        Time Frame: \(input.timeFrame.displayName)
         Mood: \(input.mood.displayName)
-        Group: \(input.isGroup ? "Group adventure" : "Solo adventure")
-        Time of Day: \(input.timeOfDay)
-        Weather: \(input.weather)
-        Transportation: \(input.preferences.transportation.map(\.displayName).joined(separator: ", "))
+        Budget: \(input.budget.displayName)
+        Companions: \(input.companions.map(\.displayName).joined(separator: ", "))
+        Transportation: \(input.transportationMode.displayName)
         Interests: \(input.preferences.interests.joined(separator: ", "))
         Avoid Crowds: \(input.preferences.avoidCrowds ? "Yes" : "No")
         Max Walking Distance: \(input.preferences.maxWalkingDistance) meters
@@ -133,14 +131,13 @@ public class AIKit: ObservableObject {
         """
         Generate 2 alternative stops for this adventure chapter:
 
-        Original: \(stop.chapter)
+        Original: \(stop.name)
         Category: \(stop.category.displayName)
-        Current Narrative: \(stop.narrative)
-        Constraints: Budget \(stop.constraints.budget.displayName), Open Late: \(stop.constraints.openLate)
+        Current Description: \(stop.description)
+        Duration: \(stop.estimatedDuration) minutes
 
-        Theme: \(input.theme)
         Mood: \(input.mood.displayName)
-        City: \(input.city)
+        Budget: \(input.budget.displayName)
 
         Return a JSON response with this structure:
         {
@@ -167,11 +164,11 @@ public class AIKit: ObservableObject {
         """
         Explain why this stop fits the adventure:
 
-        Stop: \(stop.chapter)
+        Stop: \(stop.name)
         Category: \(stop.category.displayName)
-        Narrative: \(stop.narrative)
-        Theme: \(input.theme)
+        Description: \(stop.description)
         Mood: \(input.mood.displayName)
+        Budget: \(input.budget.displayName)
 
         Provide a brief, engaging rationale (1-2 sentences) explaining why this stop is perfect for this adventure.
         """
@@ -182,10 +179,9 @@ public class AIKit: ObservableObject {
         Create a memorable recap for this completed adventure:
 
         Title: \(adventure.title)
-        Theme: \(adventure.theme)
-        Mood: \(adventure.mood.displayName)
-        Duration: \(adventure.durationHours) hours
-        Stops: \(adventure.stops.map(\.chapter).joined(separator: ", "))
+        Theme: \(adventure.theme.displayName)
+        Duration: \(adventure.totalDuration / 60) hours
+        Stops: \(adventure.stops.map(\.name).joined(separator: ", "))
 
         Write a 2-sentence recap that captures the essence and highlights of this adventure.
         """
@@ -258,23 +254,26 @@ public class AIKit: ObservableObject {
         }
 
         return AdventurePlan(
+            id: UUID(),
             title: title,
-            tagline: tagline,
-            theme: "Generated", // Will be set by caller
-            mood: .fun, // Will be set by caller
-            durationHours: 2, // Will be set by caller
-            isGroup: false, // Will be set by caller
+            description: tagline,
+            theme: .cultural,
             stops: stops,
-            notes: notes
+            totalDuration: 120, // 2 hours in minutes
+            totalDistance: 0,
+            budgetLevel: .medium,
+            status: .draft,
+            createdAt: Date(),
+            updatedAt: Date()
         )
     }
 
     private func parseAdventureStop(from data: [String: Any]) throws -> AdventureStop {
-        guard let chapter = data["chapter"] as? String,
+        guard let name = data["chapter"] as? String,
               let categoryString = data["category"] as? String,
               let category = StopCategory(rawValue: categoryString),
               let duration = data["ideal_duration_min"] as? Int,
-              let narrative = data["narrative"] as? String,
+              let description = data["narrative"] as? String,
               let constraintsData = data["constraints"] as? [String: Any]
         else {
             throw AIError.invalidResponse
@@ -283,11 +282,17 @@ public class AIKit: ObservableObject {
         let constraints = try parseStopConstraints(from: constraintsData)
 
         return AdventureStop(
-            chapter: chapter,
+            id: UUID(),
+            name: name,
+            description: description,
+            coordinate: CLLocationCoordinate2D(latitude: 0, longitude: 0), // Will be set by caller
             category: category,
-            idealDurationMin: duration,
-            narrative: narrative,
-            constraints: constraints
+            estimatedDuration: duration,
+            openingHours: "",
+            priceLevel: .medium,
+            rating: 0,
+            isAccessible: true,
+            tags: []
         )
     }
 

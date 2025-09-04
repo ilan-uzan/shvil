@@ -1,0 +1,392 @@
+/* 
+  Localizable.strings
+  shvil
+  
+  English Localization
+*/
+
+// MARK: - General
+"app_name" = "Shvil";
+"ok" = "OK";
+"cancel" = "Cancel";
+"done" = "Done";
+"save" = "Save";
+"delete" = "Delete";
+"edit" = "Edit";
+"share" = "Share";
+"close" = "Close";
+"back" = "Back";
+"next" = "Next";
+"previous" = "Previous";
+"start" = "Start";
+"stop" = "Stop";
+"continue" = "Continue";
+"retry" = "Retry";
+"loading" = "Loading...";
+"error" = "Error";
+"success" = "Success";
+"warning" = "Warning";
+"info" = "Information";
+
+// MARK: - Navigation
+"navigation" = "Navigation";
+"start_navigation" = "Start Navigation";
+"stop_navigation" = "Stop Navigation";
+"exit_navigation" = "Exit Navigation";
+"rerouting" = "Rerouting...";
+"arrived" = "You have arrived at your destination";
+"turn_left" = "Turn left";
+"turn_right" = "Turn right";
+"continue_straight" = "Continue straight";
+"u_turn" = "Make a U-turn";
+"merge" = "Merge";
+"exit" = "Exit";
+"roundabout" = "Enter roundabout";
+"ramp" = "Take ramp";
+"ferry" = "Take ferry";
+"tunnel" = "Enter tunnel";
+"bridge" = "Cross bridge";
+"toll" = "Toll road ahead";
+"stop_sign" = "Stop";
+"yield" = "Yield";
+"traffic_light" = "Traffic light ahead";
+"keep_left" = "Keep left";
+"keep_right" = "Keep right";
+
+// MARK: - Search
+"search" = "Search";
+"search_placeholder" = "Search places, activities, or locations";
+"search_results" = "Search Results";
+"no_results" = "No Results Found";
+"no_results_description" = "Try searching for something else or check your spelling.";
+"recent_searches" = "Recent Searches";
+"popular_searches" = "Popular Searches";
+"clear_recent" = "Clear Recent";
+"filters" = "Filters";
+
+// MARK: - Categories
+"all" = "All";
+"food" = "Food";
+"shopping" = "Shopping";
+"entertainment" = "Entertainment";
+"services" = "Services";
+"transportation" = "Transport";
+"coffee_shops" = "Coffee Shops";
+"restaurants" = "Restaurants";
+"museums" = "Museums";
+"parks" = "Parks";
+"bars" = "Bars";
+"gas_stations" = "Gas Stations";
+"hotels" = "Hotels";
+
+// MARK: - Map
+"map" = "Map";
+"layers" = "Layers";
+"locate_me" = "Locate Me";
+"adventure" = "Adventure";
+"my_location" = "My Location";
+"zoom_in" = "Zoom In";
+"zoom_out" = "Zoom Out";
+"compass" = "Compass";
+
+// MARK: - Routes
+"routes" = "Routes";
+"fastest" = "Fastest";
+"shortest" = "Shortest";
+"safest" = "Safest";
+"most_scenic" = "Most Scenic";
+"most_efficient" = "Most Efficient";
+"avoid_tolls" = "Avoid Tolls";
+"avoid_highways" = "Avoid Highways";
+"avoid_ferries" = "Avoid Ferries";
+"prefer_scenic" = "Prefer Scenic Routes";
+"avoid_tunnels" = "Avoid Tunnels";
+"avoid_bridges" = "Avoid Bridges";
+"avoid_dirt_roads" = "Avoid Dirt Roads";
+
+// MARK: - Transportation
+"driving" = "Driving";
+"walking" = "Walking";
+"cycling" = "Cycling";
+"public_transport" = "Public Transport";
+"mixed" = "Mixed";
+
+// MARK: - Time & Distance
+"eta" = "ETA";
+"arrival_time" = "Arrival Time";
+"distance" = "Distance";
+"duration" = "Duration";
+"minutes" = "minutes";
+"hours" = "hours";
+"kilometers" = "km";
+"meters" = "m";
+"miles" = "mi";
+"feet" = "ft";
+
+// MARK: - Adventures
+"adventures" = "Adventures";
+"create_adventure" = "Create Adventure";
+"adventure_theme" = "Adventure Theme";
+"adventure_duration" = "Duration";
+"adventure_mood" = "Mood";
+"adventure_budget" = "Budget";
+"adventure_group" = "Group Adventure";
+"adventure_solo" = "Solo Adventure";
+"adventure_time_of_day" = "Time of Day";
+"adventure_weather" = "Weather";
+"adventure_interests" = "Interests";
+"adventure_avoid_crowds" = "Avoid Crowds";
+"adventure_max_walking" = "Max Walking Distance";
+
+// MARK: - Adventure Moods
+"fun" = "Fun & Playful";
+"relaxing" = "Relaxing & Chill";
+"cultural" = "Cultural & Educational";
+"romantic" = "Romantic & Intimate";
+"adventurous" = "Adventurous & Bold";
+
+// MARK: - Adventure Categories
+"landmark" = "Landmark";
+"food_drink" = "Food & Drink";
+"scenic_view" = "Scenic View";
+"museum" = "Museum";
+"activity" = "Activity";
+"nightlife" = "Nightlife";
+"hidden_gem" = "Hidden Gem";
+
+// MARK: - Budget Levels
+"budget_friendly" = "Budget-Friendly";
+"moderate" = "Moderate";
+"premium" = "Premium";
+
+// MARK: - Settings
+"settings" = "Settings";
+"profile" = "Profile";
+"preferences" = "Preferences";
+"language" = "Language";
+"theme" = "Theme";
+"notifications" = "Notifications";
+"privacy" = "Privacy";
+"about" = "About";
+"help" = "Help";
+"feedback" = "Feedback";
+"rate_app" = "Rate App";
+"share_app" = "Share App";
+
+// MARK: - Themes
+"light_theme" = "Light";
+"dark_theme" = "Dark";
+"system_theme" = "System";
+
+// MARK: - Permissions
+"location_permission" = "Location Permission";
+"location_permission_description" = "Shvil needs access to your location to provide navigation and local recommendations.";
+"microphone_permission" = "Microphone Permission";
+"microphone_permission_description" = "Shvil needs access to your microphone for voice search and commands.";
+"notification_permission" = "Notification Permission";
+"notification_permission_description" = "Shvil can send you notifications about navigation updates and recommendations.";
+"permission_denied" = "Permission Denied";
+"permission_denied_description" = "Please enable this permission in Settings to use this feature.";
+"open_settings" = "Open Settings";
+
+// MARK: - Safety
+"safety" = "Safety";
+"sos" = "SOS";
+"emergency" = "Emergency";
+"share_location" = "Share Location";
+"emergency_contacts" = "Emergency Contacts";
+"night_mode" = "Night Mode";
+"well_lit_routes" = "Well-Lit Routes";
+"incident_reports" = "Incident Reports";
+
+// MARK: - Social
+"social" = "Social";
+"friends" = "Friends";
+"share_eta" = "Share ETA";
+"share_route" = "Share Route";
+"invite_friends" = "Invite Friends";
+"social_plans" = "Social Plans";
+
+// MARK: - Offline
+"offline" = "Offline";
+"offline_mode" = "Offline Mode";
+"download_maps" = "Download Maps";
+"offline_available" = "Available Offline";
+"download_required" = "Download Required";
+"storage_used" = "Storage Used";
+"clear_cache" = "Clear Cache";
+
+// MARK: - Voice
+"voice_guidance" = "Voice Guidance";
+"voice_search" = "Voice Search";
+"voice_commands" = "Voice Commands";
+"mute" = "Mute";
+"unmute" = "Unmute";
+"volume" = "Volume";
+
+// MARK: - Haptics
+"haptic_feedback" = "Haptic Feedback";
+"haptic_enabled" = "Haptic Feedback Enabled";
+"haptic_disabled" = "Haptic Feedback Disabled";
+
+// MARK: - Accessibility
+"accessibility" = "Accessibility";
+"voice_over" = "VoiceOver";
+"dynamic_type" = "Dynamic Type";
+"high_contrast" = "High Contrast";
+"reduce_motion" = "Reduce Motion";
+"accessibility_labels" = "Accessibility Labels";
+
+// MARK: - Errors
+"network_error" = "Network Error";
+"location_error" = "Location Error";
+"search_error" = "Search Error";
+"route_error" = "Route Error";
+"permission_error" = "Permission Error";
+"unknown_error" = "Unknown Error";
+"try_again" = "Try Again";
+"check_connection" = "Check your internet connection";
+"enable_location" = "Enable location services";
+"grant_permission" = "Grant permission in Settings";
+
+// MARK: - Success Messages
+"route_calculated" = "Route calculated successfully";
+"location_updated" = "Location updated";
+"search_completed" = "Search completed";
+"adventure_created" = "Adventure created successfully";
+"settings_saved" = "Settings saved";
+"data_synced" = "Data synced";
+
+// MARK: - Confirmation Dialogs
+"exit_navigation_confirm" = "Exit Navigation?";
+"exit_navigation_message" = "You'll lose your current route and navigation progress.";
+"delete_confirm" = "Delete Item?";
+"delete_confirm_message" = "This action cannot be undone.";
+"clear_cache_confirm" = "Clear Cache?";
+"clear_cache_message" = "This will remove all downloaded maps and cached data.";
+
+// MARK: - Onboarding
+"welcome" = "Welcome to Shvil";
+"welcome_subtitle" = "Your intelligent navigation companion";
+"get_started" = "Get Started";
+"skip" = "Skip";
+"next_step" = "Next";
+"finish" = "Finish";
+"onboarding_step_1_title" = "Discover Places";
+"onboarding_step_1_description" = "Find amazing places and activities around you";
+"onboarding_step_2_title" = "Smart Navigation";
+"onboarding_step_2_description" = "Get turn-by-turn directions with voice guidance";
+"onboarding_step_3_title" = "Create Adventures";
+"onboarding_step_3_description" = "Let AI plan personalized adventures for you";
+"onboarding_step_4_title" = "Stay Safe";
+"onboarding_step_4_description" = "Share your location and get safety alerts";
+
+// MARK: - Place Details
+"place_details" = "Place Details";
+"address" = "Address";
+"phone" = "Phone";
+"website" = "Website";
+"hours" = "Hours";
+"rating" = "Rating";
+"reviews" = "Reviews";
+"photos" = "Photos";
+"directions" = "Directions";
+"save_place" = "Save Place";
+"share_place" = "Share Place";
+"call" = "Call";
+"visit_website" = "Visit Website";
+
+// MARK: - Saved Places
+"saved_places" = "Saved Places";
+"favorites" = "Favorites";
+"recent" = "Recent";
+"home" = "Home";
+"work" = "Work";
+"add_to_favorites" = "Add to Favorites";
+"remove_from_favorites" = "Remove from Favorites";
+"no_saved_places" = "No Saved Places";
+"no_saved_places_description" = "Save places you love to access them quickly";
+
+// MARK: - Route Options
+"route_options" = "Route Options";
+"alternative_routes" = "Alternative Routes";
+"route_details" = "Route Details";
+"add_stop" = "Add Stop";
+"remove_stop" = "Remove Stop";
+"reorder_stops" = "Reorder Stops";
+"avoid_areas" = "Avoid Areas";
+"waypoints" = "Waypoints";
+
+// MARK: - Navigation UI
+"next_turn" = "Next Turn";
+"in_miles" = "in %d miles";
+"in_feet" = "in %d feet";
+"arrive_at" = "Arrive at %@";
+"lane_guidance" = "Use %d lane(s)";
+"exit_number" = "Exit %@";
+"road_name" = "%@";
+"traffic_delay" = "Traffic delay: %d min";
+"toll_cost" = "Toll cost: $%.2f";
+"fuel_cost" = "Fuel cost: $%.2f";
+
+// MARK: - Adventure UI
+"adventure_title" = "Adventure Title";
+"adventure_tagline" = "Adventure Tagline";
+"adventure_stops" = "Adventure Stops";
+"adventure_notes" = "Adventure Notes";
+"start_adventure" = "Start Adventure";
+"pause_adventure" = "Pause Adventure";
+"resume_adventure" = "Resume Adventure";
+"complete_adventure" = "Complete Adventure";
+"adventure_progress" = "Adventure Progress";
+"current_stop" = "Current Stop";
+"next_stop" = "Next Stop";
+"adventure_complete" = "Adventure Complete!";
+"adventure_complete_message" = "Congratulations! You've completed your adventure.";
+
+// MARK: - Time Formats
+"time_format_12h" = "h:mm a";
+"time_format_24h" = "HH:mm";
+"date_format" = "MMM d, yyyy";
+"datetime_format" = "MMM d, yyyy 'at' h:mm a";
+
+// MARK: - Weather
+"sunny" = "Sunny";
+"cloudy" = "Cloudy";
+"rainy" = "Rainy";
+"stormy" = "Stormy";
+"foggy" = "Foggy";
+"snowy" = "Snowy";
+"clear" = "Clear";
+"partly_cloudy" = "Partly Cloudy";
+
+// MARK: - Time of Day
+"morning" = "Morning";
+"afternoon" = "Afternoon";
+"evening" = "Evening";
+"night" = "Night";
+"dawn" = "Dawn";
+"dusk" = "Dusk";
+
+// MARK: - Days of Week
+"monday" = "Monday";
+"tuesday" = "Tuesday";
+"wednesday" = "Wednesday";
+"thursday" = "Thursday";
+"friday" = "Friday";
+"saturday" = "Saturday";
+"sunday" = "Sunday";
+
+// MARK: - Months
+"january" = "January";
+"february" = "February";
+"march" = "March";
+"april" = "April";
+"may" = "May";
+"june" = "June";
+"july" = "July";
+"august" = "August";
+"september" = "September";
+"october" = "October";
+"november" = "November";
+"december" = "December";

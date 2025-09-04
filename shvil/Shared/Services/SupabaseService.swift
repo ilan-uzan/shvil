@@ -195,6 +195,35 @@ class SupabaseService: ObservableObject {
 
         return response
     }
+    
+    // MARK: - Health Check
+    
+    func healthCheck() async throws -> HealthCheckResponse {
+        let response: HealthCheckResponse = try await client
+            .rpc("health_check")
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    func detailedHealthCheck() async throws -> DetailedHealthCheckResponse {
+        let response: DetailedHealthCheckResponse = try await client
+            .rpc("health_check_detailed")
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    func getSystemMetrics() async throws -> SystemMetrics {
+        let response: SystemMetrics = try await client
+            .rpc("get_system_metrics")
+            .execute()
+            .value
+        
+        return response
+    }
 }
 
 // MARK: - Data Models
@@ -266,6 +295,9 @@ struct RouteInfo: Codable {
     let isFastest: Bool
     let isSafest: Bool
 }
+
+// MARK: - Health Check Models
+// Note: Health check models are defined in HealthCheckService.swift
 
 // MARK: - Supabase Errors
 

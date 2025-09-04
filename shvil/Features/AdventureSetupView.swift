@@ -253,6 +253,7 @@ struct AdventureSetupView: View {
         case .driving: "car"
         case .cycling: "bicycle"
         case .publicTransport: "bus"
+        case .mixed: "arrow.triangle.2.circlepath"
         }
     }
 
@@ -350,17 +351,18 @@ struct AdventureSetupView: View {
 
         isGenerating = true
 
+        let timeFrame: TimeFrame = selectedDuration <= 4 ? .halfDay : .fullDay
+        let companions: [CompanionType] = isGroupAdventure ? [.friends] : [.solo]
+        let budget: BudgetLevel = .medium
+        
         let input = AdventureGenerationInput(
-            theme: "exploration",
-            durationHours: selectedDuration,
+            timeFrame: timeFrame,
             mood: selectedMood,
-            isGroup: isGroupAdventure,
-            city: "Current Location",
-            timeOfDay: "afternoon",
-            weather: "clear",
-            preferences: UserPreferences(),
-            savedPlaces: [],
-            recentPlaces: []
+            budget: budget,
+            companions: companions,
+            transportationMode: selectedTransport,
+            origin: locationService.currentLocation!.coordinate,
+            preferences: UserPreferences()
         )
 
         Task {

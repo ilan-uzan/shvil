@@ -131,17 +131,15 @@ struct AdventureNavigationView: View {
             }
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(stop.chapter)
+                Text(stop.name)
                     .font(LiquidGlassTypography.title)
                     .foregroundColor(LiquidGlassColors.primaryText)
                     .lineLimit(1)
 
-                if let name = stop.name {
-                    Text(name)
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
-                        .lineLimit(1)
-                }
+                Text(stop.description)
+                    .font(LiquidGlassTypography.body)
+                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .lineLimit(1)
             }
 
             Spacer()
@@ -157,6 +155,7 @@ struct AdventureNavigationView: View {
 
     private func stopIcon(for category: StopCategory) -> String {
         switch category {
+        case .all: "star"
         case .landmark: "building"
         case .food: "fork.knife"
         case .scenic: "camera"
@@ -164,6 +163,10 @@ struct AdventureNavigationView: View {
         case .activity: "figure.run"
         case .nightlife: "moon.stars"
         case .hiddenGem: "star"
+        case .shopping: "bag"
+        case .entertainment: "tv"
+        case .services: "wrench.and.screwdriver"
+        case .transportation: "car"
         }
     }
 
@@ -172,7 +175,7 @@ struct AdventureNavigationView: View {
     private var mapSection: some View {
         GeometryReader { geometry in
             Map(coordinateRegion: .constant(mapRegion), annotationItems: adventure.stops) { stop in
-                MapAnnotation(coordinate: stop.coordinate ?? CLLocationCoordinate2D()) {
+                MapAnnotation(coordinate: stop.coordinate) {
                     adventureStopAnnotation(for: stop)
                 }
             }
@@ -182,9 +185,7 @@ struct AdventureNavigationView: View {
     }
 
     private var mapRegion: MKCoordinateRegion {
-        guard let currentStop,
-              let coordinate = currentStop.coordinate
-        else {
+        guard let currentStop = currentStop else {
             return MKCoordinateRegion(
                 center: locationService.currentLocation?.coordinate ?? CLLocationCoordinate2D(),
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
@@ -192,7 +193,7 @@ struct AdventureNavigationView: View {
         }
 
         return MKCoordinateRegion(
-            center: coordinate,
+            center: currentStop.coordinate,
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         )
     }
@@ -286,7 +287,7 @@ struct AdventureNavigationView: View {
                     .font(LiquidGlassTypography.caption)
                     .foregroundColor(LiquidGlassColors.secondaryText)
 
-                Text("\(currentStop?.idealDurationMin ?? 0) min")
+                Text("\(currentStop?.estimatedDuration ?? 0) min")
                     .font(LiquidGlassTypography.title)
                     .foregroundColor(LiquidGlassColors.primaryText)
             }
@@ -356,17 +357,15 @@ struct AdventureNavigationView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Next: \(nextStop.chapter)")
+                    Text("Next: \(nextStop.name)")
                         .font(LiquidGlassTypography.bodyMedium)
                         .foregroundColor(LiquidGlassColors.primaryText)
                         .lineLimit(1)
 
-                    if let name = nextStop.name {
-                        Text(name)
-                            .font(LiquidGlassTypography.caption)
-                            .foregroundColor(LiquidGlassColors.secondaryText)
-                            .lineLimit(1)
-                    }
+                    Text(nextStop.description)
+                        .font(LiquidGlassTypography.caption)
+                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .lineLimit(1)
                 }
 
                 Spacer()
@@ -415,33 +414,36 @@ struct AdventureNavigationView: View {
 #Preview {
     AdventureNavigationView(adventure: AdventurePlan(
         title: "Downtown Food Adventure",
-        tagline: "A culinary journey through the heart of the city",
-        theme: "Food & Culture",
-        mood: .fun,
-        durationHours: 3,
-        isGroup: false,
+        description: "A culinary journey through the heart of the city",
+        theme: .fun,
         stops: [
             AdventureStop(
-                chapter: "Morning Coffee",
-                category: .food,
-                idealDurationMin: 30,
-                narrative: "Start your day with the best coffee in town",
-                constraints: StopConstraints(),
                 name: "Blue Bottle Coffee",
-                address: "123 Main St",
-                coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
+                description: "Start your day with the best coffee in town",
+                coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+                category: .food,
+                estimatedDuration: 30,
+                openingHours: "7:00 AM - 6:00 PM",
+                priceLevel: .medium,
+                rating: 4.5,
+                isAccessible: true,
+                tags: ["coffee", "breakfast"]
             ),
             AdventureStop(
-                chapter: "Art Gallery",
-                category: .museum,
-                idealDurationMin: 45,
-                narrative: "Explore contemporary art",
-                constraints: StopConstraints(),
                 name: "Modern Art Gallery",
-                address: "456 Art Ave",
-                coordinate: CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4094)
+                description: "Explore contemporary art",
+                coordinate: CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4094),
+                category: .museum,
+                estimatedDuration: 45,
+                openingHours: "10:00 AM - 6:00 PM",
+                priceLevel: .high,
+                rating: 4.2,
+                isAccessible: true,
+                tags: ["art", "culture"]
             ),
         ],
-        notes: "Perfect for a weekend morning"
+        totalDuration: 180,
+        totalDistance: 2000,
+        budgetLevel: .medium
     ))
 }

@@ -318,9 +318,9 @@ public class Persistence: ObservableObject {
                 sqlite3_bind_text(statement, 5, report.description, -1, nil)
                 sqlite3_bind_text(statement, 6, report.reporterId?.uuidString, -1, nil)
                 sqlite3_bind_double(statement, 7, report.createdAt.timeIntervalSince1970)
-                sqlite3_bind_double(statement, 8, report.expiresAt.timeIntervalSince1970)
-                sqlite3_bind_int(statement, 9, report.isActive ? 1 : 0)
-                sqlite3_bind_text(statement, 10, report.geohash, -1, nil)
+                sqlite3_bind_double(statement, 8, 0.0) // expiresAt not available
+                sqlite3_bind_int(statement, 9, 1) // isActive not available, default to true
+                sqlite3_bind_text(statement, 10, "", -1, nil) // geohash not available
 
                 sqlite3_step(statement)
                 sqlite3_reset(statement)
@@ -494,13 +494,12 @@ extension SafetyReport {
         self.init(
             id: id,
             type: type,
-            coordinate: Coordinate(CLLocationCoordinate2D(latitude: latitude, longitude: longitude)),
-            description: description,
-            reporterId: reporterId as? UUID,
+            coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+            description: description ?? "",
+            severity: .medium, // Default severity
             createdAt: createdAt,
-            expiresAt: expiresAt,
-            isActive: isActive,
-            geohash: String(cString: geohash)
+            reporterId: reporterId as? UUID,
+            isVerified: false // Default to false
         )
     }
 }
@@ -529,20 +528,20 @@ extension TileMetadata {
 extension Persistence {
     /// Save an adventure plan
     func saveAdventure(_ adventure: AdventurePlan) async throws {
-        let query = "INSERT OR REPLACE INTO adventures (id, title, tagline, theme, mood, duration_hours, is_group, notes, created_at, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        let query = "INSERT OR REPLACE INTO adventures (id, title, description, theme, total_duration, total_distance, budget_level, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         var statement: OpaquePointer?
 
         if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
             sqlite3_bind_text(statement, 1, adventure.id.uuidString, -1, nil)
             sqlite3_bind_text(statement, 2, adventure.title, -1, nil)
-            sqlite3_bind_text(statement, 3, adventure.tagline, -1, nil)
-            sqlite3_bind_text(statement, 4, adventure.theme, -1, nil)
-            sqlite3_bind_text(statement, 5, adventure.mood.rawValue, -1, nil)
-            sqlite3_bind_int(statement, 6, Int32(adventure.durationHours))
-            sqlite3_bind_int(statement, 7, adventure.isGroup ? 1 : 0)
-            sqlite3_bind_text(statement, 8, adventure.notes, -1, nil)
+            sqlite3_bind_text(statement, 3, adventure.description, -1, nil)
+            sqlite3_bind_text(statement, 4, adventure.theme.rawValue, -1, nil)
+            sqlite3_bind_int(statement, 5, Int32(adventure.totalDuration))
+            sqlite3_bind_double(statement, 6, adventure.totalDistance)
+            sqlite3_bind_text(statement, 7, adventure.budgetLevel.rawValue, -1, nil)
+            sqlite3_bind_text(statement, 8, adventure.status.rawValue, -1, nil)
             sqlite3_bind_double(statement, 9, adventure.createdAt.timeIntervalSince1970)
-            sqlite3_bind_text(statement, 10, adventure.status.rawValue, -1, nil)
+            sqlite3_bind_double(statement, 10, adventure.updatedAt.timeIntervalSince1970)
 
             if sqlite3_step(statement) != SQLITE_DONE {
                 throw PersistenceError.saveFailed
@@ -559,27 +558,23 @@ extension Persistence {
 
     /// Save an adventure stop
     private func saveAdventureStop(_ stop: AdventureStop, adventureId: UUID) async throws {
-        let query = "INSERT OR REPLACE INTO adventure_stops (adventure_id, stop_id, chapter, category, ideal_duration_min, narrative, open_late, budget, accessibility, outdoor, place_id, name, address, latitude, longitude, start_hint_ts, stay_minutes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        let query = "INSERT OR REPLACE INTO adventure_stops (adventure_id, stop_id, name, description, latitude, longitude, category, estimated_duration, opening_hours, price_level, rating, is_accessible, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         var statement: OpaquePointer?
 
         if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
             sqlite3_bind_text(statement, 1, adventureId.uuidString, -1, nil)
             sqlite3_bind_text(statement, 2, stop.id.uuidString, -1, nil)
-            sqlite3_bind_text(statement, 3, stop.chapter, -1, nil)
-            sqlite3_bind_text(statement, 4, stop.category.rawValue, -1, nil)
-            sqlite3_bind_int(statement, 5, Int32(stop.idealDurationMin))
-            sqlite3_bind_text(statement, 6, stop.narrative, -1, nil)
-            sqlite3_bind_int(statement, 7, stop.constraints.openLate ? 1 : 0)
-            sqlite3_bind_text(statement, 8, stop.constraints.budget.rawValue, -1, nil)
-            sqlite3_bind_int(statement, 9, stop.constraints.accessibility ? 1 : 0)
-            sqlite3_bind_int(statement, 10, stop.constraints.outdoor ? 1 : 0)
-            sqlite3_bind_text(statement, 11, stop.placeId ?? "", -1, nil)
-            sqlite3_bind_text(statement, 12, stop.name ?? "", -1, nil)
-            sqlite3_bind_text(statement, 13, stop.address ?? "", -1, nil)
-            sqlite3_bind_double(statement, 14, stop.coordinate?.latitude ?? 0.0)
-            sqlite3_bind_double(statement, 15, stop.coordinate?.longitude ?? 0.0)
-            sqlite3_bind_double(statement, 16, stop.startHintTimestamp?.timeIntervalSince1970 ?? 0.0)
-            sqlite3_bind_int(statement, 17, Int32(stop.stayMinutes ?? 0))
+            sqlite3_bind_text(statement, 3, stop.name, -1, nil)
+            sqlite3_bind_text(statement, 4, stop.description, -1, nil)
+            sqlite3_bind_double(statement, 5, stop.coordinate.latitude)
+            sqlite3_bind_double(statement, 6, stop.coordinate.longitude)
+            sqlite3_bind_text(statement, 7, stop.category.rawValue, -1, nil)
+            sqlite3_bind_int(statement, 8, Int32(stop.estimatedDuration))
+            sqlite3_bind_text(statement, 9, stop.openingHours ?? "", -1, nil)
+            sqlite3_bind_text(statement, 10, stop.priceLevel.rawValue, -1, nil)
+            sqlite3_bind_double(statement, 11, stop.rating ?? 0.0)
+            sqlite3_bind_int(statement, 12, stop.isAccessible ? 1 : 0)
+            sqlite3_bind_text(statement, 13, stop.tags.joined(separator: ","), -1, nil)
 
             if sqlite3_step(statement) != SQLITE_DONE {
                 throw PersistenceError.saveFailed

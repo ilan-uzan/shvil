@@ -85,7 +85,7 @@ struct AdventureStopDetailView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(stop.chapter)
+                    Text(stop.name)
                         .font(LiquidGlassTypography.titleXL)
                         .foregroundColor(LiquidGlassColors.primaryText)
 
@@ -108,23 +108,21 @@ struct AdventureStopDetailView: View {
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(LiquidGlassColors.secondaryText)
 
-                Text("\(stop.idealDurationMin) minutes")
+                Text("\(stop.estimatedDuration) minutes")
                     .font(LiquidGlassTypography.body)
                     .foregroundColor(LiquidGlassColors.secondaryText)
 
                 Spacer()
 
-                if let stayMinutes = stop.stayMinutes {
-                    Text("Stay: \(stayMinutes) min")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.accentDeepAqua)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(LiquidGlassColors.glassSurface2)
-                        )
-                }
+                Text("Stay: \(stop.estimatedDuration) min")
+                    .font(LiquidGlassTypography.caption)
+                    .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LiquidGlassColors.glassSurface2)
+                    )
             }
         }
         .padding(.vertical, 20)
@@ -136,6 +134,7 @@ struct AdventureStopDetailView: View {
 
     private func stopIcon(for category: StopCategory) -> String {
         switch category {
+        case .all: "star"
         case .landmark: "building"
         case .food: "fork.knife"
         case .scenic: "camera"
@@ -143,6 +142,10 @@ struct AdventureStopDetailView: View {
         case .activity: "figure.run"
         case .nightlife: "moon.stars"
         case .hiddenGem: "star"
+        case .shopping: "bag"
+        case .entertainment: "tv"
+        case .services: "wrench.and.screwdriver"
+        case .transportation: "car"
         }
     }
 
@@ -154,12 +157,11 @@ struct AdventureStopDetailView: View {
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
 
-            if let coordinate = stop.coordinate {
-                Map(coordinateRegion: .constant(MKCoordinateRegion(
-                    center: coordinate,
-                    span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                )), annotationItems: [stop]) { stop in
-                    MapAnnotation(coordinate: stop.coordinate!) {
+            Map(coordinateRegion: .constant(MKCoordinateRegion(
+                center: stop.coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+            )), annotationItems: [stop]) { stop in
+                MapAnnotation(coordinate: stop.coordinate) {
                         ZStack {
                             Circle()
                                 .fill(LiquidGlassGradients.primaryGradient)
@@ -178,24 +180,6 @@ struct AdventureStopDetailView: View {
                 }
                 .frame(height: 200)
                 .cornerRadius(16)
-            } else {
-                // No location available
-                VStack(spacing: 12) {
-                    Image(systemName: "location.slash")
-                        .font(.system(size: 32, weight: .medium))
-                        .foregroundColor(LiquidGlassColors.secondaryText)
-
-                    Text("Location not available")
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
-                }
-                .frame(height: 200)
-                .frame(maxWidth: .infinity)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LiquidGlassColors.glassSurface1)
-                )
-            }
         }
     }
 
@@ -203,39 +187,44 @@ struct AdventureStopDetailView: View {
 
     private var stopInfoSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            if let name = stop.name {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Place Name")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Place Name")
+                    .font(LiquidGlassTypography.caption)
+                    .foregroundColor(LiquidGlassColors.secondaryText)
 
-                    Text(name)
-                        .font(LiquidGlassTypography.title)
-                        .foregroundColor(LiquidGlassColors.primaryText)
-                }
+                Text(stop.name)
+                    .font(LiquidGlassTypography.title)
+                    .foregroundColor(LiquidGlassColors.primaryText)
             }
 
-            if let address = stop.address {
+            if let openingHours = stop.openingHours {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Address")
+                    Text("Opening Hours")
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
 
-                    Text(address)
+                    Text(openingHours)
                         .font(LiquidGlassTypography.body)
                         .foregroundColor(LiquidGlassColors.primaryText)
                 }
             }
 
-            if let startHint = stop.startHintTimestamp {
+            if let rating = stop.rating {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Best Time to Visit")
+                    Text("Rating")
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
 
-                    Text(startHint, style: .time)
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                    HStack(spacing: 4) {
+                        ForEach(0..<5) { index in
+                            Image(systemName: index < Int(rating) ? "star.fill" : "star")
+                                .foregroundColor(.yellow)
+                                .font(.system(size: 12))
+                        }
+                        Text(String(format: "%.1f", rating))
+                            .font(LiquidGlassTypography.body)
+                            .foregroundColor(LiquidGlassColors.primaryText)
+                    }
                 }
             }
         }
@@ -254,7 +243,7 @@ struct AdventureStopDetailView: View {
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
 
-            Text(stop.narrative)
+            Text(stop.description)
                 .font(LiquidGlassTypography.body)
                 .foregroundColor(LiquidGlassColors.primaryText)
                 .lineSpacing(4)
@@ -279,29 +268,22 @@ struct AdventureStopDetailView: View {
                 constraintRow(
                     icon: "dollarsign.circle",
                     title: "Budget",
-                    value: stop.constraints.budget.displayName
+                    value: stop.priceLevel.displayName
                 )
 
                 // Accessibility
                 constraintRow(
                     icon: "figure.roll",
                     title: "Accessibility",
-                    value: stop.constraints.accessibility ? "Wheelchair Accessible" : "Not Accessible"
+                    value: stop.isAccessible ? "Wheelchair Accessible" : "Not Accessible"
                 )
 
-                // Outdoor
-                constraintRow(
-                    icon: "leaf",
-                    title: "Setting",
-                    value: stop.constraints.outdoor ? "Outdoor" : "Indoor"
-                )
-
-                // Open Late
-                if stop.constraints.openLate {
+                // Tags
+                if !stop.tags.isEmpty {
                     constraintRow(
-                        icon: "moon",
-                        title: "Hours",
-                        value: "Open Late"
+                        icon: "tag",
+                        title: "Tags",
+                        value: stop.tags.joined(separator: ", ")
                     )
                 }
             }
@@ -379,8 +361,6 @@ struct AdventureStopDetailView: View {
     // MARK: - Actions
 
     private func navigateToStop() {
-        guard stop.coordinate != nil else { return }
-
         isNavigating = true
         // Start navigation to stop
         HapticFeedback.shared.impact(style: .medium)
@@ -396,7 +376,7 @@ struct DirectionsView: View {
     var body: some View {
         NavigationView {
             VStack {
-                Text("Directions to \(stop.name ?? stop.chapter)")
+                Text("Directions to \(stop.name)")
                     .font(LiquidGlassTypography.title)
                     .foregroundColor(LiquidGlassColors.primaryText)
                     .padding()
@@ -426,31 +406,25 @@ struct DirectionsView: View {
 #Preview {
     AdventureStopDetailView(
         stop: AdventureStop(
-            chapter: "Morning Coffee",
-            category: .food,
-            idealDurationMin: 30,
-            narrative: "Start your day with the best coffee in town. This local favorite serves artisanal coffee with a cozy atmosphere perfect for morning conversations.",
-            constraints: StopConstraints(
-                openLate: false,
-                budget: .medium,
-                accessibility: true,
-                outdoor: false
-            ),
             name: "Blue Bottle Coffee",
-            address: "123 Main Street, Downtown",
+            description: "Start your day with the best coffee in town. This local favorite serves artisanal coffee with a cozy atmosphere perfect for morning conversations.",
             coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
-            startHintTimestamp: Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()),
-            stayMinutes: 30
+            category: .food,
+            estimatedDuration: 30,
+            openingHours: "7:00 AM - 6:00 PM",
+            priceLevel: .medium,
+            rating: 4.5,
+            isAccessible: true,
+            tags: ["coffee", "breakfast", "cozy"]
         ),
         adventure: AdventurePlan(
             title: "Downtown Food Adventure",
-            tagline: "A culinary journey through the heart of the city",
-            theme: "Food & Culture",
-            mood: .fun,
-            durationHours: 3,
-            isGroup: false,
+            description: "A culinary journey through the heart of the city",
+            theme: .fun,
             stops: [],
-            notes: "Perfect for a weekend morning"
+            totalDuration: 180,
+            totalDistance: 2000,
+            budgetLevel: .medium
         )
     )
 }

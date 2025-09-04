@@ -845,10 +845,10 @@ struct MapView: View {
 
     // MARK: - Focus Mode Helper Functions
 
-    private func getDirectionArrow(for step: MKRoute.Step?) -> String {
+    private func getDirectionArrow(for step: RouteStep?) -> String {
         guard let step else { return "arrow.up" }
 
-        let instruction = step.instructions.lowercased()
+        let instruction = step.instruction.lowercased()
 
         if instruction.contains("turn left") || instruction.contains("left turn") {
             return "arrow.turn.up.left"
@@ -867,12 +867,12 @@ struct MapView: View {
         }
     }
 
-    private func getManeuverText(for step: MKRoute.Step?) -> String {
+    private func getManeuverText(for step: RouteStep?) -> String {
         guard let step else { return "Continue straight" }
-        return step.instructions.isEmpty ? "Continue straight" : step.instructions
+        return step.instruction.isEmpty ? "Continue straight" : step.instruction
     }
 
-    private func getDistanceText(for step: MKRoute.Step?) -> String {
+    private func getDistanceText(for step: RouteStep?) -> String {
         guard let step else { return "0 ft" }
 
         let distance = step.distance
@@ -883,7 +883,7 @@ struct MapView: View {
         }
     }
 
-    private func getLanesText(for _: MKRoute.Step?) -> String? {
+    private func getLanesText(for _: RouteStep?) -> String? {
         // This would typically come from the route step's lane information
         // For now, return nil as this data isn't readily available in MKRoute.Step
         nil

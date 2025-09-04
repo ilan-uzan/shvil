@@ -15,84 +15,81 @@ import MapKit
 public struct AdventurePlan: Codable, Identifiable {
     public let id: UUID
     public let title: String
-    public let tagline: String
-    public let theme: String
-    public let mood: AdventureMood
-    public let durationHours: Int
-    public let isGroup: Bool
+    public let description: String
+    public let theme: AdventureMood
     public let stops: [AdventureStop]
-    public let notes: String
-    public let createdAt: Date
+    public let totalDuration: Int // in minutes
+    public let totalDistance: Double // in meters
+    public let budgetLevel: BudgetLevel
     public let status: AdventureStatus
+    public let createdAt: Date
+    public let updatedAt: Date
 
     public init(
         id: UUID = UUID(),
         title: String,
-        tagline: String,
-        theme: String,
-        mood: AdventureMood,
-        durationHours: Int,
-        isGroup: Bool,
+        description: String,
+        theme: AdventureMood,
         stops: [AdventureStop],
-        notes: String,
+        totalDuration: Int,
+        totalDistance: Double,
+        budgetLevel: BudgetLevel,
+        status: AdventureStatus = .draft,
         createdAt: Date = Date(),
-        status: AdventureStatus = .draft
+        updatedAt: Date = Date()
     ) {
         self.id = id
         self.title = title
-        self.tagline = tagline
+        self.description = description
         self.theme = theme
-        self.mood = mood
-        self.durationHours = durationHours
-        self.isGroup = isGroup
         self.stops = stops
-        self.notes = notes
-        self.createdAt = createdAt
+        self.totalDuration = totalDuration
+        self.totalDistance = totalDistance
+        self.budgetLevel = budgetLevel
         self.status = status
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 }
 
 /// Individual stop in an adventure
 public struct AdventureStop: Codable, Identifiable {
     public let id: UUID
-    public let chapter: String
+    public let name: String
+    public let description: String
+    public let coordinate: CLLocationCoordinate2D
     public let category: StopCategory
-    public let idealDurationMin: Int
-    public let narrative: String
-    public let constraints: StopConstraints
-    public let placeId: String?
-    public let name: String?
-    public let address: String?
-    public let coordinate: CLLocationCoordinate2D?
-    public let startHintTimestamp: Date?
-    public let stayMinutes: Int?
+    public let estimatedDuration: Int // in minutes
+    public let openingHours: String?
+    public let priceLevel: PriceLevel
+    public let rating: Double?
+    public let isAccessible: Bool
+    public let tags: [String]
 
     public init(
         id: UUID = UUID(),
-        chapter: String,
+        name: String,
+        description: String,
+        coordinate: CLLocationCoordinate2D,
         category: StopCategory,
-        idealDurationMin: Int,
-        narrative: String,
-        constraints: StopConstraints,
-        placeId: String? = nil,
-        name: String? = nil,
-        address: String? = nil,
-        coordinate: CLLocationCoordinate2D? = nil,
-        startHintTimestamp: Date? = nil,
-        stayMinutes: Int? = nil
+        estimatedDuration: Int,
+        openingHours: String? = nil,
+        priceLevel: PriceLevel = .medium,
+        rating: Double? = nil,
+        isAccessible: Bool = true,
+        tags: [String] = []
     ) {
         self.id = id
-        self.chapter = chapter
-        self.category = category
-        self.idealDurationMin = idealDurationMin
-        self.narrative = narrative
-        self.constraints = constraints
-        self.placeId = placeId
         self.name = name
-        self.address = address
+        self.description = description
         self.coordinate = coordinate
-        self.startHintTimestamp = startHintTimestamp
-        self.stayMinutes = stayMinutes
+        self.category = category
+        self.estimatedDuration = estimatedDuration
+        self.openingHours = openingHours
+        self.priceLevel = priceLevel
+        self.rating = rating
+        self.isAccessible = isAccessible
+        self.tags = tags
     }
 }
 
@@ -117,8 +114,13 @@ public enum AdventureMood: String, CaseIterable, Codable {
 
 /// Stop categories for adventure planning
 public enum StopCategory: String, CaseIterable, Codable {
-    case landmark
+    case all
     case food
+    case shopping
+    case entertainment
+    case services
+    case transportation
+    case landmark
     case scenic
     case museum
     case activity
@@ -127,13 +129,35 @@ public enum StopCategory: String, CaseIterable, Codable {
 
     public var displayName: String {
         switch self {
-        case .landmark: "Landmark"
+        case .all: "All"
         case .food: "Food & Drink"
+        case .shopping: "Shopping"
+        case .entertainment: "Entertainment"
+        case .services: "Services"
+        case .transportation: "Transportation"
+        case .landmark: "Landmark"
         case .scenic: "Scenic View"
         case .museum: "Museum"
         case .activity: "Activity"
         case .nightlife: "Nightlife"
         case .hiddenGem: "Hidden Gem"
+        }
+    }
+}
+
+/// Price levels for adventure stops
+public enum PriceLevel: String, CaseIterable, Codable {
+    case low
+    case medium
+    case high
+    case premium
+
+    public var displayName: String {
+        switch self {
+        case .low: "Budget-Friendly"
+        case .medium: "Moderate"
+        case .high: "Expensive"
+        case .premium: "Premium"
         }
     }
 }
@@ -194,39 +218,30 @@ public enum AdventureStatus: String, CaseIterable, Codable {
 
 /// Input parameters for adventure generation
 public struct AdventureGenerationInput: Codable {
-    public let theme: String
-    public let durationHours: Int
+    public let timeFrame: TimeFrame
     public let mood: AdventureMood
-    public let isGroup: Bool
-    public let city: String
-    public let timeOfDay: String
-    public let weather: String
+    public let budget: BudgetLevel
+    public let companions: [CompanionType]
+    public let transportationMode: TransportationMode
+    public let origin: CLLocationCoordinate2D
     public let preferences: UserPreferences
-    public let savedPlaces: [String]
-    public let recentPlaces: [String]
 
     public init(
-        theme: String,
-        durationHours: Int,
+        timeFrame: TimeFrame,
         mood: AdventureMood,
-        isGroup: Bool,
-        city: String,
-        timeOfDay: String,
-        weather: String,
-        preferences: UserPreferences,
-        savedPlaces: [String] = [],
-        recentPlaces: [String] = []
+        budget: BudgetLevel,
+        companions: [CompanionType],
+        transportationMode: TransportationMode,
+        origin: CLLocationCoordinate2D,
+        preferences: UserPreferences
     ) {
-        self.theme = theme
-        self.durationHours = durationHours
+        self.timeFrame = timeFrame
         self.mood = mood
-        self.isGroup = isGroup
-        self.city = city
-        self.timeOfDay = timeOfDay
-        self.weather = weather
+        self.budget = budget
+        self.companions = companions
+        self.transportationMode = transportationMode
+        self.origin = origin
         self.preferences = preferences
-        self.savedPlaces = savedPlaces
-        self.recentPlaces = recentPlaces
     }
 }
 
@@ -250,22 +265,42 @@ public struct UserPreferences: Codable {
     }
 }
 
-/// Transportation modes for adventures
-public enum TransportationMode: String, CaseIterable, Codable {
-    case walking
-    case driving
-    case cycling
-    case publicTransport = "public_transport"
+/// Time frames for adventures
+public enum TimeFrame: String, CaseIterable, Codable {
+    case halfDay
+    case fullDay
+    case weekend
+    case week
 
     public var displayName: String {
         switch self {
-        case .walking: "Walking"
-        case .driving: "Driving"
-        case .cycling: "Cycling"
-        case .publicTransport: "Public Transport"
+        case .halfDay: "Half Day (4-6 hours)"
+        case .fullDay: "Full Day (8-12 hours)"
+        case .weekend: "Weekend (2-3 days)"
+        case .week: "Week (5-7 days)"
         }
     }
 }
+
+/// Companion types for adventures
+public enum CompanionType: String, CaseIterable, Codable {
+    case solo
+    case couple
+    case family
+    case friends
+    case business
+
+    public var displayName: String {
+        switch self {
+        case .solo: "Solo"
+        case .couple: "Couple"
+        case .family: "Family"
+        case .friends: "Friends"
+        case .business: "Business"
+        }
+    }
+}
+
 
 // MARK: - AdventureKit Service
 
@@ -333,15 +368,15 @@ public class AdventureKit: ObservableObject {
         adventure = AdventurePlan(
             id: adventure.id,
             title: adventure.title,
-            tagline: adventure.tagline,
+            description: adventure.description,
             theme: adventure.theme,
-            mood: adventure.mood,
-            durationHours: adventure.durationHours,
-            isGroup: adventure.isGroup,
             stops: adventure.stops,
-            notes: adventure.notes,
+            totalDuration: adventure.totalDuration,
+            totalDistance: adventure.totalDistance,
+            budgetLevel: adventure.budgetLevel,
+            status: .completed,
             createdAt: adventure.createdAt,
-            status: .completed
+            updatedAt: Date()
         )
 
         adventureHistory.append(adventure)
@@ -367,15 +402,15 @@ public class AdventureKit: ObservableObject {
         adventure = AdventurePlan(
             id: adventure.id,
             title: adventure.title,
-            tagline: adventure.tagline,
+            description: adventure.description,
             theme: adventure.theme,
-            mood: adventure.mood,
-            durationHours: adventure.durationHours,
-            isGroup: adventure.isGroup,
             stops: updatedStops,
-            notes: adventure.notes,
+            totalDuration: adventure.totalDuration,
+            totalDistance: adventure.totalDistance,
+            budgetLevel: adventure.budgetLevel,
+            status: adventure.status,
             createdAt: adventure.createdAt,
-            status: adventure.status
+            updatedAt: Date()
         )
 
         currentAdventure = adventure
@@ -397,23 +432,27 @@ public class AdventureKit: ObservableObject {
         for stop in plan.stops {
             // Use MapEngine to find real POIs for this stop
             let searchResults = try await mapEngine.searchPlaces(
-                query: stop.chapter
+                query: stop.name,
+                region: MKCoordinateRegion(
+                    center: stop.coordinate,
+                    latitudinalMeters: 1000,
+                    longitudinalMeters: 1000
+                )
             )
 
             if let bestMatch = searchResults.first {
                 let validatedStop = AdventureStop(
                     id: stop.id,
-                    chapter: stop.chapter,
-                    category: stop.category,
-                    idealDurationMin: stop.idealDurationMin,
-                    narrative: stop.narrative,
-                    constraints: stop.constraints,
-                    placeId: bestMatch.mapItem?.name,
                     name: bestMatch.name,
-                    address: bestMatch.address,
+                    description: stop.description,
                     coordinate: bestMatch.coordinate,
-                    startHintTimestamp: stop.startHintTimestamp,
-                    stayMinutes: stop.stayMinutes
+                    category: stop.category,
+                    estimatedDuration: stop.estimatedDuration,
+                    openingHours: bestMatch.hours?.first,
+                    priceLevel: stop.priceLevel,
+                    rating: bestMatch.rating,
+                    isAccessible: stop.isAccessible,
+                    tags: stop.tags
                 )
                 validatedStops.append(validatedStop)
             } else {
@@ -425,15 +464,15 @@ public class AdventureKit: ObservableObject {
         return AdventurePlan(
             id: plan.id,
             title: plan.title,
-            tagline: plan.tagline,
+            description: plan.description,
             theme: plan.theme,
-            mood: plan.mood,
-            durationHours: plan.durationHours,
-            isGroup: plan.isGroup,
             stops: validatedStops,
-            notes: plan.notes,
+            totalDuration: plan.totalDuration,
+            totalDistance: plan.totalDistance,
+            budgetLevel: plan.budgetLevel,
+            status: plan.status,
             createdAt: plan.createdAt,
-            status: plan.status
+            updatedAt: plan.updatedAt
         )
     }
 
@@ -467,36 +506,16 @@ public class AdventureKit: ObservableObject {
         return AdventurePlan(
             id: plan.id,
             title: plan.title,
-            tagline: plan.tagline,
+            description: plan.description,
             theme: plan.theme,
-            mood: plan.mood,
-            durationHours: plan.durationHours,
-            isGroup: plan.isGroup,
             stops: safeStops,
-            notes: plan.notes,
+            totalDuration: plan.totalDuration,
+            totalDistance: plan.totalDistance,
+            budgetLevel: plan.budgetLevel,
+            status: plan.status,
             createdAt: plan.createdAt,
-            status: plan.status
+            updatedAt: plan.updatedAt
         )
     }
 }
 
-// MARK: - CLLocationCoordinate2D Codable Extension
-
-extension CLLocationCoordinate2D: Codable {
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(latitude, forKey: .latitude)
-        try container.encode(longitude, forKey: .longitude)
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let latitude = try container.decode(Double.self, forKey: .latitude)
-        let longitude = try container.decode(Double.self, forKey: .longitude)
-        self.init(latitude: latitude, longitude: longitude)
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case latitude, longitude
-    }
-}

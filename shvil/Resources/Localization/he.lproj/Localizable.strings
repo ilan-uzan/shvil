@@ -1,0 +1,392 @@
+/* 
+  Localizable.strings
+  shvil
+  
+  Hebrew Localization
+*/
+
+// MARK: - General
+"app_name" = "שביל";
+"ok" = "אישור";
+"cancel" = "ביטול";
+"done" = "סיום";
+"save" = "שמירה";
+"delete" = "מחיקה";
+"edit" = "עריכה";
+"share" = "שיתוף";
+"close" = "סגירה";
+"back" = "חזרה";
+"next" = "הבא";
+"previous" = "הקודם";
+"start" = "התחל";
+"stop" = "עצור";
+"continue" = "המשך";
+"retry" = "נסה שוב";
+"loading" = "טוען...";
+"error" = "שגיאה";
+"success" = "הצלחה";
+"warning" = "אזהרה";
+"info" = "מידע";
+
+// MARK: - Navigation
+"navigation" = "ניווט";
+"start_navigation" = "התחל ניווט";
+"stop_navigation" = "עצור ניווט";
+"exit_navigation" = "צא מניווט";
+"rerouting" = "מחשב מסלול מחדש...";
+"arrived" = "הגעת ליעד";
+"turn_left" = "פנה שמאלה";
+"turn_right" = "פנה ימינה";
+"continue_straight" = "המשך ישר";
+"u_turn" = "פנה פרסה";
+"merge" = "התחבר";
+"exit" = "צא";
+"roundabout" = "היכנס למעגל תנועה";
+"ramp" = "קח רמפה";
+"ferry" = "קח מעבורת";
+"tunnel" = "היכנס למנהרה";
+"bridge" = "חצה גשר";
+"toll" = "כביש אגרה";
+"stop_sign" = "עצור";
+"yield" = "תן זכות קדימה";
+"traffic_light" = "רמזור";
+"keep_left" = "הישאר שמאלה";
+"keep_right" = "הישאר ימינה";
+
+// MARK: - Search
+"search" = "חיפוש";
+"search_placeholder" = "חפש מקומות, פעילויות או מיקומים";
+"search_results" = "תוצאות חיפוש";
+"no_results" = "לא נמצאו תוצאות";
+"no_results_description" = "נסה לחפש משהו אחר או בדוק את האיות.";
+"recent_searches" = "חיפושים אחרונים";
+"popular_searches" = "חיפושים פופולריים";
+"clear_recent" = "נקה אחרונים";
+"filters" = "מסננים";
+
+// MARK: - Categories
+"all" = "הכל";
+"food" = "אוכל";
+"shopping" = "קניות";
+"entertainment" = "בידור";
+"services" = "שירותים";
+"transportation" = "תחבורה";
+"coffee_shops" = "בתי קפה";
+"restaurants" = "מסעדות";
+"museums" = "מוזיאונים";
+"parks" = "פארקים";
+"bars" = "ברים";
+"gas_stations" = "תחנות דלק";
+"hotels" = "מלונות";
+
+// MARK: - Map
+"map" = "מפה";
+"layers" = "שכבות";
+"locate_me" = "מצא אותי";
+"adventure" = "הרפתקה";
+"my_location" = "המיקום שלי";
+"zoom_in" = "הגדל";
+"zoom_out" = "הקטן";
+"compass" = "מצפן";
+
+// MARK: - Routes
+"routes" = "מסלולים";
+"fastest" = "המהיר ביותר";
+"shortest" = "הקצר ביותר";
+"safest" = "הבטוח ביותר";
+"most_scenic" = "הנופי ביותר";
+"most_efficient" = "היעיל ביותר";
+"avoid_tolls" = "הימנע מאגרות";
+"avoid_highways" = "הימנע מכבישים מהירים";
+"avoid_ferries" = "הימנע ממעבורות";
+"prefer_scenic" = "העדף מסלולים נופיים";
+"avoid_tunnels" = "הימנע ממנהרות";
+"avoid_bridges" = "הימנע מגשרים";
+"avoid_dirt_roads" = "הימנע מדרכי עפר";
+
+// MARK: - Transportation
+"driving" = "נהיגה";
+"walking" = "הליכה";
+"cycling" = "רכיבה על אופניים";
+"public_transport" = "תחבורה ציבורית";
+"mixed" = "מעורב";
+
+// MARK: - Time & Distance
+"eta" = "זמן הגעה משוער";
+"arrival_time" = "זמן הגעה";
+"distance" = "מרחק";
+"duration" = "משך זמן";
+"minutes" = "דקות";
+"hours" = "שעות";
+"kilometers" = "קילומטרים";
+"meters" = "מטרים";
+"miles" = "מיילים";
+"feet" = "רגל";
+
+// MARK: - Adventures
+"adventures" = "הרפתקאות";
+"create_adventure" = "צור הרפתקה";
+"adventure_theme" = "נושא הרפתקה";
+"adventure_duration" = "משך זמן";
+"adventure_mood" = "מצב רוח";
+"adventure_budget" = "תקציב";
+"adventure_group" = "הרפתקת קבוצה";
+"adventure_solo" = "הרפתקה אישית";
+"adventure_time_of_day" = "שעת היום";
+"adventure_weather" = "מזג אוויר";
+"adventure_interests" = "תחומי עניין";
+"adventure_avoid_crowds" = "הימנע מהמונים";
+"adventure_max_walking" = "מרחק הליכה מקסימלי";
+
+// MARK: - Adventure Moods
+"fun" = "כיף ומשחקי";
+"relaxing" = "רגוע ונינוח";
+"cultural" = "תרבותי וחינוכי";
+"romantic" = "רומנטי ואינטימי";
+"adventurous" = "נועז ואמיץ";
+
+// MARK: - Adventure Categories
+"landmark" = "נקודת ציון";
+"food_drink" = "אוכל ושתייה";
+"scenic_view" = "נוף";
+"museum" = "מוזיאון";
+"activity" = "פעילות";
+"nightlife" = "חיי לילה";
+"hidden_gem" = "אבן חן נסתרת";
+
+// MARK: - Budget Levels
+"budget_friendly" = "ידידותי לתקציב";
+"moderate" = "בינוני";
+"premium" = "פרימיום";
+
+// MARK: - Settings
+"settings" = "הגדרות";
+"profile" = "פרופיל";
+"preferences" = "העדפות";
+"language" = "שפה";
+"theme" = "ערכת נושא";
+"notifications" = "התראות";
+"privacy" = "פרטיות";
+"about" = "אודות";
+"help" = "עזרה";
+"feedback" = "משוב";
+"rate_app" = "דרג אפליקציה";
+"share_app" = "שתף אפליקציה";
+
+// MARK: - Themes
+"light_theme" = "בהיר";
+"dark_theme" = "כהה";
+"system_theme" = "מערכת";
+
+// MARK: - Permissions
+"location_permission" = "הרשאות מיקום";
+"location_permission_description" = "שביל זקוק לגישה למיקום שלך כדי לספק ניווט והמלצות מקומיות.";
+"microphone_permission" = "הרשאות מיקרופון";
+"microphone_permission_description" = "שביל זקוק לגישה למיקרופון שלך לחיפוש קולי ופקודות.";
+"notification_permission" = "הרשאות התראות";
+"notification_permission_description" = "שביל יכול לשלוח לך התראות על עדכוני ניווט והמלצות.";
+"permission_denied" = "הרשאה נדחתה";
+"permission_denied_description" = "אנא הפעל הרשאה זו בהגדרות כדי להשתמש בתכונה זו.";
+"open_settings" = "פתח הגדרות";
+
+// MARK: - Safety
+"safety" = "בטיחות";
+"sos" = "חירום";
+"emergency" = "מקרה חירום";
+"share_location" = "שתף מיקום";
+"emergency_contacts" = "אנשי קשר לחירום";
+"night_mode" = "מצב לילה";
+"well_lit_routes" = "מסלולים מוארים";
+"incident_reports" = "דיווחי תקריות";
+
+// MARK: - Social
+"social" = "חברתי";
+"friends" = "חברים";
+"share_eta" = "שתף זמן הגעה";
+"share_route" = "שתף מסלול";
+"invite_friends" = "הזמן חברים";
+"social_plans" = "תכניות חברתיות";
+
+// MARK: - Offline
+"offline" = "מצב לא מקוון";
+"offline_mode" = "מצב לא מקוון";
+"download_maps" = "הורד מפות";
+"offline_available" = "זמין לא מקוון";
+"download_required" = "נדרשת הורדה";
+"storage_used" = "אחסון בשימוש";
+"clear_cache" = "נקה מטמון";
+
+// MARK: - Voice
+"voice_guidance" = "הנחיה קולית";
+"voice_search" = "חיפוש קולי";
+"voice_commands" = "פקודות קוליות";
+"mute" = "השתק";
+"unmute" = "בטל השתקה";
+"volume" = "עוצמת קול";
+
+// MARK: - Haptics
+"haptic_feedback" = "משוב מישושי";
+"haptic_enabled" = "משוב מישושי מופעל";
+"haptic_disabled" = "משוב מישושי מושבת";
+
+// MARK: - Accessibility
+"accessibility" = "נגישות";
+"voice_over" = "VoiceOver";
+"dynamic_type" = "גופן דינמי";
+"high_contrast" = "ניגודיות גבוהה";
+"reduce_motion" = "הפחת תנועה";
+"accessibility_labels" = "תוויות נגישות";
+
+// MARK: - Errors
+"network_error" = "שגיאת רשת";
+"location_error" = "שגיאת מיקום";
+"search_error" = "שגיאת חיפוש";
+"route_error" = "שגיאת מסלול";
+"permission_error" = "שגיאת הרשאה";
+"unknown_error" = "שגיאה לא ידועה";
+"try_again" = "נסה שוב";
+"check_connection" = "בדוק את החיבור לאינטרנט";
+"enable_location" = "הפעל שירותי מיקום";
+"grant_permission" = "תן הרשאה בהגדרות";
+
+// MARK: - Success Messages
+"route_calculated" = "מסלול חושב בהצלחה";
+"location_updated" = "מיקום עודכן";
+"search_completed" = "חיפוש הושלם";
+"adventure_created" = "הרפתקה נוצרה בהצלחה";
+"settings_saved" = "הגדרות נשמרו";
+"data_synced" = "נתונים סונכרנו";
+
+// MARK: - Confirmation Dialogs
+"exit_navigation_confirm" = "צא מניווט?";
+"exit_navigation_message" = "תאבד את המסלול הנוכחי והתקדמות הניווט.";
+"delete_confirm" = "מחק פריט?";
+"delete_confirm_message" = "פעולה זו לא ניתנת לביטול.";
+"clear_cache_confirm" = "נקה מטמון?";
+"clear_cache_message" = "זה יסיר את כל המפות שהורדו ונתוני המטמון.";
+
+// MARK: - Onboarding
+"welcome" = "ברוכים הבאים לשביל";
+"welcome_subtitle" = "שותף הניווט החכם שלכם";
+"get_started" = "התחל";
+"skip" = "דלג";
+"next_step" = "הבא";
+"finish" = "סיום";
+"onboarding_step_1_title" = "גלה מקומות";
+"onboarding_step_1_description" = "מצא מקומות ופעילויות מדהימים סביבך";
+"onboarding_step_2_title" = "ניווט חכם";
+"onboarding_step_2_description" = "קבל הוראות שלב אחר שלב עם הנחיה קולית";
+"onboarding_step_3_title" = "צור הרפתקאות";
+"onboarding_step_3_description" = "תן לבינה המלאכותית לתכנן הרפתקאות מותאמות אישית עבורך";
+"onboarding_step_4_title" = "הישאר בטוח";
+"onboarding_step_4_description" = "שתף את המיקום שלך וקבל התראות בטיחות";
+
+// MARK: - Place Details
+"place_details" = "פרטי מקום";
+"address" = "כתובת";
+"phone" = "טלפון";
+"website" = "אתר אינטרנט";
+"hours" = "שעות פעילות";
+"rating" = "דירוג";
+"reviews" = "ביקורות";
+"photos" = "תמונות";
+"directions" = "הוראות הגעה";
+"save_place" = "שמור מקום";
+"share_place" = "שתף מקום";
+"call" = "התקשר";
+"visit_website" = "בקר באתר";
+
+// MARK: - Saved Places
+"saved_places" = "מקומות שמורים";
+"favorites" = "מועדפים";
+"recent" = "אחרונים";
+"home" = "בית";
+"work" = "עבודה";
+"add_to_favorites" = "הוסף למועדפים";
+"remove_from_favorites" = "הסר מהמועדפים";
+"no_saved_places" = "אין מקומות שמורים";
+"no_saved_places_description" = "שמור מקומות שאתה אוהב כדי לגשת אליהם במהירות";
+
+// MARK: - Route Options
+"route_options" = "אפשרויות מסלול";
+"alternative_routes" = "מסלולים חלופיים";
+"route_details" = "פרטי מסלול";
+"add_stop" = "הוסף עצירה";
+"remove_stop" = "הסר עצירה";
+"reorder_stops" = "סדר מחדש עצירות";
+"avoid_areas" = "הימנע מאזורים";
+"waypoints" = "נקודות דרך";
+
+// MARK: - Navigation UI
+"next_turn" = "פנייה הבאה";
+"in_miles" = "בעוד %d מיילים";
+"in_feet" = "בעוד %d רגל";
+"arrive_at" = "הגע ב-%@";
+"lane_guidance" = "השתמש ב-%d נתיבים";
+"exit_number" = "יציאה %@";
+"road_name" = "%@";
+"traffic_delay" = "עיכוב תנועה: %d דקות";
+"toll_cost" = "עלות אגרה: ₪%.2f";
+"fuel_cost" = "עלות דלק: ₪%.2f";
+
+// MARK: - Adventure UI
+"adventure_title" = "כותרת הרפתקה";
+"adventure_tagline" = "סלוגן הרפתקה";
+"adventure_stops" = "עצירות הרפתקה";
+"adventure_notes" = "הערות הרפתקה";
+"start_adventure" = "התחל הרפתקה";
+"pause_adventure" = "השהה הרפתקה";
+"resume_adventure" = "המשך הרפתקה";
+"complete_adventure" = "סיים הרפתקה";
+"adventure_progress" = "התקדמות הרפתקה";
+"current_stop" = "עצירה נוכחית";
+"next_stop" = "עצירה הבאה";
+"adventure_complete" = "הרפתקה הושלמה!";
+"adventure_complete_message" = "מזל טוב! השלמת את ההרפתקה שלך.";
+
+// MARK: - Time Formats
+"time_format_12h" = "h:mm a";
+"time_format_24h" = "HH:mm";
+"date_format" = "d MMM yyyy";
+"datetime_format" = "d MMM yyyy 'ב-' h:mm a";
+
+// MARK: - Weather
+"sunny" = "שמשי";
+"cloudy" = "מעונן";
+"rainy" = "גשום";
+"stormy" = "סוער";
+"foggy" = "מעורפל";
+"snowy" = "מושלג";
+"clear" = "בהיר";
+"partly_cloudy" = "מעונן חלקית";
+
+// MARK: - Time of Day
+"morning" = "בוקר";
+"afternoon" = "אחר הצהריים";
+"evening" = "ערב";
+"night" = "לילה";
+"dawn" = "שחר";
+"dusk" = "דמדומים";
+
+// MARK: - Days of Week
+"monday" = "יום שני";
+"tuesday" = "יום שלישי";
+"wednesday" = "יום רביעי";
+"thursday" = "יום חמישי";
+"friday" = "יום שישי";
+"saturday" = "יום שבת";
+"sunday" = "יום ראשון";
+
+// MARK: - Months
+"january" = "ינואר";
+"february" = "פברואר";
+"march" = "מרץ";
+"april" = "אפריל";
+"may" = "מאי";
+"june" = "יוני";
+"july" = "יולי";
+"august" = "אוגוסט";
+"september" = "ספטמבר";
+"october" = "אוקטובר";
+"november" = "נובמבר";
+"december" = "דצמבר";

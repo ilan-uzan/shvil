@@ -127,11 +127,15 @@ class SocialKit: ObservableObject {
     }
 
     func updateETAPosition(sessionId: UUID, position: CLLocationCoordinate2D, eta: TimeInterval) async throws {
+        guard let userId = currentUser?.id else {
+            throw SocialError.notAuthenticated
+        }
+        
         let update = ETAPositionUpdate(
-            sessionId: sessionId,
+            userId: userId.uuidString,
             position: Coordinate(position),
-            eta: eta,
-            timestamp: Date()
+            timestamp: Date(),
+            eta: eta
         )
 
         try await client
@@ -375,6 +379,20 @@ class SocialKit: ObservableObject {
 
 // MARK: - Supporting Types
 
+struct Coordinate: Codable {
+    let latitude: Double
+    let longitude: Double
+    
+    init(_ coordinate: CLLocationCoordinate2D) {
+        latitude = coordinate.latitude
+        longitude = coordinate.longitude
+    }
+    
+    var clLocationCoordinate2D: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+}
+
 struct Friend: Identifiable, Codable {
     let id: UUID
     let userId: UUID
@@ -424,10 +442,10 @@ struct FriendLocation: Identifiable {
 }
 
 struct ETAPositionUpdate: Codable {
-    let sessionId: UUID
+    let userId: String
     let position: Coordinate
-    let eta: TimeInterval
     let timestamp: Date
+    let eta: TimeInterval
 }
 
 enum SocialError: Error {

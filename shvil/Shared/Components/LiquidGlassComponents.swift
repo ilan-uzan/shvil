@@ -7,58 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Search Pill Component (Glass Pill)
-
-struct SearchPill: View {
-    @Binding var searchText: String
-    let onTap: () -> Void
-    @State private var isFocused = false
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(LiquidGlassColors.secondaryText)
-                .font(.system(size: 16, weight: .medium))
-
-            TextField("Search places or address", text: $searchText)
-                .font(LiquidGlassTypography.body)
-                .foregroundColor(LiquidGlassColors.primaryText)
-                .textFieldStyle(PlainTextFieldStyle())
-                .onTapGesture {
-                    onTap()
-                }
-
-            if !searchText.isEmpty {
-                Button(action: {
-                    searchText = ""
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(LiquidGlassColors.secondaryText)
-                        .font(.system(size: 16))
-                }
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(
-            Capsule()
-                .fill(LiquidGlassColors.glassSurface1)
-                .overlay(
-                    Capsule()
-                        .stroke(isFocused ? LiquidGlassColors.accentText : Color.white.opacity(0.2), lineWidth: 2)
-                )
-                .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
-        )
-        .onTapGesture {
-            onTap()
-        }
-        .buttonAccessibility(
-            label: "Search places or address",
-            hint: "Double tap to open search"
-        )
-        .dynamicTypeSupport()
-    }
-}
 
 // MARK: - Glass Button Component
 
@@ -199,67 +147,6 @@ struct GlassBottomSheet<Content: View>: View {
     }
 }
 
-// MARK: - Route Card Component
-
-struct RouteCard: View {
-    let route: RouteInfo
-    let isSelected: Bool
-    let onTap: () -> Void
-    @State private var isPressed = false
-
-    var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(route.type)
-                            .font(LiquidGlassTypography.body)
-                            .foregroundColor(LiquidGlassColors.primaryText)
-
-                        Text(route.isFastest ? "Fastest" : route.isSafest ? "Safest" : "Route")
-                            .font(LiquidGlassTypography.caption)
-                            .foregroundColor(LiquidGlassColors.secondaryText)
-                    }
-
-                    Spacer()
-
-                    VStack(alignment: .trailing, spacing: 4) {
-                        Text(route.duration)
-                            .font(LiquidGlassTypography.bodySemibold)
-                            .foregroundColor(LiquidGlassColors.accentText)
-
-                        Text(route.distance)
-                            .font(LiquidGlassTypography.caption)
-                            .foregroundColor(LiquidGlassColors.secondaryText)
-                    }
-                }
-
-                // Route preview line
-                HStack(spacing: 4) {
-                    ForEach(0 ..< 5) { _ in
-                        RoundedRectangle(cornerRadius: 1)
-                            .fill(LiquidGlassColors.accentText)
-                            .frame(height: 3)
-                    }
-                }
-            }
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? LiquidGlassColors.glassSurface2 : LiquidGlassColors.glassSurface1)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(isSelected ? LiquidGlassColors.accentText : Color.clear, lineWidth: 2)
-                    )
-            )
-        }
-        .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
-        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-            isPressed = pressing
-        }, perform: {})
-    }
-}
 
 // MARK: - Glass FAB Component (56×56pt, circular)
 

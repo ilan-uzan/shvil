@@ -90,7 +90,7 @@ struct AdventureRecapView: View {
                     .foregroundColor(LiquidGlassColors.accentDeepAqua)
                     .multilineTextAlignment(.center)
 
-                Text("You've successfully completed your \(adventure.mood.displayName.lowercased()) adventure!")
+                Text("You've successfully completed your \(adventure.theme.displayName.lowercased()) adventure!")
                     .font(LiquidGlassTypography.body)
                     .foregroundColor(LiquidGlassColors.secondaryText)
                     .multilineTextAlignment(.center)
@@ -112,7 +112,7 @@ struct AdventureRecapView: View {
                 statCard(
                     icon: "clock.fill",
                     title: "Duration",
-                    value: "\(adventure.durationHours)h",
+                    value: "\(adventure.totalDuration / 60)h",
                     color: LiquidGlassColors.accentDeepAqua
                 )
 
@@ -167,7 +167,7 @@ struct AdventureRecapView: View {
                 .foregroundColor(LiquidGlassColors.primaryText)
 
             Map(coordinateRegion: .constant(mapRegion), annotationItems: adventure.stops) { stop in
-                MapAnnotation(coordinate: stop.coordinate ?? CLLocationCoordinate2D()) {
+                MapAnnotation(coordinate: stop.coordinate) {
                     ZStack {
                         Circle()
                             .fill(Color.green)
@@ -190,9 +190,7 @@ struct AdventureRecapView: View {
     }
 
     private var mapRegion: MKCoordinateRegion {
-        guard let firstStop = adventure.stops.first,
-              let coordinate = firstStop.coordinate
-        else {
+        guard let firstStop = adventure.stops.first else {
             return MKCoordinateRegion(
                 center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
@@ -200,7 +198,7 @@ struct AdventureRecapView: View {
         }
 
         return MKCoordinateRegion(
-            center: coordinate,
+            center: firstStop.coordinate,
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         )
     }
@@ -241,15 +239,13 @@ struct AdventureRecapView: View {
             }
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(stop.chapter)
+                Text(stop.name)
                     .font(LiquidGlassTypography.bodyMedium)
                     .foregroundColor(LiquidGlassColors.primaryText)
 
-                if let name = stop.name {
-                    Text(name)
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
-                }
+                Text(stop.description)
+                    .font(LiquidGlassTypography.caption)
+                    .foregroundColor(LiquidGlassColors.secondaryText)
             }
 
             Spacer()
@@ -264,6 +260,7 @@ struct AdventureRecapView: View {
 
     private func stopIcon(for category: StopCategory) -> String {
         switch category {
+        case .all: "star"
         case .landmark: "building"
         case .food: "fork.knife"
         case .scenic: "camera"
@@ -271,6 +268,10 @@ struct AdventureRecapView: View {
         case .activity: "figure.run"
         case .nightlife: "moon.stars"
         case .hiddenGem: "star"
+        case .shopping: "bag"
+        case .entertainment: "tv"
+        case .services: "wrench.and.screwdriver"
+        case .transportation: "car"
         }
     }
 
@@ -372,9 +373,9 @@ struct AdventureRecapView: View {
         🎉 I just completed an amazing adventure with Shvil!
 
         \(adventure.title)
-        \(adventure.tagline)
+        \(adventure.description)
 
-        \(adventure.stops.count) stops • \(adventure.durationHours) hours • \(adventure.mood.displayName)
+        \(adventure.stops.count) stops • \(adventure.totalDuration / 60) hours • \(adventure.theme.displayName)
 
         Download Shvil to create your own adventures!
         """
@@ -404,33 +405,36 @@ struct ShareSheet: UIViewControllerRepresentable {
 #Preview {
     AdventureRecapView(adventure: AdventurePlan(
         title: "Downtown Food Adventure",
-        tagline: "A culinary journey through the heart of the city",
-        theme: "Food & Culture",
-        mood: .fun,
-        durationHours: 3,
-        isGroup: false,
+        description: "A culinary journey through the heart of the city",
+        theme: .fun,
         stops: [
             AdventureStop(
-                chapter: "Morning Coffee",
-                category: .food,
-                idealDurationMin: 30,
-                narrative: "Start your day with the best coffee in town",
-                constraints: StopConstraints(),
                 name: "Blue Bottle Coffee",
-                address: "123 Main St",
-                coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
+                description: "Start your day with the best coffee in town",
+                coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+                category: .food,
+                estimatedDuration: 30,
+                openingHours: "7:00 AM - 6:00 PM",
+                priceLevel: .medium,
+                rating: 4.5,
+                isAccessible: true,
+                tags: ["coffee", "breakfast"]
             ),
             AdventureStop(
-                chapter: "Art Gallery",
-                category: .museum,
-                idealDurationMin: 45,
-                narrative: "Explore contemporary art",
-                constraints: StopConstraints(),
                 name: "Modern Art Gallery",
-                address: "456 Art Ave",
-                coordinate: CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4094)
+                description: "Explore contemporary art",
+                coordinate: CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4094),
+                category: .museum,
+                estimatedDuration: 45,
+                openingHours: "10:00 AM - 6:00 PM",
+                priceLevel: .high,
+                rating: 4.2,
+                isAccessible: true,
+                tags: ["art", "culture"]
             ),
         ],
-        notes: "Perfect for a weekend morning"
+        totalDuration: 180,
+        totalDistance: 2000,
+        budgetLevel: .medium
     ))
 }

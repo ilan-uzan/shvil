@@ -57,13 +57,9 @@ public class SafetyKit: ObservableObject {
         let report = SafetyReport(
             id: UUID(),
             type: type,
-            coordinate: Coordinate(coordinate),
-            description: description,
-            reporterId: nil, // Anonymous for now
-            createdAt: Date(),
-            expiresAt: Date().addingTimeInterval(reportTTL),
-            isActive: true,
-            geohash: coordinate.geohash(precision: geohashPrecision)
+            coordinate: coordinate,
+            description: description ?? "",
+            createdAt: Date()
         )
 
         // Check for duplicates
@@ -109,7 +105,7 @@ public class SafetyKit: ObservableObject {
         return SafetyAlert(
             type: report.type,
             message: alertMessage(for: report.type),
-            coordinate: report.coordinate.clLocationCoordinate2D,
+            coordinate: report.coordinate,
             severity: severityForReport(report)
         )
     }
@@ -119,7 +115,7 @@ public class SafetyKit: ObservableObject {
     private func loadCachedReports() {
         Task {
             let cached = await persistence.loadSafetyReports()
-            safetyReports = cached.filter { $0.isActive && $0.expiresAt > Date() }
+            safetyReports = cached
         }
     }
 
@@ -140,8 +136,7 @@ public class SafetyKit: ObservableObject {
 
     private func isDuplicateReport(_ report: SafetyReport) -> Bool {
         let sameType = safetyReports.filter { $0.type == report.type }
-        let sameGeohash = sameType.filter { $0.geohash == report.geohash }
-        let recent = sameGeohash.filter {
+        let recent = sameType.filter {
             abs($0.createdAt.timeIntervalSince(report.createdAt)) < 300 // 5 minutes
         }
 
@@ -180,10 +175,20 @@ public class SafetyKit: ObservableObject {
         switch type {
         case .police:
             "Police ahead"
-        case .speedCamera:
-            "Speed camera ahead"
         case .accident:
             "Accident reported ahead"
+        case .roadClosure:
+            "Road closure ahead"
+        case .construction:
+            "Construction ahead"
+        case .hazard:
+            "Hazard reported ahead"
+        case .emergency:
+            "Emergency ahead"
+        case .weather:
+            "Weather warning"
+        case .other:
+            "Incident reported ahead"
         }
     }
 
@@ -195,8 +200,18 @@ public class SafetyKit: ObservableObject {
             return age < 15 * 60 ? .high : .medium
         case .police:
             return age < 30 * 60 ? .high : .low
-        case .speedCamera:
+        case .roadClosure:
+            return age < 60 * 60 ? .high : .medium
+        case .construction:
             return .medium
+        case .hazard:
+            return age < 30 * 60 ? .high : .medium
+        case .emergency:
+            return .high
+        case .weather:
+            return .medium
+        case .other:
+            return .low
         }
     }
 
@@ -210,13 +225,14 @@ public class SafetyKit: ObservableObject {
     }
 
     private func cleanupExpiredReports() {
-        let now = Date()
-        safetyReports.removeAll { $0.expiresAt <= now }
-        nearbyReports.removeAll { $0.expiresAt <= now }
+        // Clean up old reports (older than 1 hour)
+        let oneHourAgo = Date().addingTimeInterval(-3600)
+        safetyReports.removeAll { $0.createdAt < oneHourAgo }
+        nearbyReports.removeAll { $0.createdAt < oneHourAgo }
 
         // Clean up cache
         let expiredIds = reportCache.compactMap { key, report in
-            report.expiresAt <= now ? key : nil
+            report.createdAt < oneHourAgo ? key : nil
         }
 
         for id in expiredIds {
@@ -226,62 +242,6 @@ public class SafetyKit: ObservableObject {
 }
 
 // MARK: - Supporting Types
-
-public struct SafetyReport: Identifiable, Codable {
-    public let id: UUID
-    public let type: SafetyReportType
-    public let coordinate: Coordinate
-    public let description: String?
-    public let reporterId: UUID?
-    public let createdAt: Date
-    public let expiresAt: Date
-    public let isActive: Bool
-    public let geohash: String
-}
-
-public struct Coordinate: Codable {
-    public let latitude: Double
-    public let longitude: Double
-
-    public init(_ coordinate: CLLocationCoordinate2D) {
-        latitude = coordinate.latitude
-        longitude = coordinate.longitude
-    }
-
-    public var clLocationCoordinate2D: CLLocationCoordinate2D {
-        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-    }
-}
-
-public enum SafetyReportType: String, Codable, CaseIterable {
-    case police
-    case speedCamera = "speed_camera"
-    case accident
-
-    var displayName: String {
-        switch self {
-        case .police: "Police"
-        case .speedCamera: "Speed Camera"
-        case .accident: "Accident"
-        }
-    }
-
-    var iconName: String {
-        switch self {
-        case .police: "shield.fill"
-        case .speedCamera: "camera.fill"
-        case .accident: "exclamationmark.triangle.fill"
-        }
-    }
-
-    var color: String {
-        switch self {
-        case .police: "#FFCC00"
-        case .speedCamera: "#0A84FF"
-        case .accident: "#FF3B30"
-        }
-    }
-}
 
 struct SafetyAlert {
     let type: SafetyReportType

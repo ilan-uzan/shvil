@@ -10,7 +10,7 @@ import CoreLocation
 import Foundation
 import MapKit
 
-class LocationService: NSObject, ObservableObject {
+public class LocationService: NSObject, ObservableObject {
     @Published var currentLocation: CLLocation?
     @Published var isLocationEnabled = false
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
@@ -62,7 +62,7 @@ class LocationService: NSObject, ObservableObject {
 // MARK: - CLLocationManagerDelegate
 
 extension LocationService: CLLocationManagerDelegate {
-    func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    public func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
 
         DispatchQueue.main.async {
@@ -76,11 +76,11 @@ extension LocationService: CLLocationManagerDelegate {
         }
     }
 
-    func locationManager(_: CLLocationManager, didFailWithError error: Error) {
+    public func locationManager(_: CLLocationManager, didFailWithError error: Error) {
         print("Location error: \(error.localizedDescription)")
     }
 
-    func locationManager(_: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+    public func locationManager(_: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         DispatchQueue.main.async {
             self.authorizationStatus = status
             self.isLocationEnabled = (status == .authorizedWhenInUse || status == .authorizedAlways)
