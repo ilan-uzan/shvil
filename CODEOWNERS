@@ -1,0 +1,30 @@
+# Global ownership
+* @ilan-uzan
+
+# Core architecture
+/AppCore/ @ilan-uzan
+/LocationKit/ @ilan-uzan
+/MapEngine/ @ilan-uzan
+/RoutingEngine/ @ilan-uzan
+/ContextEngine/ @ilan-uzan
+
+# Social and safety features
+/SocialKit/ @ilan-uzan
+/SafetyKit/ @ilan-uzan
+
+# Data and privacy
+/Persistence/ @ilan-uzan
+/PrivacyGuard/ @ilan-uzan
+
+# Design system
+/Shared/Design/ @ilan-uzan
+/Shared/Components/ @ilan-uzan
+
+# Documentation
+*.md @ilan-uzan
+/docs/ @ilan-uzan
+
+# Configuration files
+/.github/ @ilan-uzan
+*.yml @ilan-uzan
+*.yaml @ilan-uzan

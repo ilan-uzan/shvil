@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+    
+    strategy:
+      matrix:
+        destination: ['platform=iOS Simulator,name=iPhone 16', 'platform=iOS Simulator,name=iPad Pro (12.9-inch)']
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Select Xcode
+      run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+      
+    - name: Cache Swift Package Manager
+      uses: actions/cache@v3
+      with:
+        path: .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+          
+    - name: Cache DerivedData
+      uses: actions/cache@v3
+      with:
+        path: ~/Library/Developer/Xcode/DerivedData
+        key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.xcodeproj') }}
+        restore-keys: |
+          ${{ runner.os }}-deriveddata-
+          
+    - name: Build
+      run: |
+        xcodebuild -project shvil.xcodeproj \
+          -scheme shvil \
+          -destination '${{ matrix.destination }}' \
+          -configuration Debug \
+          build
+          
+    - name: Test
+      run: |
+        xcodebuild -project shvil.xcodeproj \
+          -scheme shvil \
+          -destination '${{ matrix.destination }}' \
+          -configuration Debug \
+          test
+          
+    - name: Build for Release
+      run: |
+        xcodebuild -project shvil.xcodeproj \
+          -scheme shvil \
+          -destination '${{ matrix.destination }}' \
+          -configuration Release \
+          build
+
+  swift-format:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Install SwiftFormat
+      run: |
+        brew install swiftformat
+        
+    - name: Check SwiftFormat
+      run: |
+        swiftformat --lint .
+        
+  security-scan:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Security Scan
+      run: |
+        # Check for hardcoded secrets
+        if grep -r "sk_live\|pk_live\|secret\|password\|key" --include="*.swift" --include="*.plist" .; then
+          echo "❌ Potential secrets found in code"
+          exit 1
+        else
+          echo "✅ No hardcoded secrets found"
+        fi
+        
+        # Check for TODO/FIXME comments
+        if grep -r "TODO\|FIXME\|HACK" --include="*.swift" .; then
+          echo "⚠️  TODO/FIXME comments found - review before merge"
+        fi
+
+  accessibility-check:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Accessibility Check
+      run: |
+        # Check for accessibility labels
+        if ! grep -r "accessibilityLabel\|accessibilityHint\|accessibilityValue" --include="*.swift" .; then
+          echo "⚠️  No accessibility labels found - ensure UI is accessible"
+        else
+          echo "✅ Accessibility labels found"
+        fi
