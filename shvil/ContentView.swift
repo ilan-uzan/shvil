@@ -13,38 +13,38 @@ struct ContentView: View {
     @State private var selectedTab = 0
     
     var body: some View {
-        TabView(selection: $selectedTab) {
-            // Map Tab
+                TabView(selection: $selectedTab) {
+                    // Map Tab
             MapView()
                 .tabItem {
                     Image(systemName: "map.fill")
                     Text("Map")
                 }
-                .tag(0)
-            
-            // Search Tab
+                        .tag(0)
+                    
+                    // Search Tab
             SearchView()
                 .tabItem {
                     Image(systemName: "magnifyingglass")
                     Text("Search")
                 }
-                .tag(1)
-            
-            // Saved Places Tab
+                        .tag(1)
+                    
+                    // Saved Places Tab
             SavedPlacesView()
                 .tabItem {
                     Image(systemName: "heart.fill")
                     Text("Saved")
                 }
-                .tag(2)
-            
-            // Profile Tab
+                        .tag(2)
+                    
+                    // Profile Tab
             ProfileView()
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Profile")
                 }
-                .tag(3)
+                        .tag(3)
         }
         .accentColor(LiquidGlassColors.accentText)
     }
@@ -153,10 +153,10 @@ struct SearchResultRow: View {
                         .font(.system(size: 14))
                         .foregroundColor(LiquidGlassColors.secondaryText)
                         .multilineTextAlignment(.leading)
-                }
-                
-                Spacer()
-                
+            }
+            
+            Spacer()
+            
                 Text(distance)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(LiquidGlassColors.secondaryText)
@@ -224,8 +224,8 @@ struct SavedPlacesView: View {
                         Image(systemName: "heart")
                             .font(.system(size: 60))
                             .foregroundColor(LiquidGlassColors.accentText.opacity(0.6))
-                        
-                        VStack(spacing: 12) {
+                    
+                    VStack(spacing: 12) {
                             Text("No saved places yet")
                                 .font(.system(size: 24, weight: .semibold))
                                 .foregroundColor(LiquidGlassColors.primaryText)
@@ -244,7 +244,7 @@ struct SavedPlacesView: View {
                                 Text("Add Your First Place")
                             }
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white)
+                                .foregroundColor(.white)
                             .padding(.horizontal, 24)
                             .padding(.vertical, 12)
                             .background(LiquidGlassGradients.primaryGradient)
@@ -369,13 +369,13 @@ struct SavedPlaceRow: View {
 struct ProfileView: View {
     var body: some View {
         NavigationView {
-            ScrollView {
+        ScrollView {
                 VStack(spacing: 32) {
-                    // Profile Header
+                // Profile Header
                     VStack(spacing: 20) {
-                        // Profile Picture
+                    // Profile Picture
                         ZStack {
-                            Circle()
+                    Circle()
                                 .fill(LiquidGlassGradients.primaryGradient)
                                 .frame(width: 120, height: 120)
                                 .glassEffect(elevation: .high)
@@ -389,8 +389,8 @@ struct ProfileView: View {
                             Text("Welcome to Shvil")
                                 .font(.system(size: 28, weight: .bold))
                                 .foregroundColor(LiquidGlassColors.primaryText)
-                            
-                            Text("Your personal navigation assistant")
+                        
+                        Text("Your personal navigation assistant")
                                 .font(.system(size: 16))
                                 .foregroundColor(LiquidGlassColors.secondaryText)
                                 .multilineTextAlignment(.center)
