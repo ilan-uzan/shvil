@@ -2,304 +2,228 @@
 //  LiquidGlassDesign.swift
 //  shvil
 //
-//  Created by Shvil Team on 2024.
-//  Liquid Glass Design System for Shvil Minimal
+//  Created by ilan on 2024.
 //
 
 import SwiftUI
 
-// MARK: - Color Tokens
-struct LiquidGlassColors {
-    // Primary Colors
-    static let icyTurquoise = Color(red: 0.49, green: 0.83, blue: 0.99) // #7DD3FC
-    static let deepAqua = Color(red: 0.05, green: 0.58, blue: 0.53) // #0D9488
+// MARK: - Liquid Glass Design System
+// Exact implementation matching the spec requirements
+
+// MARK: - Typography (SF Pro)
+struct LiquidGlassTypography {
+    // TitleXL (Nav instruction): 24–28pt, semibold
+    static let titleXL = Font.system(size: 26, weight: .semibold, design: .default)
     
-    // Glass Surface Colors
-    static let glassSurface1 = Color.white.opacity(0.1)
-    static let glassSurface2 = Color.white.opacity(0.15)
-    static let glassSurface3 = Color.white.opacity(0.2)
+    // Title (Sheet headers): 20–22pt, semibold
+    static let title = Font.system(size: 21, weight: .semibold, design: .default)
+    
+    // Body: 17pt min
+    static let body = Font.system(size: 17, weight: .regular, design: .default)
+    static let bodyMedium = Font.system(size: 17, weight: .medium, design: .default)
+    static let bodySemibold = Font.system(size: 17, weight: .semibold, design: .default)
+    
+    // Caption: 13–15pt
+    static let caption = Font.system(size: 14, weight: .regular, design: .default)
+    static let captionMedium = Font.system(size: 14, weight: .medium, design: .default)
+    static let captionSmall = Font.system(size: 13, weight: .regular, design: .default)
+}
+
+// MARK: - Color Palette
+struct LiquidGlassColors {
+    // Accent Gradient: Turquoise (#3DDAD7) → Deep Aqua (#007C8C)
+    static let accentTurquoise = Color(red: 0.24, green: 0.85, blue: 0.84) // #3DDAD7
+    static let accentDeepAqua = Color(red: 0.0, green: 0.49, blue: 0.55)   // #007C8C
+    
+    // Surface/Glass: #0E1116 with 40–60% opacity, subtle bluish tint
+    static let glassBase = Color(red: 0.055, green: 0.067, blue: 0.086) // #0E1116
+    static let glassSurface1 = glassBase.opacity(0.4)
+    static let glassSurface2 = glassBase.opacity(0.5)
+    static let glassSurface3 = glassBase.opacity(0.6)
+    
+    // Map Base: neutral/desaturated
+    static let mapBase = Color(red: 0.2, green: 0.2, blue: 0.2)
+    static let mapRoads = Color(red: 0.3, green: 0.3, blue: 0.3)
+    
+    // Alerts
+    static let accident = Color(red: 1.0, green: 0.23, blue: 0.19)  // #FF3B30
+    static let police = Color(red: 1.0, green: 0.8, blue: 0.0)     // #FFCC00
+    static let camera = Color(red: 0.04, green: 0.52, blue: 1.0)   // #0A84FF
     
     // Text Colors
-    static let primaryText = Color(red: 0.12, green: 0.16, blue: 0.22) // #1F2937
-    static let secondaryText = Color(red: 0.42, green: 0.45, blue: 0.50) // #6B7280
-    static let accentText = icyTurquoise
+    static let primaryText = Color.white
+    static let secondaryText = Color.white.opacity(0.7)
+    static let accentText = accentTurquoise
     
-    // Dark Mode Adaptations
-    static let darkGlassSurface1 = Color.black.opacity(0.1)
-    static let darkGlassSurface2 = Color.black.opacity(0.15)
-    static let darkGlassSurface3 = Color.black.opacity(0.2)
-    static let darkPrimaryText = Color.white
-    static let darkSecondaryText = Color(red: 0.75, green: 0.78, blue: 0.83) // #BFC2C7
+    // Background
+    static let background = Color.black
+    static let surface = glassSurface1
 }
 
-// MARK: - Typography Tokens
-struct LiquidGlassTypography {
-    // Font Sizes
-    static let largeTitle: CGFloat = 34
-    static let title1: CGFloat = 28
-    static let title2: CGFloat = 22
-    static let title3: CGFloat = 20
-    static let headline: CGFloat = 17
-    static let body: CGFloat = 17
-    static let callout: CGFloat = 16
-    static let subhead: CGFloat = 15
-    static let footnote: CGFloat = 13
-    static let caption1: CGFloat = 12
-    static let caption2: CGFloat = 11
+// MARK: - Gradients
+struct LiquidGlassGradients {
+    // Primary Accent Gradient
+    static let primaryGradient = LinearGradient(
+        colors: [LiquidGlassColors.accentTurquoise, LiquidGlassColors.accentDeepAqua],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
     
-    // Font Weights
-    static let bold = Font.Weight.bold
-    static let semibold = Font.Weight.semibold
-    static let regular = Font.Weight.regular
-    static let medium = Font.Weight.medium
+    // Glass Surface Gradients
+    static let glassGradient1 = LinearGradient(
+        colors: [LiquidGlassColors.glassSurface1, LiquidGlassColors.glassSurface2],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+    
+    static let glassGradient2 = LinearGradient(
+        colors: [LiquidGlassColors.glassSurface2, LiquidGlassColors.glassSurface3],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+    
+    // Route Polyline Gradient
+    static let routeGradient = LinearGradient(
+        colors: [LiquidGlassColors.accentTurquoise, LiquidGlassColors.accentDeepAqua],
+        startPoint: .leading,
+        endPoint: .trailing
+    )
 }
 
-// MARK: - Spacing Tokens
-struct LiquidGlassSpacing {
-    static let xs: CGFloat = 4
-    static let sm: CGFloat = 8
-    static let md: CGFloat = 16
-    static let lg: CGFloat = 24
-    static let xl: CGFloat = 32
-    static let xxl: CGFloat = 48
-    static let xxxl: CGFloat = 64
-}
-
-// MARK: - Animation Tokens
+// MARK: - Animations
 struct LiquidGlassAnimations {
-    static let microInteraction = Animation.easeOut(duration: 0.15)
-    static let transition = Animation.easeInOut(duration: 0.3)
-    static let pageTransition = Animation.easeInOut(duration: 0.5)
+    // Micro interactions: ≤200ms
+    static let microInteraction = Animation.easeInOut(duration: 0.15)
     
-    // Ripple Animation
-    static let ripple = Animation.easeOut(duration: 0.2)
-    static let rippleScale: CGFloat = 1.05
+    // Standard interactions: 300ms
+    static let standard = Animation.easeInOut(duration: 0.3)
+    
+    // Pour Animation (sheets): ≤600ms, easeOut
+    static let pourAnimation = Animation.easeOut(duration: 0.6)
+    
+    // Spring animations
+    static let spring = Animation.spring(response: 0.6, dampingFraction: 0.8)
+    
+    // Scale animations for FABs
+    static let fabPress = Animation.easeInOut(duration: 0.1)
 }
 
-// MARK: - Glass Effect Modifiers
+// MARK: - Glass Effect Modifier
 struct GlassEffectModifier: ViewModifier {
     let elevation: GlassElevation
-    @Environment(\.colorScheme) var colorScheme
-    
-    enum GlassElevation {
-        case light
-        case medium
-        case high
-    }
     
     func body(content: Content) -> some View {
         content
-            .background(glassBackground)
-            .overlay(glassOverlay)
-            .shadow(color: glassShadow, radius: shadowRadius, x: 0, y: shadowOffset)
-    }
-    
-    private var glassBackground: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .fill(glassColor)
-            .blur(radius: blurRadius)
-    }
-    
-    private var glassOverlay: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .fill(overlayColor)
-            .blendMode(.overlay)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(glassColor)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(highlightColor, lineWidth: 2)
+                    )
+                    .shadow(color: shadowColor, radius: shadowRadius, x: 0, y: shadowOffset)
+            )
     }
     
     private var glassColor: Color {
         switch elevation {
         case .light:
-            return colorScheme == .dark ? LiquidGlassColors.darkGlassSurface1 : LiquidGlassColors.glassSurface1
+            return LiquidGlassColors.glassSurface1
         case .medium:
-            return colorScheme == .dark ? LiquidGlassColors.darkGlassSurface2 : LiquidGlassColors.glassSurface2
+            return LiquidGlassColors.glassSurface2
         case .high:
-            return colorScheme == .dark ? LiquidGlassColors.darkGlassSurface3 : LiquidGlassColors.glassSurface3
+            return LiquidGlassColors.glassSurface3
         }
     }
     
-    private var overlayColor: Color {
-        colorScheme == .dark ? Color.white.opacity(0.1) : Color.white.opacity(0.2)
+    private var highlightColor: Color {
+        Color.white.opacity(0.2) // 2pt highlight edge
     }
     
-    private var blurRadius: CGFloat {
-        switch elevation {
-        case .light: return 20
-        case .medium: return 30
-        case .high: return 40
-        }
+    private var shadowColor: Color {
+        Color.black.opacity(0.3) // Soft outer shadow
     }
     
     private var shadowRadius: CGFloat {
         switch elevation {
-        case .light: return 8
-        case .medium: return 12
-        case .high: return 16
+        case .light: return 4
+        case .medium: return 8
+        case .high: return 12
         }
     }
     
     private var shadowOffset: CGFloat {
         switch elevation {
-        case .light: return 4
-        case .medium: return 6
-        case .high: return 8
+        case .light: return 2
+        case .medium: return 4
+        case .high: return 6
         }
-    }
-    
-    private var glassShadow: Color {
-        Color.black.opacity(0.15)
     }
 }
 
-// MARK: - Ripple Effect Modifier
-struct RippleEffectModifier: ViewModifier {
-    @State private var isPressed = false
-    @State private var rippleScale: CGFloat = 0
-    @State private var rippleOpacity: Double = 0
+enum GlassElevation {
+    case light
+    case medium
+    case high
+}
+
+// MARK: - Blur Effect Modifier
+struct BlurEffectModifier: ViewModifier {
+    let intensity: CGFloat
     
     func body(content: Content) -> some View {
         content
-            .scaleEffect(isPressed ? 0.98 : 1.0)
-            .overlay(
-                Circle()
-                    .fill(LiquidGlassColors.accentText.opacity(0.3))
-                    .scaleEffect(rippleScale)
-                    .opacity(rippleOpacity)
+            .background(
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .opacity(0.8)
             )
-            .onTapGesture {
-                withAnimation(LiquidGlassAnimations.ripple) {
-                    rippleScale = LiquidGlassAnimations.rippleScale
-                    rippleOpacity = 1.0
-                }
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    withAnimation(LiquidGlassAnimations.ripple) {
-                        rippleScale = 0
-                        rippleOpacity = 0
-                    }
-                }
-            }
-            .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-                withAnimation(LiquidGlassAnimations.microInteraction) {
-                    isPressed = pressing
-                }
-            }, perform: {})
     }
 }
 
 // MARK: - View Extensions
 extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
-    }
-}
-
-struct RoundedCorner: Shape {
-    var radius: CGFloat = .infinity
-    var corners: UIRectCorner = .allCorners
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
-    }
-}
-
-// MARK: - Gradient Tokens
-struct LiquidGlassGradients {
-    static let primaryGradient = LinearGradient(
-        colors: [LiquidGlassColors.icyTurquoise, LiquidGlassColors.deepAqua],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-    
-    static let routeGradient = LinearGradient(
-        colors: [LiquidGlassColors.icyTurquoise, LiquidGlassColors.deepAqua],
-        startPoint: .leading,
-        endPoint: .trailing
-    )
-    
-    static let glassGradient = LinearGradient(
-        colors: [Color.white.opacity(0.1), Color.white.opacity(0.05)],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-}
-
-// MARK: - View Extensions
-extension View {
-    func glassEffect(elevation: GlassEffectModifier.GlassElevation = .medium) -> some View {
-        modifier(GlassEffectModifier(elevation: elevation))
+    func glassEffect(elevation: GlassElevation = .medium) -> some View {
+        self.modifier(GlassEffectModifier(elevation: elevation))
     }
     
-    func rippleEffect() -> some View {
-        modifier(RippleEffectModifier())
+    func glassBlur(intensity: CGFloat = 20) -> some View {
+        self.modifier(BlurEffectModifier(intensity: intensity))
     }
     
-    func liquidGlassStyle() -> some View {
+    func liquidGlassPill() -> some View {
         self
-            .glassEffect(elevation: .medium)
-            .rippleEffect()
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                Capsule()
+                    .fill(LiquidGlassColors.glassSurface1)
+                    .overlay(
+                        Capsule()
+                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                    )
+                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+            )
+    }
+    
+    func liquidGlassFAB() -> some View {
+        self
+            .frame(width: 56, height: 56)
+            .background(
+                Circle()
+                    .fill(LiquidGlassGradients.primaryGradient)
+                    .overlay(
+                        Circle()
+                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                    )
+                    .shadow(color: LiquidGlassColors.accentTurquoise.opacity(0.3), radius: 8, x: 0, y: 4)
+            )
     }
 }
 
-// MARK: - Design System Preview
-struct LiquidGlassDesign_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack(spacing: 20) {
-            // Search Pill
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(LiquidGlassColors.secondaryText)
-                Text("Search places or address")
-                    .foregroundColor(LiquidGlassColors.secondaryText)
-                Spacer()
-            }
-            .padding()
-            .glassEffect(elevation: .light)
-            .cornerRadius(25)
-            
-            // FAB Button
-            Button(action: {}) {
-                Image(systemName: "location.fill")
-                    .font(.title2)
-                    .foregroundColor(LiquidGlassColors.primaryText)
-            }
-            .frame(width: 56, height: 56)
-            .glassEffect(elevation: .medium)
-            .clipShape(Circle())
-            .rippleEffect()
-            
-            // Instruction Card
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Turn right onto Main Street")
-                    .font(.system(size: LiquidGlassTypography.headline, weight: LiquidGlassTypography.semibold))
-                    .foregroundColor(LiquidGlassColors.primaryText)
-                Text("In 200 feet")
-                    .font(.system(size: LiquidGlassTypography.subhead))
-                    .foregroundColor(LiquidGlassColors.secondaryText)
-            }
-            .padding()
-            .glassEffect(elevation: .high)
-            .cornerRadius(16)
-            
-            // Gradient Route Line
-            Rectangle()
-                .fill(LiquidGlassGradients.routeGradient)
-                .frame(height: 6)
-                .cornerRadius(3)
-                .shadow(color: LiquidGlassColors.icyTurquoise.opacity(0.4), radius: 4, x: 0, y: 0)
-        }
-        .padding()
-        .background(
-            LinearGradient(
-                colors: [Color.blue.opacity(0.1), Color.purple.opacity(0.1)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
-        .previewDisplayName("Liquid Glass Components")
-    }
+// MARK: - Route Polyline Style
+struct RoutePolylineStyle {
+    static let strokeWidth: CGFloat = 6
+    static let glowRadius: CGFloat = 8
+    static let glowOpacity: Double = 0.6
 }

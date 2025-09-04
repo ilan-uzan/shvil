@@ -8,11 +8,16 @@
 import Foundation
 import CoreLocation
 import Combine
+import MapKit
 
 class LocationService: NSObject, ObservableObject {
     @Published var currentLocation: CLLocation?
     @Published var isLocationEnabled = false
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
+    @Published var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), // San Francisco default
+        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+    )
     
     private let locationManager = CLLocationManager()
     
@@ -38,6 +43,14 @@ class LocationService: NSObject, ObservableObject {
     func stopLocationUpdates() {
         locationManager.stopUpdatingLocation()
     }
+    
+    func centerOnUserLocation() {
+        guard let location = currentLocation else { return }
+        region = MKCoordinateRegion(
+            center: location.coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        )
+    }
 }
 
 // MARK: - CLLocationManagerDelegate
@@ -45,6 +58,12 @@ extension LocationService: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         currentLocation = location
+        
+        // Update region to follow user
+        region = MKCoordinateRegion(
+            center: location.coordinate,
+            span: region.span
+        )
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// SavedPlace is defined in SupabaseService.swift as a top-level struct
+
 struct ContentView: View {
     @State private var selectedTab = 0
     
@@ -48,228 +50,7 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Liquid Glass Map View
-struct MapView: View {
-    @State private var searchText = ""
-    @State private var isSearchFocused = false
-    @State private var isBottomSheetExpanded = false
-    
-    var body: some View {
-        ZStack {
-            // Map Background (placeholder)
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    LiquidGlassColors.glassSurface1,
-                    LiquidGlassColors.glassSurface2
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Top Bar
-                HStack {
-                    // Profile Button
-                    Button(action: {
-                        print("Profile tapped")
-                    }) {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(LiquidGlassColors.accentText)
-                    }
-                    
-                    Spacer()
-                    
-                    // Search Pill
-                    SearchPill(searchText: $searchText, onTap: {
-                        isSearchFocused = true
-                    })
-                    .frame(maxWidth: 280)
-                    
-                    Spacer()
-                    
-                    // Mic Button
-                    Button(action: {
-                        print("Voice search tapped")
-                    }) {
-                        Image(systemName: "mic.fill")
-                            .font(.system(size: 20))
-                            .foregroundColor(LiquidGlassColors.accentText)
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 10)
-                
-                Spacer()
-                
-                // Floating Buttons
-                HStack {
-                    // Layers Button
-                    VStack {
-                        Button(action: {
-                            print("Layers tapped")
-                        }) {
-                            Image(systemName: "square.stack.3d.up")
-                                .font(.system(size: 20))
-                                .foregroundColor(LiquidGlassColors.primaryText)
-                        }
-                        .padding(12)
-                        .background(
-                            Circle()
-                                .fill(LiquidGlassColors.glassSurface2)
-                                .overlay(
-                                    Circle()
-                                        .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
-                                )
-                        )
-                        
-                        Text("Layers")
-                            .font(.system(size: 10))
-                            .foregroundColor(LiquidGlassColors.secondaryText)
-                    }
-                    
-                    Spacer()
-                    
-                    // Locate Me Button
-                    VStack {
-                        Button(action: {
-                            print("Locate me tapped")
-                        }) {
-                            Image(systemName: "location.fill")
-                                .font(.system(size: 20))
-                                .foregroundColor(LiquidGlassColors.primaryText)
-                        }
-                        .padding(12)
-                        .background(
-                            Circle()
-                                .fill(LiquidGlassColors.glassSurface2)
-                                .overlay(
-                                    Circle()
-                                        .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
-                                )
-                        )
-                        
-                        Text("Locate")
-                            .font(.system(size: 10))
-                            .foregroundColor(LiquidGlassColors.secondaryText)
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 100)
-            }
-            
-            // Bottom Sheet (Simplified)
-            VStack {
-                Spacer()
-                
-                VStack(spacing: 16) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("12 min")
-                                .font(.system(size: 24, weight: .bold))
-                                .foregroundColor(LiquidGlassColors.primaryText)
-                            
-                            Text("2.3 miles via Main St")
-                                .font(.system(size: 14))
-                                .foregroundColor(LiquidGlassColors.secondaryText)
-                        }
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            withAnimation {
-                                isBottomSheetExpanded.toggle()
-                            }
-                        }) {
-                            Image(systemName: isBottomSheetExpanded ? "chevron.down" : "chevron.up")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(LiquidGlassColors.secondaryText)
-                        }
-                    }
-                    
-                    if isBottomSheetExpanded {
-                        VStack(spacing: 16) {
-                            // Route Options
-                            RouteCard(
-                                route: RouteCard.RouteInfo(
-                                    duration: "12 min",
-                                    distance: "2.3 miles",
-                                    type: "Drive",
-                                    isFastest: true,
-                                    isSafest: false
-                                ),
-                                isSelected: true,
-                                onTap: {
-                                    print("Fastest route selected")
-                                }
-                            )
-                            
-                            RouteCard(
-                                route: RouteCard.RouteInfo(
-                                    duration: "15 min",
-                                    distance: "2.1 miles",
-                                    type: "Drive",
-                                    isFastest: false,
-                                    isSafest: true
-                                ),
-                                isSelected: false,
-                                onTap: {
-                                    print("Safest route selected")
-                                }
-                            )
-                            
-                            // Action Buttons
-                            HStack(spacing: 16) {
-                                Button(action: {
-                                    print("Share ETA tapped")
-                                }) {
-                                    HStack {
-                                        Image(systemName: "square.and.arrow.up")
-                                        Text("Share ETA")
-                                    }
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(LiquidGlassColors.accentText)
-                                }
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 12)
-                                .background(LiquidGlassColors.accentText.opacity(0.1))
-                                .cornerRadius(25)
-                                
-                                Button(action: {
-                                    print("Start navigation tapped")
-                                }) {
-                                    HStack {
-                                        Image(systemName: "play.fill")
-                                        Text("Start")
-                                    }
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(.white)
-                                }
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 12)
-                                .background(LiquidGlassGradients.primaryGradient)
-                                .cornerRadius(25)
-                            }
-                        }
-                    }
-                }
-                .padding(20)
-                .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(LiquidGlassColors.glassSurface2)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
-                        )
-                )
-                .padding(.horizontal, 20)
-                .padding(.bottom, 50)
-            }
-        }
-        .navigationBarHidden(true)
-    }
-}
+// MARK: - Placeholder Views (will be replaced with real implementations)
 
 // MARK: - Liquid Glass Search View
 struct SearchView: View {
@@ -432,11 +213,7 @@ struct RecentSearchRow: View {
 
 // MARK: - Liquid Glass Saved Places View
 struct SavedPlacesView: View {
-    @State private var savedPlaces = [
-        SavedPlace(name: "Home", address: "123 Main St", type: .home),
-        SavedPlace(name: "Work", address: "456 Business Ave", type: .work),
-        SavedPlace(name: "Coffee Shop", address: "789 Coffee St", type: .favorite)
-    ]
+    @State private var savedPlaces: [SavedPlace] = []
     
     var body: some View {
         NavigationView {
@@ -504,20 +281,7 @@ struct SavedPlacesView: View {
     }
 }
 
-// MARK: - Saved Place Model
-struct SavedPlace: Identifiable {
-    let id = UUID()
-    let name: String
-    let address: String
-    let type: PlaceType
-    
-    enum PlaceType {
-        case home
-        case work
-        case favorite
-        case custom
-    }
-}
+// MARK: - Saved Place Model (moved to SupabaseService)
 
 // MARK: - Saved Place Row
 struct SavedPlaceRow: View {
@@ -585,7 +349,7 @@ struct SavedPlaceRow: View {
     private var placeColor: Color {
         switch place.type {
         case .home: return LiquidGlassColors.accentText
-        case .work: return LiquidGlassColors.deepAqua
+        case .work: return LiquidGlassColors.accentDeepAqua
         case .favorite: return Color.pink
         case .custom: return LiquidGlassColors.secondaryText
         }
