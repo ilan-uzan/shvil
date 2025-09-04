@@ -13,61 +13,155 @@ class SupabaseService: ObservableObject {
     static let shared = SupabaseService()
     
     let client: SupabaseClient
+    @Published var isConnected = false
+    @Published var lastError: Error?
     
     private init() {
-        // Use placeholder values for development
-        // In production, these should be loaded from environment variables or configuration
-        let key = "placeholder-key"
-        guard let url = URL(string: "https://placeholder.supabase.co"),
-              !key.isEmpty else {
-            fatalError("Supabase configuration is missing. Please set up your Supabase URL and key.")
+        // Use configuration system for proper setup
+        guard let url = URL(string: Configuration.supabaseURL) else {
+            fatalError("Invalid Supabase URL: \(Configuration.supabaseURL)")
         }
         
-        client = SupabaseClient(supabaseURL: url, supabaseKey: key)
+        client = SupabaseClient(supabaseURL: url, supabaseKey: Configuration.supabaseAnonKey)
+        
+        // Test connection
+        Task {
+            await testConnection()
+        }
+    }
+    
+    // MARK: - Connection Management
+    private func testConnection() async {
+        do {
+            // Simple test query to verify connection
+            let _: [String] = try await client
+                .from("saved_places")
+                .select("id")
+                .limit(1)
+                .execute()
+                .value
+            
+            await MainActor.run {
+                self.isConnected = true
+                self.lastError = nil
+            }
+        } catch {
+            await MainActor.run {
+                self.isConnected = false
+                self.lastError = error
+            }
+            print("Supabase connection test failed: \(error)")
+        }
+    }
+    
+    func retryConnection() async {
+        await testConnection()
     }
     
     // MARK: - User Authentication
     func signIn(email: String, password: String) async throws {
-        let response = try await client.auth.signIn(email: email, password: password)
-        print("User signed in: \(response.user.id)")
+        guard isConnected else {
+            throw SupabaseError.notConnected
+        }
+        
+        do {
+            let response = try await client.auth.signIn(email: email, password: password)
+            print("User signed in: \(response.user.id)")
+        } catch {
+            await MainActor.run {
+                self.lastError = error
+            }
+            throw error
+        }
     }
     
     func signUp(email: String, password: String) async throws {
-        let response = try await client.auth.signUp(email: email, password: password)
-        print("User signed up: \(response.user.id)")
+        guard isConnected else {
+            throw SupabaseError.notConnected
+        }
+        
+        do {
+            let response = try await client.auth.signUp(email: email, password: password)
+            print("User signed up: \(response.user.id)")
+        } catch {
+            await MainActor.run {
+                self.lastError = error
+            }
+            throw error
+        }
     }
     
     func signOut() async throws {
-        try await client.auth.signOut()
-        print("User signed out")
+        do {
+            try await client.auth.signOut()
+            print("User signed out")
+        } catch {
+            await MainActor.run {
+                self.lastError = error
+            }
+            throw error
+        }
     }
     
     // MARK: - Saved Places
     func savePlace(_ place: SavedPlace) async throws {
-        let response = try await client
-            .from("saved_places")
-            .insert(place)
-            .execute()
+        guard isConnected else {
+            throw SupabaseError.notConnected
+        }
         
-        print("Place saved: \(response)")
+        do {
+            let response = try await client
+                .from("saved_places")
+                .insert(place)
+                .execute()
+            
+            print("Place saved: \(response)")
+        } catch {
+            await MainActor.run {
+                self.lastError = error
+            }
+            throw error
+        }
     }
     
     func getSavedPlaces() async throws -> [SavedPlace] {
-        let response: [SavedPlace] = try await client
-            .from("saved_places")
-            .select()
-            .execute()
-            .value
+        guard isConnected else {
+            throw SupabaseError.notConnected
+        }
         
-        return response
+        do {
+            let response: [SavedPlace] = try await client
+                .from("saved_places")
+                .select()
+                .execute()
+                .value
+            
+            return response
+        } catch {
+            await MainActor.run {
+                self.lastError = error
+            }
+            throw error
+        }
     }
     
     func deletePlace(id: UUID) async throws {
-        try await client
-            .from("saved_places")
-            .delete()
-            .eq("id", value: id)
-            .execute()
+        guard isConnected else {
+            throw SupabaseError.notConnected
+        }
+        
+        do {
+            try await client
+                .from("saved_places")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+        } catch {
+            await MainActor.run {
+                self.lastError = error
+            }
+            throw error
+        }
     }
     
     // MARK: - Social Features
@@ -120,6 +214,34 @@ struct SavedPlace: Codable, Identifiable {
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
+    
+    // Custom initializer for dictionary data
+    static func from(dictionary: [String: Any]) -> SavedPlace? {
+        guard let idString = dictionary["id"] as? String,
+              let id = UUID(uuidString: idString),
+              let name = dictionary["name"] as? String,
+              let address = dictionary["address"] as? String,
+              let latitude = dictionary["latitude"] as? Double,
+              let longitude = dictionary["longitude"] as? Double,
+              let typeString = dictionary["type"] as? String,
+              let type = PlaceType(rawValue: typeString),
+              let createdAtTimestamp = dictionary["createdAt"] as? TimeInterval,
+              let userIdString = dictionary["userId"] as? String,
+              let userId = UUID(uuidString: userIdString) else {
+            return nil
+        }
+        
+        return SavedPlace(
+            id: id,
+            name: name,
+            address: address,
+            latitude: latitude,
+            longitude: longitude,
+            type: type,
+            createdAt: Date(timeIntervalSince1970: createdAtTimestamp),
+            userId: userId
+        )
+    }
 }
 
 struct ETAShare: Codable, Identifiable {
@@ -137,4 +259,28 @@ struct RouteInfo: Codable {
     let type: String
     let isFastest: Bool
     let isSafest: Bool
+}
+
+// MARK: - Supabase Errors
+enum SupabaseError: LocalizedError {
+    case notConnected
+    case authenticationFailed
+    case networkError
+    case invalidData
+    case unknown(Error)
+    
+    var errorDescription: String? {
+        switch self {
+        case .notConnected:
+            return "Not connected to Supabase. Please check your internet connection."
+        case .authenticationFailed:
+            return "Authentication failed. Please check your credentials."
+        case .networkError:
+            return "Network error occurred. Please try again."
+        case .invalidData:
+            return "Invalid data received from server."
+        case .unknown(let error):
+            return "Unknown error: \(error.localizedDescription)"
+        }
+    }
 }

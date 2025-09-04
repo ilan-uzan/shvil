@@ -38,10 +38,12 @@ class SocialKit: ObservableObject {
     
     // MARK: - Initialization
     init() {
-        // Initialize Supabase client
-        let url = URL(string: "YOUR_SUPABASE_URL")!
-        let key = "YOUR_SUPABASE_ANON_KEY"
-        client = SupabaseClient(supabaseURL: url, supabaseKey: key)
+        // Initialize Supabase client with proper configuration
+        guard let url = URL(string: Configuration.supabaseURL) else {
+            fatalError("Invalid Supabase URL: \(Configuration.supabaseURL)")
+        }
+        
+        client = SupabaseClient(supabaseURL: url, supabaseKey: Configuration.supabaseAnonKey)
         
         setupAuthListener()
     }

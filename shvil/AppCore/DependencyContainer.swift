@@ -29,13 +29,14 @@ class DependencyContainer {
     lazy var locationService: LocationService = LocationService()
     lazy var searchService: SearchService = SearchService()
     lazy var navigationService: NavigationService = NavigationService()
-    lazy var aiKit: AIKit = AIKit(apiKey: "your-openai-api-key-here")
+    lazy var aiKit: AIKit = AIKit(apiKey: Configuration.openAIAPIKey)
     lazy var adventureKit: AdventureKit = AdventureKit(
         aiKit: aiKit,
         mapEngine: mapEngine,
         safetyKit: safetyKit,
         persistence: persistence
     )
+    lazy var supabaseService: SupabaseService = SupabaseService.shared
     
     // MARK: - Utility Services
     lazy var networkMonitor: NetworkMonitor = NetworkMonitor.shared
