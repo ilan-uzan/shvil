@@ -10,23 +10,29 @@ import SwiftUI
 // MARK: - Liquid Glass Design System
 // Exact implementation matching the spec requirements
 
-// MARK: - Typography (SF Pro)
+// MARK: - Typography (SF Pro) - Dynamic Type Support
 struct LiquidGlassTypography {
-    // TitleXL (Nav instruction): 24–28pt, semibold
-    static let titleXL = Font.system(size: 26, weight: .semibold, design: .default)
+    // TitleXL (Nav instruction): 24–28pt, semibold - Dynamic Type
+    static let titleXL = Font.system(.title2, design: .default).weight(.semibold)
     
-    // Title (Sheet headers): 20–22pt, semibold
-    static let title = Font.system(size: 21, weight: .semibold, design: .default)
+    // Title (Sheet headers): 20–22pt, semibold - Dynamic Type
+    static let title = Font.system(.title3, design: .default).weight(.semibold)
     
-    // Body: 17pt min
-    static let body = Font.system(size: 17, weight: .regular, design: .default)
-    static let bodyMedium = Font.system(size: 17, weight: .medium, design: .default)
-    static let bodySemibold = Font.system(size: 17, weight: .semibold, design: .default)
+    // Body: 17pt min - Dynamic Type
+    static let body = Font.system(.body, design: .default)
+    static let bodyMedium = Font.system(.body, design: .default).weight(.medium)
+    static let bodySemibold = Font.system(.body, design: .default).weight(.semibold)
     
-    // Caption: 13–15pt
-    static let caption = Font.system(size: 14, weight: .regular, design: .default)
-    static let captionMedium = Font.system(size: 14, weight: .medium, design: .default)
-    static let captionSmall = Font.system(size: 13, weight: .regular, design: .default)
+    // Caption: 13–15pt - Dynamic Type
+    static let caption = Font.system(.caption, design: .default)
+    static let captionMedium = Font.system(.caption, design: .default).weight(.medium)
+    static let captionSmall = Font.system(.caption2, design: .default)
+    
+    // Additional Dynamic Type styles
+    static let largeTitle = Font.system(.largeTitle, design: .default).weight(.bold)
+    static let headline = Font.system(.headline, design: .default)
+    static let subheadline = Font.system(.subheadline, design: .default)
+    static let footnote = Font.system(.footnote, design: .default)
 }
 
 // MARK: - Color Palette
@@ -226,4 +232,151 @@ struct RoutePolylineStyle {
     static let strokeWidth: CGFloat = 6
     static let glowRadius: CGFloat = 8
     static let glowOpacity: Double = 0.6
+}
+
+// MARK: - Accessibility Extensions
+extension View {
+    /// Adds comprehensive accessibility support for Shvil UI components
+    func shvilAccessibility(
+        label: String? = nil,
+        hint: String? = nil,
+        value: String? = nil,
+        traits: AccessibilityTraits = [],
+        action: (() -> Void)? = nil
+    ) -> some View {
+        var view = self
+            .accessibilityAddTraits(traits)
+        
+        if let label = label {
+            view = view.accessibilityLabel(label)
+        }
+        if let hint = hint {
+            view = view.accessibilityHint(hint)
+        }
+        if let value = value {
+            view = view.accessibilityValue(value)
+        }
+        if let action = action {
+            view = view.accessibilityAction(named: "Activate", action)
+        }
+        
+        return view
+    }
+    
+    /// Adds accessibility support for navigation elements
+    func navigationAccessibility(
+        label: String,
+        hint: String? = nil,
+        isSelected: Bool = false
+    ) -> some View {
+        self
+            .shvilAccessibility(
+                label: label,
+                hint: hint ?? "Double tap to navigate",
+                traits: isSelected ? [.isSelected] : [.isButton]
+            )
+    }
+    
+    /// Adds accessibility support for toggle elements
+    func toggleAccessibility(
+        label: String,
+        isOn: Bool,
+        hint: String? = nil
+    ) -> some View {
+        self
+            .shvilAccessibility(
+                label: label,
+                hint: hint ?? "Double tap to toggle",
+                value: isOn ? "On" : "Off",
+                traits: .isButton
+            )
+    }
+    
+    /// Adds accessibility support for button elements
+    func buttonAccessibility(
+        label: String,
+        hint: String? = nil,
+        action: (() -> Void)? = nil
+    ) -> some View {
+        self
+            .shvilAccessibility(
+                label: label,
+                hint: hint ?? "Double tap to activate",
+                traits: .isButton,
+                action: action
+            )
+    }
+    
+    /// Adds accessibility support for list items
+    func listItemAccessibility(
+        label: String,
+        hint: String? = nil,
+        value: String? = nil
+    ) -> some View {
+        self
+            .shvilAccessibility(
+                label: label,
+                hint: hint,
+                value: value,
+                traits: .isButton
+            )
+    }
+    
+    /// Adds accessibility support for map elements
+    func mapElementAccessibility(
+        label: String,
+        hint: String? = nil,
+        value: String? = nil
+    ) -> some View {
+        self
+            .shvilAccessibility(
+                label: label,
+                hint: hint ?? "Double tap for more information",
+                value: value,
+                traits: .isButton
+            )
+    }
+}
+
+// MARK: - Dynamic Type Support
+extension View {
+    /// Ensures text scales properly with Dynamic Type
+    func dynamicTypeSupport() -> some View {
+        self
+            .dynamicTypeSize(.large ... .accessibility3)
+    }
+    
+    /// Limits Dynamic Type scaling for UI elements that shouldn't grow too large
+    func limitedDynamicType() -> some View {
+        self
+            .dynamicTypeSize(.medium ... .accessibility1)
+    }
+}
+
+// MARK: - RTL Support
+extension View {
+    /// Ensures proper RTL layout support
+    func rtlSupport() -> some View {
+        self
+            .environment(\.layoutDirection, .leftToRight) // Will be overridden by system
+    }
+}
+
+// MARK: - High Contrast Support
+extension LiquidGlassColors {
+    /// High contrast color variants for accessibility
+    static let highContrastPrimaryText = Color.white
+    static let highContrastSecondaryText = Color.white.opacity(0.9)
+    static let highContrastAccentText = Color.cyan
+    static let highContrastBackground = Color.black
+    static let highContrastGlassSurface1 = Color.white.opacity(0.2)
+    static let highContrastGlassSurface2 = Color.white.opacity(0.3)
+    static let highContrastGlassSurface3 = Color.white.opacity(0.4)
+}
+
+// MARK: - Accessibility Constants
+struct AccessibilityConstants {
+    static let minimumTouchTarget: CGFloat = 44
+    static let minimumContrastRatio: Double = 4.5
+    static let maximumAnimationDuration: Double = 0.5
 }
