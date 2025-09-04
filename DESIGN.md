@@ -1,6 +1,6 @@
 # Liquid Glass Design System
 
-The signature design language for Shvil Minimal, featuring translucent depth, animated micro-interactions, and a calming turquoise-to-aqua color palette.
+The signature design language for Shvil, featuring translucent depth, animated micro-interactions, and a calming turquoise-to-aqua color palette with comprehensive accessibility support.
 
 ## 🎨 Color Palette
 
@@ -20,24 +20,39 @@ The signature design language for Shvil Minimal, featuring translucent depth, an
 - **Secondary Text**: Medium contrast `#6B7280`
 - **Accent Text**: Only for alerts and highlights using accent colors
 
+### High Contrast Colors (Accessibility)
+- **High Contrast Primary Text**: `#000000`
+- **High Contrast Secondary Text**: `#333333`
+- **High Contrast Accent Text**: `#0066CC`
+- **High Contrast Background**: `#FFFFFF`
+- **High Contrast Glass Surface 1**: `rgba(0, 0, 0, 0.05)`
+- **High Contrast Glass Surface 2**: `rgba(0, 0, 0, 0.1)`
+- **High Contrast Glass Surface 3**: `rgba(0, 0, 0, 0.15)`
+
 ## 🔤 Typography
 
 ### Font Family
-- **Primary**: SF Pro (System font)
+- **Primary**: SF Pro (System font with Dynamic Type support)
 - **Fallback**: San Francisco (iOS system font)
 
-### Type Scale
-- **Large Title**: 34pt, Bold (Navigation instructions)
-- **Title 1**: 28pt, Bold (Screen titles)
-- **Title 2**: 22pt, Bold (Section headers)
-- **Title 3**: 20pt, Semibold (Card titles)
-- **Headline**: 17pt, Semibold (Body emphasis)
-- **Body**: 17pt, Regular (Primary text - minimum for legibility)
-- **Callout**: 16pt, Regular (Secondary text)
-- **Subhead**: 15pt, Regular (Tertiary text)
-- **Footnote**: 13pt, Regular (Captions)
-- **Caption 1**: 12pt, Regular (Small text)
-- **Caption 2**: 11pt, Regular (Tiny text)
+### Type Scale (Dynamic Type Compatible)
+- **Large Title**: `.largeTitle`, Bold (Navigation instructions)
+- **Title XL**: `.title2`, Semibold (Screen titles)
+- **Title**: `.title3`, Semibold (Section headers)
+- **Headline**: `.headline` (Body emphasis)
+- **Subheadline**: `.subheadline` (Secondary text)
+- **Body**: `.body` (Primary text - minimum for legibility)
+- **Body Medium**: `.body`, Medium weight (Emphasized body text)
+- **Body Semibold**: `.body`, Semibold weight (Strong body text)
+- **Footnote**: `.footnote` (Captions)
+- **Caption**: `.caption` (Small text)
+- **Caption Medium**: `.caption`, Medium weight (Emphasized small text)
+- **Caption Small**: `.caption2` (Tiny text)
+
+### Accessibility Features
+- **Dynamic Type**: All text scales with system settings
+- **High Contrast**: Enhanced contrast ratios for accessibility
+- **RTL Support**: Right-to-left layout support for internationalization
 
 ## 🎭 Visual Effects
 
@@ -76,95 +91,155 @@ The signature design language for Shvil Minimal, featuring translucent depth, an
 
 ### Search Pill
 ```swift
-// Floating search bar with glass effect
+// Floating search bar with glass effect and accessibility
 struct SearchPill: View {
+    let onTap: () -> Void
+    
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
+                .foregroundColor(LiquidGlassColors.accentDeepAqua)
             Text("Search places or address")
-                .foregroundColor(.secondary)
+                .font(LiquidGlassTypography.body)
+                .foregroundColor(LiquidGlassColors.secondaryText)
             Spacer()
         }
-        .padding()
-        .background(.ultraThinMaterial)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .glassEffect(elevation: .light)
         .cornerRadius(25)
-        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+        .onTapGesture { onTap() }
+        .buttonAccessibility(
+            label: "Search places or address",
+            hint: "Double tap to open search"
+        )
+        .dynamicTypeSupport()
     }
 }
 ```
 
-### Floating Action Button (FAB)
+### Glass Button
 ```swift
-// Circular FAB with glass effect
-struct GlassFAB: View {
-    let icon: String
+// Glass button with accessibility and haptic feedback
+struct GlassButton: View {
+    let title: String
+    let icon: String?
+    let style: ButtonStyle
     let action: () -> Void
+    
+    @State private var isPressed = false
     
     var body: some View {
         Button(action: action) {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundColor(.primary)
-        }
-        .frame(width: 56, height: 56)
-        .background(.ultraThinMaterial)
-        .clipShape(Circle())
-        .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
-        .scaleEffect(isPressed ? 0.95 : 1.0)
-        .animation(.easeOut(duration: 0.1), value: isPressed)
-    }
-}
-```
-
-### Instruction Card (Slab)
-```swift
-// Floating instruction card for navigation
-struct InstructionSlab: View {
-    let instruction: String
-    let distance: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(instruction)
-                .font(.headline)
-                .fontWeight(.semibold)
-            Text(distance)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-        }
-        .padding()
-        .background(.ultraThinMaterial)
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.15), radius: 12, x: 0, y: 6)
-    }
-}
-```
-
-### Bottom Sheet
-```swift
-// Expandable bottom sheet with glass effect
-struct GlassBottomSheet: View {
-    @State private var isExpanded = false
-    
-    var body: some View {
-        VStack {
-            // Handle
-            RoundedRectangle(cornerRadius: 2)
-                .fill(Color.secondary)
-                .frame(width: 40, height: 4)
-                .padding(.top, 8)
-            
-            // Content
-            if isExpanded {
-                ExpandedContent()
-            } else {
-                CollapsedContent()
+            HStack(spacing: 8) {
+                if let icon = icon {
+                    Image(systemName: icon)
+                        .font(LiquidGlassTypography.bodySemibold)
+                }
+                Text(title)
+                    .font(LiquidGlassTypography.bodySemibold)
             }
+            .foregroundColor(style.foregroundColor)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
         }
-        .background(.ultraThinMaterial)
-        .cornerRadius(20, corners: [.topLeft, .topRight])
-        .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: -10)
+        .background(style.background)
+        .cornerRadius(12)
+        .scaleEffect(isPressed ? 0.95 : 1.0)
+        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
+            isPressed = pressing
+        }, perform: {})
+        .buttonAccessibility(
+            label: title,
+            hint: "Double tap to activate"
+        )
+        .dynamicTypeSupport()
     }
+}
+```
+
+### Settings Row
+```swift
+// Settings row with glass effect and accessibility
+struct SettingsRow: View {
+    let title: String
+    let subtitle: String?
+    let icon: String?
+    let action: () -> Void
+    
+    @State private var isPressed = false
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                if let icon = icon {
+                    Image(systemName: icon)
+                        .font(LiquidGlassTypography.body)
+                        .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                        .frame(width: 24, height: 24)
+                }
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(LiquidGlassTypography.body)
+                        .foregroundColor(LiquidGlassColors.primaryText)
+                    
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                            .font(LiquidGlassTypography.caption)
+                            .foregroundColor(LiquidGlassColors.secondaryText)
+                    }
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(LiquidGlassTypography.caption)
+                    .foregroundColor(LiquidGlassColors.secondaryText)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        }
+        .background(LiquidGlassColors.glassSurface1)
+        .cornerRadius(12)
+        .scaleEffect(isPressed ? 0.98 : 1.0)
+        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
+            isPressed = pressing
+        }, perform: {})
+        .listItemAccessibility(
+            label: "\(title), \(subtitle ?? "")",
+            hint: "Double tap to open settings"
+        )
+        .dynamicTypeSupport()
+    }
+}
+```
+
+### Accessibility Extensions
+```swift
+// Comprehensive accessibility support
+extension View {
+    func shvilAccessibility(
+        label: String? = nil,
+        hint: String? = nil,
+        value: String? = nil,
+        traits: AccessibilityTraits = [],
+        action: (() -> Void)? = nil
+    ) -> some View
+    
+    func buttonAccessibility(
+        label: String,
+        hint: String? = nil,
+        action: (() -> Void)? = nil
+    ) -> some View
+    
+    func listItemAccessibility(
+        label: String,
+        hint: String? = nil
+    ) -> some View
+    
+    func dynamicTypeSupport() -> some View
+    func rtlSupport() -> some View
 }
 ```
 
@@ -226,13 +301,44 @@ struct GlassBottomSheet: View {
 - **Color Blind**: Patterns and icons supplement color
 - **High Contrast**: Enhanced contrast mode support
 
+## 📱 Implemented Screens
+
+### Core Navigation
+- **Home/Map Screen**: Main navigation interface with search and map
+- **Search View**: Comprehensive search functionality with results
+- **Place Details**: Detailed place information with actions
+
+### Adventure Features
+- **Adventure Setup**: Configure mood, duration, and preferences
+- **Adventure Sheet**: Main adventure interface with stops
+- **Adventure Navigation**: Active navigation with progress tracking
+- **Adventure Stop Detail**: Detailed stop information
+- **Adventure Recap**: Post-adventure summary and sharing
+
+### Social Features
+- **Social Plans**: Create and manage group plans
+- **Saved Places**: Personal place collections and management
+
+### Settings & Privacy
+- **Settings View**: App configuration and preferences
+- **Privacy Settings**: Comprehensive privacy controls
+- **Location Settings**: Location permission management
+- **Notification Settings**: Notification preferences
+
 ## 🔧 Implementation Notes
 
 ### SwiftUI Effects
-- Use `.ultraThinMaterial` for glass effects
+- Use `.glassEffect(elevation:)` for consistent glass morphism
 - Combine with `.overlay()` for color tints
 - Apply `.shadow()` for depth
 - Use `.blur()` for backdrop effects
+
+### Accessibility Implementation
+- All components use semantic accessibility modifiers
+- Dynamic Type support throughout the app
+- RTL support for internationalization
+- High contrast mode support
+- VoiceOver compatibility
 
 ### Performance
 - Avoid heavy Metal shaders
@@ -245,7 +351,39 @@ struct GlassBottomSheet: View {
 - Test with Dynamic Type enabled
 - Check Dark Mode appearance
 - Validate accessibility compliance
+- Test RTL layout support
+
+## 🎯 Design Tokens
+
+### Typography Tokens
+```swift
+LiquidGlassTypography.titleXL      // .title2, .semibold
+LiquidGlassTypography.title        // .title3, .semibold
+LiquidGlassTypography.body         // .body
+LiquidGlassTypography.bodyMedium   // .body, .medium
+LiquidGlassTypography.bodySemibold // .body, .semibold
+LiquidGlassTypography.caption      // .caption
+LiquidGlassTypography.captionMedium // .caption, .medium
+LiquidGlassTypography.captionSmall // .caption2
+```
+
+### Color Tokens
+```swift
+LiquidGlassColors.primaryText      // High contrast text
+LiquidGlassColors.secondaryText    // Medium contrast text
+LiquidGlassColors.accentText       // Accent color text
+LiquidGlassColors.glassSurface1    // Light glass surface
+LiquidGlassColors.glassSurface2    // Medium glass surface
+LiquidGlassColors.glassSurface3    // High glass surface
+```
+
+### Elevation Tokens
+```swift
+GlassElevation.light   // Light glass effect
+GlassElevation.medium  // Medium glass effect
+GlassElevation.high    // High glass effect
+```
 
 ---
 
-*This design system ensures a consistent, beautiful, and accessible experience across all Shvil Minimal interfaces.*
+*This design system ensures a consistent, beautiful, and accessible experience across all Shvil interfaces with comprehensive Apple-grade polish.*
