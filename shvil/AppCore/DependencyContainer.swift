@@ -25,6 +25,18 @@ class DependencyContainer {
     lazy var persistence: Persistence = Persistence()
     lazy var privacyGuard: PrivacyGuard = PrivacyGuard()
     
+    // MARK: - Feature Services
+    lazy var locationService: LocationService = LocationService()
+    lazy var searchService: SearchService = SearchService()
+    lazy var navigationService: NavigationService = NavigationService()
+    lazy var aiKit: AIKit = AIKit(apiKey: "your-openai-api-key-here")
+    lazy var adventureKit: AdventureKit = AdventureKit(
+        aiKit: aiKit,
+        mapEngine: mapEngine,
+        safetyKit: safetyKit,
+        persistence: persistence
+    )
+    
     // MARK: - Utility Services
     lazy var networkMonitor: NetworkMonitor = NetworkMonitor.shared
     lazy var analytics: Analytics = Analytics.shared

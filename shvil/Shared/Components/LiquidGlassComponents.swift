@@ -51,6 +51,11 @@ struct SearchPill: View {
         .onTapGesture {
             onTap()
         }
+        .buttonAccessibility(
+            label: "Search places or address",
+            hint: "Double tap to open search"
+        )
+        .dynamicTypeSupport()
     }
 }
 
@@ -90,6 +95,11 @@ struct GlassButton: View {
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
+        .buttonAccessibility(
+            label: title,
+            hint: "Double tap to activate"
+        )
+        .dynamicTypeSupport()
     }
     
     private var textColor: Color {
@@ -320,6 +330,11 @@ struct SettingsRow: View {
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
+        .listItemAccessibility(
+            label: "\(title), \(subtitle)",
+            hint: "Double tap to open settings"
+        )
+        .dynamicTypeSupport()
     }
 }
 
