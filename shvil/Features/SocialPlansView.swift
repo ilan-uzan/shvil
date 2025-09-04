@@ -5,8 +5,8 @@
 //  Created by ilan on 2024.
 //
 
-import SwiftUI
 import MapKit
+import SwiftUI
 
 struct SocialPlansView: View {
     @State private var plans: [Plan] = []
@@ -14,7 +14,7 @@ struct SocialPlansView: View {
     @State private var showCreatePlan = false
     @State private var showPlanDetails = false
     @State private var selectedPlan: Plan?
-    
+
     // Sample data for demonstration
     @State private var samplePlans: [Plan] = [
         Plan(
@@ -30,12 +30,12 @@ struct SocialPlansView: View {
             participants: [
                 PlanParticipant(id: UUID(), userId: UUID(), name: "Sarah Chen", avatar: nil, joinedAt: Date()),
                 PlanParticipant(id: UUID(), userId: UUID(), name: "Mike Johnson", avatar: nil, joinedAt: Date()),
-                PlanParticipant(id: UUID(), userId: UUID(), name: "Emma Wilson", avatar: nil, joinedAt: Date())
+                PlanParticipant(id: UUID(), userId: UUID(), name: "Emma Wilson", avatar: nil, joinedAt: Date()),
             ],
             options: [
                 PlanOption(id: UUID(), name: "Blue Bottle Coffee", address: "123 Market St", votes: 3),
                 PlanOption(id: UUID(), name: "Farmers Market", address: "456 Union St", votes: 2),
-                PlanOption(id: UUID(), name: "Golden Gate Park", address: "789 Park Ave", votes: 1)
+                PlanOption(id: UUID(), name: "Golden Gate Park", address: "789 Park Ave", votes: 1),
             ]
         ),
         Plan(
@@ -52,12 +52,12 @@ struct SocialPlansView: View {
                 PlanParticipant(id: UUID(), userId: UUID(), name: "Alex Rodriguez", avatar: nil, joinedAt: Date()),
                 PlanParticipant(id: UUID(), userId: UUID(), name: "Lisa Park", avatar: nil, joinedAt: Date()),
                 PlanParticipant(id: UUID(), userId: UUID(), name: "David Kim", avatar: nil, joinedAt: Date()),
-                PlanParticipant(id: UUID(), userId: UUID(), name: "Maria Garcia", avatar: nil, joinedAt: Date())
+                PlanParticipant(id: UUID(), userId: UUID(), name: "Maria Garcia", avatar: nil, joinedAt: Date()),
             ],
             options: [
                 PlanOption(id: UUID(), name: "Foreign Cinema", address: "2534 Mission St", votes: 4),
                 PlanOption(id: UUID(), name: "Trick Dog", address: "3010 20th St", votes: 0),
-                PlanOption(id: UUID(), name: "El Techo", address: "2516 Mission St", votes: 0)
+                PlanOption(id: UUID(), name: "El Techo", address: "2516 Mission St", votes: 0),
             ]
         ),
         Plan(
@@ -73,22 +73,22 @@ struct SocialPlansView: View {
             participants: [
                 PlanParticipant(id: UUID(), userId: UUID(), name: "Tom Anderson", avatar: nil, joinedAt: Date()),
                 PlanParticipant(id: UUID(), userId: UUID(), name: "Jenny Lee", avatar: nil, joinedAt: Date()),
-                PlanParticipant(id: UUID(), userId: UUID(), name: "Chris Brown", avatar: nil, joinedAt: Date())
+                PlanParticipant(id: UUID(), userId: UUID(), name: "Chris Brown", avatar: nil, joinedAt: Date()),
             ],
             options: [
-                PlanOption(id: UUID(), name: "Lands End", address: "680 Point Lobos Ave", votes: 3)
+                PlanOption(id: UUID(), name: "Lands End", address: "680 Point Lobos Ave", votes: 3),
             ]
-        )
+        ),
     ]
-    
+
     var filteredPlans: [Plan] {
         if selectedFilter == .all {
-            return samplePlans
+            samplePlans
         } else {
-            return samplePlans.filter { $0.status == selectedFilter }
+            samplePlans.filter { $0.status == selectedFilter }
         }
     }
-    
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -98,9 +98,9 @@ struct SocialPlansView: View {
                         Text("Social Plans")
                             .font(LiquidGlassTypography.titleXL)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         Spacer()
-                        
+
                         Button(action: {
                             showCreatePlan = true
                         }) {
@@ -112,7 +112,7 @@ struct SocialPlansView: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
-                    
+
                     // Filter Chips
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
@@ -129,7 +129,7 @@ struct SocialPlansView: View {
                         .padding(.horizontal, 16)
                     }
                 }
-                
+
                 // Plans List
                 if filteredPlans.isEmpty {
                     EmptyPlansView {
@@ -149,7 +149,7 @@ struct SocialPlansView: View {
                         .padding(.top, 8)
                     }
                 }
-                
+
                 Spacer()
             }
             .background(LiquidGlassColors.mapBase)
@@ -171,20 +171,21 @@ struct SocialPlansView: View {
 }
 
 // MARK: - Filter Chip
+
 struct FilterChip: View {
     let title: String
     let isSelected: Bool
     let count: Int
     let onTap: () -> Void
     @State private var isPressed = false
-    
+
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 6) {
                 Text(title)
                     .font(LiquidGlassTypography.caption)
                     .foregroundColor(isSelected ? .white : LiquidGlassColors.primaryText)
-                
+
                 if count > 0 {
                     Text("\(count)")
                         .font(LiquidGlassTypography.caption)
@@ -217,11 +218,12 @@ struct FilterChip: View {
 }
 
 // MARK: - Plan Card
+
 struct PlanCard: View {
     let plan: Plan
     let onTap: () -> Void
     @State private var isPressed = false
-    
+
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 16) {
@@ -232,19 +234,19 @@ struct PlanCard: View {
                             .font(LiquidGlassTypography.title)
                             .foregroundColor(LiquidGlassColors.primaryText)
                             .lineLimit(1)
-                        
+
                         Text(plan.description)
                             .font(LiquidGlassTypography.body)
                             .foregroundColor(LiquidGlassColors.secondaryText)
                             .lineLimit(2)
                     }
-                    
+
                     Spacer()
-                    
+
                     // Status Badge
                     StatusBadge(status: plan.status)
                 }
-                
+
                 // Host Info
                 HStack(spacing: 8) {
                     Circle()
@@ -255,18 +257,18 @@ struct PlanCard: View {
                                 .font(LiquidGlassTypography.caption)
                                 .foregroundColor(.white)
                         )
-                    
+
                     Text("Hosted by \(plan.hostName)")
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
-                    
+
                     Spacer()
-                    
+
                     Text("\(plan.participants.count) participants")
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
                 }
-                
+
                 // Plan-specific content based on status
                 switch plan.status {
                 case .voting:
@@ -299,9 +301,10 @@ struct PlanCard: View {
 }
 
 // MARK: - Status Badge
+
 struct StatusBadge: View {
     let status: PlanStatus
-    
+
     var body: some View {
         Text(status.displayName)
             .font(LiquidGlassTypography.caption)
@@ -313,27 +316,28 @@ struct StatusBadge: View {
                     .fill(statusColor)
             )
     }
-    
+
     private var statusColor: Color {
         switch status {
-        case .voting: return .orange
-        case .locked: return .green
-        case .live: return .blue
-        case .all: return .gray
+        case .voting: .orange
+        case .locked: .green
+        case .live: .blue
+        case .all: .gray
         }
     }
 }
 
 // MARK: - Voting Content
+
 struct VotingContent: View {
     let plan: Plan
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Vote for your favorite option:")
                 .font(LiquidGlassTypography.bodySemibold)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             LazyVStack(spacing: 8) {
                 ForEach(plan.options.prefix(3)) { option in
                     VotingOptionRow(option: option) {
@@ -341,20 +345,20 @@ struct VotingContent: View {
                     }
                 }
             }
-            
+
             if plan.options.count > 3 {
                 Text("+ \(plan.options.count - 3) more options")
                     .font(LiquidGlassTypography.caption)
                     .foregroundColor(LiquidGlassColors.secondaryText)
             }
-            
+
             HStack {
                 Text("Voting ends in \(timeRemaining)")
                     .font(LiquidGlassTypography.caption)
                     .foregroundColor(LiquidGlassColors.secondaryText)
-                
+
                 Spacer()
-                
+
                 Button("Vote Now") {
                     print("Open voting interface")
                 }
@@ -363,7 +367,7 @@ struct VotingContent: View {
             }
         }
     }
-    
+
     private var timeRemaining: String {
         let timeInterval = plan.votingEndsAt.timeIntervalSinceNow
         if timeInterval > 0 {
@@ -377,11 +381,12 @@ struct VotingContent: View {
 }
 
 // MARK: - Voting Option Row
+
 struct VotingOptionRow: View {
     let option: PlanOption
     let onVote: () -> Void
     @State private var isPressed = false
-    
+
     var body: some View {
         Button(action: onVote) {
             HStack(spacing: 12) {
@@ -390,20 +395,20 @@ struct VotingOptionRow: View {
                         .font(LiquidGlassTypography.bodySemibold)
                         .foregroundColor(LiquidGlassColors.primaryText)
                         .lineLimit(1)
-                    
+
                     Text(option.address)
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
                         .lineLimit(1)
                 }
-                
+
                 Spacer()
-                
+
                 VStack(spacing: 4) {
                     Text("\(option.votes)")
                         .font(LiquidGlassTypography.title)
                         .foregroundColor(LiquidGlassColors.accentText)
-                    
+
                     Text("votes")
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
@@ -428,31 +433,32 @@ struct VotingOptionRow: View {
 }
 
 // MARK: - Locked Content
+
 struct LockedContent: View {
     let plan: Plan
-    
+
     var winningOption: PlanOption? {
         plan.options.max { $0.votes < $1.votes }
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 16))
                     .foregroundColor(.green)
-                
+
                 Text("Decision Made!")
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
             }
-            
+
             if let winner = winningOption {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Winner: \(winner.name)")
                         .font(LiquidGlassTypography.bodySemibold)
                         .foregroundColor(LiquidGlassColors.primaryText)
-                    
+
                     Text(winner.address)
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
@@ -467,7 +473,7 @@ struct LockedContent: View {
                         )
                 )
             }
-            
+
             HStack(spacing: 12) {
                 Button("Start Group Trip") {
                     print("Start group trip")
@@ -478,7 +484,7 @@ struct LockedContent: View {
                 .padding(.vertical, 8)
                 .background(LiquidGlassGradients.primaryGradient)
                 .cornerRadius(20)
-                
+
                 Button("Share ETA") {
                     print("Share ETA")
                 }
@@ -496,28 +502,29 @@ struct LockedContent: View {
 }
 
 // MARK: - Live Content
+
 struct LiveContent: View {
     let plan: Plan
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Circle()
                     .fill(.green)
                     .frame(width: 8, height: 8)
-                
+
                 Text("Live Now")
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
             }
-            
+
             // Participants with presence indicators
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 8) {
                 ForEach(plan.participants) { participant in
                     ParticipantAvatar(participant: participant, isOnline: true)
                 }
             }
-            
+
             HStack(spacing: 12) {
                 Button("View Live") {
                     print("View live plan")
@@ -528,7 +535,7 @@ struct LiveContent: View {
                 .padding(.vertical, 8)
                 .background(LiquidGlassGradients.primaryGradient)
                 .cornerRadius(20)
-                
+
                 Button("Join") {
                     print("Join live plan")
                 }
@@ -546,10 +553,11 @@ struct LiveContent: View {
 }
 
 // MARK: - Participant Avatar
+
 struct ParticipantAvatar: View {
     let participant: PlanParticipant
     let isOnline: Bool
-    
+
     var body: some View {
         VStack(spacing: 4) {
             ZStack {
@@ -561,7 +569,7 @@ struct ParticipantAvatar: View {
                             .font(LiquidGlassTypography.caption)
                             .foregroundColor(.white)
                     )
-                
+
                 if isOnline {
                     Circle()
                         .fill(.green)
@@ -569,7 +577,7 @@ struct ParticipantAvatar: View {
                         .offset(x: 12, y: 12)
                 }
             }
-            
+
             Text(participant.name)
                 .font(LiquidGlassTypography.caption)
                 .foregroundColor(LiquidGlassColors.primaryText)
@@ -579,26 +587,27 @@ struct ParticipantAvatar: View {
 }
 
 // MARK: - Empty Plans View
+
 struct EmptyPlansView: View {
     let onCreatePlan: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 24) {
             Image(systemName: "calendar.badge.plus")
                 .font(.system(size: 60))
                 .foregroundColor(LiquidGlassColors.accentText.opacity(0.6))
-            
+
             VStack(spacing: 12) {
                 Text("No Plans Yet")
                     .font(LiquidGlassTypography.title)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Text("Create your first plan to start planning with friends")
                     .font(LiquidGlassTypography.body)
                     .foregroundColor(LiquidGlassColors.secondaryText)
                     .multilineTextAlignment(.center)
             }
-            
+
             Button(action: onCreatePlan) {
                 HStack {
                     Image(systemName: "plus")
@@ -617,6 +626,7 @@ struct EmptyPlansView: View {
 }
 
 // MARK: - Create Plan View
+
 struct CreatePlanView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var currentStep = 1
@@ -624,22 +634,22 @@ struct CreatePlanView: View {
     @State private var planDescription = ""
     @State private var selectedOptions: [String] = []
     @State private var newOption = ""
-    
+
     let onSave: (Plan) -> Void
-    
+
     var body: some View {
         NavigationView {
             VStack(spacing: 24) {
                 // Progress Indicator
                 HStack(spacing: 8) {
-                    ForEach(1...3, id: \.self) { step in
+                    ForEach(1 ... 3, id: \.self) { step in
                         Circle()
                             .fill(step <= currentStep ? LiquidGlassColors.accentText : LiquidGlassColors.glassSurface2)
                             .frame(width: 12, height: 12)
                     }
                 }
                 .padding(.top, 20)
-                
+
                 // Step Content
                 switch currentStep {
                 case 1:
@@ -651,9 +661,9 @@ struct CreatePlanView: View {
                 default:
                     EmptyView()
                 }
-                
+
                 Spacer()
-                
+
                 // Navigation Buttons
                 HStack(spacing: 16) {
                     if currentStep > 1 {
@@ -671,9 +681,9 @@ struct CreatePlanView: View {
                                 .stroke(LiquidGlassColors.accentText, lineWidth: 2)
                         )
                     }
-                    
+
                     Spacer()
-                    
+
                     Button(currentStep == 3 ? "Create Plan" : "Next") {
                         if currentStep == 3 {
                             createPlan()
@@ -705,7 +715,7 @@ struct CreatePlanView: View {
             }
         }
     }
-    
+
     private func createPlan() {
         let plan = Plan(
             id: UUID(),
@@ -718,48 +728,49 @@ struct CreatePlanView: View {
             createdAt: Date(),
             votingEndsAt: Calendar.current.date(byAdding: .hour, value: 24, to: Date())!,
             participants: [
-                PlanParticipant(id: UUID(), userId: UUID(), name: "You", avatar: nil, joinedAt: Date())
+                PlanParticipant(id: UUID(), userId: UUID(), name: "You", avatar: nil, joinedAt: Date()),
             ],
             options: selectedOptions.enumerated().map { index, option in
                 PlanOption(id: UUID(), name: option, address: "Address \(index + 1)", votes: 0)
             }
         )
-        
+
         onSave(plan)
         dismiss()
     }
 }
 
 // MARK: - Step 1 Content
+
 struct Step1Content: View {
     @Binding var title: String
     @Binding var description: String
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Plan Details")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             VStack(alignment: .leading, spacing: 12) {
                 Text("Plan Title")
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 TextField("Enter plan title", text: $title)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .font(LiquidGlassTypography.body)
             }
-            
+
             VStack(alignment: .leading, spacing: 12) {
                 Text("Description")
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 TextField("Describe your plan", text: $description, axis: .vertical)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .font(LiquidGlassTypography.body)
-                    .lineLimit(3...6)
+                    .lineLimit(3 ... 6)
             }
         }
         .padding(.horizontal, 20)
@@ -767,26 +778,27 @@ struct Step1Content: View {
 }
 
 // MARK: - Step 2 Content
+
 struct Step2Content: View {
     @Binding var selectedOptions: [String]
     @Binding var newOption: String
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Add Options")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             Text("Add places or activities for your friends to vote on")
                 .font(LiquidGlassTypography.body)
                 .foregroundColor(LiquidGlassColors.secondaryText)
-            
+
             // Add new option
             HStack {
                 TextField("Add option", text: $newOption)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .font(LiquidGlassTypography.body)
-                
+
                 Button("Add") {
                     if !newOption.isEmpty {
                         selectedOptions.append(newOption)
@@ -797,7 +809,7 @@ struct Step2Content: View {
                 .foregroundColor(LiquidGlassColors.accentText)
                 .disabled(newOption.isEmpty)
             }
-            
+
             // Selected options
             LazyVStack(spacing: 8) {
                 ForEach(selectedOptions, id: \.self) { option in
@@ -805,9 +817,9 @@ struct Step2Content: View {
                         Text(option)
                             .font(LiquidGlassTypography.body)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         Spacer()
-                        
+
                         Button("Remove") {
                             selectedOptions.removeAll { $0 == option }
                         }
@@ -827,22 +839,23 @@ struct Step2Content: View {
 }
 
 // MARK: - Step 3 Content
+
 struct Step3Content: View {
     let planTitle: String
     let planDescription: String
     let selectedOptions: [String]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Review Plan")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             VStack(alignment: .leading, spacing: 12) {
                 Text(planTitle)
                     .font(LiquidGlassTypography.title)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Text(planDescription)
                     .font(LiquidGlassTypography.body)
                     .foregroundColor(LiquidGlassColors.secondaryText)
@@ -856,19 +869,19 @@ struct Step3Content: View {
                             .stroke(Color.white.opacity(0.2), lineWidth: 2)
                     )
             )
-            
+
             VStack(alignment: .leading, spacing: 8) {
                 Text("Options (\(selectedOptions.count))")
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 LazyVStack(spacing: 8) {
                     ForEach(selectedOptions, id: \.self) { option in
                         HStack {
                             Text(option)
                                 .font(LiquidGlassTypography.body)
                                 .foregroundColor(LiquidGlassColors.primaryText)
-                            
+
                             Spacer()
                         }
                         .padding(12)
@@ -885,10 +898,11 @@ struct Step3Content: View {
 }
 
 // MARK: - Plan Details View
+
 struct PlanDetailsView: View {
     let plan: Plan
     let onDismiss: () -> Void
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -898,16 +912,16 @@ struct PlanDetailsView: View {
                         Text(plan.title)
                             .font(LiquidGlassTypography.titleXL)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         Text(plan.description)
                             .font(LiquidGlassTypography.body)
                             .foregroundColor(LiquidGlassColors.secondaryText)
-                        
+
                         HStack {
                             StatusBadge(status: plan.status)
-                            
+
                             Spacer()
-                            
+
                             Text("Hosted by \(plan.hostName)")
                                 .font(LiquidGlassTypography.caption)
                                 .foregroundColor(LiquidGlassColors.secondaryText)
@@ -922,7 +936,7 @@ struct PlanDetailsView: View {
                                     .stroke(Color.white.opacity(0.2), lineWidth: 2)
                             )
                     )
-                    
+
                     // Plan-specific content
                     switch plan.status {
                     case .voting:
@@ -951,15 +965,16 @@ struct PlanDetailsView: View {
 }
 
 // MARK: - Voting Details Content
+
 struct VotingDetailsContent: View {
     let plan: Plan
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Vote for your favorite option")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             LazyVStack(spacing: 12) {
                 ForEach(plan.options) { option in
                     VotingOptionRow(option: option) {
@@ -972,29 +987,30 @@ struct VotingDetailsContent: View {
 }
 
 // MARK: - Locked Details Content
+
 struct LockedDetailsContent: View {
     let plan: Plan
-    
+
     var winningOption: PlanOption? {
         plan.options.max { $0.votes < $1.votes }
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Decision Made!")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             if let winner = winningOption {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Winner: \(winner.name)")
                         .font(LiquidGlassTypography.title)
                         .foregroundColor(LiquidGlassColors.primaryText)
-                    
+
                     Text(winner.address)
                         .font(LiquidGlassTypography.body)
                         .foregroundColor(LiquidGlassColors.secondaryText)
-                    
+
                     Text("\(winner.votes) votes")
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
@@ -1014,25 +1030,26 @@ struct LockedDetailsContent: View {
 }
 
 // MARK: - Live Details Content
+
 struct LiveDetailsContent: View {
     let plan: Plan
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Circle()
                     .fill(.green)
                     .frame(width: 12, height: 12)
-                
+
                 Text("Live Now")
                     .font(LiquidGlassTypography.title)
                     .foregroundColor(LiquidGlassColors.primaryText)
             }
-            
+
             Text("Participants (\(plan.participants.count))")
                 .font(LiquidGlassTypography.bodySemibold)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 12) {
                 ForEach(plan.participants) { participant in
                     ParticipantAvatar(participant: participant, isOnline: true)
@@ -1043,6 +1060,7 @@ struct LiveDetailsContent: View {
 }
 
 // MARK: - Data Models
+
 struct Plan: Identifiable {
     let id: UUID
     let title: String
@@ -1073,22 +1091,23 @@ struct PlanOption: Identifiable {
 }
 
 enum PlanStatus: String, CaseIterable {
-    case all = "all"
-    case voting = "voting"
-    case locked = "locked"
-    case live = "live"
-    
+    case all
+    case voting
+    case locked
+    case live
+
     var displayName: String {
         switch self {
-        case .all: return "All"
-        case .voting: return "Voting"
-        case .locked: return "Locked"
-        case .live: return "Live"
+        case .all: "All"
+        case .voting: "Voting"
+        case .locked: "Locked"
+        case .live: "Live"
         }
     }
 }
 
 // MARK: - Preview
+
 #Preview {
     SocialPlansView()
         .background(Color.black)

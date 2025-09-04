@@ -5,9 +5,9 @@
 //  Created by ilan on 2024.
 //
 
-import Foundation
-import CoreLocation
 import Combine
+import CoreLocation
+import Foundation
 import MapKit
 
 class SearchService: ObservableObject {
@@ -15,22 +15,22 @@ class SearchService: ObservableObject {
     @Published var isSearching = false
     @Published var searchText = ""
     @Published var recentSearches: [SearchResult] = []
-    
+
     private let geocoder = CLGeocoder()
-    
+
     init() {
         loadRecentSearches()
     }
-    
+
     func search(for query: String) {
         guard !query.isEmpty else {
             searchResults = []
             return
         }
-        
+
         isSearching = true
         searchText = query
-        
+
         // Use MKLocalSearch for better results
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
@@ -38,19 +38,19 @@ class SearchService: ObservableObject {
             center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
             span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
         )
-        
+
         let search = MKLocalSearch(request: request)
         search.start { [weak self] response, error in
             DispatchQueue.main.async {
                 self?.isSearching = false
-                
-                if let error = error {
+
+                if let error {
                     print("Search error: \(error.localizedDescription)")
                     return
                 }
-                
-                guard let response = response else { return }
-                
+
+                guard let response else { return }
+
                 self?.searchResults = response.mapItems.compactMap { item in
                     SearchResult(
                         name: item.name ?? "Unknown",
@@ -63,7 +63,7 @@ class SearchService: ObservableObject {
             }
         }
     }
-    
+
     func addToRecentSearches(_ result: SearchResult) {
         recentSearches.removeAll { $0.id == result.id }
         recentSearches.insert(result, at: 0)
@@ -72,20 +72,21 @@ class SearchService: ObservableObject {
         }
         saveRecentSearches()
     }
-    
+
     func clearRecentSearches() {
         recentSearches.removeAll()
         saveRecentSearches()
     }
-    
+
     private func loadRecentSearches() {
         // Load from UserDefaults or Core Data
         if let data = UserDefaults.standard.data(forKey: "recentSearches"),
-           let searches = try? JSONDecoder().decode([SearchResult].self, from: data) {
+           let searches = try? JSONDecoder().decode([SearchResult].self, from: data)
+        {
             recentSearches = searches
         }
     }
-    
+
     private func saveRecentSearches() {
         if let data = try? JSONEncoder().encode(recentSearches) {
             UserDefaults.standard.set(data, forKey: "recentSearches")
@@ -100,7 +101,7 @@ public struct SearchResult: Identifiable, Codable {
     public let address: String?
     public let coordinate: CLLocationCoordinate2D
     public let mapItem: MKMapItem?
-    
+
     public init(name: String, subtitle: String? = nil, address: String? = nil, coordinate: CLLocationCoordinate2D, mapItem: MKMapItem? = nil) {
         self.name = name
         self.subtitle = subtitle
@@ -108,12 +109,12 @@ public struct SearchResult: Identifiable, Codable {
         self.coordinate = coordinate
         self.mapItem = mapItem
     }
-    
+
     // Custom Codable implementation for CLLocationCoordinate2D
     private enum CodingKeys: String, CodingKey {
         case name, subtitle, address, latitude, longitude
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
@@ -124,7 +125,7 @@ public struct SearchResult: Identifiable, Codable {
         coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         mapItem = nil
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)

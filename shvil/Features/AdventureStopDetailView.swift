@@ -5,44 +5,44 @@
 //  Created by ilan on 2024.
 //
 
-import SwiftUI
 import MapKit
+import SwiftUI
 
 struct AdventureStopDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var mapEngine = DependencyContainer.shared.mapEngine
     @StateObject private var locationService = DependencyContainer.shared.locationService
-    
+
     let stop: AdventureStop
     let adventure: AdventurePlan
-    
+
     @State private var isNavigating = false
     @State private var showDirections = false
-    
+
     var body: some View {
         NavigationView {
             ZStack {
                 // Background
                 LiquidGlassColors.background
                     .ignoresSafeArea()
-                
+
                 ScrollView {
                     VStack(spacing: 24) {
                         // Header
                         headerSection
-                        
+
                         // Map
                         mapSection
-                        
+
                         // Stop Info
                         stopInfoSection
-                        
+
                         // Narrative
                         narrativeSection
-                        
+
                         // Constraints
                         constraintsSection
-                        
+
                         // Action Buttons
                         actionButtonsSection
                     }
@@ -65,9 +65,9 @@ struct AdventureStopDetailView: View {
             DirectionsView(stop: stop)
         }
     }
-    
+
     // MARK: - Header Section
-    
+
     private var headerSection: some View {
         VStack(spacing: 16) {
             // Stop Number and Category
@@ -77,43 +77,43 @@ struct AdventureStopDetailView: View {
                     Circle()
                         .fill(LiquidGlassGradients.primaryGradient)
                         .frame(width: 48, height: 48)
-                    
+
                     Text("\(stopIndex + 1)")
                         .font(LiquidGlassTypography.titleXL)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(stop.chapter)
                         .font(LiquidGlassTypography.titleXL)
                         .foregroundColor(LiquidGlassColors.primaryText)
-                    
+
                     Text(stop.category.displayName)
                         .font(LiquidGlassTypography.body)
                         .foregroundColor(LiquidGlassColors.secondaryText)
                 }
-                
+
                 Spacer()
-                
+
                 // Category Icon
                 Image(systemName: stopIcon(for: stop.category))
                     .font(.system(size: 24, weight: .medium))
                     .foregroundColor(LiquidGlassColors.accentDeepAqua)
             }
-            
+
             // Duration
             HStack {
                 Image(systemName: "clock")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(LiquidGlassColors.secondaryText)
-                
+
                 Text("\(stop.idealDurationMin) minutes")
                     .font(LiquidGlassTypography.body)
                     .foregroundColor(LiquidGlassColors.secondaryText)
-                
+
                 Spacer()
-                
+
                 if let stayMinutes = stop.stayMinutes {
                     Text("Stay: \(stayMinutes) min")
                         .font(LiquidGlassTypography.caption)
@@ -129,31 +129,31 @@ struct AdventureStopDetailView: View {
         }
         .padding(.vertical, 20)
     }
-    
+
     private var stopIndex: Int {
         adventure.stops.firstIndex(where: { $0.id == stop.id }) ?? 0
     }
-    
+
     private func stopIcon(for category: StopCategory) -> String {
         switch category {
-        case .landmark: return "building"
-        case .food: return "fork.knife"
-        case .scenic: return "camera"
-        case .museum: return "building.columns"
-        case .activity: return "figure.run"
-        case .nightlife: return "moon.stars"
-        case .hiddenGem: return "star"
+        case .landmark: "building"
+        case .food: "fork.knife"
+        case .scenic: "camera"
+        case .museum: "building.columns"
+        case .activity: "figure.run"
+        case .nightlife: "moon.stars"
+        case .hiddenGem: "star"
         }
     }
-    
+
     // MARK: - Map Section
-    
+
     private var mapSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Location")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             if let coordinate = stop.coordinate {
                 Map(coordinateRegion: .constant(MKCoordinateRegion(
                     center: coordinate,
@@ -164,7 +164,7 @@ struct AdventureStopDetailView: View {
                             Circle()
                                 .fill(LiquidGlassGradients.primaryGradient)
                                 .frame(width: 32, height: 32)
-                            
+
                             Image(systemName: stopIcon(for: stop.category))
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white)
@@ -184,7 +184,7 @@ struct AdventureStopDetailView: View {
                     Image(systemName: "location.slash")
                         .font(.system(size: 32, weight: .medium))
                         .foregroundColor(LiquidGlassColors.secondaryText)
-                    
+
                     Text("Location not available")
                         .font(LiquidGlassTypography.body)
                         .foregroundColor(LiquidGlassColors.secondaryText)
@@ -198,9 +198,9 @@ struct AdventureStopDetailView: View {
             }
         }
     }
-    
+
     // MARK: - Stop Info Section
-    
+
     private var stopInfoSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             if let name = stop.name {
@@ -208,31 +208,31 @@ struct AdventureStopDetailView: View {
                     Text("Place Name")
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
-                    
+
                     Text(name)
                         .font(LiquidGlassTypography.title)
                         .foregroundColor(LiquidGlassColors.primaryText)
                 }
             }
-            
+
             if let address = stop.address {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Address")
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
-                    
+
                     Text(address)
                         .font(LiquidGlassTypography.body)
                         .foregroundColor(LiquidGlassColors.primaryText)
                 }
             }
-            
+
             if let startHint = stop.startHintTimestamp {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Best Time to Visit")
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
-                    
+
                     Text(startHint, style: .time)
                         .font(LiquidGlassTypography.body)
                         .foregroundColor(LiquidGlassColors.primaryText)
@@ -245,15 +245,15 @@ struct AdventureStopDetailView: View {
                 .fill(LiquidGlassColors.glassSurface1)
         )
     }
-    
+
     // MARK: - Narrative Section
-    
+
     private var narrativeSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("What to Expect")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             Text(stop.narrative)
                 .font(LiquidGlassTypography.body)
                 .foregroundColor(LiquidGlassColors.primaryText)
@@ -265,15 +265,15 @@ struct AdventureStopDetailView: View {
                 .fill(LiquidGlassColors.glassSurface1)
         )
     }
-    
+
     // MARK: - Constraints Section
-    
+
     private var constraintsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Details")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             VStack(spacing: 12) {
                 // Budget
                 constraintRow(
@@ -281,21 +281,21 @@ struct AdventureStopDetailView: View {
                     title: "Budget",
                     value: stop.constraints.budget.displayName
                 )
-                
+
                 // Accessibility
                 constraintRow(
                     icon: "figure.roll",
                     title: "Accessibility",
                     value: stop.constraints.accessibility ? "Wheelchair Accessible" : "Not Accessible"
                 )
-                
+
                 // Outdoor
                 constraintRow(
                     icon: "leaf",
                     title: "Setting",
                     value: stop.constraints.outdoor ? "Outdoor" : "Indoor"
                 )
-                
+
                 // Open Late
                 if stop.constraints.openLate {
                     constraintRow(
@@ -312,28 +312,28 @@ struct AdventureStopDetailView: View {
                 .fill(LiquidGlassColors.glassSurface1)
         )
     }
-    
+
     private func constraintRow(icon: String, title: String, value: String) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(LiquidGlassColors.accentDeepAqua)
                 .frame(width: 20)
-            
+
             Text(title)
                 .font(LiquidGlassTypography.body)
                 .foregroundColor(LiquidGlassColors.secondaryText)
-            
+
             Spacer()
-            
+
             Text(value)
                 .font(LiquidGlassTypography.body)
                 .foregroundColor(LiquidGlassColors.primaryText)
         }
     }
-    
+
     // MARK: - Action Buttons Section
-    
+
     private var actionButtonsSection: some View {
         VStack(spacing: 12) {
             // Navigate Button
@@ -341,7 +341,7 @@ struct AdventureStopDetailView: View {
                 HStack(spacing: 12) {
                     Image(systemName: "location.fill")
                         .font(.system(size: 16, weight: .medium))
-                    
+
                     Text("Navigate Here")
                         .font(LiquidGlassTypography.bodyMedium)
                         .fontWeight(.semibold)
@@ -354,13 +354,13 @@ struct AdventureStopDetailView: View {
                         .fill(LiquidGlassGradients.primaryGradient)
                 )
             }
-            
+
             // Directions Button
             Button(action: { showDirections = true }) {
                 HStack(spacing: 12) {
                     Image(systemName: "map")
                         .font(.system(size: 16, weight: .medium))
-                    
+
                     Text("Get Directions")
                         .font(LiquidGlassTypography.bodyMedium)
                         .fontWeight(.medium)
@@ -375,12 +375,12 @@ struct AdventureStopDetailView: View {
             }
         }
     }
-    
+
     // MARK: - Actions
-    
+
     private func navigateToStop() {
         guard stop.coordinate != nil else { return }
-        
+
         isNavigating = true
         // Start navigation to stop
         HapticFeedback.shared.impact(style: .medium)
@@ -392,7 +392,7 @@ struct AdventureStopDetailView: View {
 struct DirectionsView: View {
     @Environment(\.dismiss) private var dismiss
     let stop: AdventureStop
-    
+
     var body: some View {
         NavigationView {
             VStack {
@@ -400,13 +400,13 @@ struct DirectionsView: View {
                     .font(LiquidGlassTypography.title)
                     .foregroundColor(LiquidGlassColors.primaryText)
                     .padding()
-                
+
                 Spacer()
-                
+
                 Text("Directions functionality would be implemented here")
                     .font(LiquidGlassTypography.body)
                     .foregroundColor(LiquidGlassColors.secondaryText)
-                
+
                 Spacer()
             }
             .navigationTitle("Directions")

@@ -5,37 +5,40 @@
 //  Created by ilan on 2024.
 //
 
-import Foundation
 import Combine
+import Foundation
 import Network
 
 /// Manages offline functionality and data synchronization
 @MainActor
 class OfflineManager: ObservableObject {
     static let shared = OfflineManager()
-    
+
     // MARK: - Published Properties
+
     @Published var isOffline = false
     @Published var pendingSyncOperations: [SyncOperation] = []
     @Published var lastSyncTime: Date?
-    
+
     // MARK: - Private Properties
+
     private let networkMonitor = NetworkMonitor.shared
     private let persistence = Persistence()
     private var cancellables = Set<AnyCancellable>()
     private let syncQueue = DispatchQueue(label: "com.shvil.sync", qos: .background)
-    
+
     private init() {
         setupNetworkMonitoring()
     }
-    
+
     // MARK: - Network Monitoring
+
     private func setupNetworkMonitoring() {
         networkMonitor.$isConnected
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isConnected in
                 self?.isOffline = !isConnected
-                
+
                 if isConnected {
                     Task {
                         await self?.syncPendingOperations()
@@ -44,24 +47,25 @@ class OfflineManager: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
+
     // MARK: - Sync Operations
+
     func addSyncOperation(_ operation: SyncOperation) {
         pendingSyncOperations.append(operation)
-        
+
         if !isOffline {
             Task {
                 await syncPendingOperations()
             }
         }
     }
-    
+
     private func syncPendingOperations() async {
         guard !isOffline else { return }
-        
+
         let operations = pendingSyncOperations
         pendingSyncOperations.removeAll()
-        
+
         for operation in operations {
             do {
                 try await performSyncOperation(operation)
@@ -71,10 +75,10 @@ class OfflineManager: ObservableObject {
                 print("Sync operation failed: \(error)")
             }
         }
-        
+
         lastSyncTime = Date()
     }
-    
+
     private func performSyncOperation(_ operation: SyncOperation) async throws {
         switch operation.type {
         case .savePlace:
@@ -83,12 +87,14 @@ class OfflineManager: ObservableObject {
             }
         case .deletePlace:
             if let placeIdString = operation.data["id"] as? String,
-               let placeId = UUID(uuidString: placeIdString) {
+               let placeId = UUID(uuidString: placeIdString)
+            {
                 try await SupabaseService.shared.deletePlace(id: placeId)
             }
         case .shareETA:
             if let routeData = operation.data["route"] as? [String: Any],
-               let recipients = operation.data["recipients"] as? [String] {
+               let recipients = operation.data["recipients"] as? [String]
+            {
                 let route = RouteInfo(
                     duration: routeData["duration"] as? String ?? "",
                     distance: routeData["distance"] as? String ?? "",
@@ -103,32 +109,34 @@ class OfflineManager: ObservableObject {
             break
         }
     }
-    
+
     // MARK: - Offline Data Management
-    func getCachedData<T: Codable>(_ type: T.Type, key: String) -> T? {
+
+    func getCachedData<T: Codable>(_: T.Type, key _: String) -> T? {
         // For now, return nil - implement caching in Persistence later
-        return nil
+        nil
     }
-    
-    func cacheData<T: Codable>(_ data: T, key: String) {
+
+    func cacheData(_: some Codable, key _: String) {
         // For now, do nothing - implement caching in Persistence later
     }
-    
+
     func clearCache() {
         // For now, do nothing - implement cache clearing in Persistence later
     }
 }
 
 // MARK: - Sync Operation Types
+
 struct SyncOperation: Identifiable, Codable {
     let id: UUID
     let type: SyncOperationType
     let data: [String: Any]
     let timestamp: Date
     let retryCount: Int
-    
+
     init(type: SyncOperationType, data: Any, retryCount: Int = 0) {
-        self.id = UUID()
+        id = UUID()
         self.type = type
         // Store data as a simple dictionary
         if let dict = data as? [String: Any] {
@@ -136,15 +144,15 @@ struct SyncOperation: Identifiable, Codable {
         } else {
             self.data = [:]
         }
-        self.timestamp = Date()
+        timestamp = Date()
         self.retryCount = retryCount
     }
-    
+
     // Custom coding keys to handle Any type
     enum CodingKeys: String, CodingKey {
         case id, type, timestamp, retryCount
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(UUID.self, forKey: .id)
@@ -153,7 +161,7 @@ struct SyncOperation: Identifiable, Codable {
         retryCount = try container.decode(Int.self, forKey: .retryCount)
         data = [:] // Simplified for now
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)

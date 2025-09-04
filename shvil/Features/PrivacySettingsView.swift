@@ -12,23 +12,23 @@ struct PrivacySettingsView: View {
     @State private var showingPrivacySheet = false
     @State private var selectedFeature: PrivacyFeature?
     @State private var showingPanicSwitchAlert = false
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
                     // Privacy Overview Card
                     privacyOverviewCard
-                    
+
                     // Privacy Controls
                     privacyControlsSection
-                    
+
                     // Data Management
                     dataManagementSection
-                    
+
                     // Emergency Controls
                     emergencyControlsSection
-                    
+
                     // Legal & Compliance
                     legalSection
                 }
@@ -45,7 +45,7 @@ struct PrivacySettingsView: View {
             }
         }
         .alert("Panic Switch", isPresented: $showingPanicSwitchAlert) {
-            Button("Cancel", role: .cancel) { }
+            Button("Cancel", role: .cancel) {}
             Button("Enable Panic Switch", role: .destructive) {
                 privacyGuard.enablePanicSwitch()
                 HapticFeedback.shared.impact(style: .heavy)
@@ -54,32 +54,33 @@ struct PrivacySettingsView: View {
             Text("This will immediately stop all data sharing and disable all privacy features. You can disable it later in settings.")
         }
     }
-    
+
     // MARK: - Privacy Overview Card
+
     private var privacyOverviewCard: some View {
         VStack(spacing: 16) {
             HStack {
                 Image(systemName: "shield.checkered")
                     .font(.system(size: 24))
                     .foregroundColor(LiquidGlassColors.accentDeepAqua)
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Privacy Status")
                         .font(LiquidGlassTypography.title)
                         .foregroundColor(LiquidGlassColors.primaryText)
-                    
+
                     Text(privacyGuard.isPanicSwitchEnabled ? "All sharing disabled" : "Privacy controls active")
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
                 }
-                
+
                 Spacer()
-                
+
                 Circle()
                     .fill(privacyGuard.isPanicSwitchEnabled ? Color.red : LiquidGlassColors.accentDeepAqua)
                     .frame(width: 12, height: 12)
             }
-            
+
             if !privacyGuard.isPanicSwitchEnabled {
                 HStack(spacing: 16) {
                     PrivacyStatusItem(
@@ -87,19 +88,19 @@ struct PrivacySettingsView: View {
                         isEnabled: privacyGuard.hasAcceptedLocationSharing,
                         icon: "location.fill"
                     )
-                    
+
                     PrivacyStatusItem(
                         title: "Friends",
                         isEnabled: privacyGuard.hasAcceptedFriendsOnMap,
                         icon: "person.2.fill"
                     )
-                    
+
                     PrivacyStatusItem(
                         title: "ETA",
                         isEnabled: privacyGuard.hasAcceptedETASharing,
                         icon: "clock.fill"
                     )
-                    
+
                     PrivacyStatusItem(
                         title: "Analytics",
                         isEnabled: privacyGuard.hasAcceptedAnalytics,
@@ -115,14 +116,15 @@ struct PrivacySettingsView: View {
                 .glassEffect(elevation: .medium)
         )
     }
-    
+
     // MARK: - Privacy Controls Section
+
     private var privacyControlsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Privacy Controls")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             VStack(spacing: 12) {
                 PrivacyControlRow(
                     feature: .locationSharing,
@@ -132,7 +134,7 @@ struct PrivacySettingsView: View {
                     selectedFeature = .locationSharing
                     showingPrivacySheet = true
                 }
-                
+
                 PrivacyControlRow(
                     feature: .friendsOnMap,
                     isEnabled: privacyGuard.hasAcceptedFriendsOnMap,
@@ -141,7 +143,7 @@ struct PrivacySettingsView: View {
                     selectedFeature = .friendsOnMap
                     showingPrivacySheet = true
                 }
-                
+
                 PrivacyControlRow(
                     feature: .etaSharing,
                     isEnabled: privacyGuard.hasAcceptedETASharing,
@@ -150,7 +152,7 @@ struct PrivacySettingsView: View {
                     selectedFeature = .etaSharing
                     showingPrivacySheet = true
                 }
-                
+
                 PrivacyControlRow(
                     feature: .analytics,
                     isEnabled: privacyGuard.hasAcceptedAnalytics,
@@ -162,14 +164,15 @@ struct PrivacySettingsView: View {
             }
         }
     }
-    
+
     // MARK: - Data Management Section
+
     private var dataManagementSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Data Management")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             VStack(spacing: 12) {
                 SettingsRow(
                     icon: "trash.fill",
@@ -179,7 +182,7 @@ struct PrivacySettingsView: View {
                     // TODO: Implement clear all data
                     HapticFeedback.shared.impact(style: .medium)
                 }
-                
+
                 SettingsRow(
                     icon: "square.and.arrow.down",
                     title: "Export My Data",
@@ -188,7 +191,7 @@ struct PrivacySettingsView: View {
                     // TODO: Implement data export
                     HapticFeedback.shared.impact(style: .light)
                 }
-                
+
                 SettingsRow(
                     icon: "arrow.clockwise",
                     title: "Reset Privacy Settings",
@@ -200,14 +203,15 @@ struct PrivacySettingsView: View {
             }
         }
     }
-    
+
     // MARK: - Emergency Controls Section
+
     private var emergencyControlsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Emergency Controls")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             VStack(spacing: 12) {
                 Button(action: {
                     if privacyGuard.isPanicSwitchEnabled {
@@ -221,19 +225,19 @@ struct PrivacySettingsView: View {
                         Image(systemName: privacyGuard.isPanicSwitchEnabled ? "shield.fill" : "shield.slash.fill")
                             .font(.system(size: 20))
                             .foregroundColor(privacyGuard.isPanicSwitchEnabled ? .red : LiquidGlassColors.primaryText)
-                        
+
                         VStack(alignment: .leading, spacing: 4) {
                             Text(privacyGuard.isPanicSwitchEnabled ? "Disable Panic Switch" : "Enable Panic Switch")
                                 .font(LiquidGlassTypography.bodySemibold)
                                 .foregroundColor(LiquidGlassColors.primaryText)
-                            
+
                             Text(privacyGuard.isPanicSwitchEnabled ? "Re-enable all privacy features" : "Immediately stop all data sharing")
                                 .font(LiquidGlassTypography.caption)
                                 .foregroundColor(LiquidGlassColors.secondaryText)
                         }
-                        
+
                         Spacer()
-                        
+
                         Image(systemName: "chevron.right")
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(LiquidGlassColors.secondaryText)
@@ -249,14 +253,15 @@ struct PrivacySettingsView: View {
             }
         }
     }
-    
+
     // MARK: - Legal Section
+
     private var legalSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Legal & Compliance")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             VStack(spacing: 12) {
                 SettingsRow(
                     icon: "doc.text.fill",
@@ -266,7 +271,7 @@ struct PrivacySettingsView: View {
                     // TODO: Open privacy policy
                     HapticFeedback.shared.impact(style: .light)
                 }
-                
+
                 SettingsRow(
                     icon: "hand.raised.fill",
                     title: "Terms of Service",
@@ -275,7 +280,7 @@ struct PrivacySettingsView: View {
                     // TODO: Open terms of service
                     HapticFeedback.shared.impact(style: .light)
                 }
-                
+
                 SettingsRow(
                     icon: "envelope.fill",
                     title: "Contact Privacy Team",
@@ -295,13 +300,13 @@ struct PrivacyStatusItem: View {
     let title: String
     let isEnabled: Bool
     let icon: String
-    
+
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.system(size: 20))
                 .foregroundColor(isEnabled ? LiquidGlassColors.accentDeepAqua : LiquidGlassColors.secondaryText)
-            
+
             Text(title)
                 .font(LiquidGlassTypography.caption)
                 .foregroundColor(LiquidGlassColors.secondaryText)
@@ -314,20 +319,20 @@ struct PrivacyControlRow: View {
     let isEnabled: Bool
     let privacyGuard: PrivacyGuard
     let action: () -> Void
-    
+
     private var featureInfo: (title: String, subtitle: String, icon: String) {
         switch feature {
         case .locationSharing:
-            return ("Location Sharing", "Share your location with friends", "location.fill")
+            ("Location Sharing", "Share your location with friends", "location.fill")
         case .friendsOnMap:
-            return ("Friends on Map", "See friends' locations on map", "person.2.fill")
+            ("Friends on Map", "See friends' locations on map", "person.2.fill")
         case .etaSharing:
-            return ("ETA Sharing", "Share arrival times with friends", "clock.fill")
+            ("ETA Sharing", "Share arrival times with friends", "clock.fill")
         case .analytics:
-            return ("Analytics", "Help improve the app with usage data", "chart.bar.fill")
+            ("Analytics", "Help improve the app with usage data", "chart.bar.fill")
         }
     }
-    
+
     var body: some View {
         Button(action: action) {
             HStack {
@@ -335,19 +340,19 @@ struct PrivacyControlRow: View {
                     .font(.system(size: 20))
                     .foregroundColor(LiquidGlassColors.primaryText)
                     .frame(width: 24)
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(featureInfo.title)
                         .font(LiquidGlassTypography.bodySemibold)
                         .foregroundColor(LiquidGlassColors.primaryText)
-                    
+
                     Text(featureInfo.subtitle)
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
                 }
-                
+
                 Spacer()
-                
+
                 Toggle("", isOn: Binding(
                     get: { isEnabled },
                     set: { _ in action() }
@@ -369,11 +374,11 @@ struct PrivacyDetailSheet: View {
     let feature: PrivacyFeature
     let privacyGuard: PrivacyGuard
     @Environment(\.dismiss) private var dismiss
-    
+
     private var sheetData: PrivacySheetData {
         privacyGuard.showPrivacySheet(for: feature)
     }
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -383,18 +388,18 @@ struct PrivacyDetailSheet: View {
                         Text(sheetData.title)
                             .font(LiquidGlassTypography.titleXL)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         Text(sheetData.description)
                             .font(LiquidGlassTypography.body)
                             .foregroundColor(LiquidGlassColors.secondaryText)
                     }
-                    
+
                     // Data Collected
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Data We Collect")
                             .font(LiquidGlassTypography.title)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         VStack(alignment: .leading, spacing: 8) {
                             ForEach(sheetData.dataCollected, id: \.self) { item in
                                 HStack(alignment: .top, spacing: 12) {
@@ -402,7 +407,7 @@ struct PrivacyDetailSheet: View {
                                         .font(.system(size: 6))
                                         .foregroundColor(LiquidGlassColors.accentDeepAqua)
                                         .padding(.top, 8)
-                                    
+
                                     Text(item)
                                         .font(LiquidGlassTypography.body)
                                         .foregroundColor(LiquidGlassColors.secondaryText)
@@ -410,18 +415,18 @@ struct PrivacyDetailSheet: View {
                             }
                         }
                     }
-                    
+
                     // How to Stop
                     VStack(alignment: .leading, spacing: 12) {
                         Text("How to Stop")
                             .font(LiquidGlassTypography.title)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         Text(sheetData.howToStop)
                             .font(LiquidGlassTypography.body)
                             .foregroundColor(LiquidGlassColors.secondaryText)
                     }
-                    
+
                     Spacer(minLength: 32)
                 }
                 .padding(20)

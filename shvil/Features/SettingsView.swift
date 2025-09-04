@@ -14,26 +14,26 @@ struct SettingsView: View {
     @State private var showingLocationSettings = false
     @State private var showingNotificationSettings = false
     @State private var showingAbout = false
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
                     // Profile Header
                     profileHeader
-                    
+
                     // App Settings
                     appSettingsSection
-                    
+
                     // Feature Settings
                     featureSettingsSection
-                    
+
                     // Privacy & Security
                     privacySection
-                    
+
                     // Notifications
                     notificationsSection
-                    
+
                     // Support & Info
                     supportSection
                 }
@@ -57,8 +57,9 @@ struct SettingsView: View {
             AboutView()
         }
     }
-    
+
     // MARK: - Profile Header
+
     private var profileHeader: some View {
         VStack(spacing: 16) {
             // Profile Picture
@@ -67,17 +68,17 @@ struct SettingsView: View {
                     .fill(LiquidGlassGradients.primaryGradient)
                     .frame(width: 80, height: 80)
                     .glassEffect(elevation: .high)
-                
+
                 Image(systemName: "person.fill")
                     .font(.system(size: 32))
                     .foregroundColor(.white)
             }
-            
+
             VStack(spacing: 4) {
                 Text("Welcome to Shvil")
                     .font(LiquidGlassTypography.title)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Text("Your personal navigation assistant")
                     .font(LiquidGlassTypography.caption)
                     .foregroundColor(LiquidGlassColors.secondaryText)
@@ -90,14 +91,15 @@ struct SettingsView: View {
                 .glassEffect(elevation: .medium)
         )
     }
-    
+
     // MARK: - App Settings Section
+
     private var appSettingsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("App Settings")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             VStack(spacing: 12) {
                 SettingsRow(
                     icon: "globe",
@@ -107,7 +109,7 @@ struct SettingsView: View {
                     // TODO: Implement language selection
                     HapticFeedback.shared.impact(style: .light)
                 }
-                
+
                 SettingsRow(
                     icon: "moon.fill",
                     title: "Appearance",
@@ -116,7 +118,7 @@ struct SettingsView: View {
                     // TODO: Implement appearance selection
                     HapticFeedback.shared.impact(style: .light)
                 }
-                
+
                 SettingsRow(
                     icon: "textformat.size",
                     title: "Text Size",
@@ -128,14 +130,15 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     // MARK: - Feature Settings Section
+
     private var featureSettingsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Features")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             VStack(spacing: 12) {
                 ToggleRow(
                     icon: "person.2.fill",
@@ -143,21 +146,21 @@ struct SettingsView: View {
                     subtitle: "Show friends' locations",
                     isOn: $appState.enableFriendsOnMap
                 )
-                
+
                 ToggleRow(
                     icon: "shield.fill",
                     title: "Safety Layer",
                     subtitle: "Show safety information",
                     isOn: $appState.enableSafetyLayer
                 )
-                
+
                 ToggleRow(
                     icon: "lightbulb.fill",
                     title: "Smart Stops",
                     subtitle: "Suggest stops along your route",
                     isOn: $appState.enableSmartStops
                 )
-                
+
                 ToggleRow(
                     icon: "mic.fill",
                     title: "Voice Search",
@@ -167,14 +170,15 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     // MARK: - Privacy Section
+
     private var privacySection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Privacy & Security")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             VStack(spacing: 12) {
                 SettingsRow(
                     icon: "shield.checkered",
@@ -184,7 +188,7 @@ struct SettingsView: View {
                     showingPrivacySettings = true
                     HapticFeedback.shared.impact(style: .light)
                 }
-                
+
                 SettingsRow(
                     icon: "location.fill",
                     title: "Location Services",
@@ -193,7 +197,7 @@ struct SettingsView: View {
                     showingLocationSettings = true
                     HapticFeedback.shared.impact(style: .light)
                 }
-                
+
                 SettingsRow(
                     icon: "key.fill",
                     title: "Biometric Lock",
@@ -205,14 +209,15 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     // MARK: - Notifications Section
+
     private var notificationsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Notifications")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             VStack(spacing: 12) {
                 SettingsRow(
                     icon: "bell.fill",
@@ -222,14 +227,14 @@ struct SettingsView: View {
                     showingNotificationSettings = true
                     HapticFeedback.shared.impact(style: .light)
                 }
-                
+
                 ToggleRow(
                     icon: "location.circle.fill",
                     title: "Location Alerts",
                     subtitle: "Get notified about nearby places",
                     isOn: .constant(true) // TODO: Connect to actual setting
                 )
-                
+
                 ToggleRow(
                     icon: "person.2.circle.fill",
                     title: "Social Updates",
@@ -239,14 +244,15 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     // MARK: - Support Section
+
     private var supportSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Support & Info")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             VStack(spacing: 12) {
                 SettingsRow(
                     icon: "questionmark.circle.fill",
@@ -256,7 +262,7 @@ struct SettingsView: View {
                     // TODO: Open help center
                     HapticFeedback.shared.impact(style: .light)
                 }
-                
+
                 SettingsRow(
                     icon: "star.fill",
                     title: "Rate Shvil",
@@ -265,7 +271,7 @@ struct SettingsView: View {
                     // TODO: Open App Store rating
                     HapticFeedback.shared.impact(style: .light)
                 }
-                
+
                 SettingsRow(
                     icon: "square.and.arrow.up",
                     title: "Share Shvil",
@@ -274,7 +280,7 @@ struct SettingsView: View {
                     // TODO: Open share sheet
                     HapticFeedback.shared.impact(style: .light)
                 }
-                
+
                 SettingsRow(
                     icon: "info.circle.fill",
                     title: "About Shvil",
@@ -286,29 +292,30 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     // MARK: - Helper Properties
+
     private var locationPermissionText: String {
         switch appState.locationPermission {
         case .notDetermined:
-            return "Not determined"
+            "Not determined"
         case .denied:
-            return "Denied"
+            "Denied"
         case .whenInUse:
-            return "When in use"
+            "When in use"
         case .always:
-            return "Always"
+            "Always"
         }
     }
-    
+
     private var notificationPermissionText: String {
         switch appState.notificationPermission {
         case .notDetermined:
-            return "Not determined"
+            "Not determined"
         case .denied:
-            return "Denied"
+            "Denied"
         case .granted:
-            return "Enabled"
+            "Enabled"
         }
     }
 }
@@ -320,26 +327,26 @@ struct ToggleRow: View {
     let title: String
     let subtitle: String
     @Binding var isOn: Bool
-    
+
     var body: some View {
         HStack {
             Image(systemName: icon)
                 .font(.system(size: 20))
                 .foregroundColor(LiquidGlassColors.primaryText)
                 .frame(width: 24)
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Text(subtitle)
                     .font(LiquidGlassTypography.caption)
                     .foregroundColor(LiquidGlassColors.secondaryText)
             }
-            
+
             Spacer()
-            
+
             Toggle("", isOn: $isOn)
                 .toggleStyle(SwitchToggleStyle(tint: LiquidGlassColors.accentDeepAqua))
         }
@@ -355,7 +362,7 @@ struct ToggleRow: View {
 struct LocationSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var appState = DependencyContainer.shared.appState
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -365,16 +372,16 @@ struct LocationSettingsView: View {
                         Text("Location Services")
                             .font(LiquidGlassTypography.titleXL)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         Text("Shvil needs access to your location to provide navigation and location-based features.")
                             .font(LiquidGlassTypography.body)
                             .foregroundColor(LiquidGlassColors.secondaryText)
-                        
+
                         HStack {
                             Image(systemName: locationStatusIcon)
                                 .font(.system(size: 20))
                                 .foregroundColor(locationStatusColor)
-                            
+
                             Text(locationStatusText)
                                 .font(LiquidGlassTypography.bodySemibold)
                                 .foregroundColor(LiquidGlassColors.primaryText)
@@ -386,26 +393,26 @@ struct LocationSettingsView: View {
                                 .glassEffect(elevation: .light)
                         )
                     }
-                    
+
                     // Location Features
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Location Features")
                             .font(LiquidGlassTypography.title)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         VStack(spacing: 12) {
                             LocationFeatureRow(
                                 title: "Navigation",
                                 description: "Turn-by-turn directions",
                                 isEnabled: appState.locationPermission != .denied
                             )
-                            
+
                             LocationFeatureRow(
                                 title: "Smart Stops",
                                 description: "Suggest stops along your route",
                                 isEnabled: appState.locationPermission != .denied
                             )
-                            
+
                             LocationFeatureRow(
                                 title: "Friends on Map",
                                 description: "See friends' locations",
@@ -413,7 +420,7 @@ struct LocationSettingsView: View {
                             )
                         }
                     }
-                    
+
                     // Settings Button
                     if appState.locationPermission == .denied {
                         Button(action: {
@@ -446,41 +453,41 @@ struct LocationSettingsView: View {
             }
         }
     }
-    
+
     private var locationStatusIcon: String {
         switch appState.locationPermission {
         case .notDetermined:
-            return "questionmark.circle"
+            "questionmark.circle"
         case .denied:
-            return "xmark.circle"
+            "xmark.circle"
         case .whenInUse:
-            return "checkmark.circle"
+            "checkmark.circle"
         case .always:
-            return "checkmark.circle.fill"
+            "checkmark.circle.fill"
         }
     }
-    
+
     private var locationStatusColor: Color {
         switch appState.locationPermission {
         case .notDetermined:
-            return .orange
+            .orange
         case .denied:
-            return .red
+            .red
         case .whenInUse, .always:
-            return .green
+            .green
         }
     }
-    
+
     private var locationStatusText: String {
         switch appState.locationPermission {
         case .notDetermined:
-            return "Permission not requested"
+            "Permission not requested"
         case .denied:
-            return "Location access denied"
+            "Location access denied"
         case .whenInUse:
-            return "Location access granted (when in use)"
+            "Location access granted (when in use)"
         case .always:
-            return "Location access granted (always)"
+            "Location access granted (always)"
         }
     }
 }
@@ -489,21 +496,21 @@ struct LocationFeatureRow: View {
     let title: String
     let description: String
     let isEnabled: Bool
-    
+
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Text(description)
                     .font(LiquidGlassTypography.caption)
                     .foregroundColor(LiquidGlassColors.secondaryText)
             }
-            
+
             Spacer()
-            
+
             Image(systemName: isEnabled ? "checkmark.circle.fill" : "xmark.circle")
                 .font(.system(size: 20))
                 .foregroundColor(isEnabled ? .green : .red)
@@ -520,7 +527,7 @@ struct LocationFeatureRow: View {
 struct NotificationSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var appState = DependencyContainer.shared.appState
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -530,16 +537,16 @@ struct NotificationSettingsView: View {
                         Text("Notifications")
                             .font(LiquidGlassTypography.titleXL)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         Text("Stay updated with important information about your navigation and social features.")
                             .font(LiquidGlassTypography.body)
                             .foregroundColor(LiquidGlassColors.secondaryText)
-                        
+
                         HStack {
                             Image(systemName: notificationStatusIcon)
                                 .font(.system(size: 20))
                                 .foregroundColor(notificationStatusColor)
-                            
+
                             Text(notificationStatusText)
                                 .font(LiquidGlassTypography.bodySemibold)
                                 .foregroundColor(LiquidGlassColors.primaryText)
@@ -551,26 +558,26 @@ struct NotificationSettingsView: View {
                                 .glassEffect(elevation: .light)
                         )
                     }
-                    
+
                     // Notification Types
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Notification Types")
                             .font(LiquidGlassTypography.title)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         VStack(spacing: 12) {
                             NotificationTypeRow(
                                 title: "Navigation Alerts",
                                 description: "Turn-by-turn directions and route updates",
                                 isEnabled: appState.notificationPermission == .granted
                             )
-                            
+
                             NotificationTypeRow(
                                 title: "Social Updates",
                                 description: "Updates from friends and group plans",
                                 isEnabled: appState.notificationPermission == .granted
                             )
-                            
+
                             NotificationTypeRow(
                                 title: "Safety Alerts",
                                 description: "Important safety information",
@@ -578,7 +585,7 @@ struct NotificationSettingsView: View {
                             )
                         }
                     }
-                    
+
                     // Settings Button
                     if appState.notificationPermission == .denied {
                         Button(action: {
@@ -611,37 +618,37 @@ struct NotificationSettingsView: View {
             }
         }
     }
-    
+
     private var notificationStatusIcon: String {
         switch appState.notificationPermission {
         case .notDetermined:
-            return "questionmark.circle"
+            "questionmark.circle"
         case .denied:
-            return "xmark.circle"
+            "xmark.circle"
         case .granted:
-            return "checkmark.circle.fill"
+            "checkmark.circle.fill"
         }
     }
-    
+
     private var notificationStatusColor: Color {
         switch appState.notificationPermission {
         case .notDetermined:
-            return .orange
+            .orange
         case .denied:
-            return .red
+            .red
         case .granted:
-            return .green
+            .green
         }
     }
-    
+
     private var notificationStatusText: String {
         switch appState.notificationPermission {
         case .notDetermined:
-            return "Permission not requested"
+            "Permission not requested"
         case .denied:
-            return "Notifications disabled"
+            "Notifications disabled"
         case .granted:
-            return "Notifications enabled"
+            "Notifications enabled"
         }
     }
 }
@@ -650,21 +657,21 @@ struct NotificationTypeRow: View {
     let title: String
     let description: String
     let isEnabled: Bool
-    
+
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Text(description)
                     .font(LiquidGlassTypography.caption)
                     .foregroundColor(LiquidGlassColors.secondaryText)
             }
-            
+
             Spacer()
-            
+
             Image(systemName: isEnabled ? "checkmark.circle.fill" : "xmark.circle")
                 .font(.system(size: 20))
                 .foregroundColor(isEnabled ? .green : .red)
@@ -680,7 +687,7 @@ struct NotificationTypeRow: View {
 
 struct AboutView: View {
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -692,40 +699,40 @@ struct AboutView: View {
                                 .fill(LiquidGlassGradients.primaryGradient)
                                 .frame(width: 100, height: 100)
                                 .glassEffect(elevation: .high)
-                            
+
                             Image(systemName: "map.fill")
                                 .font(.system(size: 40))
                                 .foregroundColor(.white)
                         }
-                        
+
                         VStack(spacing: 8) {
                             Text("Shvil")
                                 .font(LiquidGlassTypography.titleXL)
                                 .foregroundColor(LiquidGlassColors.primaryText)
-                            
+
                             Text("Version 1.0.0")
                                 .font(LiquidGlassTypography.caption)
                                 .foregroundColor(LiquidGlassColors.secondaryText)
                         }
                     }
-                    
+
                     // App Description
                     VStack(alignment: .leading, spacing: 16) {
                         Text("About Shvil")
                             .font(LiquidGlassTypography.title)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         Text("Shvil is your personal navigation assistant that helps you discover new places, plan adventures, and stay connected with friends. Built with privacy and safety in mind.")
                             .font(LiquidGlassTypography.body)
                             .foregroundColor(LiquidGlassColors.secondaryText)
                     }
-                    
+
                     // Features
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Features")
                             .font(LiquidGlassTypography.title)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         VStack(alignment: .leading, spacing: 12) {
                             FeatureItem(title: "Smart Navigation", description: "AI-powered route planning")
                             FeatureItem(title: "Social Features", description: "Share ETAs and plans with friends")
@@ -733,14 +740,14 @@ struct AboutView: View {
                             FeatureItem(title: "Privacy First", description: "Your data stays private and secure")
                         }
                     }
-                    
+
                     // Legal Links
                     VStack(spacing: 12) {
                         Button("Privacy Policy") {
                             // TODO: Open privacy policy
                         }
                         .foregroundColor(LiquidGlassColors.accentDeepAqua)
-                        
+
                         Button("Terms of Service") {
                             // TODO: Open terms of service
                         }
@@ -766,19 +773,19 @@ struct AboutView: View {
 struct FeatureItem: View {
     let title: String
     let description: String
-    
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 16))
                 .foregroundColor(LiquidGlassColors.accentDeepAqua)
                 .padding(.top, 2)
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Text(description)
                     .font(LiquidGlassTypography.caption)
                     .foregroundColor(LiquidGlassColors.secondaryText)
