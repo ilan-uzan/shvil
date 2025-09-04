@@ -5,9 +5,9 @@
 //  Created by ilan on 2024.
 //
 
-import Foundation
-import CoreLocation
 import Combine
+import CoreLocation
+import Foundation
 import MapKit
 
 class LocationService: NSObject, ObservableObject {
@@ -18,9 +18,9 @@ class LocationService: NSObject, ObservableObject {
         center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), // San Francisco default
         span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
     )
-    
+
     private let locationManager = CLLocationManager()
-    
+
     override init() {
         super.init()
         locationManager.delegate = self
@@ -33,11 +33,11 @@ class LocationService: NSObject, ObservableObject {
             }
         }
     }
-    
+
     func requestLocationPermission() {
         locationManager.requestWhenInUseAuthorization()
     }
-    
+
     func startLocationUpdates() {
         guard authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways else {
             requestLocationPermission()
@@ -45,11 +45,11 @@ class LocationService: NSObject, ObservableObject {
         }
         locationManager.startUpdatingLocation()
     }
-    
+
     func stopLocationUpdates() {
         locationManager.stopUpdatingLocation()
     }
-    
+
     func centerOnUserLocation() {
         guard let location = currentLocation else { return }
         region = MKCoordinateRegion(
@@ -60,13 +60,14 @@ class LocationService: NSObject, ObservableObject {
 }
 
 // MARK: - CLLocationManagerDelegate
+
 extension LocationService: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        
+
         DispatchQueue.main.async {
             self.currentLocation = location
-            
+
             // Update region to follow user
             self.region = MKCoordinateRegion(
                 center: location.coordinate,
@@ -74,16 +75,16 @@ extension LocationService: CLLocationManagerDelegate {
             )
         }
     }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+
+    func locationManager(_: CLLocationManager, didFailWithError error: Error) {
         print("Location error: \(error.localizedDescription)")
     }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+
+    func locationManager(_: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         DispatchQueue.main.async {
             self.authorizationStatus = status
             self.isLocationEnabled = (status == .authorizedWhenInUse || status == .authorizedAlways)
-            
+
             if self.isLocationEnabled {
                 self.startLocationUpdates()
             }

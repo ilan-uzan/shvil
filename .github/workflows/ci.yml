@@ -93,9 +93,10 @@ jobs:
           echo "✅ No hardcoded secrets found"
         fi
         
-        # Check for TODO/FIXME comments
+        # Check for TODO/FIXME comments (non-blocking)
         if grep -r "TODO\|FIXME\|HACK" --include="*.swift" .; then
           echo "⚠️  TODO/FIXME comments found - review before merge"
+          echo "ℹ️  This is non-blocking for development builds"
         fi
 
   accessibility-check:

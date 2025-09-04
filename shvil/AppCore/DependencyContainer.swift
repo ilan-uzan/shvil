@@ -11,24 +11,26 @@ import Foundation
 @MainActor
 class DependencyContainer {
     static let shared = DependencyContainer()
-    
+
     private init() {}
-    
+
     // MARK: - Core Services
-    lazy var appState: AppState = AppState()
-    lazy var locationKit: LocationKit = LocationKit()
-    lazy var mapEngine: MapEngine = MapEngine()
-    lazy var routingEngine: RoutingEngine = RoutingEngine()
-    lazy var contextEngine: ContextEngine = ContextEngine()
-    lazy var socialKit: SocialKit = SocialKit()
-    lazy var safetyKit: SafetyKit = SafetyKit()
-    lazy var persistence: Persistence = Persistence()
-    lazy var privacyGuard: PrivacyGuard = PrivacyGuard()
-    
+
+    lazy var appState: AppState = .init()
+    lazy var locationKit: LocationKit = .init()
+    lazy var mapEngine: MapEngine = .init()
+    lazy var routingEngine: RoutingEngine = .init()
+    lazy var contextEngine: ContextEngine = .init()
+    lazy var socialKit: SocialKit = .init()
+    lazy var safetyKit: SafetyKit = .init()
+    lazy var persistence: Persistence = .init()
+    lazy var privacyGuard: PrivacyGuard = .init()
+
     // MARK: - Feature Services
-    lazy var locationService: LocationService = LocationService()
-    lazy var searchService: SearchService = SearchService()
-    lazy var navigationService: NavigationService = NavigationService()
+
+    lazy var locationService: LocationService = .init()
+    lazy var searchService: SearchService = .init()
+    lazy var navigationService: NavigationService = .init()
     lazy var aiKit: AIKit = {
         do {
             return try AIKit()
@@ -38,20 +40,23 @@ class DependencyContainer {
             return AIKit(apiKey: Configuration.openAIAPIKey)
         }
     }()
-    lazy var adventureKit: AdventureKit = AdventureKit(
+
+    lazy var adventureKit: AdventureKit = .init(
         aiKit: aiKit,
         mapEngine: mapEngine,
         safetyKit: safetyKit,
         persistence: persistence
     )
-    lazy var supabaseService: SupabaseService = SupabaseService.shared
-    
+    lazy var supabaseService: SupabaseService = .shared
+
     // MARK: - Utility Services
-    lazy var networkMonitor: NetworkMonitor = NetworkMonitor.shared
-    lazy var analytics: Analytics = Analytics.shared
-    lazy var hapticFeedback: HapticFeedback = HapticFeedback.shared
-    
+
+    lazy var networkMonitor: NetworkMonitor = .shared
+    lazy var analytics: Analytics = .shared
+    lazy var hapticFeedback: HapticFeedback = .shared
+
     // MARK: - Reset for Testing
+
     func reset() {
         // Reset all services for testing
         appState = AppState()

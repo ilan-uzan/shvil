@@ -5,14 +5,14 @@
 //  Created by ilan on 2024.
 //
 
-import SwiftUI
 import MapKit
+import SwiftUI
 
 struct PlaceDetailsView: View {
     let place: SearchResult
     @Binding var isPresented: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
+
     var body: some View {
         ZStack {
             // Background overlay
@@ -21,18 +21,18 @@ struct PlaceDetailsView: View {
                 .onTapGesture {
                     dismissModal()
                 }
-            
+
             // Modal content
             VStack(spacing: 0) {
                 Spacer()
-                
+
                 VStack(spacing: 0) {
                     // Header section
                     headerSection
-                    
+
                     // Primary actions row
                     primaryActionsRow
-                    
+
                     // Content sections
                     contentSections
                 }
@@ -51,9 +51,9 @@ struct PlaceDetailsView: View {
         }
         .animation(reduceMotion ? .none : LiquidGlassAnimations.pourAnimation, value: isPresented) // Pour animation ≤600ms
     }
-    
+
     // MARK: - Header Section
-    
+
     private var headerSection: some View {
         VStack(spacing: 16) {
             // Drag handle
@@ -62,7 +62,7 @@ struct PlaceDetailsView: View {
                 .frame(width: 36, height: 4)
                 .padding(.top, 8)
                 .padding(.bottom, 12)
-            
+
             HStack(spacing: 16) {
                 // Place info
                 VStack(alignment: .leading, spacing: 4) {
@@ -70,7 +70,7 @@ struct PlaceDetailsView: View {
                         .font(LiquidGlassTypography.title) // Title typography
                         .foregroundColor(LiquidGlassColors.primaryText)
                         .lineLimit(2)
-                    
+
                     if let subtitle = place.subtitle {
                         Text(subtitle)
                             .font(LiquidGlassTypography.caption)
@@ -78,9 +78,9 @@ struct PlaceDetailsView: View {
                             .lineLimit(1)
                     }
                 }
-                
+
                 Spacer()
-                
+
                 // Close button
                 Button(action: {
                     dismissModal()
@@ -97,9 +97,9 @@ struct PlaceDetailsView: View {
             .padding(.bottom, 16)
         }
     }
-    
+
     // MARK: - Primary Actions Row
-    
+
     private var primaryActionsRow: some View {
         HStack(spacing: 12) {
             // Route button
@@ -123,7 +123,7 @@ struct PlaceDetailsView: View {
             }
             .accessibilityLabel("Route to \(place.name)")
             .accessibilityHint("Double tap to get directions to this place")
-            
+
             // Save button
             Button(action: {
                 // TODO: Implement save place
@@ -149,7 +149,7 @@ struct PlaceDetailsView: View {
             }
             .accessibilityLabel("Save \(place.name)")
             .accessibilityHint("Double tap to save this place to your favorites")
-            
+
             // Share button
             Button(action: {
                 // TODO: Implement share place
@@ -174,21 +174,21 @@ struct PlaceDetailsView: View {
         .padding(.horizontal, 20)
         .padding(.bottom, 20)
     }
-    
+
     // MARK: - Content Sections
-    
+
     private var contentSections: some View {
         ScrollView {
             VStack(spacing: 20) {
                 // Address section
                 addressSection
-                
+
                 // Contact section
                 contactSection
-                
+
                 // Hours section
                 hoursSection
-                
+
                 // Additional details
                 additionalDetailsSection
             }
@@ -196,7 +196,7 @@ struct PlaceDetailsView: View {
             .padding(.bottom, 20)
         }
     }
-    
+
     private var addressSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -204,14 +204,14 @@ struct PlaceDetailsView: View {
                     .font(.system(size: 16))
                     .foregroundColor(LiquidGlassColors.accentText)
                     .frame(width: 20)
-                
+
                 Text("Address")
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Spacer()
             }
-            
+
             Text(place.address ?? "Address not available")
                 .font(LiquidGlassTypography.body)
                 .foregroundColor(LiquidGlassColors.secondaryText)
@@ -228,7 +228,7 @@ struct PlaceDetailsView: View {
                 )
         )
     }
-    
+
     private var contactSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -236,14 +236,14 @@ struct PlaceDetailsView: View {
                     .font(.system(size: 16))
                     .foregroundColor(LiquidGlassColors.accentText)
                     .frame(width: 20)
-                
+
                 Text("Contact")
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Spacer()
             }
-            
+
             VStack(alignment: .leading, spacing: 8) {
                 // Phone number (placeholder)
                 HStack {
@@ -251,25 +251,25 @@ struct PlaceDetailsView: View {
                         .font(.system(size: 14))
                         .foregroundColor(LiquidGlassColors.secondaryText)
                         .frame(width: 16)
-                    
+
                     Text("(555) 123-4567")
                         .font(LiquidGlassTypography.body)
                         .foregroundColor(LiquidGlassColors.secondaryText)
-                    
+
                     Spacer()
                 }
-                
+
                 // Website (placeholder)
                 HStack {
                     Image(systemName: "globe")
                         .font(.system(size: 14))
                         .foregroundColor(LiquidGlassColors.secondaryText)
                         .frame(width: 16)
-                    
+
                     Text("www.example.com")
                         .font(LiquidGlassTypography.body)
                         .foregroundColor(LiquidGlassColors.accentText)
-                    
+
                     Spacer()
                 }
             }
@@ -285,7 +285,7 @@ struct PlaceDetailsView: View {
                 )
         )
     }
-    
+
     private var hoursSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -293,23 +293,23 @@ struct PlaceDetailsView: View {
                     .font(.system(size: 16))
                     .foregroundColor(LiquidGlassColors.accentText)
                     .frame(width: 20)
-                
+
                 Text("Hours")
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Spacer()
             }
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 Text("Monday - Friday: 9:00 AM - 6:00 PM")
                     .font(LiquidGlassTypography.body)
                     .foregroundColor(LiquidGlassColors.secondaryText)
-                
+
                 Text("Saturday: 10:00 AM - 4:00 PM")
                     .font(LiquidGlassTypography.body)
                     .foregroundColor(LiquidGlassColors.secondaryText)
-                
+
                 Text("Sunday: Closed")
                     .font(LiquidGlassTypography.body)
                     .foregroundColor(LiquidGlassColors.secondaryText)
@@ -326,7 +326,7 @@ struct PlaceDetailsView: View {
                 )
         )
     }
-    
+
     private var additionalDetailsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -334,14 +334,14 @@ struct PlaceDetailsView: View {
                     .font(.system(size: 16))
                     .foregroundColor(LiquidGlassColors.accentText)
                     .frame(width: 20)
-                
+
                 Text("Details")
                     .font(LiquidGlassTypography.bodySemibold)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Spacer()
             }
-            
+
             VStack(alignment: .leading, spacing: 8) {
                 Text("This is a sample place with additional details that would typically include amenities, reviews, and other relevant information.")
                     .font(LiquidGlassTypography.body)
@@ -360,9 +360,9 @@ struct PlaceDetailsView: View {
                 )
         )
     }
-    
+
     // MARK: - Helper Functions
-    
+
     private func dismissModal() {
         withAnimation(reduceMotion ? .none : LiquidGlassAnimations.standard) {
             isPresented = false

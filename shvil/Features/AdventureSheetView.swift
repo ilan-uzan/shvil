@@ -5,36 +5,36 @@
 //  Created by ilan on 2024.
 //
 
-import SwiftUI
 import MapKit
+import SwiftUI
 
 struct AdventureSheetView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var adventureKit = DependencyContainer.shared.adventureKit
     @StateObject private var mapEngine = DependencyContainer.shared.mapEngine
     @StateObject private var locationService = DependencyContainer.shared.locationService
-    
+
     @State private var selectedStop: AdventureStop?
     @State private var showStopDetails = false
     @State private var currentStopIndex = 0
     @State private var isNavigating = false
-    
+
     let adventure: AdventurePlan
-    
+
     var body: some View {
         NavigationView {
             ZStack {
                 // Background
                 LiquidGlassColors.background
                     .ignoresSafeArea()
-                
+
                 VStack(spacing: 0) {
                     // Header
                     headerSection
-                    
+
                     // Map
                     mapSection
-                    
+
                     // Bottom Sheet
                     bottomSheet
                 }
@@ -47,9 +47,9 @@ struct AdventureSheetView: View {
             }
         }
     }
-    
+
     // MARK: - Header Section
-    
+
     private var headerSection: some View {
         VStack(spacing: 0) {
             // Drag Handle
@@ -57,7 +57,7 @@ struct AdventureSheetView: View {
                 .fill(LiquidGlassColors.secondaryText)
                 .frame(width: 36, height: 4)
                 .padding(.top, 8)
-            
+
             HStack(spacing: 16) {
                 // Close Button
                 Button(action: { dismiss() }) {
@@ -70,21 +70,21 @@ struct AdventureSheetView: View {
                                 .fill(LiquidGlassColors.glassSurface1)
                         )
                 }
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(adventure.title)
                         .font(LiquidGlassTypography.title)
                         .foregroundColor(LiquidGlassColors.primaryText)
                         .lineLimit(1)
-                    
+
                     Text(adventure.tagline)
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
                         .lineLimit(1)
                 }
-                
+
                 Spacer()
-                
+
                 // Status Badge
                 statusBadge
             }
@@ -97,13 +97,13 @@ struct AdventureSheetView: View {
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
         )
     }
-    
+
     private var statusBadge: some View {
         HStack(spacing: 6) {
             Circle()
                 .fill(statusColor)
                 .frame(width: 8, height: 8)
-            
+
             Text(adventure.status.displayName)
                 .font(LiquidGlassTypography.caption)
                 .foregroundColor(LiquidGlassColors.primaryText)
@@ -115,18 +115,18 @@ struct AdventureSheetView: View {
                 .fill(LiquidGlassColors.glassSurface2)
         )
     }
-    
+
     private var statusColor: Color {
         switch adventure.status {
-        case .draft: return LiquidGlassColors.secondaryText
-        case .active: return LiquidGlassColors.accentDeepAqua
-        case .completed: return .green
-        case .cancelled: return .red
+        case .draft: LiquidGlassColors.secondaryText
+        case .active: LiquidGlassColors.accentDeepAqua
+        case .completed: .green
+        case .cancelled: .red
         }
     }
-    
+
     // MARK: - Map Section
-    
+
     private var mapSection: some View {
         GeometryReader { geometry in
             Map(coordinateRegion: .constant(mapRegion), annotationItems: adventure.stops) { stop in
@@ -138,22 +138,23 @@ struct AdventureSheetView: View {
             .cornerRadius(0)
         }
     }
-    
+
     private var mapRegion: MKCoordinateRegion {
         guard let firstStop = adventure.stops.first,
-              let coordinate = firstStop.coordinate else {
+              let coordinate = firstStop.coordinate
+        else {
             return MKCoordinateRegion(
                 center: locationService.currentLocation?.coordinate ?? CLLocationCoordinate2D(),
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             )
         }
-        
+
         return MKCoordinateRegion(
             center: coordinate,
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         )
     }
-    
+
     private func adventureStopAnnotation(for stop: AdventureStop) -> some View {
         Button(action: {
             selectedStop = stop
@@ -164,7 +165,7 @@ struct AdventureSheetView: View {
                 Circle()
                     .fill(LiquidGlassGradients.primaryGradient)
                     .frame(width: 32, height: 32)
-                
+
                 Image(systemName: stopIcon(for: stop.category))
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.white)
@@ -176,21 +177,21 @@ struct AdventureSheetView: View {
             .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
         }
     }
-    
+
     private func stopIcon(for category: StopCategory) -> String {
         switch category {
-        case .landmark: return "building"
-        case .food: return "fork.knife"
-        case .scenic: return "camera"
-        case .museum: return "building.columns"
-        case .activity: return "figure.run"
-        case .nightlife: return "moon.stars"
-        case .hiddenGem: return "star"
+        case .landmark: "building"
+        case .food: "fork.knife"
+        case .scenic: "camera"
+        case .museum: "building.columns"
+        case .activity: "figure.run"
+        case .nightlife: "moon.stars"
+        case .hiddenGem: "star"
         }
     }
-    
+
     // MARK: - Bottom Sheet
-    
+
     private var bottomSheet: some View {
         VStack(spacing: 0) {
             // Drag Handle
@@ -198,15 +199,15 @@ struct AdventureSheetView: View {
                 .fill(LiquidGlassColors.secondaryText)
                 .frame(width: 36, height: 4)
                 .padding(.top, 12)
-            
+
             // Content
             VStack(spacing: 20) {
                 // Adventure Info
                 adventureInfoSection
-                
+
                 // Stops List
                 stopsListSection
-                
+
                 // Action Buttons
                 actionButtonsSection
             }
@@ -219,7 +220,7 @@ struct AdventureSheetView: View {
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
         )
     }
-    
+
     private var adventureInfoSection: some View {
         HStack(spacing: 16) {
             // Mood
@@ -227,35 +228,35 @@ struct AdventureSheetView: View {
                 Image(systemName: moodIcon)
                     .font(.system(size: 20, weight: .medium))
                     .foregroundColor(LiquidGlassColors.accentDeepAqua)
-                
+
                 Text(adventure.mood.displayName)
                     .font(LiquidGlassTypography.caption)
                     .foregroundColor(LiquidGlassColors.secondaryText)
             }
-            
+
             Divider()
                 .frame(height: 40)
-            
+
             // Duration
             VStack(spacing: 4) {
                 Text("\(adventure.durationHours)h")
                     .font(LiquidGlassTypography.title)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Text("Duration")
                     .font(LiquidGlassTypography.caption)
                     .foregroundColor(LiquidGlassColors.secondaryText)
             }
-            
+
             Divider()
                 .frame(height: 40)
-            
+
             // Stops Count
             VStack(spacing: 4) {
                 Text("\(adventure.stops.count)")
                     .font(LiquidGlassTypography.title)
                     .foregroundColor(LiquidGlassColors.primaryText)
-                
+
                 Text("Stops")
                     .font(LiquidGlassTypography.caption)
                     .foregroundColor(LiquidGlassColors.secondaryText)
@@ -268,23 +269,23 @@ struct AdventureSheetView: View {
                 .fill(LiquidGlassColors.glassSurface2)
         )
     }
-    
+
     private var moodIcon: String {
         switch adventure.mood {
-        case .fun: return "face.smiling"
-        case .relaxing: return "leaf"
-        case .cultural: return "building.columns"
-        case .romantic: return "heart"
-        case .adventurous: return "mountain.2"
+        case .fun: "face.smiling"
+        case .relaxing: "leaf"
+        case .cultural: "building.columns"
+        case .romantic: "heart"
+        case .adventurous: "mountain.2"
         }
     }
-    
+
     private var stopsListSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Adventure Stops")
                 .font(LiquidGlassTypography.title)
                 .foregroundColor(LiquidGlassColors.primaryText)
-            
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach(Array(adventure.stops.enumerated()), id: \.element.id) { index, stop in
@@ -295,7 +296,7 @@ struct AdventureSheetView: View {
             }
         }
     }
-    
+
     private func stopCard(for stop: AdventureStop, at index: Int) -> some View {
         Button(action: {
             selectedStop = stop
@@ -313,27 +314,27 @@ struct AdventureSheetView: View {
                             Circle()
                                 .fill(LiquidGlassGradients.primaryGradient)
                         )
-                    
+
                     Spacer()
-                    
+
                     Image(systemName: stopIcon(for: stop.category))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(LiquidGlassColors.accentDeepAqua)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(stop.chapter)
                         .font(LiquidGlassTypography.bodyMedium)
                         .foregroundColor(LiquidGlassColors.primaryText)
                         .lineLimit(2)
-                    
+
                     if let name = stop.name {
                         Text(name)
                             .font(LiquidGlassTypography.caption)
                             .foregroundColor(LiquidGlassColors.secondaryText)
                             .lineLimit(1)
                     }
-                    
+
                     Text("\(stop.idealDurationMin) min")
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.accentDeepAqua)
@@ -348,7 +349,7 @@ struct AdventureSheetView: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
+
     private var actionButtonsSection: some View {
         HStack(spacing: 12) {
             // Start Adventure Button
@@ -356,7 +357,7 @@ struct AdventureSheetView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "play.fill")
                         .font(.system(size: 16, weight: .medium))
-                    
+
                     Text("Start Adventure")
                         .font(LiquidGlassTypography.bodyMedium)
                         .fontWeight(.semibold)
@@ -369,7 +370,7 @@ struct AdventureSheetView: View {
                         .fill(LiquidGlassGradients.primaryGradient)
                 )
             }
-            
+
             // Share Button
             Button(action: shareAdventure) {
                 Image(systemName: "square.and.arrow.up")
@@ -383,15 +384,15 @@ struct AdventureSheetView: View {
             }
         }
     }
-    
+
     // MARK: - Actions
-    
+
     private func startAdventure() {
         isNavigating = true
         // Start navigation to first stop
         HapticFeedback.shared.impact(style: .medium)
     }
-    
+
     private func shareAdventure() {
         // Share adventure
         HapticFeedback.shared.impact(style: .light)
@@ -424,7 +425,7 @@ struct AdventureSheetView: View {
                 constraints: StopConstraints(),
                 name: "Modern Art Gallery",
                 address: "456 Art Ave"
-            )
+            ),
         ],
         notes: "Perfect for a weekend morning"
     ))

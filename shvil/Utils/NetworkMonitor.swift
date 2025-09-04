@@ -5,24 +5,24 @@
 //  Created by ilan on 2024.
 //
 
+import Combine
 import Foundation
 import Network
-import Combine
 
 /// Network connectivity monitoring
 class NetworkMonitor: ObservableObject {
     static let shared = NetworkMonitor()
-    
+
     @Published var isConnected = true
     @Published var connectionType: ConnectionType = .wifi
-    
+
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "NetworkMonitor")
-    
+
     init() {
         startMonitoring()
     }
-    
+
     private func startMonitoring() {
         monitor.pathUpdateHandler = { [weak self] path in
             DispatchQueue.main.async {
@@ -30,22 +30,22 @@ class NetworkMonitor: ObservableObject {
                 self?.connectionType = self?.determineConnectionType(path) ?? .unknown
             }
         }
-        
+
         monitor.start(queue: queue)
     }
-    
+
     private func determineConnectionType(_ path: NWPath) -> ConnectionType {
         if path.usesInterfaceType(.wifi) {
-            return .wifi
+            .wifi
         } else if path.usesInterfaceType(.cellular) {
-            return .cellular
+            .cellular
         } else if path.usesInterfaceType(.wiredEthernet) {
-            return .ethernet
+            .ethernet
         } else {
-            return .unknown
+            .unknown
         }
     }
-    
+
     deinit {
         monitor.cancel()
     }

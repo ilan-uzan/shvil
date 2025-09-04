@@ -5,8 +5,8 @@
 //  Created by ilan on 2024.
 //
 
-import Foundation
 import CoreLocation
+import Foundation
 import MapKit
 
 // MARK: - Adventure Models
@@ -24,7 +24,7 @@ public struct AdventurePlan: Codable, Identifiable {
     public let notes: String
     public let createdAt: Date
     public let status: AdventureStatus
-    
+
     public init(
         id: UUID = UUID(),
         title: String,
@@ -66,7 +66,7 @@ public struct AdventureStop: Codable, Identifiable {
     public let coordinate: CLLocationCoordinate2D?
     public let startHintTimestamp: Date?
     public let stayMinutes: Int?
-    
+
     public init(
         id: UUID = UUID(),
         chapter: String,
@@ -98,42 +98,42 @@ public struct AdventureStop: Codable, Identifiable {
 
 /// Adventure mood types
 public enum AdventureMood: String, CaseIterable, Codable {
-    case fun = "fun"
-    case relaxing = "relaxing"
-    case cultural = "cultural"
-    case romantic = "romantic"
-    case adventurous = "adventurous"
-    
+    case fun
+    case relaxing
+    case cultural
+    case romantic
+    case adventurous
+
     public var displayName: String {
         switch self {
-        case .fun: return "Fun & Playful"
-        case .relaxing: return "Relaxing & Chill"
-        case .cultural: return "Cultural & Educational"
-        case .romantic: return "Romantic & Intimate"
-        case .adventurous: return "Adventurous & Bold"
+        case .fun: "Fun & Playful"
+        case .relaxing: "Relaxing & Chill"
+        case .cultural: "Cultural & Educational"
+        case .romantic: "Romantic & Intimate"
+        case .adventurous: "Adventurous & Bold"
         }
     }
 }
 
 /// Stop categories for adventure planning
 public enum StopCategory: String, CaseIterable, Codable {
-    case landmark = "landmark"
-    case food = "food"
-    case scenic = "scenic"
-    case museum = "museum"
-    case activity = "activity"
-    case nightlife = "nightlife"
+    case landmark
+    case food
+    case scenic
+    case museum
+    case activity
+    case nightlife
     case hiddenGem = "hidden_gem"
-    
+
     public var displayName: String {
         switch self {
-        case .landmark: return "Landmark"
-        case .food: return "Food & Drink"
-        case .scenic: return "Scenic View"
-        case .museum: return "Museum"
-        case .activity: return "Activity"
-        case .nightlife: return "Nightlife"
-        case .hiddenGem: return "Hidden Gem"
+        case .landmark: "Landmark"
+        case .food: "Food & Drink"
+        case .scenic: "Scenic View"
+        case .museum: "Museum"
+        case .activity: "Activity"
+        case .nightlife: "Nightlife"
+        case .hiddenGem: "Hidden Gem"
         }
     }
 }
@@ -144,7 +144,7 @@ public struct StopConstraints: Codable {
     public let budget: BudgetLevel
     public let accessibility: Bool
     public let outdoor: Bool
-    
+
     public init(
         openLate: Bool = false,
         budget: BudgetLevel = .medium,
@@ -160,32 +160,32 @@ public struct StopConstraints: Codable {
 
 /// Budget levels for adventure stops
 public enum BudgetLevel: String, CaseIterable, Codable {
-    case low = "low"
-    case medium = "medium"
-    case high = "high"
-    
+    case low
+    case medium
+    case high
+
     public var displayName: String {
         switch self {
-        case .low: return "Budget-Friendly"
-        case .medium: return "Moderate"
-        case .high: return "Premium"
+        case .low: "Budget-Friendly"
+        case .medium: "Moderate"
+        case .high: "Premium"
         }
     }
 }
 
 /// Adventure status
 public enum AdventureStatus: String, CaseIterable, Codable {
-    case draft = "draft"
-    case active = "active"
-    case completed = "completed"
-    case cancelled = "cancelled"
-    
+    case draft
+    case active
+    case completed
+    case cancelled
+
     public var displayName: String {
         switch self {
-        case .draft: return "Draft"
-        case .active: return "Active"
-        case .completed: return "Completed"
-        case .cancelled: return "Cancelled"
+        case .draft: "Draft"
+        case .active: "Active"
+        case .completed: "Completed"
+        case .cancelled: "Cancelled"
         }
     }
 }
@@ -204,7 +204,7 @@ public struct AdventureGenerationInput: Codable {
     public let preferences: UserPreferences
     public let savedPlaces: [String]
     public let recentPlaces: [String]
-    
+
     public init(
         theme: String,
         durationHours: Int,
@@ -236,7 +236,7 @@ public struct UserPreferences: Codable {
     public let interests: [String]
     public let avoidCrowds: Bool
     public let maxWalkingDistance: Int // meters
-    
+
     public init(
         transportation: [TransportationMode] = [.walking],
         interests: [String] = [],
@@ -252,17 +252,17 @@ public struct UserPreferences: Codable {
 
 /// Transportation modes for adventures
 public enum TransportationMode: String, CaseIterable, Codable {
-    case walking = "walking"
-    case driving = "driving"
-    case cycling = "cycling"
+    case walking
+    case driving
+    case cycling
     case publicTransport = "public_transport"
-    
+
     public var displayName: String {
         switch self {
-        case .walking: return "Walking"
-        case .driving: return "Driving"
-        case .cycling: return "Cycling"
-        case .publicTransport: return "Public Transport"
+        case .walking: "Walking"
+        case .driving: "Driving"
+        case .cycling: "Cycling"
+        case .publicTransport: "Public Transport"
         }
     }
 }
@@ -276,12 +276,12 @@ public class AdventureKit: ObservableObject {
     @Published public var adventureHistory: [AdventurePlan] = []
     @Published public var isGenerating = false
     @Published public var error: Error?
-    
+
     private let aiKit: AIKit
     private let mapEngine: MapEngine
     private let safetyKit: SafetyKit
     private let persistence: Persistence
-    
+
     public init(
         aiKit: AIKit,
         mapEngine: MapEngine,
@@ -293,43 +293,43 @@ public class AdventureKit: ObservableObject {
         self.safetyKit = safetyKit
         self.persistence = persistence
     }
-    
+
     /// Generate a new adventure plan
     public func generateAdventure(input: AdventureGenerationInput) async throws -> AdventurePlan {
         isGenerating = true
         defer { isGenerating = false }
-        
+
         do {
             // Generate adventure plan using AI
             let plan = try await aiKit.generateAdventurePlan(input: input)
-            
+
             // Validate stops with MapEngine
             let validatedPlan = try await validateAdventureStops(plan)
-            
+
             // Filter for safety
             let safePlan = try await filterAdventureForSafety(validatedPlan)
-            
+
             // Cache the adventure
             try await persistence.saveAdventure(safePlan)
-            
+
             return safePlan
         } catch {
             self.error = error
             throw error
         }
     }
-    
+
     /// Start an adventure
     public func startAdventure(_ adventure: AdventurePlan) {
         currentAdventure = adventure
         // Update status to active
         // Start navigation to first stop
     }
-    
+
     /// Complete an adventure
     public func completeAdventure() {
         guard var adventure = currentAdventure else { return }
-        
+
         adventure = AdventurePlan(
             id: adventure.id,
             title: adventure.title,
@@ -343,26 +343,26 @@ public class AdventureKit: ObservableObject {
             createdAt: adventure.createdAt,
             status: .completed
         )
-        
+
         adventureHistory.append(adventure)
         currentAdventure = nil
-        
+
         // Save to persistence
         Task {
             try await persistence.saveAdventure(adventure)
         }
     }
-    
+
     /// Swap a stop in the current adventure
     public func swapStop(stopId: UUID, with alternative: AdventureStop) async throws {
         guard var adventure = currentAdventure else { return }
-        
+
         // Find and replace the stop
         var updatedStops = adventure.stops
         if let index = updatedStops.firstIndex(where: { $0.id == stopId }) {
             updatedStops[index] = alternative
         }
-        
+
         // Update adventure
         adventure = AdventurePlan(
             id: adventure.id,
@@ -377,29 +377,29 @@ public class AdventureKit: ObservableObject {
             createdAt: adventure.createdAt,
             status: adventure.status
         )
-        
+
         currentAdventure = adventure
-        
+
         // Save to persistence
         try await persistence.saveAdventure(adventure)
     }
-    
+
     /// Generate alternatives for a stop
     public func generateAlternatives(for stop: AdventureStop, input: AdventureGenerationInput) async throws -> [AdventureStop] {
-        return try await aiKit.generateStopAlternatives(stop: stop, input: input)
+        try await aiKit.generateStopAlternatives(stop: stop, input: input)
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func validateAdventureStops(_ plan: AdventurePlan) async throws -> AdventurePlan {
         var validatedStops: [AdventureStop] = []
-        
+
         for stop in plan.stops {
             // Use MapEngine to find real POIs for this stop
             let searchResults = try await mapEngine.searchPlaces(
                 query: stop.chapter
             )
-            
+
             if let bestMatch = searchResults.first {
                 let validatedStop = AdventureStop(
                     id: stop.id,
@@ -421,7 +421,7 @@ public class AdventureKit: ObservableObject {
                 validatedStops.append(stop)
             }
         }
-        
+
         return AdventurePlan(
             id: plan.id,
             title: plan.title,
@@ -436,16 +436,16 @@ public class AdventureKit: ObservableObject {
             status: plan.status
         )
     }
-    
+
     private func filterAdventureForSafety(_ plan: AdventurePlan) async throws -> AdventurePlan {
         var safeStops: [AdventureStop] = []
-        
+
         for stop in plan.stops {
             guard stop.coordinate != nil else {
                 safeStops.append(stop)
                 continue
             }
-            
+
             // Check safety reports for this location
             // TODO: Fix getSafetyReports method visibility issue
             // let safetyReports = try await safetyKit.getSafetyReports(
@@ -453,17 +453,17 @@ public class AdventureKit: ObservableObject {
             //     radius: 500 // 500m radius
             // )
             let safetyReports: [SafetyReport] = []
-            
+
             // Filter out stops with recent safety issues
-            let recentReports = safetyReports.filter { 
+            let recentReports = safetyReports.filter {
                 Date().timeIntervalSince($0.createdAt) < 3600 // Last hour
             }
-            
+
             if recentReports.isEmpty {
                 safeStops.append(stop)
             }
         }
-        
+
         return AdventurePlan(
             id: plan.id,
             title: plan.title,
@@ -488,14 +488,14 @@ extension CLLocationCoordinate2D: Codable {
         try container.encode(latitude, forKey: .latitude)
         try container.encode(longitude, forKey: .longitude)
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let latitude = try container.decode(Double.self, forKey: .latitude)
         let longitude = try container.decode(Double.self, forKey: .longitude)
         self.init(latitude: latitude, longitude: longitude)
     }
-    
+
     private enum CodingKeys: String, CodingKey {
         case latitude, longitude
     }
