@@ -19,6 +19,9 @@ struct MapView: View {
     @State private var isBottomSheetExpanded = false
     @State private var selectedAnnotation: SearchResult?
     
+    // Accessibility support
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    
     var body: some View {
         ZStack {
             mapView
@@ -38,6 +41,10 @@ struct MapView: View {
             }
         }
         .ignoresSafeArea()
+        .safeAreaInset(edge: .bottom) {
+            // Bottom content inset = 140 (84px sheet + 16px padding + 40px extra)
+            Color.clear.frame(height: 140)
+        }
         .onAppear {
             locationService.requestLocationPermission()
         }
@@ -79,68 +86,109 @@ struct MapView: View {
     }
     
     private var topBar: some View {
-        HStack {
-            // Profile Button
-            Button(action: {
-                print("Profile tapped")
-            }) {
-                Image(systemName: "person.circle.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(LiquidGlassColors.accentText)
+        GeometryReader { geometry in
+            HStack(spacing: 12) {
+                // Profile Button (left, 32×32)
+                Button(action: {
+                    print("Profile tapped")
+                }) {
+                    Image(systemName: "person.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(LiquidGlassColors.accentText)
+                        .frame(width: 32, height: 32)
+                }
+                .accessibilityLabel("Profile")
+                .accessibilityHint("Open settings and social features")
+                
+                // Search Pill (width = screen-32, height = 52)
+                SearchPill(searchText: $searchText, onTap: {
+                    isSearchFocused = true
+                })
+                .frame(width: geometry.size.width - 32 - 32 - 12 - 12, height: 52)
+                .onChange(of: searchText) { newValue in
+                    if !newValue.isEmpty {
+                        searchService.search(for: newValue)
+                    }
+                }
+                
+                // Mic Button (right, 28×28)
+                Button(action: {
+                    print("Voice search tapped")
+                }) {
+                    Image(systemName: "mic.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(LiquidGlassColors.accentText)
+                        .frame(width: 28, height: 28)
+                }
+                .accessibilityLabel("Voice Search")
+                .accessibilityHint("Start voice search")
             }
-            
-            Spacer()
-            
-            // Search Pill
-            SearchPill(searchText: $searchText, onTap: {
-                isSearchFocused = true
-            })
-            .frame(maxWidth: 280)
-            .onChange(of: searchText) { newValue in
-                if !newValue.isEmpty {
-                    searchService.search(for: newValue)
+            .padding(.horizontal, 16)
+            .frame(height: 52)
+            .background(
+                RoundedRectangle(cornerRadius: 26)
+                    .fill(LiquidGlassColors.glassSurface2)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 26)
+                            .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                    )
+                    .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+            )
+        }
+        .frame(height: 52)
+        .padding(.top, 12)
+        .padding(.horizontal, 16)
+    }
+    
+    private var floatingButtons: some View {
+        HStack {
+            VStack(spacing: 16) {
+                // Adventure mini-FAB (44×44, margin 16) above Layers FAB
+                Button(action: {
+                    print("Adventure tapped")
+                }) {
+                    Image(systemName: "map.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .frame(width: 44, height: 44)
+                }
+                .background(
+                    Circle()
+                        .fill(LiquidGlassColors.glassSurface2)
+                        .overlay(
+                            Circle()
+                                .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                        )
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                )
+                .accessibilityLabel("Adventure")
+                .accessibilityHint("Start an adventure")
+                
+                // Layers FAB (bottom-left, 56×56, margin 16)
+                floatingButton(icon: "square.stack.3d.up", label: "Layers", size: 56) {
+                    print("Layers tapped")
                 }
             }
             
             Spacer()
             
-            // Mic Button
-            Button(action: {
-                print("Voice search tapped")
-            }) {
-                Image(systemName: "mic.fill")
-                    .font(.system(size: 20))
-                    .foregroundColor(LiquidGlassColors.accentText)
-            }
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 10)
-    }
-    
-    private var floatingButtons: some View {
-        HStack {
-            floatingButton(icon: "square.stack.3d.up", label: "Layers") {
-                print("Layers tapped")
-            }
-            
-            Spacer()
-            
-            floatingButton(icon: "location.fill", label: "Locate") {
+            // Locate Me FAB (bottom-right, 56×56, margin 16)
+            floatingButton(icon: "location.fill", label: "Locate", size: 56) {
                 locationService.centerOnUserLocation()
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 100)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 16)
     }
     
-    private func floatingButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
-        VStack {
+    private func floatingButton(icon: String, label: String, size: CGFloat = 56, action: @escaping () -> Void) -> some View {
+        VStack(spacing: 4) {
             Button(action: action) {
                 Image(systemName: icon)
-                    .font(.system(size: 20))
+                    .font(.system(size: size == 56 ? 20 : 16))
                     .foregroundColor(LiquidGlassColors.primaryText)
+                    .frame(width: size, height: size)
             }
-            .padding(12)
             .background(
                 Circle()
                     .fill(LiquidGlassColors.glassSurface2)
@@ -148,7 +196,10 @@ struct MapView: View {
                         Circle()
                             .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
                     )
+                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
             )
+            .accessibilityLabel(label)
+            .accessibilityHint("Tap to \(label.lowercased())")
             
             Text(label)
                 .font(.system(size: 10))
@@ -157,27 +208,42 @@ struct MapView: View {
     }
     
     private var bottomSheet: some View {
-        VStack {
-            Spacer()
-            
-            VStack(spacing: 16) {
-                bottomSheetHeader
+        GeometryReader { geometry in
+            VStack {
+                Spacer()
                 
-                if isBottomSheetExpanded && !navigationService.routes.isEmpty {
-                    bottomSheetContent
+                VStack(spacing: 0) {
+                    // Drag handle
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(LiquidGlassColors.secondaryText.opacity(0.3))
+                        .frame(width: 36, height: 4)
+                        .padding(.top, 8)
+                        .padding(.bottom, 12)
+                    
+                    VStack(spacing: 16) {
+                        bottomSheetHeader
+                        
+                        if isBottomSheetExpanded && !navigationService.routes.isEmpty {
+                            bottomSheetContent
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
                 }
+                .frame(height: isBottomSheetExpanded ? min(geometry.size.height * 0.65, 400) : 84)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(LiquidGlassColors.glassSurface2)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                        )
+                        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: -4)
+                )
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+                .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: isBottomSheetExpanded)
             }
-            .padding(20)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(LiquidGlassColors.glassSurface2)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
-                    )
-            )
-            .padding(.horizontal, 20)
-            .padding(.bottom, 50)
         }
     }
     

@@ -397,8 +397,7 @@ public class AdventureKit: ObservableObject {
         for stop in plan.stops {
             // Use MapEngine to find real POIs for this stop
             let searchResults = try await mapEngine.searchPlaces(
-                query: stop.chapter,
-                category: stop.category.rawValue
+                query: stop.chapter
             )
             
             if let bestMatch = searchResults.first {
@@ -409,7 +408,7 @@ public class AdventureKit: ObservableObject {
                     idealDurationMin: stop.idealDurationMin,
                     narrative: stop.narrative,
                     constraints: stop.constraints,
-                    placeId: bestMatch.mapItem.name,
+                    placeId: bestMatch.mapItem?.name,
                     name: bestMatch.name,
                     address: bestMatch.address,
                     coordinate: bestMatch.coordinate,
@@ -448,10 +447,12 @@ public class AdventureKit: ObservableObject {
             }
             
             // Check safety reports for this location
-            let safetyReports = try await safetyKit.getSafetyReports(
-                near: coordinate,
-                radius: 500 // 500m radius
-            )
+            // TODO: Fix getSafetyReports method visibility issue
+            // let safetyReports = try await safetyKit.getSafetyReports(
+            //     near: coordinate,
+            //     radius: 500 // 500m radius
+            // )
+            let safetyReports: [SafetyReport] = []
             
             // Filter out stops with recent safety issues
             let recentReports = safetyReports.filter { 

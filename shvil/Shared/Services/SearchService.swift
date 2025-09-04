@@ -92,14 +92,14 @@ class SearchService: ObservableObject {
     }
 }
 
-struct SearchResult: Identifiable, Codable {
-    let id = UUID()
-    let name: String
-    let address: String
-    let coordinate: CLLocationCoordinate2D
-    let mapItem: MKMapItem?
+public struct SearchResult: Identifiable, Codable {
+    public let id = UUID()
+    public let name: String
+    public let address: String
+    public let coordinate: CLLocationCoordinate2D
+    public let mapItem: MKMapItem?
     
-    init(name: String, address: String, coordinate: CLLocationCoordinate2D, mapItem: MKMapItem? = nil) {
+    public init(name: String, address: String, coordinate: CLLocationCoordinate2D, mapItem: MKMapItem? = nil) {
         self.name = name
         self.address = address
         self.coordinate = coordinate
@@ -107,11 +107,11 @@ struct SearchResult: Identifiable, Codable {
     }
     
     // Custom Codable implementation for CLLocationCoordinate2D
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case name, address, latitude, longitude
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
         address = try container.decode(String.self, forKey: .address)
@@ -121,7 +121,7 @@ struct SearchResult: Identifiable, Codable {
         mapItem = nil
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encode(address, forKey: .address)

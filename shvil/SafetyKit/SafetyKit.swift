@@ -11,7 +11,7 @@ import MapKit
 import Combine
 
 /// Safety reports and crowd-sourced data management
-class SafetyKit: ObservableObject {
+public class SafetyKit: ObservableObject {
     // MARK: - Published Properties
     @Published var safetyReports: [SafetyReport] = []
     @Published var isSafetyLayerEnabled = false
@@ -220,33 +220,33 @@ class SafetyKit: ObservableObject {
 }
 
 // MARK: - Supporting Types
-struct SafetyReport: Identifiable, Codable {
-    let id: UUID
-    let type: SafetyReportType
-    let coordinate: Coordinate
-    let description: String?
-    let reporterId: UUID?
-    let createdAt: Date
-    let expiresAt: Date
-    let isActive: Bool
-    let geohash: String
+public struct SafetyReport: Identifiable, Codable {
+    public let id: UUID
+    public let type: SafetyReportType
+    public let coordinate: Coordinate
+    public let description: String?
+    public let reporterId: UUID?
+    public let createdAt: Date
+    public let expiresAt: Date
+    public let isActive: Bool
+    public let geohash: String
 }
 
-struct Coordinate: Codable {
-    let latitude: Double
-    let longitude: Double
+public struct Coordinate: Codable {
+    public let latitude: Double
+    public let longitude: Double
     
-    init(_ coordinate: CLLocationCoordinate2D) {
+    public init(_ coordinate: CLLocationCoordinate2D) {
         self.latitude = coordinate.latitude
         self.longitude = coordinate.longitude
     }
     
-    var clLocationCoordinate2D: CLLocationCoordinate2D {
+    public var clLocationCoordinate2D: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 }
 
-enum SafetyReportType: String, Codable, CaseIterable {
+public enum SafetyReportType: String, Codable, CaseIterable {
     case police = "police"
     case speedCamera = "speed_camera"
     case accident = "accident"
@@ -311,6 +311,14 @@ extension CLLocationCoordinate2D {
         }
         
         return geohash
+    }
+    
+    /// Get safety reports near a location
+    public func getSafetyReports(near coordinate: CLLocationCoordinate2D, radius: Double) async throws -> [SafetyReport] {
+        // For now, return empty array - this would typically query a database
+        // In a real implementation, this would query the safety reports database
+        // and filter by location and radius
+        return []
     }
 }
 

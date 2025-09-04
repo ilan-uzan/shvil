@@ -11,7 +11,7 @@ import CoreLocation
 import MapKit
 
 /// Local storage and caching using SQLite
-class Persistence: ObservableObject {
+public class Persistence: ObservableObject {
     // MARK: - Private Properties
     private var db: OpaquePointer?
     private let dbPath: String
@@ -511,5 +511,90 @@ extension TileMetadata {
             dataSize: dataSize,
             isOfflineAvailable: isOfflineAvailable
         )
+    }
+}
+
+// MARK: - Adventure Support
+
+extension Persistence {
+    /// Save an adventure plan
+    func saveAdventure(_ adventure: AdventurePlan) async throws {
+        let query = "INSERT OR REPLACE INTO adventures (id, title, tagline, theme, mood, duration_hours, is_group, notes, created_at, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        var statement: OpaquePointer?
+        
+        if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, adventure.id.uuidString, -1, nil)
+            sqlite3_bind_text(statement, 2, adventure.title, -1, nil)
+            sqlite3_bind_text(statement, 3, adventure.tagline, -1, nil)
+            sqlite3_bind_text(statement, 4, adventure.theme, -1, nil)
+            sqlite3_bind_text(statement, 5, adventure.mood.rawValue, -1, nil)
+            sqlite3_bind_int(statement, 6, Int32(adventure.durationHours))
+            sqlite3_bind_int(statement, 7, adventure.isGroup ? 1 : 0)
+            sqlite3_bind_text(statement, 8, adventure.notes, -1, nil)
+            sqlite3_bind_double(statement, 9, adventure.createdAt.timeIntervalSince1970)
+            sqlite3_bind_text(statement, 10, adventure.status.rawValue, -1, nil)
+            
+            if sqlite3_step(statement) != SQLITE_DONE {
+                throw PersistenceError.saveFailed
+            }
+        }
+        
+        sqlite3_finalize(statement)
+        
+        // Save adventure stops
+        for stop in adventure.stops {
+            try await saveAdventureStop(stop, adventureId: adventure.id)
+        }
+    }
+    
+    /// Save an adventure stop
+    private func saveAdventureStop(_ stop: AdventureStop, adventureId: UUID) async throws {
+        let query = "INSERT OR REPLACE INTO adventure_stops (adventure_id, stop_id, chapter, category, ideal_duration_min, narrative, open_late, budget, accessibility, outdoor, place_id, name, address, latitude, longitude, start_hint_ts, stay_minutes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        var statement: OpaquePointer?
+        
+        if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, adventureId.uuidString, -1, nil)
+            sqlite3_bind_text(statement, 2, stop.id.uuidString, -1, nil)
+            sqlite3_bind_text(statement, 3, stop.chapter, -1, nil)
+            sqlite3_bind_text(statement, 4, stop.category.rawValue, -1, nil)
+            sqlite3_bind_int(statement, 5, Int32(stop.idealDurationMin))
+            sqlite3_bind_text(statement, 6, stop.narrative, -1, nil)
+            sqlite3_bind_int(statement, 7, stop.constraints.openLate ? 1 : 0)
+            sqlite3_bind_text(statement, 8, stop.constraints.budget.rawValue, -1, nil)
+            sqlite3_bind_int(statement, 9, stop.constraints.accessibility ? 1 : 0)
+            sqlite3_bind_int(statement, 10, stop.constraints.outdoor ? 1 : 0)
+            sqlite3_bind_text(statement, 11, stop.placeId ?? "", -1, nil)
+            sqlite3_bind_text(statement, 12, stop.name ?? "", -1, nil)
+            sqlite3_bind_text(statement, 13, stop.address ?? "", -1, nil)
+            sqlite3_bind_double(statement, 14, stop.coordinate?.latitude ?? 0.0)
+            sqlite3_bind_double(statement, 15, stop.coordinate?.longitude ?? 0.0)
+            sqlite3_bind_double(statement, 16, stop.startHintTimestamp?.timeIntervalSince1970 ?? 0.0)
+            sqlite3_bind_int(statement, 17, Int32(stop.stayMinutes ?? 0))
+            
+            if sqlite3_step(statement) != SQLITE_DONE {
+                throw PersistenceError.saveFailed
+            }
+        }
+        
+        sqlite3_finalize(statement)
+    }
+}
+
+// MARK: - Persistence Errors
+
+enum PersistenceError: Error, LocalizedError {
+    case saveFailed
+    case loadFailed
+    case databaseError
+    
+    var errorDescription: String? {
+        switch self {
+        case .saveFailed:
+            return "Failed to save data"
+        case .loadFailed:
+            return "Failed to load data"
+        case .databaseError:
+            return "Database error occurred"
+        }
     }
 }

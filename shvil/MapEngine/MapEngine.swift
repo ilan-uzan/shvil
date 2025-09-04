@@ -11,7 +11,7 @@ import Combine
 
 /// MapKit wrapper for search, annotations, overlays, and camera management
 @MainActor
-class MapEngine: NSObject, ObservableObject {
+public class MapEngine: NSObject, ObservableObject {
     // MARK: - Published Properties
     @Published var region: MKCoordinateRegion = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
@@ -47,6 +47,33 @@ class MapEngine: NSObject, ObservableObject {
         
         isSearching = true
         searchCompleter.queryFragment = query
+    }
+    
+    /// Search for places using MapKit and return results directly
+    public func searchPlaces(query: String, region: MKCoordinateRegion? = nil) async throws -> [SearchResult] {
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = query
+        
+        if let region = region {
+            request.region = region
+        } else {
+            request.region = MKCoordinateRegion(
+                center: self.region.center,
+                latitudinalMeters: 10000,
+                longitudinalMeters: 10000
+            )
+        }
+        
+        let search = MKLocalSearch(request: request)
+        let response = try await search.start()
+        
+        return response.mapItems.map { item in
+            SearchResult(
+                name: item.name ?? "Unknown",
+                address: item.placemark.title ?? "",
+                coordinate: item.placemark.coordinate
+            )
+        }
     }
     
     func performSearch(query: String, completion: @escaping ([SearchResult]) -> Void) {
@@ -162,7 +189,7 @@ class MapEngine: NSObject, ObservableObject {
 
 // MARK: - MKLocalSearchCompleterDelegate
 extension MapEngine: @preconcurrency MKLocalSearchCompleterDelegate {
-    nonisolated func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+    public nonisolated func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         let results = completer.results.map { completion in
             SearchResult(
                 name: completion.title,
@@ -177,7 +204,7 @@ extension MapEngine: @preconcurrency MKLocalSearchCompleterDelegate {
         }
     }
     
-    nonisolated func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+    public nonisolated func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
         print("Search completer error: \(error.localizedDescription)")
         Task { @MainActor in
             isSearching = false
