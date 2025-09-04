@@ -15,6 +15,10 @@ struct FocusModeNavigationView: View {
     @StateObject private var routingEngine = RoutingEngine()
     @StateObject private var locationService = LocationService()
     @StateObject private var hapticFeedback = HapticFeedback()
+    @StateObject private var smartStopsService = SmartStopsService(
+        contextEngine: ContextEngine(),
+        locationService: LocationService()
+    )
     
     // MARK: - State
     @State private var destination: String = ""
@@ -66,6 +70,29 @@ struct FocusModeNavigationView: View {
                 topSlabNavigationBar
                 
                 Spacer()
+                
+                // Smart Stops Suggestions
+                if !smartStopsService.activeSuggestions.isEmpty {
+                    SmartStopCardContainer(
+                        suggestions: smartStopsService.activeSuggestions,
+                        onAddStop: { suggestion in
+                            smartStopsService.addStopToRoute(suggestion)
+                            hapticFeedback.impact(style: .medium)
+                        },
+                        onDismiss: { suggestion in
+                            smartStopsService.dismissSuggestion(suggestion)
+                            hapticFeedback.impact(style: .light)
+                        },
+                        onSnooze: { suggestion in
+                            smartStopsService.snoozeSuggestion(suggestion)
+                            hapticFeedback.impact(style: .light)
+                        }
+                    )
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .bottom).combined(with: .opacity),
+                        removal: .move(edge: .bottom).combined(with: .opacity)
+                    ))
+                }
                 
                 // Bottom Navigation Bar
                 bottomNavigationBar
@@ -344,6 +371,11 @@ struct FocusModeNavigationView: View {
         destination = "Downtown Los Angeles"
         routingEngine.isNavigating = true
         navigationStartTime = Date()
+        
+        // Start Smart Stops analysis if we have a route
+        if let route = routingEngine.currentRoute {
+            smartStopsService.startAnalysis(for: route)
+        }
     }
     
     private func toggleRouteOption() {
@@ -361,6 +393,7 @@ struct FocusModeNavigationView: View {
     
     private func endNavigation() {
         routingEngine.stopNavigation()
+        smartStopsService.stopAnalysis()
         destination = ""
         navigationStartTime = nil
         hapticFeedback.impact(style: .medium)
