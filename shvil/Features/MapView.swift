@@ -119,7 +119,7 @@ struct MapView: View {
     private var topBar: some View {
         GeometryReader { geometry in
             HStack(spacing: 12) {
-                // Profile Button (left, 32×32)
+                // Profile Button (left, 32×32, aligned to Search Pill centerY, leading = 12pt)
                 Button(action: {
                     print("Profile tapped")
                 }) {
@@ -131,11 +131,11 @@ struct MapView: View {
                 .accessibilityLabel("Profile")
                 .accessibilityHint("Open settings and social features")
                 
-                // Search Pill (width = screen-32, height = 52)
+                // Search Pill (width = screen - 32pt - 32pt - 12pt - 12pt, height = 52pt)
                 SearchPill(searchText: $searchText, onTap: {
                     isSearchFocused = true
                 })
-                .frame(width: geometry.size.width - 32 - 32 - 12 - 12, height: 52)
+                .frame(width: geometry.size.width - 88, height: 52) // 32 + 32 + 12 + 12 = 88
                 .onChange(of: searchText) { newValue in
                     if !newValue.isEmpty {
                         Task {
@@ -146,7 +146,7 @@ struct MapView: View {
                     }
                 }
                 
-                // Mic Button (right, 28×28)
+                // Mic Button (right, 28×28, aligned to Search Pill centerY, trailing = 12pt)
                 Button(action: {
                     print("Voice search tapped")
                 }) {
@@ -158,21 +158,21 @@ struct MapView: View {
                 .accessibilityLabel("Voice Search")
                 .accessibilityHint("Start voice search")
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 16) // 16pt safe-area insets
             .frame(height: 52)
             .background(
-                RoundedRectangle(cornerRadius: 26)
+                RoundedRectangle(cornerRadius: 26) // 16-20pt corner radius for glass pill
                     .fill(LiquidGlassColors.glassSurface2)
                     .overlay(
                         RoundedRectangle(cornerRadius: 26)
-                            .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 2) // 2pt highlight edge
                     )
-                    .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+                    .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4) // Soft outer shadow
             )
         }
         .frame(height: 52)
-        .padding(.top, 12)
-        .padding(.horizontal, 16)
+        .padding(.top, 12) // 12pt top for floating bars
+        .padding(.horizontal, 16) // 16pt safe-area insets
     }
     
     // MARK: - Focus Mode Components
@@ -194,9 +194,9 @@ struct MapView: View {
                     .frame(width: 32, height: 32)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    // Next maneuver
+                    // Next maneuver - TitleXL (24-28pt, semibold)
                     Text(getManeuverText(for: navigationService.currentStep))
-                        .font(LiquidGlassTypography.title)
+                        .font(LiquidGlassTypography.titleXL)
                         .foregroundColor(LiquidGlassColors.primaryText)
                         .lineLimit(2)
                     
@@ -232,21 +232,21 @@ struct MapView: View {
         }
         .frame(height: 84) // 72-96 height range, using 84
         .background(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 24) // 24pt corner radius for slabs
                 .fill(LiquidGlassColors.glassSurface2)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 24)
+                        .stroke(Color.white.opacity(0.2), lineWidth: 2) // 2pt highlight edge
                 )
-                .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+                .shadow(color: Color.black.opacity(0.15), radius: 12, x: 0, y: 6) // Soft outer shadow
         )
-        .padding(.horizontal, 12)
-        .padding(.top, 12)
+        .padding(.horizontal, 12) // 12pt margins
+        .padding(.top, 12) // 12pt top for floating bars
         .transition(.asymmetric(
             insertion: .move(edge: .top).combined(with: .opacity),
             removal: .move(edge: .top).combined(with: .opacity)
         ))
-        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: isFocusMode)
+        .animation(reduceMotion ? .none : LiquidGlassAnimations.standard, value: isFocusMode)
     }
     
     private var focusModeBottomBar: some View {
@@ -297,23 +297,23 @@ struct MapView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
-        .frame(height: 60)
+        .frame(height: 60) // 60pt height
         .background(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 24) // 24pt corner radius for slabs
                 .fill(LiquidGlassColors.glassSurface2)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 24)
+                        .stroke(Color.white.opacity(0.2), lineWidth: 2) // 2pt highlight edge
                 )
-                .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: -4)
+                .shadow(color: Color.black.opacity(0.15), radius: 12, x: 0, y: -6) // Soft outer shadow
         )
-        .padding(.horizontal, 12)
-        .padding(.bottom, 12)
+        .padding(.horizontal, 12) // 12pt margins
+        .padding(.bottom, 12) // 12pt bottom
         .transition(.asymmetric(
             insertion: .move(edge: .bottom).combined(with: .opacity),
             removal: .move(edge: .bottom).combined(with: .opacity)
         ))
-        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: isFocusMode)
+        .animation(reduceMotion ? .none : LiquidGlassAnimations.standard, value: isFocusMode)
     }
     
     private var exitConfirmationDialog: some View {
@@ -550,8 +550,8 @@ struct MapView: View {
     
     private var floatingButtons: some View {
         HStack {
-            VStack(spacing: 16) {
-                // Adventure mini-FAB (44×44, margin 16) above Layers FAB
+            VStack(spacing: 12) { // 12pt above Layers FAB
+                // Adventure mini-FAB (44×44, 12pt above Layers FAB)
                 Button(action: {
                     print("Adventure tapped")
                 }) {
@@ -565,14 +565,16 @@ struct MapView: View {
                         .fill(LiquidGlassColors.glassSurface2)
                         .overlay(
                             Circle()
-                                .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                                .stroke(Color.white.opacity(0.2), lineWidth: 2) // 2pt highlight edge
                         )
-                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        .shadow(color: LiquidGlassColors.accentTurquoise.opacity(0.3), radius: 8, x: 0, y: 4) // Halo ring
                 )
+                .scaleEffect(1.0) // Tap ripple ≤200ms
+                .animation(LiquidGlassAnimations.fabPress, value: false)
                 .accessibilityLabel("Adventure")
                 .accessibilityHint("Start an adventure")
                 
-                // Layers FAB (bottom-left, 56×56, margin 16)
+                // Layers FAB (bottom-left, 56×56, 16pt from edges)
                 floatingButton(icon: "square.stack.3d.up", label: "Layers", size: 56) {
                     print("Layers tapped")
                 }
@@ -580,13 +582,13 @@ struct MapView: View {
             
             Spacer()
             
-            // Locate Me FAB (bottom-right, 56×56, margin 16)
+            // Locate Me FAB (bottom-right, 56×56, 16pt from edges)
             floatingButton(icon: "location.fill", label: "Locate", size: 56) {
                 locationService.centerOnUserLocation()
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.bottom, 16)
+        .padding(.horizontal, 16) // 16pt from edges
+        .padding(.bottom, 16) // 16pt from edges
     }
     
     private func floatingButton(icon: String, label: String, size: CGFloat = 56, action: @escaping () -> Void) -> some View {
@@ -602,10 +604,12 @@ struct MapView: View {
                     .fill(LiquidGlassColors.glassSurface2)
                     .overlay(
                         Circle()
-                            .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 2) // 2pt highlight edge
                     )
-                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                    .shadow(color: LiquidGlassColors.accentTurquoise.opacity(0.3), radius: 8, x: 0, y: 4) // Halo ring
             )
+            .scaleEffect(1.0) // Tap ripple ≤200ms
+            .animation(LiquidGlassAnimations.fabPress, value: false)
             .accessibilityLabel(label)
             .accessibilityHint("Tap to \(label.lowercased())")
             
@@ -635,22 +639,22 @@ struct MapView: View {
                             bottomSheetContent
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, 16) // 16pt internal padding
+                    .padding(.bottom, 16)
                 }
-                .frame(height: isBottomSheetExpanded ? min(geometry.size.height * 0.65, 400) : 84)
+                .frame(height: isBottomSheetExpanded ? min(geometry.size.height * 0.65, 400) : 84) // collapsed 84pt; expanded ≤65% of viewport
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: 24) // 24pt corner radius for sheets
                         .fill(LiquidGlassColors.glassSurface2)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: 24)
+                                .stroke(Color.white.opacity(0.2), lineWidth: 2) // 2pt highlight edge
                         )
-                        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: -4)
+                        .shadow(color: Color.black.opacity(0.15), radius: 12, x: 0, y: -6) // Soft outer shadow
                 )
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
-                .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: isBottomSheetExpanded)
+                .padding(.horizontal, 16) // 16pt from edges
+                .padding(.bottom, 16) // 16pt from edges
+                .animation(reduceMotion ? .none : LiquidGlassAnimations.pourAnimation, value: isBottomSheetExpanded) // Pour animation ≤600ms
             }
         }
     }
