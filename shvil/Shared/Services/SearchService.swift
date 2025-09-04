@@ -54,7 +54,8 @@ class SearchService: ObservableObject {
                 self?.searchResults = response.mapItems.compactMap { item in
                     SearchResult(
                         name: item.name ?? "Unknown",
-                        address: item.placemark.title ?? "",
+                        subtitle: item.placemark.title,
+                        address: item.placemark.title,
                         coordinate: item.placemark.coordinate,
                         mapItem: item
                     )
@@ -95,12 +96,14 @@ class SearchService: ObservableObject {
 public struct SearchResult: Identifiable, Codable {
     public let id = UUID()
     public let name: String
-    public let address: String
+    public let subtitle: String?
+    public let address: String?
     public let coordinate: CLLocationCoordinate2D
     public let mapItem: MKMapItem?
     
-    public init(name: String, address: String, coordinate: CLLocationCoordinate2D, mapItem: MKMapItem? = nil) {
+    public init(name: String, subtitle: String? = nil, address: String? = nil, coordinate: CLLocationCoordinate2D, mapItem: MKMapItem? = nil) {
         self.name = name
+        self.subtitle = subtitle
         self.address = address
         self.coordinate = coordinate
         self.mapItem = mapItem
@@ -108,13 +111,14 @@ public struct SearchResult: Identifiable, Codable {
     
     // Custom Codable implementation for CLLocationCoordinate2D
     private enum CodingKeys: String, CodingKey {
-        case name, address, latitude, longitude
+        case name, subtitle, address, latitude, longitude
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
-        address = try container.decode(String.self, forKey: .address)
+        subtitle = try container.decodeIfPresent(String.self, forKey: .subtitle)
+        address = try container.decodeIfPresent(String.self, forKey: .address)
         let latitude = try container.decode(Double.self, forKey: .latitude)
         let longitude = try container.decode(Double.self, forKey: .longitude)
         coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -124,7 +128,8 @@ public struct SearchResult: Identifiable, Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
-        try container.encode(address, forKey: .address)
+        try container.encodeIfPresent(subtitle, forKey: .subtitle)
+        try container.encodeIfPresent(address, forKey: .address)
         try container.encode(coordinate.latitude, forKey: .latitude)
         try container.encode(coordinate.longitude, forKey: .longitude)
     }
