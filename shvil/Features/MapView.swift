@@ -21,6 +21,8 @@ struct MapView: View {
     @State private var isFocusMode = false
     @State private var showExitConfirmation = false
     @State private var showOverflowMenu = false
+    @State private var showPlaceDetails = false
+    @State private var selectedPlace: SearchResult?
     @State private var rerouteTimer: Timer?
     
     // Accessibility support
@@ -39,6 +41,11 @@ struct MapView: View {
             // Overflow menu sheet
             if showOverflowMenu {
                 overflowMenuSheet
+            }
+            
+            // Place details modal
+            if showPlaceDetails, let place = selectedPlace {
+                PlaceDetailsView(place: place, isPresented: $showPlaceDetails)
             }
         }
         .navigationBarHidden(true)
@@ -95,7 +102,8 @@ struct MapView: View {
         }
         .onTapGesture {
             selectedAnnotation = result
-            calculateRoute(to: result.coordinate)
+            selectedPlace = result
+            showPlaceDetails = true
         }
     }
     
