@@ -137,6 +137,60 @@ chmod 600 .env
 
 **⚠️ Important**: Never commit `.env` files or API keys to version control!
 
+## 🔧 Troubleshooting
+
+### Why Changes Don't Show Up
+
+If you've made changes but don't see them in the running app, check these common issues:
+
+#### 1. Repository & GitHub Status
+- **Check branch status**: Ensure work is on a feature branch, not main
+- **Verify PR status**: Check if PRs are failing CI or awaiting review
+- **Confirm main tip**: Compare latest main commit to local
+- **Check CI pipeline**: Ensure all CI checks are passing
+
+#### 2. Local Build Issues
+- **Clean build**: Run `xcodebuild clean` and rebuild
+- **Delete DerivedData**: Clear Xcode cache
+- **Check scheme/target**: Ensure building correct target (Debug/Release)
+- **Verify dependencies**: Check SPM packages are resolved
+- **Bump build number**: Force app reinstall
+
+#### 3. CI Pipeline Problems
+- **SwiftFormat issues**: Run `swiftformat .` to fix formatting
+- **Security scan failures**: Check for hardcoded secrets or blocking TODO comments
+- **Build failures**: Verify CI environment matches local
+- **Test failures**: Run tests locally before pushing
+
+#### 4. Runtime & Configuration
+- **Feature flags**: Check if features are enabled in configuration
+- **Environment variables**: Verify API keys are properly set
+- **App state**: Check if app is running from correct build
+- **Cache issues**: Clear app data and restart
+
+#### 5. Quick Fixes
+```bash
+# Fix SwiftFormat issues
+swiftformat .
+
+# Clean and rebuild
+xcodebuild clean
+xcodebuild -project shvil.xcodeproj -scheme shvil build
+
+# Check CI status
+gh pr checks
+
+# Verify local changes
+git status
+git log --oneline -5
+```
+
+### Common Issues
+- **CI failing**: Usually SwiftFormat or security scan issues
+- **Build errors**: Check for missing imports or syntax errors
+- **App not updating**: Delete app and reinstall from Xcode
+- **Changes not visible**: Ensure PRs are merged to main branch
+
 ## 🎯 Roadmap
 
 - [x] Project setup and architecture
