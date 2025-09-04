@@ -21,6 +21,7 @@ struct MapView: View {
     @State private var isFocusMode = false
     @State private var showExitConfirmation = false
     @State private var showOverflowMenu = false
+    @State private var rerouteTimer: Timer?
     
     // Accessibility support
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -237,6 +238,11 @@ struct MapView: View {
         )
         .padding(.horizontal, 12)
         .padding(.top, 12)
+        .transition(.asymmetric(
+            insertion: .move(edge: .top).combined(with: .opacity),
+            removal: .move(edge: .top).combined(with: .opacity)
+        ))
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: isFocusMode)
     }
     
     private var focusModeBottomBar: some View {
@@ -258,6 +264,7 @@ struct MapView: View {
             Button(action: {
                 navigationService.stopNavigation()
                 isFocusMode = false
+                stopRerouteTimer()
             }) {
                 Text("Stop")
                     .font(LiquidGlassTypography.bodySemibold)
@@ -298,6 +305,11 @@ struct MapView: View {
         )
         .padding(.horizontal, 12)
         .padding(.bottom, 12)
+        .transition(.asymmetric(
+            insertion: .move(edge: .bottom).combined(with: .opacity),
+            removal: .move(edge: .bottom).combined(with: .opacity)
+        ))
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: isFocusMode)
     }
     
     private var exitConfirmationDialog: some View {
@@ -355,6 +367,7 @@ struct MapView: View {
                             isFocusMode = false
                             showExitConfirmation = false
                         }
+                        stopRerouteTimer()
                     }) {
                         Text("Exit")
                             .font(LiquidGlassTypography.bodySemibold)
@@ -787,6 +800,7 @@ struct MapView: View {
                 withAnimation(reduceMotion ? .none : .easeInOut(duration: 0.3)) {
                     isFocusMode = true
                 }
+                startRerouteTimer()
             }) {
                 HStack {
                     Image(systemName: "play.fill")
@@ -887,5 +901,57 @@ struct MapView: View {
         // TODO: Implement audio controls
         print("Audio Controls tapped")
         // This would typically open audio settings or toggle voice guidance
+    }
+    
+    // MARK: - Reroute Logic
+    private func checkForReroute() {
+        guard isFocusMode else { return }
+        
+        // This would typically check if the user has deviated from the current route
+        // For now, we'll implement a basic check that could be enhanced with actual route tracking
+        let currentLocation = locationService.region.center
+        let routeDeviationThreshold: Double = 100 // meters
+        
+        // TODO: Implement actual route deviation detection
+        // This would involve:
+        // 1. Getting the current route from NavigationService
+        // 2. Calculating distance from current location to nearest point on route
+        // 3. If distance > threshold, trigger reroute
+        
+        // For now, we'll simulate a reroute check
+        if shouldTriggerReroute() {
+            triggerReroute()
+        }
+    }
+    
+    private func shouldTriggerReroute() -> Bool {
+        // This is a placeholder - in a real implementation, this would check
+        // if the user has deviated from the current route
+        return false
+    }
+    
+    private func triggerReroute() {
+        // Provide haptic feedback for reroute
+        HapticFeedback.shared.impact(style: .medium)
+        
+        // TODO: Implement actual rerouting logic
+        // This would involve:
+        // 1. Recalculating the route from current location to destination
+        // 2. Updating the navigation instructions
+        // 3. Providing visual/audio feedback to the user
+        
+        print("Rerouting triggered")
+    }
+    
+    private func startRerouteTimer() {
+        stopRerouteTimer()
+        rerouteTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
+            checkForReroute()
+        }
+    }
+    
+    private func stopRerouteTimer() {
+        rerouteTimer?.invalidate()
+        rerouteTimer = nil
     }
 }
