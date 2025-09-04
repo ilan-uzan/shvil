@@ -28,11 +28,11 @@ struct AdventureSetupView: View {
         NavigationView {
             ZStack {
                 // Background
-                LiquidGlassColors.background
+                AppleColors.background
                     .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: 24) {
+                    VStack(spacing: AppleSpacing.xl) {
                         // Header
                         headerSection
 
@@ -54,67 +54,84 @@ struct AdventureSetupView: View {
                         // Generate Button
                         generateButton
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
+                    .padding(.horizontal, AppleSpacing.md)
+                    .padding(.top, AppleSpacing.md)
                 }
             }
             .navigationTitle("Create Adventure")
-            .navigationBarTitleDisplayMode(.large)
+            .appleNavigationBar()
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    AppleGlassButton(
+                        title: "Cancel",
+                        style: .tertiary,
+                        size: .medium
+                    ) {
                         dismiss()
                     }
-                    .foregroundColor(LiquidGlassColors.primaryText)
                 }
             }
         }
         .alert("Error", isPresented: $showError) {
-            Button("OK") {}
+            Button("OK") {
+                showError = false
+                errorMessage = ""
+            }
         } message: {
-            Text(errorMessage)
+            VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+                HStack {
+                    AppleGlassStatusIndicator(status: .error, size: 16)
+                    Text("Something went wrong")
+                        .font(AppleTypography.bodyEmphasized)
+                        .foregroundColor(AppleColors.textPrimary)
+                }
+                Text(errorMessage)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
+            }
         }
     }
 
     // MARK: - Header Section
 
     private var headerSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppleSpacing.md) {
             // Icon
             ZStack {
                 Circle()
-                    .fill(LiquidGlassGradients.primaryGradient)
+                    .fill(AppleColors.primary)
                     .frame(width: 80, height: 80)
+                    .appleShadow(AppleShadows.medium)
 
                 Image(systemName: "sparkles")
                     .font(.system(size: 32, weight: .medium))
                     .foregroundColor(.white)
             }
 
-            VStack(spacing: 8) {
+            VStack(spacing: AppleSpacing.sm) {
                 Text("Let's Create Your Adventure")
-                    .font(LiquidGlassTypography.titleXL)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title1)
+                    .foregroundColor(AppleColors.textPrimary)
                     .multilineTextAlignment(.center)
 
                 Text("Tell us what kind of experience you're looking for and we'll craft the perfect adventure for you.")
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
                     .multilineTextAlignment(.center)
             }
         }
-        .padding(.vertical, 20)
+        .padding(.vertical, AppleSpacing.xl)
     }
 
     // MARK: - Mood Section
 
     private var moodSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: AppleSpacing.md) {
             Text("What's your mood?")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: AppleSpacing.sm) {
                 ForEach(AdventureMood.allCases, id: \.self) { mood in
                     moodCard(for: mood)
                 }
@@ -124,37 +141,38 @@ struct AdventureSetupView: View {
 
     private func moodCard(for mood: AdventureMood) -> some View {
         Button(action: {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            withAnimation(AppleAnimations.spring) {
                 selectedMood = mood
             }
             HapticFeedback.shared.impact(style: .light)
         }) {
-            VStack(spacing: 12) {
+            VStack(spacing: AppleSpacing.sm) {
                 // Icon
                 ZStack {
                     Circle()
-                        .fill(selectedMood == mood ? AnyShapeStyle(LiquidGlassGradients.primaryGradient) : AnyShapeStyle(LiquidGlassColors.glassSurface1))
+                        .fill(selectedMood == mood ? AppleColors.primary : AppleColors.surfaceSecondary)
                         .frame(width: 48, height: 48)
 
                     Image(systemName: moodIcon(for: mood))
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(selectedMood == mood ? .white : LiquidGlassColors.secondaryText)
+                        .foregroundColor(selectedMood == mood ? .white : AppleColors.textSecondary)
                 }
 
                 Text(mood.displayName)
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(selectedMood == mood ? LiquidGlassColors.primaryText : LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(selectedMood == mood ? AppleColors.textPrimary : AppleColors.textSecondary)
                     .multilineTextAlignment(.center)
             }
-            .padding(.vertical, 16)
-            .padding(.horizontal, 12)
+            .padding(.vertical, AppleSpacing.md)
+            .padding(.horizontal, AppleSpacing.sm)
             .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(selectedMood == mood ? LiquidGlassColors.glassSurface2 : LiquidGlassColors.glassSurface1)
+                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                    .fill(selectedMood == mood ? AppleColors.glassMedium : AppleColors.surfaceSecondary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(selectedMood == mood ? LiquidGlassColors.accentDeepAqua : Color.clear, lineWidth: 2)
+                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                            .stroke(selectedMood == mood ? AppleColors.primary : AppleColors.glassLight, lineWidth: 1)
                     )
+                    .appleShadow(AppleShadows.light)
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -173,12 +191,12 @@ struct AdventureSetupView: View {
     // MARK: - Duration Section
 
     private var durationSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: AppleSpacing.md) {
             Text("How long?")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
-            HStack(spacing: 12) {
+            HStack(spacing: AppleSpacing.sm) {
                 ForEach(durationOptions, id: \.self) { duration in
                     durationChip(for: duration)
                 }
@@ -188,19 +206,20 @@ struct AdventureSetupView: View {
 
     private func durationChip(for duration: Int) -> some View {
         Button(action: {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            withAnimation(AppleAnimations.spring) {
                 selectedDuration = duration
             }
             HapticFeedback.shared.impact(style: .light)
         }) {
             Text("\(duration)h")
-                .font(LiquidGlassTypography.bodyMedium)
-                .foregroundColor(selectedDuration == duration ? .white : LiquidGlassColors.primaryText)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
+                .font(AppleTypography.bodyEmphasized)
+                .foregroundColor(selectedDuration == duration ? .white : AppleColors.textPrimary)
+                .padding(.horizontal, AppleSpacing.md)
+                .padding(.vertical, AppleSpacing.sm)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(selectedDuration == duration ? AnyShapeStyle(LiquidGlassGradients.primaryGradient) : AnyShapeStyle(LiquidGlassColors.glassSurface1))
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                        .fill(selectedDuration == duration ? AppleColors.primary : AppleColors.surfaceSecondary)
+                        .appleShadow(AppleShadows.light)
                 )
         }
         .buttonStyle(PlainButtonStyle())
@@ -209,12 +228,12 @@ struct AdventureSetupView: View {
     // MARK: - Transportation Section
 
     private var transportationSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: AppleSpacing.md) {
             Text("How will you get around?")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
-            HStack(spacing: 12) {
+            HStack(spacing: AppleSpacing.sm) {
                 ForEach(TransportationMode.allCases, id: \.self) { transport in
                     transportChip(for: transport)
                 }
@@ -224,24 +243,25 @@ struct AdventureSetupView: View {
 
     private func transportChip(for transport: TransportationMode) -> some View {
         Button(action: {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            withAnimation(AppleAnimations.spring) {
                 selectedTransport = transport
             }
             HapticFeedback.shared.impact(style: .light)
         }) {
-            HStack(spacing: 8) {
+            HStack(spacing: AppleSpacing.xs) {
                 Image(systemName: transportIcon(for: transport))
                     .font(.system(size: 16, weight: .medium))
 
                 Text(transport.displayName)
-                    .font(LiquidGlassTypography.caption)
+                    .font(AppleTypography.caption1)
             }
-            .foregroundColor(selectedTransport == transport ? .white : LiquidGlassColors.primaryText)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+            .foregroundColor(selectedTransport == transport ? .white : AppleColors.textPrimary)
+            .padding(.horizontal, AppleSpacing.md)
+            .padding(.vertical, AppleSpacing.sm)
             .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(selectedTransport == transport ? AnyShapeStyle(LiquidGlassGradients.primaryGradient) : AnyShapeStyle(LiquidGlassColors.glassSurface1))
+                RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                    .fill(selectedTransport == transport ? AppleColors.primary : AppleColors.surfaceSecondary)
+                    .appleShadow(AppleShadows.light)
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -260,52 +280,53 @@ struct AdventureSetupView: View {
     // MARK: - Group Section
 
     private var groupSection: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Group Adventure")
-                    .font(LiquidGlassTypography.bodyMedium)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+        AppleGlassCard(style: .glassmorphism) {
+            HStack {
+                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+                    Text("Group Adventure")
+                        .font(AppleTypography.bodyEmphasized)
+                        .foregroundColor(AppleColors.textPrimary)
 
-                Text("Include friends in your adventure")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    Text("Include friends in your adventure")
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
+                }
+
+                Spacer()
+
+                Toggle("", isOn: $isGroupAdventure)
+                    .toggleStyle(SwitchToggleStyle(tint: AppleColors.primary))
             }
-
-            Spacer()
-
-            Toggle("", isOn: $isGroupAdventure)
-                .toggleStyle(SwitchToggleStyle(tint: LiquidGlassColors.accentDeepAqua))
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
-        )
     }
 
     // MARK: - Custom Prompt Section
 
     private var customPromptSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: AppleSpacing.md) {
             Text("Anything specific? (Optional)")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: AppleSpacing.sm) {
                 TextEditor(text: $customPrompt)
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.primaryText)
-                    .padding(16)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textPrimary)
+                    .padding(AppleSpacing.md)
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(LiquidGlassColors.glassSurface1)
+                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                            .fill(AppleColors.surfaceSecondary)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                                    .stroke(AppleColors.glassLight, lineWidth: 1)
+                            )
+                            .appleShadow(AppleShadows.light)
                     )
                     .frame(minHeight: 100)
 
                 Text("Tell us about specific places, activities, or experiences you'd like to include.")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
             }
         }
     }
@@ -313,31 +334,26 @@ struct AdventureSetupView: View {
     // MARK: - Generate Button
 
     private var generateButton: some View {
-        Button(action: generateAdventure) {
-            HStack(spacing: 12) {
-                if isGenerating {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                        .scaleEffect(0.8)
-                } else {
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 16, weight: .medium))
-                }
-
-                Text(isGenerating ? "Creating Adventure..." : "Create Adventure")
-                    .font(LiquidGlassTypography.bodyMedium)
-                    .fontWeight(.semibold)
-            }
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(LiquidGlassGradients.primaryGradient)
-            )
+        AppleGlassButton(
+            title: isGenerating ? "Creating Adventure..." : "Create Adventure",
+            icon: isGenerating ? nil : "sparkles",
+            style: .primary,
+            size: .large
+        ) {
+            generateAdventure()
         }
         .disabled(isGenerating)
-        .padding(.bottom, 20)
+        .overlay(
+            Group {
+                if isGenerating {
+                    AppleGlassLoadingIndicator(size: 20, color: .white)
+                        .offset(x: -60)
+                }
+            }
+        )
+        .scaleEffect(isGenerating ? 0.98 : 1.0)
+        .animation(AppleAnimations.micro, value: isGenerating)
+        .padding(.bottom, AppleSpacing.xl)
     }
 
     // MARK: - Actions
@@ -369,7 +385,6 @@ struct AdventureSetupView: View {
             do {
                 _ = try await adventureKit.generateAdventure(input: input)
                 isGenerating = false
-                // Navigate to adventure sheet or details
                 dismiss()
             } catch {
                 isGenerating = false

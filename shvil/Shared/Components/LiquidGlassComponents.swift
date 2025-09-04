@@ -39,6 +39,7 @@ struct GlassButton: View {
             .padding(.vertical, 16)
             .background(buttonBackground)
             .cornerRadius(12)
+            .shadow(color: shadowColor, radius: shadowRadius, x: 0, y: shadowOffset)
         }
         .scaleEffect(isPressed ? 0.98 : 1.0)
         .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
@@ -73,6 +74,33 @@ struct GlassButton: View {
             case .destructive:
                 Color.red
             }
+        }
+    }
+    
+    private var shadowColor: Color {
+        switch style {
+        case .primary:
+            LiquidGlassColors.accentTurquoise.opacity(0.3)
+        case .secondary:
+            Color.black.opacity(0.2)
+        case .destructive:
+            Color.red.opacity(0.3)
+        }
+    }
+    
+    private var shadowRadius: CGFloat {
+        switch style {
+        case .primary: 8
+        case .secondary: 4
+        case .destructive: 6
+        }
+    }
+    
+    private var shadowOffset: CGFloat {
+        switch style {
+        case .primary: 4
+        case .secondary: 2
+        case .destructive: 3
         }
     }
 }
@@ -170,6 +198,7 @@ struct GlassFAB: View {
                         .stroke(Color.white.opacity(0.3), lineWidth: 1)
                 )
                 .shadow(color: LiquidGlassColors.accentTurquoise.opacity(0.3), radius: 8, x: 0, y: 4)
+                .shadow(color: LiquidGlassColors.accentTurquoise.opacity(0.1), radius: 16, x: 0, y: 0)
         )
         .scaleEffect(isPressed ? 1.05 : 1.0)
         .animation(LiquidGlassAnimations.fabPress, value: isPressed)

@@ -123,17 +123,26 @@ enum LiquidGlassAnimations {
 
 struct GlassEffectModifier: ViewModifier {
     let elevation: GlassElevation
+    let cornerRadius: CGFloat
+    let isInteractive: Bool
+
+    init(elevation: GlassElevation = .medium, cornerRadius: CGFloat = 16, isInteractive: Bool = false) {
+        self.elevation = elevation
+        self.cornerRadius = cornerRadius
+        self.isInteractive = isInteractive
+    }
 
     func body(content: Content) -> some View {
         content
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(glassColor)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: cornerRadius)
                             .stroke(highlightColor, lineWidth: 2)
                     )
                     .shadow(color: shadowColor, radius: shadowRadius, x: 0, y: shadowOffset)
+                    .shadow(color: LiquidGlassColors.accentTurquoise.opacity(0.1), radius: glowRadius, x: 0, y: 0)
             )
     }
 
@@ -171,6 +180,14 @@ struct GlassEffectModifier: ViewModifier {
         case .high: 6
         }
     }
+    
+    private var glowRadius: CGFloat {
+        switch elevation {
+        case .light: 8
+        case .medium: 12
+        case .high: 16
+        }
+    }
 }
 
 enum GlassElevation {
@@ -197,8 +214,8 @@ struct BlurEffectModifier: ViewModifier {
 // MARK: - View Extensions
 
 extension View {
-    func glassEffect(elevation: GlassElevation = .medium) -> some View {
-        modifier(GlassEffectModifier(elevation: elevation))
+    func glassEffect(elevation: GlassElevation = .medium, cornerRadius: CGFloat = 16, isInteractive: Bool = false) -> some View {
+        modifier(GlassEffectModifier(elevation: elevation, cornerRadius: cornerRadius, isInteractive: isInteractive))
     }
 
     func glassBlur(intensity: CGFloat = 20) -> some View {
@@ -382,4 +399,211 @@ enum AccessibilityConstants {
     static let minimumTouchTarget: CGFloat = 44
     static let minimumContrastRatio: Double = 4.5
     static let maximumAnimationDuration: Double = 0.5
+}
+
+// MARK: - Enhanced UI Components
+
+/// A polished loading indicator with glassmorphism design
+struct GlassLoadingIndicator: View {
+    @State private var isAnimating = false
+    let size: CGFloat
+    let color: Color
+    
+    init(size: CGFloat = 24, color: Color = LiquidGlassColors.accentText) {
+        self.size = size
+        self.color = color
+    }
+    
+    var body: some View {
+        Circle()
+            .trim(from: 0, to: 0.7)
+            .stroke(
+                LinearGradient(
+                    colors: [color, color.opacity(0.3)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                style: StrokeStyle(lineWidth: 3, lineCap: .round)
+            )
+            .frame(width: size, height: size)
+            .rotationEffect(.degrees(isAnimating ? 360 : 0))
+            .animation(
+                .linear(duration: 1.0)
+                .repeatForever(autoreverses: false),
+                value: isAnimating
+            )
+            .onAppear {
+                isAnimating = true
+            }
+    }
+}
+
+/// A polished status indicator with animated state changes
+struct StatusIndicator: View {
+    let status: Status
+    let size: CGFloat
+    @State private var isPulsing = false
+    
+    enum Status {
+        case success
+        case warning
+        case error
+        case info
+        
+        var color: Color {
+            switch self {
+            case .success: Color.green
+            case .warning: Color.orange
+            case .error: LiquidGlassColors.accident
+            case .info: LiquidGlassColors.accentText
+            }
+        }
+        
+        var icon: String {
+            switch self {
+            case .success: "checkmark.circle.fill"
+            case .warning: "exclamationmark.triangle.fill"
+            case .error: "xmark.circle.fill"
+            case .info: "info.circle.fill"
+            }
+        }
+    }
+    
+    init(status: Status, size: CGFloat = 20) {
+        self.status = status
+        self.size = size
+    }
+    
+    var body: some View {
+        Image(systemName: status.icon)
+            .font(.system(size: size, weight: .medium))
+            .foregroundColor(status.color)
+            .scaleEffect(isPulsing ? 1.1 : 1.0)
+            .animation(
+                .easeInOut(duration: 0.6)
+                .repeatForever(autoreverses: true),
+                value: isPulsing
+            )
+            .onAppear {
+                isPulsing = true
+            }
+    }
+}
+
+/// A polished progress bar with glassmorphism design
+struct GlassProgressBar: View {
+    let progress: Double
+    let height: CGFloat
+    let color: Color
+    @State private var animatedProgress: Double = 0
+    
+    init(progress: Double, height: CGFloat = 8, color: Color = LiquidGlassColors.accentText) {
+        self.progress = max(0, min(1, progress))
+        self.height = height
+        self.color = color
+    }
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                // Background track
+                RoundedRectangle(cornerRadius: height / 2)
+                    .fill(LiquidGlassColors.glassSurface1)
+                    .frame(height: height)
+                
+                // Progress fill
+                RoundedRectangle(cornerRadius: height / 2)
+                    .fill(
+                        LinearGradient(
+                            colors: [color, color.opacity(0.8)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(width: geometry.size.width * animatedProgress, height: height)
+                    .shadow(color: color.opacity(0.3), radius: 4, x: 0, y: 2)
+            }
+        }
+        .frame(height: height)
+        .onAppear {
+            withAnimation(.easeInOut(duration: 0.8)) {
+                animatedProgress = progress
+            }
+        }
+        .onChange(of: progress) { _, newValue in
+            withAnimation(.easeInOut(duration: 0.5)) {
+                animatedProgress = newValue
+            }
+        }
+    }
+}
+
+/// A polished empty state view
+struct EmptyStateView: View {
+    let icon: String
+    let title: String
+    let description: String
+    let actionTitle: String?
+    let action: (() -> Void)?
+    
+    init(
+        icon: String,
+        title: String,
+        description: String,
+        actionTitle: String? = nil,
+        action: (() -> Void)? = nil
+    ) {
+        self.icon = icon
+        self.title = title
+        self.description = description
+        self.actionTitle = actionTitle
+        self.action = action
+    }
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            // Icon
+            ZStack {
+                Circle()
+                    .fill(LiquidGlassColors.glassSurface1)
+                    .frame(width: 80, height: 80)
+                
+                Image(systemName: icon)
+                    .font(.system(size: 32, weight: .medium))
+                    .foregroundColor(LiquidGlassColors.secondaryText)
+            }
+            
+            // Content
+            VStack(spacing: 12) {
+                Text(title)
+                    .font(LiquidGlassTypography.title)
+                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .multilineTextAlignment(.center)
+                
+                Text(description)
+                    .font(LiquidGlassTypography.body)
+                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
+            
+            // Action button
+            if let actionTitle = actionTitle, let action = action {
+                Button(action: action) {
+                    Text(actionTitle)
+                        .font(LiquidGlassTypography.bodySemibold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(LiquidGlassGradients.primaryGradient)
+                        )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+        .padding(.horizontal, 32)
+        .padding(.vertical, 40)
+    }
 }

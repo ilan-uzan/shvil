@@ -23,7 +23,7 @@ struct SearchView: View {
         NavigationView {
             ZStack {
                 // Background
-                LiquidGlassColors.background
+                AppleColors.background
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
@@ -40,8 +40,7 @@ struct SearchView: View {
                     }
                 }
             }
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.large)
+            .appleNavigationBar()
         }
         .sheet(isPresented: $showPlaceDetails) {
             if let result = selectedResult {
@@ -60,121 +59,84 @@ struct SearchView: View {
     // MARK: - Search Header
 
     private var searchHeader: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppleSpacing.md) {
             // Search Bar
-            HStack(spacing: 12) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(LiquidGlassColors.secondaryText)
-
-                TextField("Search places, activities, or locations", text: $searchText)
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.primaryText)
-                    .textFieldStyle(PlainTextFieldStyle())
-
+            AppleGlassSearchBar(
+                text: $searchText,
+                placeholder: "Search places, activities, or locations"
+            ) {
                 if !searchText.isEmpty {
-                    Button(action: {
-                        searchText = ""
-                        searchService.searchResults = []
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(LiquidGlassColors.secondaryText)
-                    }
+                    searchService.search(for: searchText)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(LiquidGlassColors.glassSurface1)
-            )
 
             // Category Filters
             categoryFilters
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 8)
+        .padding(.horizontal, AppleSpacing.md)
+        .padding(.top, AppleSpacing.sm)
     }
 
     private var categoryFilters: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
+            HStack(spacing: AppleSpacing.sm) {
                 ForEach(SearchCategory.allCases, id: \.self) { category in
                     categoryChip(for: category)
                 }
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, AppleSpacing.xs)
         }
     }
 
     private func categoryChip(for category: SearchCategory) -> some View {
-        Button(action: {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+        AppleGlassButton(
+            title: category.displayName,
+            icon: category.icon,
+            style: selectedCategory == category ? .primary : .secondary,
+            size: .small
+        ) {
+            withAnimation(AppleAnimations.spring) {
                 selectedCategory = category
             }
             HapticFeedback.shared.impact(style: .light)
             performSearch()
-        }) {
-            HStack(spacing: 6) {
-                Image(systemName: category.icon)
-                    .font(.system(size: 14, weight: .medium))
-
-                Text(category.displayName)
-                    .font(LiquidGlassTypography.caption)
-            }
-            .foregroundColor(selectedCategory == category ? .white : LiquidGlassColors.primaryText)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(selectedCategory == category ? AnyShapeStyle(LiquidGlassGradients.primaryGradient) : AnyShapeStyle(LiquidGlassColors.glassSurface1))
-            )
         }
-        .buttonStyle(PlainButtonStyle())
     }
 
     // MARK: - Empty State
 
     private var emptyState: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "magnifyingglass")
-                .font(.system(size: 48, weight: .light))
-                .foregroundColor(LiquidGlassColors.secondaryText)
-
-            VStack(spacing: 8) {
-                Text("No Results Found")
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
-
-                Text("Try searching for something else or check your spelling.")
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
-                    .multilineTextAlignment(.center)
+        AppleGlassEmptyState(
+            icon: "magnifyingglass",
+            title: "No Results Found",
+            description: "Try searching for something else or check your spelling.",
+            actionTitle: "Clear Search",
+            action: {
+                searchText = ""
+                searchService.searchResults = []
             }
-        }
-        .padding(.top, 60)
+        )
     }
 
     // MARK: - Suggestions View
 
     private var suggestionsView: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: AppleSpacing.lg) {
             Text("Popular Searches")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
-                .padding(.horizontal, 20)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
+                .padding(.horizontal, AppleSpacing.md)
 
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: AppleSpacing.sm) {
                 ForEach(popularSearches, id: \.self) { search in
                     suggestionCard(for: search)
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, AppleSpacing.md)
 
             Spacer()
         }
-        .padding(.top, 20)
+        .padding(.top, AppleSpacing.lg)
     }
 
     private var popularSearches: [String] {
@@ -191,30 +153,25 @@ struct SearchView: View {
     }
 
     private func suggestionCard(for search: String) -> some View {
-        Button(action: {
-            searchText = search
-            performSearch()
-        }) {
-            HStack(spacing: 12) {
+        AppleGlassCard(style: .glassmorphism) {
+            HStack(spacing: AppleSpacing.sm) {
                 Image(systemName: searchIcon(for: search))
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                    .foregroundColor(AppleColors.accent)
+                    .frame(width: 24)
 
                 Text(search)
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textPrimary)
                     .lineLimit(1)
 
                 Spacer()
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(LiquidGlassColors.glassSurface1)
-            )
         }
-        .buttonStyle(PlainButtonStyle())
+        .onTapGesture {
+            searchText = search
+            performSearch()
+        }
     }
 
     private func searchIcon(for search: String) -> String {
@@ -234,90 +191,86 @@ struct SearchView: View {
     // MARK: - Results List
 
     private var resultsList: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: AppleSpacing.md) {
             HStack {
                 Text("\(searchService.searchResults.count) Results")
-                    .font(LiquidGlassTypography.bodyMedium)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.bodyEmphasized)
+                    .foregroundColor(AppleColors.textSecondary)
 
                 Spacer()
 
-                Button(action: { showFilters = true }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "slider.horizontal.3")
-                            .font(.system(size: 14, weight: .medium))
-
-                        Text("Filters")
-                            .font(LiquidGlassTypography.caption)
-                    }
-                    .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                AppleGlassButton(
+                    title: "Filters",
+                    icon: "slider.horizontal.3",
+                    style: .tertiary,
+                    size: .small
+                ) {
+                    showFilters = true
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, AppleSpacing.md)
 
             ScrollView {
-                LazyVStack(spacing: 12) {
+                LazyVStack(spacing: AppleSpacing.sm) {
                     ForEach(searchService.searchResults) { result in
                         searchResultCard(for: result)
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, AppleSpacing.md)
             }
         }
     }
 
     private func searchResultCard(for result: SearchResult) -> some View {
-        Button(action: {
-            selectedResult = result
-            showPlaceDetails = true
-            HapticFeedback.shared.impact(style: .light)
-        }) {
-            HStack(spacing: 16) {
+        AppleGlassCard(style: .glassmorphism) {
+            HStack(spacing: AppleSpacing.md) {
                 // Place Image/Icon
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(LiquidGlassColors.glassSurface2)
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                        .fill(AppleColors.surfaceSecondary)
                         .frame(width: 60, height: 60)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                                .stroke(AppleColors.glassLight, lineWidth: 1)
+                        )
+                        .appleShadow(AppleShadows.light)
 
                     Image(systemName: placeIcon(for: result))
                         .font(.system(size: 24, weight: .medium))
-                        .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                        .foregroundColor(AppleColors.accent)
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
                     Text(result.name)
-                        .font(LiquidGlassTypography.bodyMedium)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.bodyEmphasized)
+                        .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(1)
 
                     Text(result.address ?? "Address not available")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                         .lineLimit(2)
 
-                    // Distance calculation would go here if needed
                     Text("Tap to view details")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                        .font(AppleTypography.caption2)
+                        .foregroundColor(AppleColors.accent)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .foregroundColor(AppleColors.textTertiary)
             }
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(LiquidGlassColors.glassSurface1)
-            )
         }
-        .buttonStyle(PlainButtonStyle())
+        .onTapGesture {
+            selectedResult = result
+            showPlaceDetails = true
+            HapticFeedback.shared.impact(style: .light)
+        }
     }
 
     private func placeIcon(for _: SearchResult) -> String {
-        // This would be determined by the result's category or type
         "location"
     }
 
@@ -327,7 +280,6 @@ struct SearchView: View {
         guard !searchText.isEmpty else { return }
 
         Task {
-            // TODO: Implement search functionality
             print("Searching for: \(searchText) in category: \(selectedCategory)")
         }
     }
