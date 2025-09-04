@@ -144,12 +144,10 @@ struct MapView: View {
                     isSearchFocused = true
                 })
                 .frame(width: geometry.size.width - 88, height: 52) // 32 + 32 + 12 + 12 = 88
-                .onChange(of: searchText) { newValue in
+                .onChange(of: searchText) { _, newValue in
                     if !newValue.isEmpty {
                         Task {
-                            await MainActor.run {
-                                searchService.search(for: newValue)
-                            }
+                            await searchService.search(for: newValue)
                         }
                     }
                 }

@@ -366,17 +366,13 @@ struct AdventureSetupView: View {
         Task {
             do {
                 let adventure = try await adventureKit.generateAdventure(input: input)
-                await MainActor.run {
-                    isGenerating = false
-                    // Navigate to adventure sheet or details
-                    dismiss()
-                }
+                isGenerating = false
+                // Navigate to adventure sheet or details
+                dismiss()
             } catch {
-                await MainActor.run {
-                    isGenerating = false
-                    errorMessage = error.localizedDescription
-                    showError = true
-                }
+                isGenerating = false
+                errorMessage = error.localizedDescription
+                showError = true
             }
         }
     }

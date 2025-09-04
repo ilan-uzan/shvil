@@ -535,7 +535,7 @@ struct SavedPlaceRow: View {
                     Button(action: {
                         print("Route to \(place.name)")
                     }) {
-                        Image(systemName: "arrow.triangle.turn.up.right.fill")
+                        Image(systemName: "arrow.turn.up.right")
                             .font(.system(size: 16))
                             .foregroundColor(LiquidGlassColors.accentText)
                             .frame(width: 32, height: 32)

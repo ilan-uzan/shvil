@@ -15,9 +15,13 @@ class SupabaseService: ObservableObject {
     let client: SupabaseClient
     
     private init() {
-        // Replace with your actual Supabase URL and anon key
-        let url = URL(string: "YOUR_SUPABASE_URL")!
-        let key = "YOUR_SUPABASE_ANON_KEY"
+        // Use placeholder values for development
+        // In production, these should be loaded from environment variables or configuration
+        let key = "placeholder-key"
+        guard let url = URL(string: "https://placeholder.supabase.co"),
+              !key.isEmpty else {
+            fatalError("Supabase configuration is missing. Please set up your Supabase URL and key.")
+        }
         
         client = SupabaseClient(supabaseURL: url, supabaseKey: key)
     }
