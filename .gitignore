@@ -95,12 +95,21 @@ Config.swift
 .env*
 secrets.plist
 SupabaseConfig.plist
+Configuration.swift.backup
 
 # API Keys and Secrets
 *APIKey*
 *Secret*
 *Token*
 *Key*
+*openai*
+*supabase*
+
+# Environment Variables
+.env.local
+.env.development
+.env.production
+.env.staging
 
 # Database
 *.db

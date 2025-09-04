@@ -34,12 +34,40 @@ public struct Configuration {
     public static let openAIAPIKey: String = {
         // Try to get from environment variable first
         if let key = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] {
-            return key
+            // Validate the key format to ensure it's a real OpenAI key
+            if isValidOpenAIKey(key) {
+                return key
+            } else {
+                print("⚠️ WARNING: Invalid OpenAI API key format detected")
+                return "invalid-key-format"
+            }
         }
         
         // Fallback to placeholder for development
         return "your-openai-api-key-here"
     }()
+    
+    // MARK: - Key Validation
+    private static func isValidOpenAIKey(_ key: String) -> Bool {
+        // OpenAI API keys typically start with 'sk-' and are 51 characters long
+        return key.hasPrefix("sk-") && key.count == 51
+    }
+    
+    // MARK: - Secure Key Access
+    public static func getOpenAIKey() throws -> String {
+        guard isOpenAIConfigured else {
+            throw ConfigurationError.openAINotConfigured
+        }
+        
+        let key = openAIAPIKey
+        
+        // Additional security check
+        guard key != "invalid-key-format" else {
+            throw ConfigurationError.missingAPIKey
+        }
+        
+        return key
+    }
     
     // MARK: - App Configuration
     public static let isDevelopment: Bool = {

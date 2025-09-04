@@ -107,13 +107,35 @@ xcodebuild test -scheme shvil -destination 'platform=iOS Simulator,name=iPhone 1
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🔐 Privacy
+## 🔐 Privacy & Security
 
-Shvil Minimal is built with privacy as a core principle:
+Shvil Minimal is built with privacy and security as core principles:
+
+### Privacy
 - All social features are opt-in and temporary
 - Location data stays on-device unless explicitly shared
 - No tracking or analytics without explicit consent
 - Clear privacy controls and kill-switches
+
+### Security
+- **API Key Protection**: All API keys are stored securely using environment variables
+- **No Hardcoded Secrets**: No sensitive information is committed to version control
+- **Secure Configuration**: Use `./setup_environment.sh` for secure key setup
+- **Validation**: API keys are validated for proper format and security
+- **Documentation**: See [SECURITY_GUIDE.md](SECURITY_GUIDE.md) for detailed security practices
+
+### Quick Security Setup
+```bash
+# Secure setup (recommended)
+./setup_environment.sh
+
+# Or manual setup
+cp environment.example .env
+# Edit .env with your actual keys
+chmod 600 .env
+```
+
+**⚠️ Important**: Never commit `.env` files or API keys to version control!
 
 ## 🎯 Roadmap
 

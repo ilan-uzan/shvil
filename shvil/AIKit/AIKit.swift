@@ -23,6 +23,12 @@ public class AIKit: ObservableObject {
         self.apiKey = apiKey
     }
     
+    /// Convenience initializer that uses secure key access
+    public convenience init() throws {
+        let key = try Configuration.getOpenAIKey()
+        self.init(apiKey: key)
+    }
+    
     /// Generate an adventure plan using OpenAI
     public func generateAdventurePlan(input: AdventureGenerationInput) async throws -> AdventurePlan {
         isGenerating = true

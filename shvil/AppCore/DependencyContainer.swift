@@ -29,7 +29,15 @@ class DependencyContainer {
     lazy var locationService: LocationService = LocationService()
     lazy var searchService: SearchService = SearchService()
     lazy var navigationService: NavigationService = NavigationService()
-    lazy var aiKit: AIKit = AIKit(apiKey: Configuration.openAIAPIKey)
+    lazy var aiKit: AIKit = {
+        do {
+            return try AIKit()
+        } catch {
+            // Fallback to direct initialization with placeholder key
+            // This will show proper error messages when the key is invalid
+            return AIKit(apiKey: Configuration.openAIAPIKey)
+        }
+    }()
     lazy var adventureKit: AdventureKit = AdventureKit(
         aiKit: aiKit,
         mapEngine: mapEngine,
