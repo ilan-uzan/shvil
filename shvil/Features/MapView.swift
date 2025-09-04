@@ -138,7 +138,11 @@ struct MapView: View {
                 .frame(width: geometry.size.width - 32 - 32 - 12 - 12, height: 52)
                 .onChange(of: searchText) { newValue in
                     if !newValue.isEmpty {
-                        searchService.search(for: newValue)
+                        Task {
+                            await MainActor.run {
+                                searchService.search(for: newValue)
+                            }
+                        }
                     }
                 }
                 
