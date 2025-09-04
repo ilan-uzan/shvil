@@ -134,7 +134,7 @@ extension View {
     
     // MARK: - Liquid Glass Button
     func liquidGlassButton(
-        color: Color = LiquidGlassDesign.Colors.liquidBlue,
+        color: Color = .blue,
         cornerRadius: CGFloat = LiquidGlassDesign.CornerRadius.md,
         padding: CGFloat = LiquidGlassDesign.Spacing.md
     ) -> some View {
@@ -152,7 +152,7 @@ extension View {
     
     // MARK: - Liquid Glass Glow
     func liquidGlassGlow(
-        color: Color = LiquidGlassDesign.Colors.liquidBlue,
+        color: Color = .blue,
         radius: CGFloat = 20,
         intensity: CGFloat = 0.6
     ) -> some View {
@@ -162,7 +162,7 @@ extension View {
     
     // MARK: - Liquid Glass Border
     func liquidGlassBorder(
-        color: Color = LiquidGlassDesign.Colors.liquidBlue,
+        color: Color = .blue,
         width: CGFloat = 1,
         cornerRadius: CGFloat = LiquidGlassDesign.CornerRadius.md
     ) -> some View {
@@ -231,7 +231,7 @@ struct LiquidGlassButton: View {
         case .primary, .danger:
             return .white
         case .secondary, .ghost:
-            return LiquidGlassDesign.Colors.liquidBlue
+            return .blue
         }
     }
     
@@ -240,14 +240,14 @@ struct LiquidGlassButton: View {
         switch style {
         case .primary:
             RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.md)
-                .fill(LiquidGlassDesign.Colors.liquidBlue)
-                .shadow(color: LiquidGlassDesign.Colors.liquidBlue.opacity(0.3), radius: 8, x: 0, y: 4)
+                .fill(.blue)
+                .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
         case .secondary:
             RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.md)
                 .fill(LiquidGlassDesign.Colors.glassWhite)
                 .overlay(
                     RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.md)
-                        .stroke(LiquidGlassDesign.Colors.liquidBlue, lineWidth: 1)
+                        .stroke(.blue, lineWidth: 1)
                 )
         case .ghost:
             RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.md)
@@ -335,34 +335,35 @@ struct TabBarButton: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {
-                ZStack {
-                    Image(systemName: tab.icon)
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(isSelected ? LiquidGlassDesign.Colors.liquidBlue : LiquidGlassDesign.Colors.textSecondary)
-                    
-                    if let badge = tab.badge, !badge.isEmpty {
-                        Text(badge)
-                            .font(.system(size: 10, weight: .bold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(
-                                Capsule()
-                                    .fill(LiquidGlassDesign.Colors.accentRed)
-                            )
-                            .offset(x: 12, y: -8)
-                    }
-                }
+                Image(systemName: tab.icon)
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundColor(isSelected ? .blue : .secondary)
+                    .overlay(
+                        Group {
+                            if let badge = tab.badge, !badge.isEmpty {
+                                Text(badge)
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(
+                                        Capsule()
+                                            .fill(.red)
+                                    )
+                                    .offset(x: 12, y: -8)
+                            }
+                        }
+                    )
                 
                 Text(tab.title)
-                    .font(LiquidGlassDesign.Typography.tabBar)
-                    .foregroundColor(isSelected ? LiquidGlassDesign.Colors.liquidBlue : LiquidGlassDesign.Colors.textSecondary)
+                    .font(.caption)
+                    .foregroundColor(isSelected ? .blue : .secondary)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, LiquidGlassDesign.Spacing.sm)
             .background(
                 RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.md)
-                    .fill(isSelected ? LiquidGlassDesign.Colors.liquidBlue.opacity(0.1) : Color.clear)
+                    .fill(isSelected ? .blue.opacity(0.1) : Color.clear)
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -382,7 +383,7 @@ struct TabBarButton: View {
                     .font(LiquidGlassDesign.Typography.headline)
                 Text("This is a beautiful liquid glass card with subtle shadows and transparency.")
                     .font(LiquidGlassDesign.Typography.body)
-                    .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
+                    .foregroundColor(.secondary)
             }
         }
         

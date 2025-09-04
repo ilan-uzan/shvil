@@ -32,17 +32,17 @@ struct QuickActionCard: View {
                 VStack(spacing: 2) {
                     Text(title)
                         .font(LiquidGlassDesign.Typography.callout)
-                        .foregroundColor(LiquidGlassDesign.Colors.textPrimary)
+                        .foregroundColor(.primary)
                         .multilineTextAlignment(.center)
                     
                     Text(subtitle)
-                        .font(LiquidGlassDesign.Typography.caption)
-                        .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(LiquidGlassDesign.Spacing.md)
+            .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.lg)
                     .fill(LiquidGlassDesign.Colors.glassWhite)
@@ -60,45 +60,44 @@ struct SavedPlaceCard: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: LiquidGlassDesign.Spacing.md) {
+            HStack(spacing: 16) {
                 // Icon
-                ZStack {
-                    Circle()
-                        .fill(categoryColor)
-                        .frame(width: 48, height: 48)
-                    
-                    Image(systemName: categoryIcon)
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.white)
-                }
+                Circle()
+                    .fill(categoryColor)
+                    .frame(width: 48, height: 48)
+                    .overlay(
+                        Image(systemName: categoryIcon)
+                            .font(.system(size: 20, weight: .medium))
+                            .foregroundColor(.white)
+                    )
                 .shadow(color: categoryColor.opacity(0.3), radius: 6, x: 0, y: 3)
                 
                 // Content
                 VStack(alignment: .leading, spacing: 4) {
                     Text(place.name)
-                        .font(LiquidGlassDesign.Typography.headline)
-                        .foregroundColor(LiquidGlassDesign.Colors.textPrimary)
+                        .font(.headline)
+                        .foregroundColor(.primary)
                         .lineLimit(1)
                     
                     if let address = place.address {
                         Text(address)
                             .font(LiquidGlassDesign.Typography.callout)
-                            .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
+                            .foregroundColor(.secondary)
                             .lineLimit(2)
                     }
                     
                     HStack(spacing: LiquidGlassDesign.Spacing.sm) {
                         if let distance = place.distance {
                             Label(distance, systemImage: "location")
-                                .font(LiquidGlassDesign.Typography.caption)
-                                .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                         
                         Spacer()
                         
                         Text(place.category)
-                            .font(LiquidGlassDesign.Typography.caption)
-                            .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                             .padding(.horizontal, LiquidGlassDesign.Spacing.sm)
                             .padding(.vertical, 2)
                             .background(
@@ -113,9 +112,9 @@ struct SavedPlaceCard: View {
                 // Action Button
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(LiquidGlassDesign.Colors.textSecondary)
+                    .foregroundColor(.secondary)
             }
-            .padding(LiquidGlassDesign.Spacing.md)
+            .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: LiquidGlassDesign.CornerRadius.lg)
                     .fill(LiquidGlassDesign.Colors.glassWhite)
@@ -160,9 +159,9 @@ struct SettingsSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: LiquidGlassDesign.Spacing.sm) {
             Text(title)
-                .font(LiquidGlassDesign.Typography.headline)
-                .foregroundColor(LiquidGlassDesign.Colors.textPrimary)
-                .padding(.horizontal, LiquidGlassDesign.Spacing.md)
+                .font(.headline)
+                .foregroundColor(.primary)
+                .padding(.horizontal, 16)
             
             content
         }

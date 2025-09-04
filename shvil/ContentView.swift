@@ -89,7 +89,7 @@ struct ContentView: View {
     
     // MARK: - Map Tab View
     private var mapTabView: some View {
-        ZStack {
+        VStack {
             // Map Background
             Rectangle()
                 .fill(Color(.systemGray6))
@@ -107,44 +107,40 @@ struct ContentView: View {
                     print("Map tab view appeared")
                 }
             
-            // Map Controls Overlay
-            VStack {
+            // Map Controls
+            HStack {
                 Spacer()
                 
-                HStack {
-                    Spacer()
-                    
-                    VStack(spacing: 12) {
-                        // Location Button
-                        Button(action: {}) {
-                            Image(systemName: "location.fill")
-                                .font(.title3)
-                                .foregroundColor(.white)
-                                .frame(width: 50, height: 50)
-                                .background(
-                                    Circle()
-                                        .fill(.blue)
-                                        .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
-                                )
-                        }
-                        
-                        // Search Button
-                        Button(action: {}) {
-                            Image(systemName: "magnifyingglass")
-                                .font(.title3)
-                                .foregroundColor(.white)
-                                .frame(width: 50, height: 50)
-                                .background(
-                                    Circle()
-                                        .fill(.blue)
-                                        .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
-                                )
-                        }
+                VStack(spacing: 12) {
+                    // Location Button
+                    Button(action: {}) {
+                        Image(systemName: "location.fill")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(
+                                Circle()
+                                    .fill(.blue)
+                                    .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
+                            )
                     }
-                    .padding(.trailing, 16)
-                    .padding(.bottom, 100) // Above tab bar
+                    
+                    // Search Button
+                    Button(action: {}) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(
+                                Circle()
+                                    .fill(.blue)
+                                    .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
+                            )
+                    }
                 }
+                .padding(.trailing, 16)
             }
+            .padding(.bottom, 20)
         }
     }
     
