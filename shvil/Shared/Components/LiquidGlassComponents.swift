@@ -8,17 +8,18 @@
 import SwiftUI
 
 // MARK: - Search Pill Component (Glass Pill)
+
 struct SearchPill: View {
     @Binding var searchText: String
     let onTap: () -> Void
     @State private var isFocused = false
-    
+
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(LiquidGlassColors.secondaryText)
                 .font(.system(size: 16, weight: .medium))
-            
+
             TextField("Search places or address", text: $searchText)
                 .font(LiquidGlassTypography.body)
                 .foregroundColor(LiquidGlassColors.primaryText)
@@ -26,7 +27,7 @@ struct SearchPill: View {
                 .onTapGesture {
                     onTap()
                 }
-            
+
             if !searchText.isEmpty {
                 Button(action: {
                     searchText = ""
@@ -60,27 +61,28 @@ struct SearchPill: View {
 }
 
 // MARK: - Glass Button Component
+
 struct GlassButton: View {
     let title: String
     let icon: String?
     let action: () -> Void
     let style: GlassButtonStyle
     @State private var isPressed = false
-    
+
     enum GlassButtonStyle {
         case primary
         case secondary
         case destructive
     }
-    
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
-                if let icon = icon {
+                if let icon {
                     Image(systemName: icon)
                         .font(.system(size: 16, weight: .medium))
                 }
-                
+
                 Text(title)
                     .font(LiquidGlassTypography.bodySemibold)
             }
@@ -101,18 +103,18 @@ struct GlassButton: View {
         )
         .dynamicTypeSupport()
     }
-    
+
     private var textColor: Color {
         switch style {
         case .primary:
-            return .white
+            .white
         case .secondary:
-            return LiquidGlassColors.primaryText
+            LiquidGlassColors.primaryText
         case .destructive:
-            return .white
+            .white
         }
     }
-    
+
     private var buttonBackground: some View {
         Group {
             switch style {
@@ -128,15 +130,16 @@ struct GlassButton: View {
 }
 
 // MARK: - Glass Card Component
+
 struct GlassCard<Content: View>: View {
     let content: Content
     let elevation: GlassElevation
-    
+
     init(elevation: GlassElevation = .medium, @ViewBuilder content: () -> Content) {
         self.elevation = elevation
         self.content = content()
     }
-    
+
     var body: some View {
         content
             .padding(20)
@@ -145,21 +148,22 @@ struct GlassCard<Content: View>: View {
 }
 
 // MARK: - Glass Bottom Sheet
+
 struct GlassBottomSheet<Content: View>: View {
     @Binding var isPresented: Bool
     let content: Content
     let height: CGFloat
-    
+
     init(isPresented: Binding<Bool>, height: CGFloat = 300, @ViewBuilder content: () -> Content) {
-        self._isPresented = isPresented
+        _isPresented = isPresented
         self.height = height
         self.content = content()
     }
-    
+
     var body: some View {
         VStack {
             Spacer()
-            
+
             VStack(spacing: 0) {
                 // Handle
                 RoundedRectangle(cornerRadius: 2)
@@ -167,7 +171,7 @@ struct GlassBottomSheet<Content: View>: View {
                     .frame(width: 40, height: 4)
                     .padding(.top, 12)
                     .padding(.bottom, 20)
-                
+
                 content
                     .padding(.horizontal, 20)
                     .padding(.bottom, 20)
@@ -196,12 +200,13 @@ struct GlassBottomSheet<Content: View>: View {
 }
 
 // MARK: - Route Card Component
+
 struct RouteCard: View {
     let route: RouteInfo
     let isSelected: Bool
     let onTap: () -> Void
     @State private var isPressed = false
-    
+
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 12) {
@@ -210,28 +215,28 @@ struct RouteCard: View {
                         Text(route.type)
                             .font(LiquidGlassTypography.body)
                             .foregroundColor(LiquidGlassColors.primaryText)
-                        
+
                         Text(route.isFastest ? "Fastest" : route.isSafest ? "Safest" : "Route")
                             .font(LiquidGlassTypography.caption)
                             .foregroundColor(LiquidGlassColors.secondaryText)
                     }
-                    
+
                     Spacer()
-                    
+
                     VStack(alignment: .trailing, spacing: 4) {
                         Text(route.duration)
                             .font(LiquidGlassTypography.bodySemibold)
                             .foregroundColor(LiquidGlassColors.accentText)
-                        
+
                         Text(route.distance)
                             .font(LiquidGlassTypography.caption)
                             .foregroundColor(LiquidGlassColors.secondaryText)
                     }
                 }
-                
+
                 // Route preview line
                 HStack(spacing: 4) {
-                    ForEach(0..<5) { _ in
+                    ForEach(0 ..< 5) { _ in
                         RoundedRectangle(cornerRadius: 1)
                             .fill(LiquidGlassColors.accentText)
                             .frame(height: 3)
@@ -257,11 +262,12 @@ struct RouteCard: View {
 }
 
 // MARK: - Glass FAB Component (56×56pt, circular)
+
 struct GlassFAB: View {
     let icon: String
     let action: () -> Void
     @State private var isPressed = false
-    
+
     var body: some View {
         Button(action: action) {
             Image(systemName: icon)
@@ -287,13 +293,14 @@ struct GlassFAB: View {
 }
 
 // MARK: - Settings Row Component
+
 struct SettingsRow: View {
     let icon: String
     let title: String
     let subtitle: String
     let action: () -> Void
     @State private var isPressed = false
-    
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 16) {
@@ -301,19 +308,19 @@ struct SettingsRow: View {
                     .font(.system(size: 20, weight: .medium))
                     .foregroundColor(LiquidGlassColors.accentText)
                     .frame(width: 24, height: 24)
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(LiquidGlassTypography.bodyMedium)
                         .foregroundColor(LiquidGlassColors.primaryText)
-                    
+
                     Text(subtitle)
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
                 }
-                
+
                 Spacer()
-                
+
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(LiquidGlassColors.secondaryText)
@@ -341,6 +348,7 @@ struct SettingsRow: View {
 // RouteInfo is defined in SupabaseService
 
 // MARK: - Preview
+
 struct LiquidGlassComponents_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
@@ -348,25 +356,25 @@ struct LiquidGlassComponents_Previews: PreviewProvider {
             SearchPill(searchText: .constant("")) {
                 print("Search tapped")
             }
-            
+
             // Glass Button
             GlassButton(title: "Start Navigation", icon: "play.fill", action: {
                 print("Button tapped")
             }, style: .primary)
-            
+
             // Glass Card
             GlassCard {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Route Options")
                         .font(LiquidGlassTypography.body)
                         .foregroundColor(LiquidGlassColors.primaryText)
-                    
+
                     Text("Choose your preferred route")
                         .font(LiquidGlassTypography.caption)
                         .foregroundColor(LiquidGlassColors.secondaryText)
                 }
             }
-            
+
             // Glass FAB
             GlassFAB(icon: "location.fill") {
                 print("FAB tapped")

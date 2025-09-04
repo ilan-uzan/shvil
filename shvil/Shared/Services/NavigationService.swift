@@ -5,10 +5,10 @@
 //  Created by ilan on 2024.
 //
 
-import Foundation
-import CoreLocation
-import MapKit
 import Combine
+import CoreLocation
+import Foundation
+import MapKit
 
 class NavigationService: NSObject, ObservableObject {
     @Published var isNavigating = false
@@ -18,48 +18,48 @@ class NavigationService: NSObject, ObservableObject {
     @Published var remainingTime: TimeInterval = 0
     @Published var routes: [MKRoute] = []
     @Published var selectedRouteIndex = 0
-    
+
     private var directions: MKDirections?
     private var currentStepIndex = 0
-    
+
     override init() {
         super.init()
     }
-    
+
     func calculateRoute(from start: CLLocationCoordinate2D, to destination: CLLocationCoordinate2D, completion: @escaping (Bool) -> Void) {
         let request = MKDirections.Request()
         request.source = MKMapItem(placemark: MKPlacemark(coordinate: start))
         request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination))
         request.requestsAlternateRoutes = true
         request.transportType = .automobile
-        
+
         directions = MKDirections(request: request)
         directions?.calculate { [weak self] response, error in
             DispatchQueue.main.async {
-                if let error = error {
+                if let error {
                     print("Route calculation error: \(error.localizedDescription)")
                     completion(false)
                     return
                 }
-                
-                guard let response = response else {
+
+                guard let response else {
                     completion(false)
                     return
                 }
-                
+
                 self?.routes = response.routes
                 self?.currentRoute = response.routes.first
                 completion(true)
             }
         }
     }
-    
+
     func selectRoute(at index: Int) {
         guard index < routes.count else { return }
         selectedRouteIndex = index
         currentRoute = routes[index]
     }
-    
+
     func startNavigation() {
         guard let route = currentRoute else { return }
         isNavigating = true
@@ -67,7 +67,7 @@ class NavigationService: NSObject, ObservableObject {
         currentStep = route.steps.first
         updateRemainingDistance()
     }
-    
+
     func stopNavigation() {
         isNavigating = false
         currentRoute = nil
@@ -76,7 +76,7 @@ class NavigationService: NSObject, ObservableObject {
         remainingDistance = 0
         remainingTime = 0
     }
-    
+
     func nextStep() {
         guard let route = currentRoute else { return }
         if currentStepIndex < route.steps.count - 1 {
@@ -88,17 +88,17 @@ class NavigationService: NSObject, ObservableObject {
         }
         updateRemainingDistance()
     }
-    
+
     private func updateRemainingDistance() {
         guard let route = currentRoute else { return }
         let remainingSteps = Array(route.steps.dropFirst(currentStepIndex))
-        
+
         var totalDistance: CLLocationDistance = 0
-        
+
         for step in remainingSteps {
             totalDistance += step.distance
         }
-        
+
         remainingDistance = totalDistance
         remainingTime = route.expectedTravelTime // Use route's total time for now
     }

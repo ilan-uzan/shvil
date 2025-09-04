@@ -5,36 +5,40 @@
 //  Created by ilan on 2024.
 //
 
-import Foundation
-import CoreLocation
 import Combine
+import CoreLocation
+import Foundation
 
 /// Location permission and accuracy management
 @MainActor
 class LocationKit: NSObject, ObservableObject {
     // MARK: - Published Properties
+
     @Published var currentLocation: CLLocation?
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
     @Published var isLocationEnabled = false
     @Published var accuracyMode: LocationAccuracyMode = .balanced
-    
+
     // MARK: - Private Properties
+
     private let locationManager = CLLocationManager()
     private var cancellables = Set<AnyCancellable>()
-    
+
     // MARK: - Initialization
+
     override init() {
         super.init()
         setupLocationManager()
     }
-    
+
     private func setupLocationManager() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = 10 // 10 meters
     }
-    
+
     // MARK: - Public Methods
+
     func requestLocationPermission() {
         switch authorizationStatus {
         case .notDetermined:
@@ -51,43 +55,43 @@ class LocationKit: NSObject, ObservableObject {
             break
         }
     }
-    
+
     func requestAlwaysAuthorization() {
         locationManager.requestAlwaysAuthorization()
     }
-    
+
     func startLocationUpdates() {
         guard authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways else {
             return
         }
-        
+
         locationManager.startUpdatingLocation()
         isLocationEnabled = true
     }
-    
+
     func stopLocationUpdates() {
         locationManager.stopUpdatingLocation()
         isLocationEnabled = false
     }
-    
+
     func startBackgroundLocationUpdates() {
         guard authorizationStatus == .authorizedAlways else {
             return
         }
-        
+
         locationManager.allowsBackgroundLocationUpdates = true
         locationManager.pausesLocationUpdatesAutomatically = false
         locationManager.startUpdatingLocation()
     }
-    
+
     func stopBackgroundLocationUpdates() {
         locationManager.allowsBackgroundLocationUpdates = false
         locationManager.stopUpdatingLocation()
     }
-    
+
     func setAccuracyMode(_ mode: LocationAccuracyMode) {
         accuracyMode = mode
-        
+
         switch mode {
         case .high:
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -103,15 +107,16 @@ class LocationKit: NSObject, ObservableObject {
 }
 
 // MARK: - CLLocationManagerDelegate
+
 extension LocationKit: @preconcurrency CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         currentLocation = location
     }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+
+    func locationManager(_: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         authorizationStatus = status
-        
+
         switch status {
         case .authorizedWhenInUse, .authorizedAlways:
             startLocationUpdates()
@@ -123,23 +128,24 @@ extension LocationKit: @preconcurrency CLLocationManagerDelegate {
             break
         }
     }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+
+    func locationManager(_: CLLocationManager, didFailWithError error: Error) {
         print("Location error: \(error.localizedDescription)")
     }
 }
 
 // MARK: - Supporting Types
+
 enum LocationAccuracyMode: String, CaseIterable {
-    case high = "high"
-    case balanced = "balanced"
-    case low = "low"
-    
+    case high
+    case balanced
+    case low
+
     var displayName: String {
         switch self {
-        case .high: return "High Accuracy"
-        case .balanced: return "Balanced"
-        case .low: return "Low Power"
+        case .high: "High Accuracy"
+        case .balanced: "Balanced"
+        case .low: "Low Power"
         }
     }
 }
