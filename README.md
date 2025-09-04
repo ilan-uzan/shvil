@@ -1,152 +1,139 @@
-# Shvil
+# Shvil Minimal
 
-**Lightweight, iOS-first navigation app that combines the clean polish of Apple Maps with the community feedback of Waze.**
+A distraction-free navigation app with a signature Liquid Glass interface, built for iOS 17+ with SwiftUI and MapKit.
 
-## 🎯 MVP Vision
+## 🌿 Product Vision
 
-Shvil delivers a fast, reliable, and privacy-respecting navigation experience with just the essentials:
+Shvil Minimal is a privacy-first navigation app that combines powerful A→B navigation with subtle social features. The app features a distinctive Liquid Glass aesthetic with translucent depth, animated micro-ripples, and a calming turquoise-to-aqua color palette.
 
-- **🚀 Instant Search & Recents** - Find places quickly with native search
-- **🧭 Turn-by-Turn Directions** - Driving and walking modes with ETA and guidance
-- **📱 Navigation HUD** - Distraction-free full-screen interface
-- **📢 Community Reports** - Lightweight hazard and traffic reports
-- **⭐ Saved Places** - Favorites with names and emojis
-- **📶 Offline Fallback** - Cache route details for network drops
-- **👤 Guest Mode** - Quick start without account required
-- **⚙️ Privacy Controls** - Clear data management and settings
+### Key Features (MVP)
+
+- **Fast, Clear Navigation**: Driving, walking, and cycling modes with fastest/safest route options
+- **Powerful Search**: Location search with recent searches and distance-based ranking
+- **Saved Places**: Collections for Home/Work/Favorites with quick access
+- **Light Social**: Share ETA, optional Friends on Map, quick reactions
+- **Offline Ready**: Tile/route caching for weak signal areas
+- **Privacy First**: All social features opt-in & temporary
+
+## 🎨 Liquid Glass Design
+
+Every container is designed as living glass with:
+- **Accents**: Icy turquoise → deep aqua gradient
+- **Panels/Buttons**: Translucent depth with subtle specular highlights
+- **Animations**: Micro-ripples on tap, subtle parallax on scroll
+- **Route Lines**: Radiant gradient with soft glow
+- **Motion**: 120fps-friendly, battery-safe animations
+
+## 🛠️ Tech Stack
+
+- **Language**: Swift 5.10+
+- **UI Framework**: SwiftUI
+- **Maps**: MapKit
+- **Location**: Core Location
+- **Reactive**: Combine
+- **Backend**: Supabase (Auth, DB, Realtime)
+- **Target**: iOS 17+, iPhone first
 
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Xcode 15.0+
-- iOS 17.0+ target device or simulator
-- Supabase account (optional - guest mode available)
+- iOS 17.0+ Simulator or Device
+- Supabase account (for social features)
 
-### Setup
-1. **Clone and open:**
-   ```bash
-   git clone https://github.com/ilan-uzan/shvil.git
-   cd shvil
-   open shvil.xcodeproj
-   ```
+### Installation
 
-2. **Add Supabase package:**
-   - File → Add Package Dependencies
-   - URL: `https://github.com/supabase/supabase-swift`
-   - Select "Supabase" when prompted
+1. Clone the repository:
+```bash
+git clone https://github.com/ilan-uzan/shvil.git
+cd shvil
+```
 
-3. **Configure (optional):**
-   ```bash
-   source setup_env.sh  # Sets up Supabase connection
-   ```
+2. Open in Xcode:
+```bash
+open shvil.xcodeproj
+```
 
-4. **Build and run:**
-   - Select iOS Simulator
-   - Press Cmd+R
+3. Configure Supabase (optional for core features):
+   - Create a new project at [supabase.com](https://supabase.com)
+   - Copy your project URL and anon key
+   - Update `Config.swift` with your credentials
 
-## 📱 Features
+4. Build and run:
+   - Select your target device/simulator
+   - Press `Cmd+R` to build and run
 
-### Core Navigation
-- **Fast Search** - Native MapKit integration with < 500ms latency
-- **Smart Directions** - Driving and walking modes with alternatives
-- **Live Navigation** - Full-screen HUD with haptic feedback
-- **Offline Support** - Cached routes continue without network
+## 📱 Screenshots
 
-### Community Features
-- **Lightweight Reports** - Quick hazard, traffic, and roadwork alerts
-- **Auto-Expiry** - Reports automatically expire for relevance
-- **Privacy-First** - Minimal data collection, local storage
-
-### User Experience
-- **Guest Mode** - Start immediately without account
-- **Saved Places** - Custom favorites with emojis
-- **Dark Mode** - System integration with manual override
-- **Accessibility** - VoiceOver, Dynamic Type, high contrast
+*Screenshots will be added as features are implemented*
 
 ## 🏗️ Architecture
 
-- **Platform**: iOS 17+, Swift 5.9+, SwiftUI
-- **Maps**: MapKit (native Apple mapping)
-- **Backend**: Supabase (optional authentication and sync)
-- **Pattern**: MVVM + Repository
-- **Privacy**: Local-first with optional cloud sync
+The app follows a modular architecture with clear separation of concerns:
 
-## 🔒 Privacy & Security
+- **AppCore**: App state, dependency injection, feature flags
+- **LocationKit**: GPS permissions, location updates, background handling
+- **MapKit+**: Search, geocoding, directions, annotations/overlays
+- **RoutingEngine**: Mode selection, route options, ETA formatting, rerouting
+- **Persistence**: Cached tiles, route summaries, saved places (local + cloud sync)
+- **SocialKit**: Supabase Auth/Realtime for ETA sharing and friends presence
+- **PrivacyGuard**: Share toggles, session timeouts, kill-switch
+- **DesignSystem**: Liquid Glass components, tokens, motion
 
-- **Minimal Permissions** - Only location when needed
-- **Local Storage** - Data stays on device by default
-- **Optional Sync** - Cloud features require explicit opt-in
-- **Transparent Policies** - Clear data usage and retention
+## 🧪 Testing
 
-## 📊 Performance Targets
-
-- **Cold Start**: < 2 seconds
-- **Search Latency**: < 500ms
-- **Map Interactions**: 60fps
-- **Memory Usage**: < 100MB
-
-## 🛠️ Development
-
-### Project Structure
-```
-shvil/
-├── App/                    # App entry point
-├── Features/              # Feature modules
-│   ├── Authentication/    # Onboarding & auth
-│   ├── Home/             # Main map view
-│   ├── Search/           # Place search
-│   ├── Navigation/       # Directions & HUD
-│   ├── Reports/          # Community reports
-│   ├── SavedPlaces/      # Favorites
-│   └── Settings/         # Privacy & preferences
-├── Shared/               # Shared components
-│   ├── Models/           # Data models
-│   ├── Services/         # Business logic
-│   ├── UI/               # Reusable components
-│   └── Utils/            # Utilities
-└── Resources/            # Assets & localization
+Run the test suite:
+```bash
+xcodebuild test -scheme shvil -destination 'platform=iOS Simulator,name=iPhone 16'
 ```
 
-### Development Workflow
-- **Branch Policy**: `feat/`, `fix/`, `chore/` prefixes
-- **Commit Convention**: `feat:`, `fix:`, `chore:`, `docs:`
-- **Code Quality**: SwiftLint, unit tests, accessibility
-- **Security**: No sensitive data in git, environment variables
+## 📚 Documentation
 
-## 📋 Roadmap
-
-### Phase 1: Foundation ✅
-- Project scaffolding and architecture
-- Supabase integration and security
-- Core services and models
-
-### Phase 2: Core Navigation 🚧
-- Map integration and search
-- Basic routing and directions
-- Navigation HUD
-
-### Phase 3: Community Features 📋
-- Lightweight reporting system
-- Saved places functionality
-- Offline fallback
-
-### Phase 4: Polish & Launch 📋
-- Settings and privacy controls
-- Performance optimization
-- App Store preparation
+- [Design System](DESIGN.md) - Liquid Glass tokens, components, and motion rules
+- [Social Features](SOCIAL_SPEC.md) - ETA sharing, friends presence, reactions
+- [Architecture](ARCHITECTURE.md) - Module boundaries, data flow, error handling
+- [Test Plan](TEST_PLAN.md) - Manual QA scenarios and acceptance criteria
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`feat/your-feature`)
-3. Make your changes with tests
-4. Update documentation
-5. Submit a pull request
+2. Create a feature branch: `git checkout -b feat/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feat/amazing-feature`
+5. Open a Pull Request
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🔐 Privacy
+
+Shvil Minimal is built with privacy as a core principle:
+- All social features are opt-in and temporary
+- Location data stays on-device unless explicitly shared
+- No tracking or analytics without explicit consent
+- Clear privacy controls and kill-switches
+
+## 🎯 Roadmap
+
+- [x] Project setup and architecture
+- [ ] Liquid Glass design system
+- [ ] Core map and search functionality
+- [ ] Turn-by-turn navigation
+- [ ] Saved places management
+- [ ] Social ETA sharing
+- [ ] Friends on map (opt-in)
+- [ ] Quick reactions
+- [ ] Offline capabilities
+- [ ] Privacy controls
+- [ ] Analytics and telemetry
+- [ ] Accessibility compliance
+
+## 📞 Support
+
+For support, email support@shvil.app or create an issue on GitHub.
 
 ---
 
-**Shvil MVP: Fast, Simple, Private Navigation for iOS** 🗺️✨
+Built with ❤️ for iOS
