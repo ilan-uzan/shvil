@@ -59,6 +59,18 @@ enum AppleColors {
     // Accent Colors
     static let accent = brandPrimary
     static let accentSecondary = brandPrimaryMid
+    
+    // Accessibility Colors
+    static let accessibilitySuccess = Color(red: 0.137, green: 0.769, blue: 0.514) // High contrast green
+    static let accessibilityWarning = Color(red: 1.0, green: 0.784, blue: 0.341) // High contrast orange
+    static let accessibilityDanger = Color(red: 1.0, green: 0.420, blue: 0.420) // High contrast red
+    static let accessibilityInfo = brandPrimaryMid // High contrast blue
+    
+    // High Contrast Colors
+    static let highContrastPrimary = Color.primary
+    static let highContrastSecondary = Color.secondary
+    static let highContrastBackground = Color(.systemBackground)
+    static let highContrastSurface = Color(.secondarySystemBackground)
 }
 
 // MARK: - Typography System (Apple SF Pro)
@@ -100,6 +112,19 @@ enum AppleTypography {
     
     // Caption 2 (11pt, regular)
     static let caption2 = Font.system(.caption2, design: .default)
+    
+    // Accessibility Typography - Enhanced for better readability
+    static let accessibilityLargeTitle = Font.system(.largeTitle, design: .default).weight(.bold)
+    static let accessibilityTitle1 = Font.system(.title, design: .default).weight(.bold)
+    static let accessibilityTitle2 = Font.system(.title2, design: .default).weight(.bold)
+    static let accessibilityTitle3 = Font.system(.title3, design: .default).weight(.bold)
+    static let accessibilityHeadline = Font.system(.headline, design: .default).weight(.semibold)
+    static let accessibilityBody = Font.system(.body, design: .default).weight(.regular)
+    static let accessibilityCallout = Font.system(.callout, design: .default).weight(.regular)
+    static let accessibilitySubheadline = Font.system(.subheadline, design: .default).weight(.regular)
+    static let accessibilityFootnote = Font.system(.footnote, design: .default).weight(.regular)
+    static let accessibilityCaption1 = Font.system(.caption, design: .default).weight(.regular)
+    static let accessibilityCaption2 = Font.system(.caption2, design: .default).weight(.regular)
 }
 
 // MARK: - Spacing System (8pt grid)
@@ -619,6 +644,52 @@ extension View {
             .accessibilityValue(value ?? "")
             .accessibilityAddTraits(traits)
     }
+    
+    func appleAccessibilityButton(
+        label: String,
+        hint: String? = nil,
+        value: String? = nil
+    ) -> some View {
+        self
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(label)
+            .accessibilityHint(hint ?? "")
+            .accessibilityValue(value ?? "")
+            .accessibilityAddTraits(.isButton)
+    }
+    
+    func appleAccessibilityHeader(
+        label: String,
+        level: Int = 1
+    ) -> some View {
+        self
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(label)
+            .accessibilityAddTraits(.isHeader)
+    }
+    
+    func appleAccessibilityImage(
+        label: String,
+        hint: String? = nil
+    ) -> some View {
+        self
+            .accessibilityLabel(label)
+            .accessibilityHint(hint ?? "")
+            .accessibilityAddTraits(.isImage)
+    }
+    
+    func appleAccessibilityToggle(
+        label: String,
+        hint: String? = nil,
+        isOn: Bool
+    ) -> some View {
+        self
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(label)
+            .accessibilityHint(hint ?? "")
+            .accessibilityValue(isOn ? "On" : "Off")
+            .accessibilityAddTraits(.isButton)
+    }
 }
 
 // MARK: - Dynamic Type Support
@@ -627,6 +698,14 @@ extension View {
     func appleDynamicType() -> some View {
         dynamicTypeSize(.small ... .accessibility3)
     }
+    
+    func appleDynamicTypeLimited() -> some View {
+        dynamicTypeSize(.small ... .large)
+    }
+    
+    func appleDynamicTypeAccessibility() -> some View {
+        dynamicTypeSize(.small ... .accessibility5)
+    }
 }
 
 // MARK: - RTL Support
@@ -634,6 +713,20 @@ extension View {
 extension View {
     func appleRTL() -> some View {
         environment(\.layoutDirection, .leftToRight)
+    }
+    
+    func appleRTLSupport() -> some View {
+        environment(\.layoutDirection, .leftToRight)
+            .environment(\.layoutDirection, .rightToLeft)
+    }
+}
+
+// MARK: - VoiceOver Support
+
+extension View {
+    func appleVoiceOverHint(_ hint: String) -> some View {
+        self
+            .accessibilityHint(hint)
     }
 }
 
