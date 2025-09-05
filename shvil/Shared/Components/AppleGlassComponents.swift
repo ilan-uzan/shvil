@@ -108,10 +108,10 @@ struct AppleGlassButton: View {
     
     private var backgroundColor: Color {
         switch style {
-        case .primary: AppleColors.primary
+        case .primary: AppleColors.brandPrimary
         case .secondary: AppleColors.glassMedium
         case .tertiary: Color.clear
-        case .destructive: AppleColors.error
+        case .destructive: AppleColors.danger
         }
     }
     
@@ -281,7 +281,7 @@ struct AppleGlassFAB: View {
     
     private var backgroundColor: Color {
         switch style {
-        case .primary: AppleColors.primary
+        case .primary: AppleColors.brandPrimary
         case .secondary: AppleColors.glassMedium
         case .tertiary: Color.clear
         }
@@ -591,7 +591,7 @@ struct AppleGlassStatusIndicator: View {
             switch self {
             case .success: AppleColors.success
             case .warning: AppleColors.warning
-            case .error: AppleColors.error
+            case .error: AppleColors.danger
             case .info: AppleColors.info
             }
         }

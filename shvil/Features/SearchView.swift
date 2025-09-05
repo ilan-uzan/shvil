@@ -61,14 +61,13 @@ struct SearchView: View {
     private var searchHeader: some View {
         VStack(spacing: AppleSpacing.md) {
             // Search Bar
-            AppleGlassSearchBar(
+            ShvilSearchField(
                 text: $searchText,
-                placeholder: "Search places, activities, or locations"
-            ) {
-                if !searchText.isEmpty {
-                    searchService.search(for: searchText)
+                placeholder: "Search places, activities, or locations",
+                onVoiceSearch: {
+                    // TODO: Implement voice search
                 }
-            }
+            )
 
             // Category Filters
             categoryFilters
@@ -89,11 +88,10 @@ struct SearchView: View {
     }
 
     private func categoryChip(for category: SearchCategory) -> some View {
-        AppleGlassButton(
-            title: category.displayName,
+        ShvilGlassChip(
+            category.displayName,
             icon: category.icon,
-            style: selectedCategory == category ? .primary : .secondary,
-            size: .small
+            isSelected: selectedCategory == category
         ) {
             withAnimation(AppleAnimations.spring) {
                 selectedCategory = category

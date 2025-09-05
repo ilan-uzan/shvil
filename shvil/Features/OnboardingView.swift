@@ -37,29 +37,44 @@ struct OnboardingView: View {
     }
     
     private var onboardingContent: some View {
-        VStack(spacing: 0) {
-            // Progress indicator
-            progressIndicator
+        ZStack {
+            // Background with wavy path motif
+            AppleColors.background
+                .ignoresSafeArea()
             
-            // Content
-            TabView(selection: $currentStep) {
-                welcomeStep
-                    .tag(0)
-                
-                languageStep
-                    .tag(1)
-                
-                themeStep
-                    .tag(2)
-                
-                permissionsStep
-                    .tag(3)
+            // Subtle wavy path decoration
+            VStack {
+                Spacer()
+                WavyPathMotif(style: .subtle, color: AppleColors.brandPrimary.opacity(0.3))
+                    .frame(height: 100)
+                    .offset(y: 50)
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .animation(AppleAnimations.pageTransition, value: currentStep)
+            .ignoresSafeArea()
             
-            // Navigation buttons
-            navigationButtons
+            VStack(spacing: 0) {
+                // Progress indicator
+                progressIndicator
+                
+                // Content
+                TabView(selection: $currentStep) {
+                    welcomeStep
+                        .tag(0)
+                    
+                    languageStep
+                        .tag(1)
+                
+                    themeStep
+                        .tag(2)
+                    
+                    permissionsStep
+                        .tag(3)
+                }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                .animation(AppleAnimations.pageTransition, value: currentStep)
+                
+                // Navigation buttons
+                navigationButtons
+            }
         }
     }
     
@@ -67,7 +82,7 @@ struct OnboardingView: View {
         HStack(spacing: AppleSpacing.sm) {
             ForEach(0..<totalSteps, id: \.self) { step in
                 Circle()
-                    .fill(step <= currentStep ? AppleColors.accent : AppleColors.surfaceTertiary)
+                    .fill(step <= currentStep ? AppleColors.brandPrimary : AppleColors.strokeLight)
                     .frame(width: 8, height: 8)
                     .scaleEffect(step == currentStep ? 1.2 : 1.0)
                     .animation(AppleAnimations.spring, value: currentStep)
@@ -86,7 +101,7 @@ struct OnboardingView: View {
                 // App icon
                 ZStack {
                     RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                        .fill(AppleColors.primary)
+                        .fill(AppleColors.brandPrimary)
                         .frame(width: 120, height: 120)
                         .appleShadow(AppleShadows.heavy)
                     
@@ -245,11 +260,11 @@ struct OnboardingView: View {
         }
         .overlay(
             RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                .stroke(selectedLanguage == language ? AppleColors.primary : Color.clear, lineWidth: 2)
+                .stroke(selectedLanguage == language ? AppleColors.brandPrimary : Color.clear, lineWidth: 2)
         )
         .background(
             RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                .fill(selectedLanguage == language ? AppleColors.primary : Color.clear)
+                .fill(selectedLanguage == language ? AppleColors.brandPrimary : Color.clear)
         )
     }
     
@@ -284,11 +299,11 @@ struct OnboardingView: View {
         }
         .overlay(
             RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                .stroke(selectedTheme == theme ? AppleColors.primary : Color.clear, lineWidth: 2)
+                .stroke(selectedTheme == theme ? AppleColors.brandPrimary : Color.clear, lineWidth: 2)
         )
         .background(
             RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                .fill(selectedTheme == theme ? AppleColors.primary : Color.clear)
+                .fill(selectedTheme == theme ? AppleColors.brandPrimary : Color.clear)
         )
     }
     
@@ -309,12 +324,12 @@ struct OnboardingView: View {
                         if isRequired {
                             Text("Required")
                                 .font(AppleTypography.caption2)
-                                .foregroundColor(AppleColors.error)
+                                .foregroundColor(AppleColors.danger)
                                 .padding(.horizontal, AppleSpacing.sm)
                                 .padding(.vertical, AppleSpacing.xs)
                                 .background(
                                     Capsule()
-                                        .fill(AppleColors.error.opacity(0.2))
+                                        .fill(AppleColors.danger.opacity(0.2))
                                 )
                         }
                     }

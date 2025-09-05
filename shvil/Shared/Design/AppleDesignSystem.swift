@@ -10,40 +10,53 @@ import SwiftUI
 // MARK: - Apple Design System for Shvil
 // Following Apple's Human Interface Guidelines and iOS Design Principles
 
-// MARK: - Color System (Apple Compliant)
+// MARK: - Shvil Brand Color System (Icy Ocean Blue Theme)
 
 enum AppleColors {
-    // Primary Colors - Following Apple's color guidelines
-    static let primary = Color(red: 0.0, green: 0.48, blue: 0.55) // Deep Aqua
-    static let primaryLight = Color(red: 0.24, green: 0.85, blue: 0.84) // Turquoise
-    static let primaryDark = Color(red: 0.0, green: 0.35, blue: 0.4) // Darker Aqua
+    // Brand Primary - Icy Ocean Blue Gradient (from app icon)
+    static let brandPrimary = Color(red: 0.498, green: 0.827, blue: 1.0) // #7FD3FF
+    static let brandPrimaryMid = Color(red: 0.224, green: 0.663, blue: 0.973) // #39A9F8
+    static let brandPrimaryDark = Color(red: 0.059, green: 0.498, blue: 0.871) // #0F7FDE
+    
+    // Brand Gradient
+    static let brandGradient = LinearGradient(
+        colors: [brandPrimary, brandPrimaryMid, brandPrimaryDark],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
     
     // Semantic Colors
-    static let success = Color.green
-    static let warning = Color.orange
-    static let error = Color.red
-    static let info = Color.blue
+    static let success = Color(red: 0.137, green: 0.769, blue: 0.514) // #23C483
+    static let warning = Color(red: 1.0, green: 0.784, blue: 0.341) // #FFC857
+    static let danger = Color(red: 1.0, green: 0.420, blue: 0.420) // #FF6B6B
+    static let info = brandPrimaryMid
     
-    // Neutral Colors
-    static let background = Color.black
-    static let surface = Color(red: 0.05, green: 0.06, blue: 0.08) // #0D0F12
-    static let surfaceSecondary = Color(red: 0.08, green: 0.09, blue: 0.12) // #14151F
-    static let surfaceTertiary = Color(red: 0.12, green: 0.13, blue: 0.16) // #1F2029
+    // Surface Colors - Light, glassy theme
+    static let background = Color(red: 0.98, green: 0.98, blue: 0.99) // Near white
+    static let surface = Color.white.opacity(0.55) // Glass surface
+    static let surfaceSecondary = Color.white.opacity(0.45) // Secondary glass
+    static let surfaceTertiary = Color.white.opacity(0.35) // Tertiary glass
     
-    // Text Colors
-    static let textPrimary = Color.white
-    static let textSecondary = Color.white.opacity(0.7)
-    static let textTertiary = Color.white.opacity(0.5)
-    static let textQuaternary = Color.white.opacity(0.3)
+    // Text Colors - Near black on light
+    static let textPrimary = Color(red: 0.043, green: 0.043, blue: 0.047) // #0B0B0C at 80-90%
+    static let textSecondary = Color(red: 0.227, green: 0.227, blue: 0.251) // #3A3A40 at 70%
+    static let textTertiary = Color(red: 0.227, green: 0.227, blue: 0.251).opacity(0.6)
+    static let textQuaternary = Color(red: 0.227, green: 0.227, blue: 0.251).opacity(0.4)
     
-    // Glass Colors (for glassmorphism)
-    static let glassLight = Color.white.opacity(0.1)
-    static let glassMedium = Color.white.opacity(0.15)
-    static let glassHeavy = Color.white.opacity(0.2)
+    // Glass Colors - Enhanced glassmorphism
+    static let glassLight = Color.white.opacity(0.55) // Frosted glass
+    static let glassMedium = Color.white.opacity(0.65) // Medium glass
+    static let glassHeavy = Color.white.opacity(0.75) // Heavy glass
+    static let glassInnerHighlight = Color.white.opacity(0.06) // Inner highlight
+    
+    // Stroke Colors
+    static let strokeHairline = Color.black.opacity(0.06) // Hairline stroke
+    static let strokeLight = Color.black.opacity(0.12) // Light stroke
+    static let strokeMedium = Color.black.opacity(0.18) // Medium stroke
     
     // Accent Colors
-    static let accent = primaryLight
-    static let accentSecondary = Color(red: 0.4, green: 0.7, blue: 0.9) // Light Blue
+    static let accent = brandPrimary
+    static let accentSecondary = brandPrimaryMid
 }
 
 // MARK: - Typography System (Apple SF Pro)
@@ -97,25 +110,30 @@ enum AppleSpacing {
     static let xxxl: CGFloat = 48 // 48pt
 }
 
-// MARK: - Corner Radius System
+// MARK: - Corner Radius System (20-24pt for cards)
 
 enum AppleCornerRadius {
     static let xs: CGFloat = 4    // 4pt
     static let sm: CGFloat = 8    // 8pt
     static let md: CGFloat = 12   // 12pt
     static let lg: CGFloat = 16   // 16pt
-    static let xl: CGFloat = 20   // 20pt
-    static let xxl: CGFloat = 24  // 24pt
+    static let xl: CGFloat = 20   // 20pt - Card radius
+    static let xxl: CGFloat = 24  // 24pt - Large card radius
     static let round: CGFloat = 50 // 50% for circular elements
 }
 
-// MARK: - Shadow System
+// MARK: - Shadow System (Soft multi-layer shadows)
 
 enum AppleShadows {
-    static let light = Shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
-    static let medium = Shadow(color: Color.black.opacity(0.15), radius: 4, x: 0, y: 2)
-    static let heavy = Shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
-    static let glass = Shadow(color: AppleColors.accent.opacity(0.1), radius: 12, x: 0, y: 0)
+    // Soft shadows for glassmorphism
+    static let light = Shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
+    static let medium = Shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
+    static let heavy = Shadow(color: Color.black.opacity(0.12), radius: 18, x: 0, y: 8)
+    static let glass = Shadow(color: AppleColors.brandPrimary.opacity(0.08), radius: 24, x: 0, y: 12)
+    
+    // Inner shadows for depth
+    static let innerLight = Shadow(color: AppleColors.glassInnerHighlight, radius: 2, x: 0, y: 1)
+    static let innerMedium = Shadow(color: AppleColors.glassInnerHighlight, radius: 4, x: 0, y: 2)
 }
 
 struct Shadow {
@@ -150,6 +168,7 @@ enum AppleAnimations {
 struct GlassmorphismModifier: ViewModifier {
     let intensity: GlassIntensity
     let cornerRadius: CGFloat
+    let isInteractive: Bool
     
     enum GlassIntensity {
         case light
@@ -157,22 +176,39 @@ struct GlassmorphismModifier: ViewModifier {
         case heavy
     }
     
-    init(intensity: GlassIntensity = .medium, cornerRadius: CGFloat = AppleCornerRadius.md) {
+    init(intensity: GlassIntensity = .medium, cornerRadius: CGFloat = AppleCornerRadius.xl, isInteractive: Bool = false) {
         self.intensity = intensity
         self.cornerRadius = cornerRadius
+        self.isInteractive = isInteractive
     }
     
     func body(content: Content) -> some View {
         content
             .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(glassColor)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .stroke(highlightColor, lineWidth: 1)
-                    )
-                    .shadow(color: AppleShadows.glass.color, radius: AppleShadows.glass.radius, x: AppleShadows.glass.x, y: AppleShadows.glass.y)
+                ZStack {
+                    // Backdrop blur effect
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(.ultraThinMaterial)
+                        .opacity(0.8)
+                    
+                    // Glass surface
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(glassColor)
+                        .overlay(
+                            // Inner highlight for depth
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                .blendMode(.overlay)
+                        )
+                        .overlay(
+                            // Outer stroke
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .stroke(AppleColors.strokeHairline, lineWidth: 0.5)
+                        )
+                }
             )
+            .shadow(color: AppleShadows.glass.color, radius: AppleShadows.glass.radius, x: AppleShadows.glass.x, y: AppleShadows.glass.y)
+            .shadow(color: AppleShadows.medium.color, radius: AppleShadows.medium.radius, x: AppleShadows.medium.x, y: AppleShadows.medium.y)
     }
     
     private var glassColor: Color {
@@ -182,17 +218,13 @@ struct GlassmorphismModifier: ViewModifier {
         case .heavy: AppleColors.glassHeavy
         }
     }
-    
-    private var highlightColor: Color {
-        Color.white.opacity(0.2)
-    }
 }
 
 // MARK: - View Extensions
 
 extension View {
-    func glassmorphism(intensity: GlassmorphismModifier.GlassIntensity = .medium, cornerRadius: CGFloat = AppleCornerRadius.md) -> some View {
-        modifier(GlassmorphismModifier(intensity: intensity, cornerRadius: cornerRadius))
+    func glassmorphism(intensity: GlassmorphismModifier.GlassIntensity = .medium, cornerRadius: CGFloat = AppleCornerRadius.xl, isInteractive: Bool = false) -> some View {
+        modifier(GlassmorphismModifier(intensity: intensity, cornerRadius: cornerRadius, isInteractive: isInteractive))
     }
     
     func appleShadow(_ shadow: Shadow = AppleShadows.medium) -> some View {

@@ -527,7 +527,7 @@ struct MapView: View {
                     VStack(spacing: AppleSpacing.sm) {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .font(.system(size: 32))
-                            .foregroundColor(AppleColors.error)
+                            .foregroundColor(AppleColors.danger)
 
                         Text("Exit Navigation?")
                             .font(AppleTypography.title2)

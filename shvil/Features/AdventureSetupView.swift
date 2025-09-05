@@ -99,7 +99,7 @@ struct AdventureSetupView: View {
             // Icon
             ZStack {
                 Circle()
-                    .fill(AppleColors.primary)
+                    .fill(AppleColors.brandPrimary)
                     .frame(width: 80, height: 80)
                     .appleShadow(AppleShadows.medium)
 
@@ -150,7 +150,7 @@ struct AdventureSetupView: View {
                 // Icon
                 ZStack {
                     Circle()
-                        .fill(selectedMood == mood ? AppleColors.primary : AppleColors.surfaceSecondary)
+                        .fill(selectedMood == mood ? AppleColors.brandPrimary : AppleColors.surfaceSecondary)
                         .frame(width: 48, height: 48)
 
                     Image(systemName: moodIcon(for: mood))
@@ -170,7 +170,7 @@ struct AdventureSetupView: View {
                     .fill(selectedMood == mood ? AppleColors.glassMedium : AppleColors.surfaceSecondary)
                     .overlay(
                         RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                            .stroke(selectedMood == mood ? AppleColors.primary : AppleColors.glassLight, lineWidth: 1)
+                            .stroke(selectedMood == mood ? AppleColors.brandPrimary : AppleColors.glassLight, lineWidth: 1)
                     )
                     .appleShadow(AppleShadows.light)
             )
@@ -218,7 +218,7 @@ struct AdventureSetupView: View {
                 .padding(.vertical, AppleSpacing.sm)
                 .background(
                     RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                        .fill(selectedDuration == duration ? AppleColors.primary : AppleColors.surfaceSecondary)
+                        .fill(selectedDuration == duration ? AppleColors.brandPrimary : AppleColors.surfaceSecondary)
                         .appleShadow(AppleShadows.light)
                 )
         }
@@ -260,7 +260,7 @@ struct AdventureSetupView: View {
             .padding(.vertical, AppleSpacing.sm)
             .background(
                 RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                    .fill(selectedTransport == transport ? AppleColors.primary : AppleColors.surfaceSecondary)
+                    .fill(selectedTransport == transport ? AppleColors.brandPrimary : AppleColors.surfaceSecondary)
                     .appleShadow(AppleShadows.light)
             )
         }
@@ -295,7 +295,7 @@ struct AdventureSetupView: View {
                 Spacer()
 
                 Toggle("", isOn: $isGroupAdventure)
-                    .toggleStyle(SwitchToggleStyle(tint: AppleColors.primary))
+                    .toggleStyle(SwitchToggleStyle(tint: AppleColors.brandPrimary))
             }
         }
     }

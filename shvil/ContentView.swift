@@ -61,7 +61,7 @@ struct ContentView: View {
                 .tag(3)
         }
         .appleTabBar()
-        .accentColor(AppleColors.accent)
+        .accentColor(AppleColors.brandPrimary)
         .overlay(
             // Floating Adventure Button
             VStack {
@@ -131,8 +131,7 @@ struct AdventuresView: View {
     }
     
     private var emptyState: some View {
-        AppleGlassEmptyState(
-            icon: "sparkles",
+        ShvilEmptyState(
             title: "No Adventures Yet",
             description: "Create your first adventure to start exploring amazing places and experiences.",
             actionTitle: "Create Adventure",
@@ -155,7 +154,7 @@ struct AdventuresView: View {
     }
     
     private func adventureCard(for adventure: AdventurePlan) -> some View {
-        AppleGlassCard(style: .glassmorphism) {
+        ShvilGlassCard(style: .elevated) {
             VStack(alignment: .leading, spacing: AppleSpacing.sm) {
                 // Header
                 HStack {
@@ -277,7 +276,7 @@ struct ProfileView: View {
                 // Profile Picture
                 ZStack {
                     Circle()
-                        .fill(AppleColors.primary)
+                        .fill(AppleColors.brandPrimary)
                         .frame(width: 80, height: 80)
                         .appleShadow(AppleShadows.medium)
                     
