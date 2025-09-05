@@ -37,7 +37,7 @@ struct PrivacySettingsView: View {
             }
             .navigationTitle("Privacy & Security")
             .navigationBarTitleDisplayMode(.large)
-            .background(LiquidGlassColors.background.ignoresSafeArea())
+            .background(AppleColors.background.ignoresSafeArea())
         }
         .sheet(isPresented: $showingPrivacySheet) {
             if let feature = selectedFeature {
@@ -62,22 +62,22 @@ struct PrivacySettingsView: View {
             HStack {
                 Image(systemName: "shield.checkered")
                     .font(.system(size: 24))
-                    .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                    .foregroundColor(AppleColors.brandPrimary)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Privacy Status")
-                        .font(LiquidGlassTypography.title)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.title3)
+                        .foregroundColor(AppleColors.textPrimary)
 
                     Text(privacyGuard.isPanicSwitchEnabled ? "All sharing disabled" : "Privacy controls active")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
 
                 Spacer()
 
                 Circle()
-                    .fill(privacyGuard.isPanicSwitchEnabled ? Color.red : LiquidGlassColors.accentDeepAqua)
+                    .fill(privacyGuard.isPanicSwitchEnabled ? Color.red : AppleColors.brandPrimary)
                     .frame(width: 12, height: 12)
             }
 
@@ -112,8 +112,8 @@ struct PrivacySettingsView: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
-                .glassEffect(elevation: .medium)
+                .fill(AppleColors.surfaceTertiary)
+                .glassmorphism(intensity: .medium, cornerRadius: 16)
         )
     }
 
@@ -122,8 +122,8 @@ struct PrivacySettingsView: View {
     private var privacyControlsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Privacy Controls")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             VStack(spacing: 12) {
                 PrivacyControlRow(
@@ -170,36 +170,39 @@ struct PrivacySettingsView: View {
     private var dataManagementSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Data Management")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             VStack(spacing: 12) {
-                SettingsRow(
+                AppleGlassListRow(
                     icon: "trash.fill",
                     title: "Clear All Data",
-                    subtitle: "Remove all stored location and social data"
-                ) {
-                    // TODO: Implement clear all data
-                    HapticFeedback.shared.impact(style: .medium)
-                }
+                    subtitle: "Remove all stored location and social data",
+                    action: {
+                        // TODO: Implement clear all data
+                        HapticFeedback.shared.impact(style: .medium)
+                    }
+                )
 
-                SettingsRow(
+                AppleGlassListRow(
                     icon: "square.and.arrow.down",
                     title: "Export My Data",
-                    subtitle: "Download a copy of your data"
-                ) {
-                    // TODO: Implement data export
-                    HapticFeedback.shared.impact(style: .light)
-                }
+                    subtitle: "Download a copy of your data",
+                    action: {
+                        // TODO: Implement data export
+                        HapticFeedback.shared.impact(style: .light)
+                    }
+                )
 
-                SettingsRow(
+                AppleGlassListRow(
                     icon: "arrow.clockwise",
                     title: "Reset Privacy Settings",
-                    subtitle: "Reset all privacy preferences to default"
-                ) {
-                    // TODO: Implement reset privacy settings
-                    HapticFeedback.shared.impact(style: .medium)
-                }
+                    subtitle: "Reset all privacy preferences to default",
+                    action: {
+                        // TODO: Implement reset privacy settings
+                        HapticFeedback.shared.impact(style: .medium)
+                    }
+                )
             }
         }
     }
@@ -209,8 +212,8 @@ struct PrivacySettingsView: View {
     private var emergencyControlsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Emergency Controls")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             VStack(spacing: 12) {
                 Button(action: {
@@ -224,29 +227,29 @@ struct PrivacySettingsView: View {
                     HStack {
                         Image(systemName: privacyGuard.isPanicSwitchEnabled ? "shield.fill" : "shield.slash.fill")
                             .font(.system(size: 20))
-                            .foregroundColor(privacyGuard.isPanicSwitchEnabled ? .red : LiquidGlassColors.primaryText)
+                            .foregroundColor(privacyGuard.isPanicSwitchEnabled ? .red : AppleColors.textPrimary)
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text(privacyGuard.isPanicSwitchEnabled ? "Disable Panic Switch" : "Enable Panic Switch")
-                                .font(LiquidGlassTypography.bodySemibold)
-                                .foregroundColor(LiquidGlassColors.primaryText)
+                                .font(AppleTypography.body)
+                                .foregroundColor(AppleColors.textPrimary)
 
                             Text(privacyGuard.isPanicSwitchEnabled ? "Re-enable all privacy features" : "Immediately stop all data sharing")
-                                .font(LiquidGlassTypography.caption)
-                                .foregroundColor(LiquidGlassColors.secondaryText)
+                                .font(AppleTypography.caption1)
+                                .foregroundColor(AppleColors.textSecondary)
                         }
 
                         Spacer()
 
                         Image(systemName: "chevron.right")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .foregroundColor(AppleColors.textSecondary)
                     }
                     .padding(16)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(privacyGuard.isPanicSwitchEnabled ? Color.red.opacity(0.1) : LiquidGlassColors.glassSurface1)
-                            .glassEffect(elevation: .light)
+                            .fill(privacyGuard.isPanicSwitchEnabled ? Color.red.opacity(0.1) : AppleColors.surfaceTertiary)
+                            .glassmorphism(intensity: .light, cornerRadius: 12)
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -259,36 +262,39 @@ struct PrivacySettingsView: View {
     private var legalSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Legal & Compliance")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             VStack(spacing: 12) {
-                SettingsRow(
+                AppleGlassListRow(
                     icon: "doc.text.fill",
                     title: "Privacy Policy",
-                    subtitle: "Read our privacy policy"
-                ) {
-                    // TODO: Open privacy policy
-                    HapticFeedback.shared.impact(style: .light)
-                }
+                    subtitle: "Read our privacy policy",
+                    action: {
+                        // TODO: Open privacy policy
+                        HapticFeedback.shared.impact(style: .light)
+                    }
+                )
 
-                SettingsRow(
+                AppleGlassListRow(
                     icon: "hand.raised.fill",
                     title: "Terms of Service",
-                    subtitle: "Read our terms of service"
-                ) {
-                    // TODO: Open terms of service
-                    HapticFeedback.shared.impact(style: .light)
-                }
+                    subtitle: "Read our terms of service",
+                    action: {
+                        // TODO: Open terms of service
+                        HapticFeedback.shared.impact(style: .light)
+                    }
+                )
 
-                SettingsRow(
+                AppleGlassListRow(
                     icon: "envelope.fill",
                     title: "Contact Privacy Team",
-                    subtitle: "privacy@shvil.app"
-                ) {
-                    // TODO: Open email composer
-                    HapticFeedback.shared.impact(style: .light)
-                }
+                    subtitle: "privacy@shvil.app",
+                    action: {
+                        // TODO: Open email composer
+                        HapticFeedback.shared.impact(style: .light)
+                    }
+                )
             }
         }
     }
@@ -305,11 +311,11 @@ struct PrivacyStatusItem: View {
         VStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.system(size: 20))
-                .foregroundColor(isEnabled ? LiquidGlassColors.accentDeepAqua : LiquidGlassColors.secondaryText)
+                .foregroundColor(isEnabled ? AppleColors.brandPrimary : AppleColors.textSecondary)
 
             Text(title)
-                .font(LiquidGlassTypography.caption)
-                .foregroundColor(LiquidGlassColors.secondaryText)
+                .font(AppleTypography.caption1)
+                .foregroundColor(AppleColors.textSecondary)
         }
     }
 }
@@ -338,17 +344,17 @@ struct PrivacyControlRow: View {
             HStack {
                 Image(systemName: featureInfo.icon)
                     .font(.system(size: 20))
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .foregroundColor(AppleColors.textPrimary)
                     .frame(width: 24)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(featureInfo.title)
-                        .font(LiquidGlassTypography.bodySemibold)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.textPrimary)
 
                     Text(featureInfo.subtitle)
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
 
                 Spacer()
@@ -357,13 +363,13 @@ struct PrivacyControlRow: View {
                     get: { isEnabled },
                     set: { _ in action() }
                 ))
-                .toggleStyle(SwitchToggleStyle(tint: LiquidGlassColors.accentDeepAqua))
+                .toggleStyle(SwitchToggleStyle(tint: AppleColors.brandPrimary))
             }
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(LiquidGlassColors.glassSurface1)
-                    .glassEffect(elevation: .light)
+                    .fill(AppleColors.surfaceTertiary)
+                    .glassmorphism(intensity: .light, cornerRadius: 12)
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -386,31 +392,31 @@ struct PrivacyDetailSheet: View {
                     // Header
                     VStack(alignment: .leading, spacing: 12) {
                         Text(sheetData.title)
-                            .font(LiquidGlassTypography.titleXL)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.title1)
+                            .foregroundColor(AppleColors.textPrimary)
 
                         Text(sheetData.description)
-                            .font(LiquidGlassTypography.body)
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .font(AppleTypography.body)
+                            .foregroundColor(AppleColors.textSecondary)
                     }
 
                     // Data Collected
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Data We Collect")
-                            .font(LiquidGlassTypography.title)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.title3)
+                            .foregroundColor(AppleColors.textPrimary)
 
                         VStack(alignment: .leading, spacing: 8) {
                             ForEach(sheetData.dataCollected, id: \.self) { item in
                                 HStack(alignment: .top, spacing: 12) {
                                     Image(systemName: "circle.fill")
                                         .font(.system(size: 6))
-                                        .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                                        .foregroundColor(AppleColors.brandPrimary)
                                         .padding(.top, 8)
 
                                     Text(item)
-                                        .font(LiquidGlassTypography.body)
-                                        .foregroundColor(LiquidGlassColors.secondaryText)
+                                        .font(AppleTypography.body)
+                                        .foregroundColor(AppleColors.textSecondary)
                                 }
                             }
                         }
@@ -419,12 +425,12 @@ struct PrivacyDetailSheet: View {
                     // How to Stop
                     VStack(alignment: .leading, spacing: 12) {
                         Text("How to Stop")
-                            .font(LiquidGlassTypography.title)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.title3)
+                            .foregroundColor(AppleColors.textPrimary)
 
                         Text(sheetData.howToStop)
-                            .font(LiquidGlassTypography.body)
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .font(AppleTypography.body)
+                            .foregroundColor(AppleColors.textSecondary)
                     }
 
                     Spacer(minLength: 32)
@@ -439,7 +445,7 @@ struct PrivacyDetailSheet: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                    .foregroundColor(AppleColors.brandPrimary)
                 }
             }
         }

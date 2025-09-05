@@ -23,11 +23,11 @@ struct AdventureStopDetailView: View {
         NavigationView {
             ZStack {
                 // Background
-                LiquidGlassColors.background
+                AppleColors.background
                     .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: 24) {
+                    VStack(spacing: AppleSpacing.lg) {
                         // Header
                         headerSection
 
@@ -46,18 +46,17 @@ struct AdventureStopDetailView: View {
                         // Action Buttons
                         actionButtonsSection
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, AppleSpacing.lg)
+                    .padding(.bottom, AppleSpacing.lg)
                 }
             }
             .navigationTitle("Stop Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") {
+                    AppleButton("Close", style: .ghost, size: .small) {
                         dismiss()
                     }
-                    .foregroundColor(LiquidGlassColors.primaryText)
                 }
             }
         }
@@ -69,29 +68,30 @@ struct AdventureStopDetailView: View {
     // MARK: - Header Section
 
     private var headerSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppleSpacing.md) {
             // Stop Number and Category
             HStack {
                 // Stop Number
                 ZStack {
                     Circle()
-                        .fill(LiquidGlassGradients.primaryGradient)
+                        .fill(AppleColors.brandGradient)
                         .frame(width: 48, height: 48)
+                        .appleShadow(AppleShadows.medium)
 
                     Text("\(stopIndex + 1)")
-                        .font(LiquidGlassTypography.titleXL)
+                        .font(AppleTypography.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
                     Text(stop.name)
-                        .font(LiquidGlassTypography.titleXL)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.largeTitle)
+                        .foregroundColor(AppleColors.textPrimary)
 
                     Text(stop.category.displayName)
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
 
                 Spacer()
@@ -99,33 +99,33 @@ struct AdventureStopDetailView: View {
                 // Category Icon
                 Image(systemName: stopIcon(for: stop.category))
                     .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                    .foregroundColor(AppleColors.brandPrimary)
             }
 
             // Duration
             HStack {
                 Image(systemName: "clock")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .foregroundColor(AppleColors.textSecondary)
 
                 Text("\(stop.estimatedDuration) minutes")
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
 
                 Spacer()
 
                 Text("Stay: \(stop.estimatedDuration) min")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.accentDeepAqua)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.brandPrimary)
+                    .padding(.horizontal, AppleSpacing.sm)
+                    .padding(.vertical, AppleSpacing.xs)
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(LiquidGlassColors.glassSurface2)
+                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                            .fill(AppleColors.surfaceSecondary)
                     )
             }
         }
-        .padding(.vertical, 20)
+        .padding(.vertical, AppleSpacing.lg)
     }
 
     private var stopIndex: Int {
@@ -152,10 +152,11 @@ struct AdventureStopDetailView: View {
     // MARK: - Map Section
 
     private var mapSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppleSpacing.md) {
             Text("Location")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .fontWeight(.semibold)
+                .foregroundColor(AppleColors.textPrimary)
 
             Map(coordinateRegion: .constant(MKCoordinateRegion(
                 center: stop.coordinate,
@@ -164,8 +165,9 @@ struct AdventureStopDetailView: View {
                 MapAnnotation(coordinate: stop.coordinate) {
                         ZStack {
                             Circle()
-                                .fill(LiquidGlassGradients.primaryGradient)
+                                .fill(AppleColors.brandGradient)
                                 .frame(width: 32, height: 32)
+                                .appleShadow(AppleShadows.light)
 
                             Image(systemName: stopIcon(for: stop.category))
                                 .font(.system(size: 14, weight: .medium))
@@ -175,185 +177,169 @@ struct AdventureStopDetailView: View {
                             Circle()
                                 .stroke(Color.white, lineWidth: 3)
                         )
-                        .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
                     }
                 }
                 .frame(height: 200)
-                .cornerRadius(16)
+                .cornerRadius(AppleCornerRadius.lg)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                        .stroke(AppleColors.glassLight, lineWidth: 1)
+                )
+                .appleShadow(AppleShadows.light)
         }
     }
 
     // MARK: - Stop Info Section
 
     private var stopInfoSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Place Name")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+        AppleGlassCard(style: .elevated) {
+            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+                Text("Place Information")
+                    .font(AppleTypography.title3)
+                    .fontWeight(.semibold)
+                    .foregroundColor(AppleColors.textPrimary)
 
-                Text(stop.name)
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
-            }
+                VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+                    Text("Place Name")
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
 
-            if let openingHours = stop.openingHours {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Opening Hours")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
-
-                    Text(openingHours)
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                    Text(stop.name)
+                        .font(AppleTypography.title3)
+                        .foregroundColor(AppleColors.textPrimary)
                 }
-            }
 
-            if let rating = stop.rating {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Rating")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                if let openingHours = stop.openingHours {
+                    VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+                        Text("Opening Hours")
+                            .font(AppleTypography.caption1)
+                            .foregroundColor(AppleColors.textSecondary)
 
-                    HStack(spacing: 4) {
-                        ForEach(0..<5) { index in
-                            Image(systemName: index < Int(rating) ? "star.fill" : "star")
-                                .foregroundColor(.yellow)
-                                .font(.system(size: 12))
+                        Text(openingHours)
+                            .font(AppleTypography.body)
+                            .foregroundColor(AppleColors.textPrimary)
+                    }
+                }
+
+                if let rating = stop.rating {
+                    VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+                        Text("Rating")
+                            .font(AppleTypography.caption1)
+                            .foregroundColor(AppleColors.textSecondary)
+
+                        HStack(spacing: AppleSpacing.xs) {
+                            ForEach(0..<5) { index in
+                                Image(systemName: index < Int(rating) ? "star.fill" : "star")
+                                    .foregroundColor(.yellow)
+                                    .font(.system(size: 12))
+                            }
+                            Text(String(format: "%.1f", rating))
+                                .font(AppleTypography.body)
+                                .foregroundColor(AppleColors.textPrimary)
                         }
-                        Text(String(format: "%.1f", rating))
-                            .font(LiquidGlassTypography.body)
-                            .foregroundColor(LiquidGlassColors.primaryText)
                     }
                 }
             }
         }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
-        )
     }
 
     // MARK: - Narrative Section
 
     private var narrativeSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("What to Expect")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+        AppleGlassCard(style: .elevated) {
+            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+                Text("What to Expect")
+                    .font(AppleTypography.title3)
+                    .fontWeight(.semibold)
+                    .foregroundColor(AppleColors.textPrimary)
 
-            Text(stop.description)
-                .font(LiquidGlassTypography.body)
-                .foregroundColor(LiquidGlassColors.primaryText)
-                .lineSpacing(4)
+                Text(stop.description)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textPrimary)
+                    .lineSpacing(4)
+            }
         }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
-        )
     }
 
     // MARK: - Constraints Section
 
     private var constraintsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Details")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+        AppleGlassCard(style: .elevated) {
+            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+                Text("Details")
+                    .font(AppleTypography.title3)
+                    .fontWeight(.semibold)
+                    .foregroundColor(AppleColors.textPrimary)
 
-            VStack(spacing: 12) {
-                // Budget
-                constraintRow(
-                    icon: "dollarsign.circle",
-                    title: "Budget",
-                    value: stop.priceLevel.displayName
-                )
-
-                // Accessibility
-                constraintRow(
-                    icon: "figure.roll",
-                    title: "Accessibility",
-                    value: stop.isAccessible ? "Wheelchair Accessible" : "Not Accessible"
-                )
-
-                // Tags
-                if !stop.tags.isEmpty {
+                VStack(spacing: AppleSpacing.md) {
+                    // Budget
                     constraintRow(
-                        icon: "tag",
-                        title: "Tags",
-                        value: stop.tags.joined(separator: ", ")
+                        icon: "dollarsign.circle",
+                        title: "Budget",
+                        value: stop.priceLevel.displayName
                     )
+
+                    // Accessibility
+                    constraintRow(
+                        icon: "figure.roll",
+                        title: "Accessibility",
+                        value: stop.isAccessible ? "Wheelchair Accessible" : "Not Accessible"
+                    )
+
+                    // Tags
+                    if !stop.tags.isEmpty {
+                        constraintRow(
+                            icon: "tag",
+                            title: "Tags",
+                            value: stop.tags.joined(separator: ", ")
+                        )
+                    }
                 }
             }
         }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
-        )
     }
 
     private func constraintRow(icon: String, title: String, value: String) -> some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppleSpacing.md) {
             Image(systemName: icon)
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                .foregroundColor(AppleColors.brandPrimary)
                 .frame(width: 20)
 
             Text(title)
-                .font(LiquidGlassTypography.body)
-                .foregroundColor(LiquidGlassColors.secondaryText)
+                .font(AppleTypography.body)
+                .foregroundColor(AppleColors.textSecondary)
 
             Spacer()
 
             Text(value)
-                .font(LiquidGlassTypography.body)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.body)
+                .foregroundColor(AppleColors.textPrimary)
         }
     }
 
     // MARK: - Action Buttons Section
 
     private var actionButtonsSection: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: AppleSpacing.md) {
             // Navigate Button
-            Button(action: navigateToStop) {
-                HStack(spacing: 12) {
-                    Image(systemName: "location.fill")
-                        .font(.system(size: 16, weight: .medium))
-
-                    Text("Navigate Here")
-                        .font(LiquidGlassTypography.bodyMedium)
-                        .fontWeight(.semibold)
-                }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LiquidGlassGradients.primaryGradient)
-                )
+            AppleButton(
+                "Navigate Here",
+                icon: "location.fill",
+                style: .primary,
+                size: .large
+            ) {
+                navigateToStop()
             }
 
             // Directions Button
-            Button(action: { showDirections = true }) {
-                HStack(spacing: 12) {
-                    Image(systemName: "map")
-                        .font(.system(size: 16, weight: .medium))
-
-                    Text("Get Directions")
-                        .font(LiquidGlassTypography.bodyMedium)
-                        .fontWeight(.medium)
-                }
-                .foregroundColor(LiquidGlassColors.primaryText)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LiquidGlassColors.glassSurface2)
-                )
+            AppleButton(
+                "Get Directions",
+                icon: "map",
+                style: .secondary,
+                size: .large
+            ) {
+                showDirections = true
             }
         }
     }
@@ -377,15 +363,15 @@ struct DirectionsView: View {
         NavigationView {
             VStack {
                 Text("Directions to \(stop.name)")
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title2)
+                    .foregroundColor(AppleColors.textPrimary)
                     .padding()
 
                 Spacer()
 
                 Text("Directions functionality would be implemented here")
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
 
                 Spacer()
             }
@@ -396,7 +382,7 @@ struct DirectionsView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .foregroundColor(AppleColors.textPrimary)
                 }
             }
         }

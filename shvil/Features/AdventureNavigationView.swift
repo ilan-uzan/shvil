@@ -33,7 +33,7 @@ struct AdventureNavigationView: View {
     var body: some View {
         ZStack {
             // Background
-            LiquidGlassColors.background
+            AppleColors.background
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -70,24 +70,23 @@ struct AdventureNavigationView: View {
             // Status Bar
             HStack {
                 Text("Adventure Active")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
 
                 Spacer()
 
-                Button(action: { showExitConfirmation = true }) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(LiquidGlassColors.primaryText)
-                        .frame(width: 32, height: 32)
-                        .background(
-                            Circle()
-                                .fill(LiquidGlassColors.glassSurface1)
-                        )
+                AppleButton(
+                    "",
+                    icon: "xmark",
+                    style: .ghost,
+                    size: .small
+                ) {
+                    showExitConfirmation = true
                 }
+                .frame(width: 32, height: 32)
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
+            .padding(.horizontal, AppleSpacing.lg)
+            .padding(.top, AppleSpacing.sm)
 
             // Progress Bar
             progressBar
@@ -99,46 +98,47 @@ struct AdventureNavigationView: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(LiquidGlassColors.glassSurface1)
+                .fill(AppleColors.surfaceTertiary)
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
         )
     }
 
     private var progressBar: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: AppleSpacing.sm) {
             ForEach(0 ..< adventure.stops.count, id: \.self) { index in
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(index <= currentStopIndex ? LiquidGlassColors.accentDeepAqua : LiquidGlassColors.glassSurface2)
+                    .fill(index <= currentStopIndex ? AppleColors.brandPrimary : AppleColors.surfaceTertiary)
                     .frame(height: 4)
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
+        .padding(.horizontal, AppleSpacing.lg)
+        .padding(.vertical, AppleSpacing.sm)
     }
 
     private func currentStopInfo(for stop: AdventureStop) -> some View {
-        HStack(spacing: 16) {
+        HStack(spacing: AppleSpacing.md) {
             // Stop Number
             ZStack {
                 Circle()
-                    .fill(LiquidGlassGradients.primaryGradient)
+                    .fill(AppleColors.brandGradient)
                     .frame(width: 40, height: 40)
+                    .appleShadow(AppleShadows.light)
 
                 Text("\(currentStopIndex + 1)")
-                    .font(LiquidGlassTypography.title)
+                    .font(AppleTypography.title3)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
             }
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: AppleSpacing.xs) {
                 Text(stop.name)
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
                     .lineLimit(1)
 
                 Text(stop.description)
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
                     .lineLimit(1)
             }
 
@@ -147,10 +147,10 @@ struct AdventureNavigationView: View {
             // Category Icon
             Image(systemName: stopIcon(for: stop.category))
                 .font(.system(size: 20, weight: .medium))
-                .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                .foregroundColor(AppleColors.brandPrimary)
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 16)
+        .padding(.horizontal, AppleSpacing.lg)
+        .padding(.bottom, AppleSpacing.md)
     }
 
     private func stopIcon(for category: StopCategory) -> String {
@@ -204,8 +204,8 @@ struct AdventureNavigationView: View {
 
         return ZStack {
             Circle()
-                .fill(isCurrentStop ? AnyShapeStyle(LiquidGlassGradients.primaryGradient) :
-                    isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(LiquidGlassColors.glassSurface2))
+                .fill(isCurrentStop ? AnyShapeStyle(AppleColors.brandGradient) :
+                    isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(AppleColors.surfaceSecondary))
                 .frame(width: isCurrentStop ? 40 : 32, height: isCurrentStop ? 40 : 32)
 
             Image(systemName: isCompleted ? "checkmark" : stopIcon(for: stop.category))
@@ -225,7 +225,7 @@ struct AdventureNavigationView: View {
         VStack(spacing: 0) {
             // Drag Handle
             RoundedRectangle(cornerRadius: 2)
-                .fill(LiquidGlassColors.secondaryText)
+                .fill(AppleColors.textSecondary)
                 .frame(width: 36, height: 4)
                 .padding(.top, 12)
 
@@ -246,7 +246,7 @@ struct AdventureNavigationView: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(LiquidGlassColors.glassSurface1)
+                .fill(AppleColors.surfaceTertiary)
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
         )
     }
@@ -256,12 +256,12 @@ struct AdventureNavigationView: View {
             // Distance
             VStack(alignment: .leading, spacing: 4) {
                 Text("Distance")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
 
                 Text("0.5 mi")
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
             }
 
             Divider()
@@ -270,12 +270,12 @@ struct AdventureNavigationView: View {
             // ETA
             VStack(alignment: .leading, spacing: 4) {
                 Text("ETA")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
 
                 Text("8 min")
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
             }
 
             Divider()
@@ -284,19 +284,19 @@ struct AdventureNavigationView: View {
             // Duration
             VStack(alignment: .leading, spacing: 4) {
                 Text("Stay")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
 
                 Text("\(currentStop?.estimatedDuration ?? 0) min")
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
             }
         }
         .padding(.vertical, 16)
         .padding(.horizontal, 20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface2)
+                .fill(AppleColors.surfaceSecondary)
         )
     }
 
@@ -309,15 +309,15 @@ struct AdventureNavigationView: View {
                         .font(.system(size: 16, weight: .medium))
 
                     Text("Details")
-                        .font(LiquidGlassTypography.bodyMedium)
+                        .font(AppleTypography.body)
                         .fontWeight(.medium)
                 }
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .foregroundColor(AppleColors.textPrimary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(LiquidGlassColors.glassSurface2)
+                        .fill(AppleColors.surfaceSecondary)
                 )
             }
 
@@ -328,7 +328,7 @@ struct AdventureNavigationView: View {
                         .font(.system(size: 16, weight: .medium))
 
                     Text("I'm Here")
-                        .font(LiquidGlassTypography.bodyMedium)
+                        .font(AppleTypography.body)
                         .fontWeight(.semibold)
                 }
                 .foregroundColor(.white)
@@ -336,7 +336,7 @@ struct AdventureNavigationView: View {
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(LiquidGlassGradients.primaryGradient)
+                        .fill(AppleColors.brandGradient)
                 )
             }
         }
@@ -348,23 +348,23 @@ struct AdventureNavigationView: View {
                 // Next Stop Icon
                 ZStack {
                     Circle()
-                        .fill(LiquidGlassColors.glassSurface2)
+                        .fill(AppleColors.surfaceSecondary)
                         .frame(width: 32, height: 32)
 
                     Image(systemName: stopIcon(for: nextStop.category))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                        .foregroundColor(AppleColors.brandPrimary)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Next: \(nextStop.name)")
-                        .font(LiquidGlassTypography.bodyMedium)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(1)
 
                     Text(nextStop.description)
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                         .lineLimit(1)
                 }
 
@@ -372,12 +372,12 @@ struct AdventureNavigationView: View {
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .foregroundColor(AppleColors.textSecondary)
             }
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(LiquidGlassColors.glassSurface2)
+                    .fill(AppleColors.surfaceSecondary)
             )
         }
         .buttonStyle(PlainButtonStyle())

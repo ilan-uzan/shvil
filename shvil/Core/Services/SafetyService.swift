@@ -63,7 +63,9 @@ public class SafetyService: NSObject, ObservableObject {
         
         // Start SOS timer
         sosTimer = Timer.scheduledTimer(withTimeInterval: sosDuration, repeats: false) { [weak self] _ in
-            self?.executeSOS()
+            Task { @MainActor in
+                await self?.executeSOS()
+            }
         }
         
         // Start location sharing
@@ -200,7 +202,9 @@ public class SafetyService: NSObject, ObservableObject {
         guard isSOSActive else { return }
         
         locationSharingTimer = Timer.scheduledTimer(withTimeInterval: locationSharingInterval, repeats: true) { [weak self] _ in
-            self?.shareLocationWithEmergencyContacts()
+            Task { @MainActor in
+                await self?.shareLocationWithEmergencyContacts()
+            }
         }
         
         isSharingLocation = true
@@ -304,10 +308,12 @@ public class SafetyService: NSObject, ObservableObject {
 
 // MARK: - CLLocationManagerDelegate
 
-extension SafetyService: CLLocationManagerDelegate {
-    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+extension SafetyService: @preconcurrency CLLocationManagerDelegate {
+    nonisolated public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        lastKnownLocation = location
+        Task { @MainActor in
+            lastKnownLocation = location
+        }
     }
     
     nonisolated public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

@@ -21,11 +21,11 @@ struct AdventureRecapView: View {
         NavigationView {
             ZStack {
                 // Background
-                LiquidGlassColors.background
+                AppleColors.background
                     .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: 24) {
+                    VStack(spacing: AppleSpacing.lg) {
                         // Header
                         headerSection
 
@@ -44,18 +44,17 @@ struct AdventureRecapView: View {
                         // Action Buttons
                         actionButtonsSection
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, AppleSpacing.lg)
+                    .padding(.bottom, AppleSpacing.lg)
                 }
             }
             .navigationTitle("Adventure Complete")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Done") {
+                    AppleButton("Done", style: .ghost, size: .small) {
                         dismiss()
                     }
-                    .foregroundColor(LiquidGlassColors.primaryText)
                 }
             }
         }
@@ -67,93 +66,93 @@ struct AdventureRecapView: View {
     // MARK: - Header Section
 
     private var headerSection: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: AppleSpacing.lg) {
             // Success Icon
             ZStack {
                 Circle()
-                    .fill(LiquidGlassGradients.primaryGradient)
+                    .fill(AppleColors.brandGradient)
                     .frame(width: 80, height: 80)
+                    .appleShadow(AppleShadows.medium)
 
                 Image(systemName: "checkmark")
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.white)
             }
 
-            VStack(spacing: 8) {
+            VStack(spacing: AppleSpacing.sm) {
                 Text("Adventure Complete!")
-                    .font(LiquidGlassTypography.titleXL)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(AppleColors.textPrimary)
                     .multilineTextAlignment(.center)
 
                 Text(adventure.title)
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.brandPrimary)
                     .multilineTextAlignment(.center)
 
                 Text("You've successfully completed your \(adventure.theme.displayName.lowercased()) adventure!")
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
                     .multilineTextAlignment(.center)
             }
         }
-        .padding(.vertical, 20)
+        .padding(.vertical, AppleSpacing.lg)
     }
 
     // MARK: - Stats Section
 
     private var statsSection: some View {
-        VStack(spacing: 16) {
-            Text("Your Adventure Stats")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+        AppleGlassCard(style: .elevated) {
+            VStack(spacing: AppleSpacing.md) {
+                Text("Your Adventure Stats")
+                    .font(AppleTypography.title3)
+                    .fontWeight(.semibold)
+                    .foregroundColor(AppleColors.textPrimary)
 
-            HStack(spacing: 20) {
-                // Duration
-                statCard(
-                    icon: "clock.fill",
-                    title: "Duration",
-                    value: "\(adventure.totalDuration / 60)h",
-                    color: LiquidGlassColors.accentDeepAqua
-                )
+                HStack(spacing: AppleSpacing.lg) {
+                    // Duration
+                    statCard(
+                        icon: "clock.fill",
+                        title: "Duration",
+                        value: "\(adventure.totalDuration / 60)h",
+                        color: AppleColors.brandPrimary
+                    )
 
-                // Stops
-                statCard(
-                    icon: "location.fill",
-                    title: "Stops",
-                    value: "\(adventure.stops.count)",
-                    color: .green
-                )
+                    // Stops
+                    statCard(
+                        icon: "location.fill",
+                        title: "Stops",
+                        value: "\(adventure.stops.count)",
+                        color: AppleColors.success
+                    )
 
-                // Distance
-                statCard(
-                    icon: "figure.walk",
-                    title: "Distance",
-                    value: "2.3 mi",
-                    color: .orange
-                )
+                    // Distance
+                    statCard(
+                        icon: "figure.walk",
+                        title: "Distance",
+                        value: "2.3 mi",
+                        color: AppleColors.warning
+                    )
+                }
             }
         }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
-        )
     }
 
     private func statCard(icon: String, title: String, value: String, color: Color) -> some View {
-        VStack(spacing: 8) {
+        VStack(spacing: AppleSpacing.sm) {
             Image(systemName: icon)
                 .font(.system(size: 24, weight: .medium))
                 .foregroundColor(color)
 
             Text(value)
-                .font(LiquidGlassTypography.titleXL)
+                .font(AppleTypography.largeTitle)
                 .fontWeight(.bold)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .foregroundColor(AppleColors.textPrimary)
 
             Text(title)
-                .font(LiquidGlassTypography.caption)
-                .foregroundColor(LiquidGlassColors.secondaryText)
+                .font(AppleTypography.caption1)
+                .foregroundColor(AppleColors.textSecondary)
         }
         .frame(maxWidth: .infinity)
     }
@@ -163,8 +162,8 @@ struct AdventureRecapView: View {
     private var mapSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Your Journey")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             Map(coordinateRegion: .constant(mapRegion), annotationItems: adventure.stops) { stop in
                 MapAnnotation(coordinate: stop.coordinate) {
@@ -208,8 +207,8 @@ struct AdventureRecapView: View {
     private var stopsSummarySection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Stops Visited")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             VStack(spacing: 12) {
                 ForEach(Array(adventure.stops.enumerated()), id: \.element.id) { index, stop in
@@ -220,7 +219,7 @@ struct AdventureRecapView: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
+                .fill(AppleColors.surfaceTertiary)
         )
     }
 
@@ -233,19 +232,19 @@ struct AdventureRecapView: View {
                     .frame(width: 32, height: 32)
 
                 Text("\(index + 1)")
-                    .font(LiquidGlassTypography.bodyMedium)
+                    .font(AppleTypography.body)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
             }
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(stop.name)
-                    .font(LiquidGlassTypography.bodyMedium)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Text(stop.description)
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
             }
 
             Spacer()
@@ -253,7 +252,7 @@ struct AdventureRecapView: View {
             // Category Icon
             Image(systemName: stopIcon(for: stop.category))
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                .foregroundColor(AppleColors.brandPrimary)
         }
         .padding(.vertical, 8)
     }
@@ -280,8 +279,8 @@ struct AdventureRecapView: View {
     private var ratingSection: some View {
         VStack(spacing: 16) {
             Text("How was your adventure?")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             HStack(spacing: 8) {
                 ForEach(1 ... 5, id: \.self) { rating in
@@ -293,7 +292,7 @@ struct AdventureRecapView: View {
                     }) {
                         Image(systemName: rating <= userRating ? "star.fill" : "star")
                             .font(.system(size: 24, weight: .medium))
-                            .foregroundColor(rating <= userRating ? .yellow : LiquidGlassColors.secondaryText)
+                            .foregroundColor(rating <= userRating ? .yellow : AppleColors.textSecondary)
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
@@ -301,15 +300,15 @@ struct AdventureRecapView: View {
 
             if userRating > 0 {
                 Text(ratingText)
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
                     .multilineTextAlignment(.center)
             }
         }
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
+                .fill(AppleColors.surfaceTertiary)
         )
     }
 
@@ -335,7 +334,7 @@ struct AdventureRecapView: View {
                         .font(.system(size: 16, weight: .medium))
 
                     Text("Share Adventure")
-                        .font(LiquidGlassTypography.bodyMedium)
+                        .font(AppleTypography.body)
                         .fontWeight(.semibold)
                 }
                 .foregroundColor(.white)
@@ -343,7 +342,7 @@ struct AdventureRecapView: View {
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(LiquidGlassGradients.primaryGradient)
+                        .fill(AppleColors.brandGradient)
                 )
             }
 
@@ -354,15 +353,15 @@ struct AdventureRecapView: View {
                         .font(.system(size: 16, weight: .medium))
 
                     Text("Create Another Adventure")
-                        .font(LiquidGlassTypography.bodyMedium)
+                        .font(AppleTypography.body)
                         .fontWeight(.medium)
                 }
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .foregroundColor(AppleColors.textPrimary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(LiquidGlassColors.glassSurface2)
+                        .fill(AppleColors.surfaceSecondary)
                 )
             }
         }

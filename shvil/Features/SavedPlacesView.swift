@@ -152,7 +152,7 @@ struct SavedPlacesView: View {
 
                 Spacer()
             }
-            .background(LiquidGlassColors.mapBase)
+            .background(AppleColors.background)
             .navigationBarHidden(true)
         }
         .sheet(isPresented: $showAddCollection) {
@@ -197,8 +197,8 @@ struct QuickAccessSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Quick Access")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             HStack(spacing: 12) {
                 if let home = homePlace {
@@ -206,7 +206,7 @@ struct QuickAccessSection: View {
                         title: "Home",
                         subtitle: home.name,
                         icon: "house.fill",
-                        color: LiquidGlassColors.accentText
+                        color: AppleColors.brandPrimary
                     ) {
                         onPlaceTap(home)
                     }
@@ -217,7 +217,7 @@ struct QuickAccessSection: View {
                         title: "Work",
                         subtitle: work.name,
                         icon: "building.2.fill",
-                        color: LiquidGlassColors.accentDeepAqua
+                        color: AppleColors.brandPrimary
                     ) {
                         onPlaceTap(work)
                     }
@@ -227,8 +227,8 @@ struct QuickAccessSection: View {
             if !favoritePlaces.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Favorites")
-                        .font(LiquidGlassTypography.bodySemibold)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.bodySemibold)
+                        .foregroundColor(AppleColors.textPrimary)
 
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 8) {
                         ForEach(favoritePlaces.prefix(4)) { place in
@@ -265,24 +265,24 @@ struct QuickAccessCard: View {
 
                     Image(systemName: "arrow.up.right")
                         .font(.system(size: 12))
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
 
                     Text(subtitle)
-                        .font(LiquidGlassTypography.bodySemibold)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.bodySemibold)
+                        .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(1)
                 }
             }
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(LiquidGlassColors.glassSurface1)
+                    .fill(AppleColors.surfaceTertiary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -291,7 +291,7 @@ struct QuickAccessCard: View {
             )
         }
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
+        .animation(AppleAnimations.microInteraction, value: isPressed)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
@@ -313,8 +313,8 @@ struct FavoriteCard: View {
                     .foregroundColor(.pink)
 
                 Text(place.name)
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textPrimary)
                     .lineLimit(1)
 
                 Spacer()
@@ -323,7 +323,7 @@ struct FavoriteCard: View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(LiquidGlassColors.glassSurface2)
+                    .fill(AppleColors.surfaceSecondary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.white.opacity(0.2), lineWidth: 1)
@@ -331,7 +331,7 @@ struct FavoriteCard: View {
             )
         }
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
+        .animation(AppleAnimations.microInteraction, value: isPressed)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
@@ -349,15 +349,15 @@ struct CollectionsSection: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("Collections")
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Spacer()
 
                 Button(action: onAddCollection) {
                     Image(systemName: "plus.circle.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(LiquidGlassColors.accentText)
+                        .foregroundColor(AppleColors.brandPrimary)
                 }
                 .accessibilityLabel("Add Collection")
             }
@@ -397,8 +397,8 @@ struct CollectionCard: View {
                     Spacer()
 
                     Text("\(collection.places.count)")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(
@@ -409,19 +409,19 @@ struct CollectionCard: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(collection.name)
-                        .font(LiquidGlassTypography.bodySemibold)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.bodySemibold)
+                        .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(1)
 
                     Text("\(collection.places.count) places")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
             }
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(LiquidGlassColors.glassSurface1)
+                    .fill(AppleColors.surfaceTertiary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -430,7 +430,7 @@ struct CollectionCard: View {
             )
         }
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
+        .animation(AppleAnimations.microInteraction, value: isPressed)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
@@ -446,16 +446,16 @@ struct EmptyCollectionView: View {
         VStack(spacing: 16) {
             Image(systemName: "folder")
                 .font(.system(size: 40))
-                .foregroundColor(LiquidGlassColors.secondaryText.opacity(0.6))
+                .foregroundColor(AppleColors.textSecondary.opacity(0.6))
 
             VStack(spacing: 8) {
                 Text("No Collections Yet")
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodySemibold)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Text("Create collections to organize your places")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
                     .multilineTextAlignment(.center)
             }
 
@@ -464,18 +464,18 @@ struct EmptyCollectionView: View {
                     Image(systemName: "plus")
                     Text("Create Collection")
                 }
-                .font(LiquidGlassTypography.bodySemibold)
+                .font(AppleTypography.bodySemibold)
                 .foregroundColor(.white)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)
-                .background(LiquidGlassGradients.primaryGradient)
+                .background(AppleColors.brandGradient)
                 .cornerRadius(20)
             }
         }
         .padding(24)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface2)
+                .fill(AppleColors.surfaceSecondary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(Color.white.opacity(0.2), lineWidth: 1)
@@ -493,8 +493,8 @@ struct AllPlacesSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("All Places")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             LazyVStack(spacing: 12) {
                 ForEach(places) { place in
@@ -525,13 +525,13 @@ struct SavedPlaceRow: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(place.name)
-                        .font(LiquidGlassTypography.bodySemibold)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.bodySemibold)
+                        .foregroundColor(AppleColors.textPrimary)
                         .multilineTextAlignment(.leading)
 
                     Text(place.address)
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                         .multilineTextAlignment(.leading)
                         .lineLimit(2)
                 }
@@ -545,18 +545,18 @@ struct SavedPlaceRow: View {
                     }) {
                         Image(systemName: "arrow.turn.up.right")
                             .font(.system(size: 16))
-                            .foregroundColor(LiquidGlassColors.accentText)
+                            .foregroundColor(AppleColors.brandPrimary)
                             .frame(width: 32, height: 32)
                             .background(
                                 Circle()
-                                    .fill(LiquidGlassColors.accentText.opacity(0.1))
+                                    .fill(AppleColors.brandPrimary.opacity(0.1))
                             )
                     }
                     .accessibilityLabel("Route to \(place.name)")
 
                     // Type Badge
                     Text(placeTypeText)
-                        .font(LiquidGlassTypography.caption)
+                        .font(AppleTypography.caption1)
                         .foregroundColor(placeColor)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
@@ -567,7 +567,7 @@ struct SavedPlaceRow: View {
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(LiquidGlassColors.glassSurface1)
+                    .fill(AppleColors.surfaceTertiary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -576,7 +576,7 @@ struct SavedPlaceRow: View {
             )
         }
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
+        .animation(AppleAnimations.microInteraction, value: isPressed)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
@@ -593,10 +593,10 @@ struct SavedPlaceRow: View {
 
     private var placeColor: Color {
         switch place.type {
-        case .home: LiquidGlassColors.accentText
-        case .work: LiquidGlassColors.accentDeepAqua
+        case .home: AppleColors.brandPrimary
+        case .work: AppleColors.brandPrimary
         case .favorite: Color.pink
-        case .custom: LiquidGlassColors.secondaryText
+        case .custom: AppleColors.textSecondary
         }
     }
 
@@ -642,18 +642,18 @@ struct AddCollectionView: View {
             VStack(spacing: 24) {
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Collection Name")
-                        .font(LiquidGlassTypography.bodySemibold)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.bodySemibold)
+                        .foregroundColor(AppleColors.textPrimary)
 
                     TextField("Enter collection name", text: $collectionName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .font(LiquidGlassTypography.body)
+                        .font(AppleTypography.body)
                 }
 
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Color")
-                        .font(LiquidGlassTypography.bodySemibold)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.bodySemibold)
+                        .foregroundColor(AppleColors.textPrimary)
 
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 12) {
                         ForEach(colors, id: \.self) { color in

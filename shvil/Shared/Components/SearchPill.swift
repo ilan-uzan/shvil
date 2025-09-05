@@ -21,11 +21,11 @@ struct SearchPill: View {
             HStack(spacing: 12) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .foregroundColor(AppleColors.textSecondary)
                 
                 TextField("search_placeholder".localized, text: $searchText)
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textPrimary)
                     .textFieldStyle(PlainTextFieldStyle())
                     .onTapGesture {
                         onTap()
@@ -48,7 +48,7 @@ struct SearchPill: View {
                     }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .foregroundColor(AppleColors.textSecondary)
                     }
                 }
             }
@@ -56,7 +56,7 @@ struct SearchPill: View {
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 26)
-                    .fill(LiquidGlassColors.glassSurface2)
+                    .fill(AppleColors.surfaceSecondary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 26)
                             .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -73,18 +73,18 @@ struct SearchPill: View {
     
     private var suggestionsList: some View {
         VStack(spacing: 0) {
-            ForEach(searchService.autocompleteSuggestions) { suggestion in
+            ForEach(Array(searchService.autocompleteSuggestions.enumerated()), id: \.element.id) { index, suggestion in
                 suggestionRow(suggestion)
                 
                 if suggestion.id != searchService.autocompleteSuggestions.last?.id {
                     Divider()
-                        .background(LiquidGlassColors.glassSurface3)
+                        .background(AppleColors.surfacePrimary)
                 }
             }
         }
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface2)
+                .fill(AppleColors.surfaceSecondary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(Color.white.opacity(0.2), lineWidth: 1)
@@ -107,25 +107,25 @@ struct SearchPill: View {
             HStack(spacing: 12) {
                 Image(systemName: suggestion.type.icon)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(LiquidGlassColors.accentText)
+                    .foregroundColor(AppleColors.brandPrimary)
                     .frame(width: 20)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(suggestion.text)
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(1)
                     
                     Text(suggestion.type.displayName)
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
                 
                 Spacer()
                 
                 Image(systemName: "arrow.up.left")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .foregroundColor(AppleColors.textSecondary)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -143,11 +143,11 @@ struct CompactSearchPill: View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(LiquidGlassColors.secondaryText)
+                .foregroundColor(AppleColors.textSecondary)
             
             Text("search_placeholder".localized)
-                .font(LiquidGlassTypography.body)
-                .foregroundColor(LiquidGlassColors.secondaryText)
+                .font(AppleTypography.body)
+                .foregroundColor(AppleColors.textSecondary)
             
             Spacer()
         }
@@ -155,7 +155,7 @@ struct CompactSearchPill: View {
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(LiquidGlassColors.glassSurface1)
+                .fill(AppleColors.surfaceTertiary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(Color.white.opacity(0.1), lineWidth: 1)
@@ -178,11 +178,11 @@ struct VoiceSearchPill: View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(LiquidGlassColors.secondaryText)
+                .foregroundColor(AppleColors.textSecondary)
             
             TextField("search_placeholder".localized, text: $searchText)
-                .font(LiquidGlassTypography.body)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.body)
+                .foregroundColor(AppleColors.textPrimary)
                 .textFieldStyle(PlainTextFieldStyle())
                 .onTapGesture {
                     onTap()
@@ -194,7 +194,7 @@ struct VoiceSearchPill: View {
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
             }
             
@@ -211,7 +211,7 @@ struct VoiceSearchPill: View {
             }) {
                 Image(systemName: isListening ? "mic.fill" : "mic")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(isListening ? LiquidGlassColors.accident : LiquidGlassColors.accentText)
+                    .foregroundColor(isListening ? AppleColors.error : AppleColors.brandPrimary)
                     .scaleEffect(isListening ? 1.2 : 1.0)
                     .animation(.easeInOut(duration: 0.2), value: isListening)
             }
@@ -220,7 +220,7 @@ struct VoiceSearchPill: View {
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 26)
-                .fill(LiquidGlassColors.glassSurface2)
+                .fill(AppleColors.surfaceSecondary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 26)
                         .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -242,11 +242,11 @@ struct CategorySearchPill: View {
             HStack(spacing: 12) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .foregroundColor(AppleColors.textSecondary)
                 
                 TextField("search_placeholder".localized, text: $searchText)
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textPrimary)
                     .textFieldStyle(PlainTextFieldStyle())
                     .onTapGesture {
                         onTap()
@@ -258,7 +258,7 @@ struct CategorySearchPill: View {
                     }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .foregroundColor(AppleColors.textSecondary)
                     }
                 }
             }
@@ -266,7 +266,7 @@ struct CategorySearchPill: View {
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 26)
-                    .fill(LiquidGlassColors.glassSurface2)
+                    .fill(AppleColors.surfaceSecondary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 26)
                             .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -296,16 +296,16 @@ struct CategorySearchPill: View {
                     .font(.system(size: 12, weight: .medium))
                 
                 Text(category.displayName)
-                    .font(LiquidGlassTypography.caption)
+                    .font(AppleTypography.caption1)
             }
-            .foregroundColor(selectedCategory == category ? .white : LiquidGlassColors.primaryText)
+            .foregroundColor(selectedCategory == category ? .white : AppleColors.textPrimary)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(selectedCategory == category ? 
-                          AnyShapeStyle(LiquidGlassGradients.primaryGradient) : 
-                          AnyShapeStyle(LiquidGlassColors.glassSurface1))
+                          AnyShapeStyle(AppleColors.brandGradient) : 
+                          AnyShapeStyle(AppleColors.surfaceTertiary))
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -336,5 +336,5 @@ struct CategorySearchPill: View {
         }
     }
     .padding()
-    .background(LiquidGlassColors.background)
+    .background(AppleColors.background)
 }

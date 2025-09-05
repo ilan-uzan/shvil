@@ -148,6 +148,24 @@ struct SystemMetrics: Codable {
 
 import SwiftUI
 
+struct ServiceStatusRow: View {
+    let service: String
+    let isHealthy: Bool
+    
+    var body: some View {
+        HStack {
+            Text(service.capitalized)
+                .font(AppleTypography.body)
+                .foregroundColor(AppleColors.textPrimary)
+            
+            Spacer()
+            
+            Image(systemName: isHealthy ? "checkmark.circle.fill" : "xmark.circle.fill")
+                .foregroundColor(isHealthy ? .green : .red)
+        }
+    }
+}
+
 struct HealthStatusView: View {
     @StateObject private var healthService = HealthCheckService.shared
     
@@ -155,8 +173,8 @@ struct HealthStatusView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("System Health")
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
                 
                 Spacer()
                 
@@ -167,23 +185,14 @@ struct HealthStatusView: View {
             
             if let lastCheck = healthService.lastCheckTime {
                 Text("Last checked: \(lastCheck, formatter: timeFormatter)")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
             }
             
             // Services status
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(Array(healthService.services.keys.sorted()), id: \.self) { service in
-                    HStack {
-                        Text(service.capitalized)
-                            .font(LiquidGlassTypography.body)
-                            .foregroundColor(LiquidGlassColors.primaryText)
-                        
-                        Spacer()
-                        
-                        Image(systemName: healthService.services[service] == true ? "checkmark.circle.fill" : "xmark.circle.fill")
-                            .foregroundColor(healthService.services[service] == true ? .green : .red)
-                    }
+                    ServiceStatusRow(service: service, isHealthy: healthService.services[service] ?? false)
                 }
             }
             
@@ -191,23 +200,23 @@ struct HealthStatusView: View {
             if let metrics = healthService.systemMetrics {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("System Metrics")
-                        .font(LiquidGlassTypography.bodySemibold)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.bodySemibold)
+                        .foregroundColor(AppleColors.textPrimary)
                     
                     Text("Database: \(metrics.databaseSize)")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                     
                     Text("Connections: \(metrics.activeConnections)/\(metrics.maxConnections)")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
             }
             
             // Error display
             if let error = healthService.lastError {
                 Text("Error: \(error.localizedDescription)")
-                    .font(LiquidGlassTypography.caption)
+                    .font(AppleTypography.caption1)
                     .foregroundColor(.red)
             }
             
@@ -223,7 +232,7 @@ struct HealthStatusView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(LiquidGlassColors.glassSurface1)
+                .fill(AppleColors.surfaceTertiary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(Color.white.opacity(0.2), lineWidth: 1)

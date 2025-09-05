@@ -22,7 +22,7 @@ struct OnboardingView: View {
     var body: some View {
         ZStack {
             // Background
-            LiquidGlassColors.background
+            AppleColors.background
                 .ignoresSafeArea()
             
             if hasCompletedOnboarding {
@@ -34,104 +34,132 @@ struct OnboardingView: View {
         .onAppear {
             checkOnboardingStatus()
         }
+        .environment(\.layoutDirection, localizationManager.isRTL ? .rightToLeft : .leftToRight)
     }
     
     private var onboardingContent: some View {
-        VStack(spacing: 0) {
-            // Progress indicator
-            progressIndicator
+        ZStack {
+            // Background with wavy path motif
+            AppleColors.background
+                .ignoresSafeArea()
             
-            // Content
-            TabView(selection: $currentStep) {
-                welcomeStep
-                    .tag(0)
-                
-                languageStep
-                    .tag(1)
-                
-                themeStep
-                    .tag(2)
-                
-                permissionsStep
-                    .tag(3)
+            // Subtle wavy path decoration
+            VStack {
+                Spacer()
+                // Simple wave illustration
+                RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                    .fill(AppleColors.brandPrimary.opacity(0.1))
+                    .frame(width: 120, height: 80)
+                    .overlay(
+                        Path { path in
+                            path.move(to: CGPoint(x: 0, y: 40))
+                            path.addQuadCurve(to: CGPoint(x: 120, y: 40), control: CGPoint(x: 60, y: 20))
+                        }
+                        .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 2)
+                    )
+                    .frame(height: 100)
+                    .offset(y: 50)
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .animation(.easeInOut, value: currentStep)
+            .ignoresSafeArea()
             
-            // Navigation buttons
-            navigationButtons
+            VStack(spacing: 0) {
+                // Progress indicator
+                progressIndicator
+                
+                // Content
+                TabView(selection: $currentStep) {
+                    welcomeStep
+                        .tag(0)
+                    
+                    languageStep
+                        .tag(1)
+                
+                    themeStep
+                        .tag(2)
+                    
+                    permissionsStep
+                        .tag(3)
+                }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                .animation(AppleAnimations.pageTransition, value: currentStep)
+                
+                // Navigation buttons
+                navigationButtons
+            }
         }
     }
     
     private var progressIndicator: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: AppleSpacing.sm) {
             ForEach(0..<totalSteps, id: \.self) { step in
                 Circle()
-                    .fill(step <= currentStep ? LiquidGlassColors.accentText : LiquidGlassColors.glassSurface3)
+                    .fill(step <= currentStep ? AppleColors.brandPrimary : AppleColors.strokeLight)
                     .frame(width: 8, height: 8)
-                    .animation(.easeInOut, value: currentStep)
+                    .scaleEffect(step == currentStep ? 1.2 : 1.0)
+                    .animation(AppleAnimations.spring, value: currentStep)
             }
         }
-        .padding(.top, 20)
-        .padding(.bottom, 30)
+        .padding(.top, AppleSpacing.lg)
+        .padding(.bottom, AppleSpacing.xl)
     }
     
     private var welcomeStep: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: AppleSpacing.xxl) {
             Spacer()
             
             // App icon and title
-            VStack(spacing: 24) {
-                // App icon placeholder
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(LiquidGlassGradients.primaryGradient)
-                    .frame(width: 120, height: 120)
-                    .overlay(
-                        Image(systemName: "map.fill")
-                            .font(.system(size: 48, weight: .medium))
-                            .foregroundColor(.white)
-                    )
-                    .shadow(color: LiquidGlassColors.accentTurquoise.opacity(0.3), radius: 20, x: 0, y: 10)
+            VStack(spacing: AppleSpacing.lg) {
+                // App icon
+                ZStack {
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                        .fill(AppleColors.brandPrimary)
+                        .frame(width: 120, height: 120)
+                        .appleShadow(AppleShadows.heavy)
+                    
+                    Image(systemName: "map.fill")
+                        .font(.system(size: 48, weight: .medium))
+                        .foregroundColor(.white)
+                }
                 
-                VStack(spacing: 16) {
+                VStack(spacing: AppleSpacing.md) {
                     Text("welcome".localized)
-                        .font(LiquidGlassTypography.largeTitle)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.largeTitle)
+                        .foregroundColor(AppleColors.textPrimary)
                         .multilineTextAlignment(.center)
                     
                     Text("welcome_subtitle".localized)
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.textSecondary)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
+                        .padding(.horizontal, AppleSpacing.xl)
                 }
             }
             
             Spacer()
         }
-        .padding(.horizontal, 32)
+        .padding(.horizontal, AppleSpacing.xl)
     }
     
     private var languageStep: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: AppleSpacing.xxl) {
             Spacer()
             
-            VStack(spacing: 32) {
-                VStack(spacing: 16) {
+            VStack(spacing: AppleSpacing.xl) {
+                VStack(spacing: AppleSpacing.md) {
                     Text("onboarding_step_1_title".localized)
-                        .font(LiquidGlassTypography.title)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.title2)
+                        .foregroundColor(AppleColors.textPrimary)
                         .multilineTextAlignment(.center)
                     
                     Text("onboarding_step_1_description".localized)
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.textSecondary)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
+                        .padding(.horizontal, AppleSpacing.xl)
                 }
                 
                 // Language selection
-                VStack(spacing: 16) {
+                VStack(spacing: AppleSpacing.md) {
                     ForEach(Language.allCases, id: \.self) { language in
                         languageOption(language)
                     }
@@ -140,29 +168,29 @@ struct OnboardingView: View {
             
             Spacer()
         }
-        .padding(.horizontal, 32)
+        .padding(.horizontal, AppleSpacing.xl)
     }
     
     private var themeStep: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: AppleSpacing.xxl) {
             Spacer()
             
-            VStack(spacing: 32) {
-                VStack(spacing: 16) {
+            VStack(spacing: AppleSpacing.xl) {
+                VStack(spacing: AppleSpacing.md) {
                     Text("onboarding_step_2_title".localized)
-                        .font(LiquidGlassTypography.title)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.title2)
+                        .foregroundColor(AppleColors.textPrimary)
                         .multilineTextAlignment(.center)
                     
                     Text("onboarding_step_2_description".localized)
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.textSecondary)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
+                        .padding(.horizontal, AppleSpacing.xl)
                 }
                 
                 // Theme selection
-                VStack(spacing: 16) {
+                VStack(spacing: AppleSpacing.md) {
                     ForEach(Theme.allCases, id: \.self) { theme in
                         themeOption(theme)
                     }
@@ -171,29 +199,29 @@ struct OnboardingView: View {
             
             Spacer()
         }
-        .padding(.horizontal, 32)
+        .padding(.horizontal, AppleSpacing.xl)
     }
     
     private var permissionsStep: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: AppleSpacing.xxl) {
             Spacer()
             
-            VStack(spacing: 32) {
-                VStack(spacing: 16) {
+            VStack(spacing: AppleSpacing.xl) {
+                VStack(spacing: AppleSpacing.md) {
                     Text("onboarding_step_3_title".localized)
-                        .font(LiquidGlassTypography.title)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.title2)
+                        .foregroundColor(AppleColors.textPrimary)
                         .multilineTextAlignment(.center)
                     
                     Text("onboarding_step_3_description".localized)
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.textSecondary)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
+                        .padding(.horizontal, AppleSpacing.xl)
                 }
                 
                 // Permission cards
-                VStack(spacing: 16) {
+                VStack(spacing: AppleSpacing.md) {
                     permissionCard(
                         icon: "location.fill",
                         title: "location_permission".localized,
@@ -219,165 +247,154 @@ struct OnboardingView: View {
             
             Spacer()
         }
-        .padding(.horizontal, 32)
+        .padding(.horizontal, AppleSpacing.xl)
     }
     
     private func languageOption(_ language: Language) -> some View {
-        Button(action: {
-            selectedLanguage = language
-            localizationManager.setLanguage(language)
-            HapticFeedback.shared.impact(style: .light)
-        }) {
-            HStack(spacing: 16) {
+        AppleGlassCard(style: .elevated) {
+            HStack(spacing: AppleSpacing.md) {
                 Text(language.displayName)
-                    .font(LiquidGlassTypography.bodyMedium)
-                    .foregroundColor(selectedLanguage == language ? .white : LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodyEmphasized)
+                    .foregroundColor(selectedLanguage == language ? .white : AppleColors.textPrimary)
                 
                 Spacer()
                 
                 if selectedLanguage == language {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.white)
+                    AppleGlassStatusIndicator(status: .success)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(selectedLanguage == language ? 
-                          AnyShapeStyle(LiquidGlassGradients.primaryGradient) : 
-                          AnyShapeStyle(LiquidGlassColors.glassSurface1))
-            )
         }
-        .buttonStyle(PlainButtonStyle())
+        .onTapGesture {
+            selectedLanguage = language
+            localizationManager.setLanguage(language)
+            HapticFeedback.shared.impact(style: .light)
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                .stroke(selectedLanguage == language ? AppleColors.brandPrimary : Color.clear, lineWidth: 2)
+        )
+        .background(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                .fill(selectedLanguage == language ? AppleColors.brandPrimary : Color.clear)
+        )
+        .accessibilityLabel("Language: \(language.displayName)")
+        .accessibilityHint(selectedLanguage == language ? "Currently selected" : "Double tap to select this language")
+        .accessibilityAddTraits(selectedLanguage == language ? .isSelected : [])
     }
     
     private func themeOption(_ theme: Theme) -> some View {
-        Button(action: {
-            selectedTheme = theme
-            HapticFeedback.shared.impact(style: .light)
-        }) {
-            HStack(spacing: 16) {
+        AppleGlassCard(style: .elevated) {
+            HStack(spacing: AppleSpacing.md) {
                 Image(systemName: theme.icon)
-                    .font(.title2)
-                    .foregroundColor(selectedTheme == theme ? .white : LiquidGlassColors.accentText)
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundColor(selectedTheme == theme ? .white : AppleColors.accent)
+                    .frame(width: 24)
                 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
                     Text(theme.displayName)
-                        .font(LiquidGlassTypography.bodyMedium)
-                        .foregroundColor(selectedTheme == theme ? .white : LiquidGlassColors.primaryText)
+                        .font(AppleTypography.bodyEmphasized)
+                        .foregroundColor(selectedTheme == theme ? .white : AppleColors.textPrimary)
                     
                     Text(theme.description)
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(selectedTheme == theme ? .white.opacity(0.8) : LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(selectedTheme == theme ? .white.opacity(0.8) : AppleColors.textSecondary)
                 }
                 
                 Spacer()
                 
                 if selectedTheme == theme {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.white)
+                    AppleGlassStatusIndicator(status: .success)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(selectedTheme == theme ? 
-                          AnyShapeStyle(LiquidGlassGradients.primaryGradient) : 
-                          AnyShapeStyle(LiquidGlassColors.glassSurface1))
-            )
         }
-        .buttonStyle(PlainButtonStyle())
+        .onTapGesture {
+            selectedTheme = theme
+            HapticFeedback.shared.impact(style: .light)
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                .stroke(selectedTheme == theme ? AppleColors.brandPrimary : Color.clear, lineWidth: 2)
+        )
+        .background(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                .fill(selectedTheme == theme ? AppleColors.brandPrimary : Color.clear)
+        )
+        .accessibilityLabel("Theme: \(theme.displayName)")
+        .accessibilityHint(selectedTheme == theme ? "Currently selected" : "Double tap to select this theme")
+        .accessibilityAddTraits(selectedTheme == theme ? .isSelected : [])
     }
     
     private func permissionCard(icon: String, title: String, description: String, isRequired: Bool) -> some View {
-        HStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundColor(LiquidGlassColors.accentText)
-                .frame(width: 32)
-            
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(title)
-                        .font(LiquidGlassTypography.bodyMedium)
-                        .foregroundColor(LiquidGlassColors.primaryText)
-                    
-                    if isRequired {
-                        Text("Required")
-                            .font(LiquidGlassTypography.caption)
-                            .foregroundColor(LiquidGlassColors.accident)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
-                            .background(
-                                Capsule()
-                                    .fill(LiquidGlassColors.accident.opacity(0.2))
-                            )
+        AppleGlassCard(style: .elevated) {
+            HStack(spacing: AppleSpacing.md) {
+                Image(systemName: icon)
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundColor(AppleColors.accent)
+                    .frame(width: 32)
+                
+                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+                    HStack {
+                        Text(title)
+                            .font(AppleTypography.bodyEmphasized)
+                            .foregroundColor(AppleColors.textPrimary)
+                        
+                        if isRequired {
+                            Text("Required")
+                                .font(AppleTypography.caption2)
+                                .foregroundColor(AppleColors.danger)
+                                .padding(.horizontal, AppleSpacing.sm)
+                                .padding(.vertical, AppleSpacing.xs)
+                                .background(
+                                    Capsule()
+                                        .fill(AppleColors.danger.opacity(0.2))
+                                )
+                        }
                     }
+                    
+                    Text(description)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
                 
-                Text(description)
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                Spacer()
             }
-            
-            Spacer()
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
-        )
+        .accessibilityLabel("\(title). \(isRequired ? "Required permission" : "Optional permission"). \(description)")
+        .accessibilityHint("This permission is \(isRequired ? "required" : "optional") for app functionality")
     }
     
     private var navigationButtons: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: AppleSpacing.md) {
             if currentStep > 0 {
-                Button(action: {
-                    withAnimation {
+                AppleButton(
+                    "back".localized,
+                    style: .secondary,
+                    size: .medium
+                ) {
+                    withAnimation(AppleAnimations.standard) {
                         currentStep -= 1
                     }
                     HapticFeedback.shared.impact(style: .light)
-                }) {
-                    Text("back".localized)
-                        .font(LiquidGlassTypography.bodySemibold)
-                        .foregroundColor(LiquidGlassColors.primaryText)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(LiquidGlassColors.glassSurface1)
-                        )
                 }
             }
             
-            Button(action: {
+            AppleButton(
+                currentStep < totalSteps - 1 ? "next".localized : "get_started".localized,
+                style: .primary,
+                size: .medium
+            ) {
                 if currentStep < totalSteps - 1 {
-                    withAnimation {
+                    withAnimation(AppleAnimations.standard) {
                         currentStep += 1
                     }
                 } else {
                     completeOnboarding()
                 }
                 HapticFeedback.shared.impact(style: .light)
-            }) {
-                Text(currentStep < totalSteps - 1 ? "next".localized : "get_started".localized)
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(LiquidGlassGradients.primaryGradient)
-                    )
             }
         }
-        .padding(.horizontal, 32)
-        .padding(.bottom, 40)
+        .padding(.horizontal, AppleSpacing.xl)
+        .padding(.bottom, AppleSpacing.xxl)
     }
     
     private func checkOnboardingStatus() {
@@ -394,7 +411,7 @@ struct OnboardingView: View {
         requestPermissions()
         
         // Complete onboarding
-        withAnimation(.easeInOut(duration: 0.5)) {
+        withAnimation(AppleAnimations.complex) {
             hasCompletedOnboarding = true
         }
     }
@@ -404,7 +421,6 @@ struct OnboardingView: View {
         locationService.requestLocationPermission()
         
         // Request other permissions as needed
-        // This would typically be done through the respective services
     }
 }
 

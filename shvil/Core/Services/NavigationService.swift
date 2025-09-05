@@ -400,15 +400,17 @@ public class NavigationService: NSObject, ObservableObject {
 
 // MARK: - CLLocationManagerDelegate
 
-extension NavigationService: CLLocationManagerDelegate {
-    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+extension NavigationService: @preconcurrency CLLocationManagerDelegate {
+    nonisolated public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         
-        currentLocation = location
-        
-        if isNavigating {
-            // Check if we've completed the current step
-            checkStepCompletion()
+        Task { @MainActor in
+            currentLocation = location
+            
+            if isNavigating {
+                // Check if we've completed the current step
+                checkStepCompletion()
+            }
         }
     }
     
@@ -455,8 +457,8 @@ extension NavigationService: CLLocationManagerDelegate {
 
 // MARK: - AVSpeechSynthesizerDelegate
 
-extension NavigationService: AVSpeechSynthesizerDelegate {
-    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+extension NavigationService: @preconcurrency AVSpeechSynthesizerDelegate {
+    nonisolated public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
         // Handle speech completion if needed
     }
 }
