@@ -25,6 +25,11 @@ class DependencyContainer {
     lazy var safetyKit: SafetyKit = .init()
     lazy var persistence: Persistence = .init()
     lazy var privacyGuard: PrivacyGuard = .init()
+    
+    // MARK: - Authentication & Settings
+    
+    lazy var authenticationService: AuthenticationService = .init()
+    lazy var settingsService: SettingsService = .init()
 
     // MARK: - Feature Services
 

@@ -12,6 +12,18 @@ struct PlaceDetailsView: View {
     let place: SearchResult
     @Binding var isPresented: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    
+    // Services
+    @StateObject private var routingService = DependencyContainer.shared.routingEngine
+    @StateObject private var persistence = DependencyContainer.shared.persistence
+    @StateObject private var hapticFeedback = DependencyContainer.shared.hapticFeedback
+    
+    // State
+    @State private var isRouting = false
+    @State private var isSaving = false
+    @State private var isSaved = false
+    @State private var showError = false
+    @State private var errorMessage = ""
 
     var body: some View {
         ZStack {
@@ -37,19 +49,19 @@ struct PlaceDetailsView: View {
                     contentSections
                 }
                 .background(
-                    RoundedRectangle(cornerRadius: 24) // 24pt corner radius for modal
-                        .fill(LiquidGlassColors.glassSurface2)
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                        .fill(AppleColors.glassMedium)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 24)
-                                .stroke(Color.white.opacity(0.2), lineWidth: 2) // 2pt highlight edge
+                            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                                .stroke(AppleColors.glassLight, lineWidth: 1)
                         )
-                        .shadow(color: Color.black.opacity(0.2), radius: 16, x: 0, y: 8) // Soft outer shadow
+                        .appleShadow(AppleShadows.heavy)
                 )
                 .padding(.horizontal, 16) // 16pt from edges
                 .padding(.bottom, 16) // 16pt from edges
             }
         }
-        .animation(reduceMotion ? .none : LiquidGlassAnimations.pourAnimation, value: isPresented) // Pour animation ≤600ms
+        .animation(reduceMotion ? .none : AppleAnimations.complex, value: isPresented)
     }
 
     // MARK: - Header Section
@@ -58,23 +70,23 @@ struct PlaceDetailsView: View {
         VStack(spacing: 16) {
             // Drag handle
             RoundedRectangle(cornerRadius: 2)
-                .fill(LiquidGlassColors.secondaryText.opacity(0.3))
+                .fill(AppleColors.textTertiary)
                 .frame(width: 36, height: 4)
-                .padding(.top, 8)
-                .padding(.bottom, 12)
+                .padding(.top, AppleSpacing.sm)
+                .padding(.bottom, AppleSpacing.sm)
 
             HStack(spacing: 16) {
                 // Place info
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
                     Text(place.name)
-                        .font(LiquidGlassTypography.title) // Title typography
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.title2)
+                        .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(2)
 
                     if let subtitle = place.subtitle {
                         Text(subtitle)
-                            .font(LiquidGlassTypography.caption)
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .font(AppleTypography.caption1)
+                            .foregroundColor(AppleColors.textSecondary)
                             .lineLimit(1)
                     }
                 }
@@ -87,7 +99,7 @@ struct PlaceDetailsView: View {
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .foregroundColor(AppleColors.textSecondary)
                         .frame(width: 32, height: 32)
                 }
                 .accessibilityLabel("Close")
@@ -103,52 +115,32 @@ struct PlaceDetailsView: View {
     private var primaryActionsRow: some View {
         HStack(spacing: 12) {
             // Route button
-            Button(action: {
-                // TODO: Implement route to place
-                print("Route to \(place.name)")
-            }) {
-                HStack(spacing: 8) {
-                    Image(systemName: "arrow.triangle.turn.up.right.diamond")
-                        .font(.system(size: 16, weight: .semibold))
-                    Text("Route")
-                        .font(LiquidGlassTypography.bodySemibold)
-                }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LiquidGlassGradients.primaryGradient)
-                )
+            AppleGlassButton(
+                "Route",
+                icon: "arrow.triangle.turn.up.right.diamond",
+                style: .primary,
+                size: .medium,
+                isLoading: isRouting,
+                isDisabled: isRouting
+            ) {
+                routeToPlace()
             }
             .accessibilityLabel("Route to \(place.name)")
             .accessibilityHint("Double tap to get directions to this place")
 
             // Save button
-            Button(action: {
-                // TODO: Implement save place
-                print("Save \(place.name)")
-            }) {
-                HStack(spacing: 8) {
-                    Image(systemName: "bookmark")
-                        .font(.system(size: 16, weight: .semibold))
-                    Text("Save")
-                        .font(LiquidGlassTypography.bodySemibold)
-                }
-                .foregroundColor(LiquidGlassColors.accentText)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LiquidGlassColors.accentText.opacity(0.1))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(LiquidGlassColors.accentText, lineWidth: 2)
-                        )
-                )
+            AppleGlassButton(
+                isSaved ? "Saved" : "Save",
+                icon: isSaved ? "bookmark.fill" : "bookmark",
+                style: isSaved ? .secondary : .ghost,
+                size: .medium,
+                isLoading: isSaving,
+                isDisabled: isSaving || isSaved
+            ) {
+                savePlace()
             }
-            .accessibilityLabel("Save \(place.name)")
-            .accessibilityHint("Double tap to save this place to your favorites")
+            .accessibilityLabel(isSaved ? "\(place.name) is saved" : "Save \(place.name)")
+            .accessibilityHint(isSaved ? "This place is already saved" : "Double tap to save this place to your favorites")
 
             // Share button
             Button(action: {
@@ -157,14 +149,14 @@ struct PlaceDetailsView: View {
             }) {
                 Image(systemName: "square.and.arrow.up")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(LiquidGlassColors.accentText)
+                    .foregroundColor(AppleColors.accent)
                     .frame(width: 48, height: 48)
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(LiquidGlassColors.accentText.opacity(0.1))
+                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                            .fill(AppleColors.accent.opacity(0.1))
                             .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(LiquidGlassColors.accentText, lineWidth: 2)
+                                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                                    .stroke(AppleColors.accent, lineWidth: 1)
                             )
                     )
             }
@@ -198,63 +190,64 @@ struct PlaceDetailsView: View {
     }
 
     private var addressSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppleSpacing.sm) {
             HStack {
                 Image(systemName: "location")
-                    .font(.system(size: 16))
-                    .foregroundColor(LiquidGlassColors.accentText)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(AppleColors.accent)
                     .frame(width: 20)
 
                 Text("Address")
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodyEmphasized)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Spacer()
             }
 
             Text(place.address ?? "Address not available")
-                .font(LiquidGlassTypography.body)
-                .foregroundColor(LiquidGlassColors.secondaryText)
+                .font(AppleTypography.body)
+                .foregroundColor(AppleColors.textSecondary)
                 .multilineTextAlignment(.leading)
         }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 16)
+        .padding(.vertical, AppleSpacing.md)
+        .padding(.horizontal, AppleSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
+            RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                .fill(AppleColors.glassLight)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                        .stroke(AppleColors.glassLight, lineWidth: 1)
                 )
         )
+        .accessibilityLabel("Address: \(place.address ?? "Address not available")")
     }
 
     private var contactSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppleSpacing.sm) {
             HStack {
                 Image(systemName: "phone")
-                    .font(.system(size: 16))
-                    .foregroundColor(LiquidGlassColors.accentText)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(AppleColors.accent)
                     .frame(width: 20)
 
                 Text("Contact")
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodyEmphasized)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Spacer()
             }
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: AppleSpacing.sm) {
                 // Phone number (placeholder)
                 HStack {
                     Image(systemName: "phone.fill")
-                        .font(.system(size: 14))
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(AppleColors.textSecondary)
                         .frame(width: 16)
 
                     Text("(555) 123-4567")
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.textSecondary)
 
                     Spacer()
                 }
@@ -262,110 +255,179 @@ struct PlaceDetailsView: View {
                 // Website (placeholder)
                 HStack {
                     Image(systemName: "globe")
-                        .font(.system(size: 14))
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(AppleColors.textSecondary)
                         .frame(width: 16)
 
                     Text("www.example.com")
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.accentText)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.accent)
 
                     Spacer()
                 }
             }
         }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 16)
+        .padding(.vertical, AppleSpacing.md)
+        .padding(.horizontal, AppleSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
+            RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                .fill(AppleColors.glassLight)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                        .stroke(AppleColors.glassLight, lineWidth: 1)
                 )
         )
+        .accessibilityLabel("Contact information")
     }
 
     private var hoursSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppleSpacing.sm) {
             HStack {
                 Image(systemName: "clock")
-                    .font(.system(size: 16))
-                    .foregroundColor(LiquidGlassColors.accentText)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(AppleColors.accent)
                     .frame(width: 20)
 
                 Text("Hours")
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodyEmphasized)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Spacer()
             }
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: AppleSpacing.xs) {
                 Text("Monday - Friday: 9:00 AM - 6:00 PM")
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
 
                 Text("Saturday: 10:00 AM - 4:00 PM")
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
 
                 Text("Sunday: Closed")
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
             }
         }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 16)
+        .padding(.vertical, AppleSpacing.md)
+        .padding(.horizontal, AppleSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
+            RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                .fill(AppleColors.glassLight)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                        .stroke(AppleColors.glassLight, lineWidth: 1)
                 )
         )
+        .accessibilityLabel("Business hours")
     }
 
     private var additionalDetailsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppleSpacing.sm) {
             HStack {
                 Image(systemName: "info.circle")
-                    .font(.system(size: 16))
-                    .foregroundColor(LiquidGlassColors.accentText)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(AppleColors.accent)
                     .frame(width: 20)
 
                 Text("Details")
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodyEmphasized)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Spacer()
             }
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: AppleSpacing.sm) {
                 Text("This is a sample place with additional details that would typically include amenities, reviews, and other relevant information.")
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
                     .multilineTextAlignment(.leading)
             }
         }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 16)
+        .padding(.vertical, AppleSpacing.md)
+        .padding(.horizontal, AppleSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
+            RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                .fill(AppleColors.glassLight)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(LiquidGlassColors.glassSurface3, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                        .stroke(AppleColors.glassLight, lineWidth: 1)
                 )
         )
+        .accessibilityLabel("Additional details")
     }
 
     // MARK: - Helper Functions
 
     private func dismissModal() {
-        withAnimation(reduceMotion ? .none : LiquidGlassAnimations.standard) {
+        withAnimation(reduceMotion ? .none : AppleAnimations.standard) {
             isPresented = false
+        }
+    }
+    
+    // MARK: - Action Methods
+    
+    private func routeToPlace() {
+        isRouting = true
+        hapticFeedback.impact(style: .medium)
+        
+        Task {
+            do {
+                // Get current location
+                guard let currentLocation = DependencyContainer.shared.locationService.currentLocation else {
+                    await MainActor.run {
+                        errorMessage = "Location not available"
+                        showError = true
+                        isRouting = false
+                    }
+                    return
+                }
+                
+                // Calculate route
+                routingService.calculateRoute(
+                    from: currentLocation.coordinate,
+                    to: place.coordinate,
+                    transportType: .automobile
+                )
+                
+                await MainActor.run {
+                    isRouting = false
+                    // TODO: Navigate to route view
+                    print("Route calculated successfully")
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = "Failed to calculate route: \(error.localizedDescription)"
+                    showError = true
+                    isRouting = false
+                }
+            }
+        }
+    }
+    
+    private func savePlace() {
+        isSaving = true
+        hapticFeedback.impact(style: .light)
+        
+        Task {
+            // Save to persistence
+            let savedPlace = SavedPlace(
+                id: UUID(),
+                name: place.name,
+                address: place.address ?? "Unknown Address",
+                latitude: place.coordinate.latitude,
+                longitude: place.coordinate.longitude,
+                type: .custom, // Default type
+                createdAt: Date(),
+                userId: UUID() // TODO: Use actual user ID
+            )
+            await persistence.savePlace(savedPlace)
+            
+            await MainActor.run {
+                isSaved = true
+                isSaving = false
+                hapticFeedback.success()
+            }
         }
     }
 }

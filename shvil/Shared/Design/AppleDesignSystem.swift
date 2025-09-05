@@ -240,8 +240,163 @@ extension View {
     }
 }
 
-// MARK: - Button Styles
-// Note: Button styles are implemented in AppleGlassComponents.swift
+// MARK: - Button Components
+
+struct AppleButton: View {
+    let title: String
+    let icon: String?
+    let style: ButtonStyleType
+    let size: ButtonSize
+    let isLoading: Bool
+    let isDisabled: Bool
+    let action: () -> Void
+    
+    enum ButtonStyleType {
+        case primary
+        case secondary
+        case destructive
+        case ghost
+    }
+    
+    enum ButtonSize {
+        case small
+        case medium
+        case large
+    }
+    
+    init(
+        _ title: String,
+        icon: String? = nil,
+        style: ButtonStyleType = .primary,
+        size: ButtonSize = .medium,
+        isLoading: Bool = false,
+        isDisabled: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.icon = icon
+        self.style = style
+        self.size = size
+        self.isLoading = isLoading
+        self.isDisabled = isDisabled
+        self.action = action
+    }
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: AppleSpacing.sm) {
+                if isLoading {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                        .progressViewStyle(CircularProgressViewStyle(tint: textColor))
+                } else if let icon = icon {
+                    Image(systemName: icon)
+                        .font(iconFont)
+                }
+                
+                Text(title)
+                    .font(buttonFont)
+            }
+            .foregroundColor(textColor)
+            .padding(.horizontal, horizontalPadding)
+            .padding(.vertical, verticalPadding)
+            .background(backgroundView)
+            .opacity(isDisabled ? 0.6 : 1.0)
+            .disabled(isDisabled || isLoading)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private var buttonFont: Font {
+        switch size {
+        case .small: AppleTypography.footnoteEmphasized
+        case .medium: AppleTypography.bodyEmphasized
+        case .large: AppleTypography.headline
+        }
+    }
+    
+    private var iconFont: Font {
+        switch size {
+        case .small: AppleTypography.footnote
+        case .medium: AppleTypography.body
+        case .large: AppleTypography.title3
+        }
+    }
+    
+    private var textColor: Color {
+        switch style {
+        case .primary: .white
+        case .secondary: AppleColors.textPrimary
+        case .destructive: .white
+        case .ghost: AppleColors.brandPrimary
+        }
+    }
+    
+    private var horizontalPadding: CGFloat {
+        switch size {
+        case .small: AppleSpacing.md
+        case .medium: AppleSpacing.lg
+        case .large: AppleSpacing.xl
+        }
+    }
+    
+    private var verticalPadding: CGFloat {
+        switch size {
+        case .small: AppleSpacing.sm
+        case .medium: AppleSpacing.md
+        case .large: AppleSpacing.lg
+        }
+    }
+    
+    private var backgroundView: some View {
+        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+            .fill(backgroundColor)
+            .overlay(overlayView)
+            .appleShadow(shadow)
+    }
+    
+    private var backgroundColor: Color {
+        switch style {
+        case .primary: AppleColors.brandPrimary
+        case .secondary: AppleColors.surfaceSecondary
+        case .destructive: AppleColors.danger
+        case .ghost: Color.clear
+        }
+    }
+    
+    private var overlayView: some View {
+        Group {
+            if style == .ghost {
+                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                    .stroke(AppleColors.brandPrimary, lineWidth: 1)
+            } else if style == .secondary {
+                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                    .stroke(AppleColors.strokeLight, lineWidth: 1)
+            }
+        }
+    }
+    
+    private var shadow: Shadow {
+        switch style {
+        case .primary: AppleShadows.medium
+        case .secondary: AppleShadows.light
+        case .destructive: AppleShadows.medium
+        case .ghost: AppleShadows.none
+        }
+    }
+    
+    private func paddingForSize(_ size: ButtonSize) -> (horizontal: CGFloat, vertical: CGFloat) {
+        switch size {
+        case .small: return (AppleSpacing.md, AppleSpacing.sm)
+        case .medium: return (AppleSpacing.lg, AppleSpacing.md)
+        case .large: return (AppleSpacing.xl, AppleSpacing.lg)
+        }
+    }
+}
+
+extension AppleShadows {
+    static let none = Shadow(color: Color.clear, radius: 0, x: 0, y: 0)
+}
 
 // MARK: - Card Component
 

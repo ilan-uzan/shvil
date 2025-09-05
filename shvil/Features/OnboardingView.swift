@@ -34,6 +34,7 @@ struct OnboardingView: View {
         .onAppear {
             checkOnboardingStatus()
         }
+        .environment(\.layoutDirection, localizationManager.isRTL ? .rightToLeft : .leftToRight)
     }
     
     private var onboardingContent: some View {
@@ -240,7 +241,7 @@ struct OnboardingView: View {
     }
     
     private func languageOption(_ language: Language) -> some View {
-        AppleGlassCard(style: .glassmorphism) {
+        AppleGlassCard(style: .elevated) {
             HStack(spacing: AppleSpacing.md) {
                 Text(language.displayName)
                     .font(AppleTypography.bodyEmphasized)
@@ -249,7 +250,7 @@ struct OnboardingView: View {
                 Spacer()
                 
                 if selectedLanguage == language {
-                    AppleGlassStatusIndicator(status: .success, size: 20)
+                    AppleGlassStatusIndicator(status: .success)
                 }
             }
         }
@@ -266,10 +267,13 @@ struct OnboardingView: View {
             RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
                 .fill(selectedLanguage == language ? AppleColors.brandPrimary : Color.clear)
         )
+        .accessibilityLabel("Language: \(language.displayName)")
+        .accessibilityHint(selectedLanguage == language ? "Currently selected" : "Double tap to select this language")
+        .accessibilityAddTraits(selectedLanguage == language ? .isSelected : [])
     }
     
     private func themeOption(_ theme: Theme) -> some View {
-        AppleGlassCard(style: .glassmorphism) {
+        AppleGlassCard(style: .elevated) {
             HStack(spacing: AppleSpacing.md) {
                 Image(systemName: theme.icon)
                     .font(.system(size: 20, weight: .medium))
@@ -289,7 +293,7 @@ struct OnboardingView: View {
                 Spacer()
                 
                 if selectedTheme == theme {
-                    AppleGlassStatusIndicator(status: .success, size: 20)
+                    AppleGlassStatusIndicator(status: .success)
                 }
             }
         }
@@ -305,10 +309,13 @@ struct OnboardingView: View {
             RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
                 .fill(selectedTheme == theme ? AppleColors.brandPrimary : Color.clear)
         )
+        .accessibilityLabel("Theme: \(theme.displayName)")
+        .accessibilityHint(selectedTheme == theme ? "Currently selected" : "Double tap to select this theme")
+        .accessibilityAddTraits(selectedTheme == theme ? .isSelected : [])
     }
     
     private func permissionCard(icon: String, title: String, description: String, isRequired: Bool) -> some View {
-        AppleGlassCard(style: .glassmorphism) {
+        AppleGlassCard(style: .elevated) {
             HStack(spacing: AppleSpacing.md) {
                 Image(systemName: icon)
                     .font(.system(size: 20, weight: .medium))
@@ -342,13 +349,15 @@ struct OnboardingView: View {
                 Spacer()
             }
         }
+        .accessibilityLabel("\(title). \(isRequired ? "Required permission" : "Optional permission"). \(description)")
+        .accessibilityHint("This permission is \(isRequired ? "required" : "optional") for app functionality")
     }
     
     private var navigationButtons: some View {
         HStack(spacing: AppleSpacing.md) {
             if currentStep > 0 {
                 AppleGlassButton(
-                    title: "back".localized,
+                    "back".localized,
                     style: .secondary,
                     size: .medium
                 ) {
@@ -360,7 +369,7 @@ struct OnboardingView: View {
             }
             
             AppleGlassButton(
-                title: currentStep < totalSteps - 1 ? "next".localized : "get_started".localized,
+                currentStep < totalSteps - 1 ? "next".localized : "get_started".localized,
                 style: .primary,
                 size: .medium
             ) {

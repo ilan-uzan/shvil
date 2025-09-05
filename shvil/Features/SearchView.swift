@@ -18,6 +18,8 @@ struct SearchView: View {
     @State private var showFilters = false
     @State private var selectedResult: SearchResult?
     @State private var showPlaceDetails = false
+    @State private var searchHistory: [String] = []
+    @State private var recentSearches: [String] = []
 
     var body: some View {
         NavigationView {
@@ -54,6 +56,9 @@ struct SearchView: View {
                 searchService.searchResults = []
             }
         }
+        .onAppear {
+            loadRecentSearches()
+        }
     }
 
     // MARK: - Search Header
@@ -61,13 +66,44 @@ struct SearchView: View {
     private var searchHeader: some View {
         VStack(spacing: AppleSpacing.md) {
             // Search Bar
-            ShvilSearchField(
-                text: $searchText,
-                placeholder: "Search places, activities, or locations",
-                onVoiceSearch: {
-                    // TODO: Implement voice search
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(AppleColors.textSecondary)
+                    .padding(.leading, AppleSpacing.sm)
+                
+                TextField("Search places, activities, or locations", text: $searchText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textPrimary)
+                    .onSubmit {
+                        if !searchText.isEmpty {
+                            searchService.search(for: searchText)
+                        }
+                    }
+                    .accessibilityLabel("Search field")
+                    .accessibilityHint("Enter a place, activity, or location to search")
+                
+                if !searchText.isEmpty {
+                    Button(action: {
+                        searchText = ""
+                        searchService.searchResults = []
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(AppleColors.textTertiary)
+                    }
+                    .accessibilityLabel("Clear search")
                 }
+            }
+            .padding(.horizontal, AppleSpacing.md)
+            .padding(.vertical, AppleSpacing.sm)
+            .background(
+                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                    .fill(AppleColors.glassMedium)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                            .stroke(AppleColors.glassLight, lineWidth: 1)
+                    )
             )
+            .appleShadow(AppleShadows.light)
 
             // Category Filters
             categoryFilters
@@ -88,26 +124,45 @@ struct SearchView: View {
     }
 
     private func categoryChip(for category: SearchCategory) -> some View {
-        ShvilGlassChip(
-            category.displayName,
-            icon: category.icon,
-            isSelected: selectedCategory == category
-        ) {
+        HStack(spacing: AppleSpacing.xs) {
+            Image(systemName: category.icon)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(selectedCategory == category ? .white : AppleColors.accent)
+            
+            Text(category.displayName)
+                .font(AppleTypography.caption1)
+                .foregroundColor(selectedCategory == category ? .white : AppleColors.textPrimary)
+        }
+        .padding(.horizontal, AppleSpacing.md)
+        .padding(.vertical, AppleSpacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                .fill(selectedCategory == category ? AppleColors.brandPrimary : AppleColors.glassMedium)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                        .stroke(selectedCategory == category ? Color.clear : AppleColors.glassLight, lineWidth: 1)
+                )
+        )
+        .appleShadow(AppleShadows.light)
+        .onTapGesture {
             withAnimation(AppleAnimations.spring) {
                 selectedCategory = category
             }
             HapticFeedback.shared.impact(style: .light)
             performSearch()
         }
+        .accessibilityLabel("Category: \(category.displayName)")
+        .accessibilityHint(selectedCategory == category ? "Currently selected" : "Double tap to select this category")
+        .accessibilityAddTraits(selectedCategory == category ? .isSelected : [])
     }
 
     // MARK: - Empty State
 
     private var emptyState: some View {
         AppleGlassEmptyState(
-            icon: "magnifyingglass",
             title: "No Results Found",
             description: "Try searching for something else or check your spelling.",
+            icon: "magnifyingglass",
             actionTitle: "Clear Search",
             action: {
                 searchText = ""
@@ -119,22 +174,53 @@ struct SearchView: View {
     // MARK: - Suggestions View
 
     private var suggestionsView: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.lg) {
-            Text("Popular Searches")
-                .font(AppleTypography.title3)
-                .foregroundColor(AppleColors.textPrimary)
-                .padding(.horizontal, AppleSpacing.md)
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppleSpacing.xl) {
+                // Recent Searches
+                if !recentSearches.isEmpty {
+                    VStack(alignment: .leading, spacing: AppleSpacing.md) {
+                        HStack {
+                            Text("Recent Searches")
+                                .font(AppleTypography.title3)
+                                .foregroundColor(AppleColors.textPrimary)
+                            
+                            Spacer()
+                            
+                            Button("Clear") {
+                                recentSearches.removeAll()
+                                UserDefaults.standard.set([], forKey: "recent_searches")
+                            }
+                            .font(AppleTypography.caption1)
+                            .foregroundColor(AppleColors.brandPrimary)
+                        }
+                        .padding(.horizontal, AppleSpacing.md)
+                        
+                        LazyVStack(spacing: AppleSpacing.sm) {
+                            ForEach(recentSearches, id: \.self) { search in
+                                recentSearchRow(for: search)
+                            }
+                        }
+                        .padding(.horizontal, AppleSpacing.md)
+                    }
+                }
+                
+                // Popular Searches
+                VStack(alignment: .leading, spacing: AppleSpacing.md) {
+                    Text("Popular Searches")
+                        .font(AppleTypography.title3)
+                        .foregroundColor(AppleColors.textPrimary)
+                        .padding(.horizontal, AppleSpacing.md)
 
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: AppleSpacing.sm) {
-                ForEach(popularSearches, id: \.self) { search in
-                    suggestionCard(for: search)
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: AppleSpacing.sm), count: 2), spacing: AppleSpacing.sm) {
+                        ForEach(popularSearches, id: \.self) { search in
+                            suggestionCard(for: search)
+                        }
+                    }
+                    .padding(.horizontal, AppleSpacing.md)
                 }
             }
-            .padding(.horizontal, AppleSpacing.md)
-
-            Spacer()
+            .padding(.top, AppleSpacing.lg)
         }
-        .padding(.top, AppleSpacing.lg)
     }
 
     private var popularSearches: [String] {
@@ -151,25 +237,92 @@ struct SearchView: View {
     }
 
     private func suggestionCard(for search: String) -> some View {
-        AppleGlassCard(style: .glassmorphism) {
-            HStack(spacing: AppleSpacing.sm) {
-                Image(systemName: searchIcon(for: search))
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(AppleColors.accent)
-                    .frame(width: 24)
+        HStack(spacing: AppleSpacing.sm) {
+            Image(systemName: searchIcon(for: search))
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(AppleColors.accent)
+                .frame(width: 24)
 
-                Text(search)
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textPrimary)
-                    .lineLimit(1)
+            Text(search)
+                .font(AppleTypography.body)
+                .foregroundColor(AppleColors.textPrimary)
+                .lineLimit(1)
 
-                Spacer()
-            }
+            Spacer()
         }
+        .padding(.horizontal, AppleSpacing.md)
+        .padding(.vertical, AppleSpacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                        .fill(AppleColors.glassMedium)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                                .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                .blendMode(.overlay)
+                        )
+                )
+        )
+        .appleShadow(AppleShadows.light)
         .onTapGesture {
             searchText = search
             performSearch()
+            HapticFeedback.shared.impact(style: .light)
         }
+        .accessibilityLabel("Search suggestion: \(search)")
+        .accessibilityHint("Double tap to search for \(search)")
+        .accessibilityAddTraits(.isButton)
+    }
+    
+    private func recentSearchRow(for search: String) -> some View {
+        HStack(spacing: AppleSpacing.md) {
+            Image(systemName: "clock")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(AppleColors.textSecondary)
+                .frame(width: 20)
+            
+            Text(search)
+                .font(AppleTypography.body)
+                .foregroundColor(AppleColors.textPrimary)
+                .lineLimit(1)
+            
+            Spacer()
+            
+            Button(action: {
+                removeRecentSearch(search)
+            }) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 16))
+                    .foregroundColor(AppleColors.textTertiary)
+            }
+            .accessibilityLabel("Remove from recent searches")
+        }
+        .padding(.horizontal, AppleSpacing.md)
+        .padding(.vertical, AppleSpacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                        .fill(AppleColors.glassMedium)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                                .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                .blendMode(.overlay)
+                        )
+                )
+        )
+        .appleShadow(AppleShadows.light)
+        .onTapGesture {
+            searchText = search
+            performSearch()
+            HapticFeedback.shared.impact(style: .light)
+        }
+        .accessibilityLabel("Recent search: \(search)")
+        .accessibilityHint("Double tap to search for \(search)")
+        .accessibilityAddTraits(.isButton)
     }
 
     private func searchIcon(for search: String) -> String {
@@ -198,9 +351,9 @@ struct SearchView: View {
                 Spacer()
 
                 AppleGlassButton(
-                    title: "Filters",
+                    "Filters",
                     icon: "slider.horizontal.3",
-                    style: .tertiary,
+                    style: .ghost,
                     size: .small
                 ) {
                     showFilters = true
@@ -220,7 +373,7 @@ struct SearchView: View {
     }
 
     private func searchResultCard(for result: SearchResult) -> some View {
-        AppleGlassCard(style: .glassmorphism) {
+        AppleGlassCard(style: .elevated) {
             HStack(spacing: AppleSpacing.md) {
                 // Place Image/Icon
                 ZStack {
@@ -266,6 +419,9 @@ struct SearchView: View {
             showPlaceDetails = true
             HapticFeedback.shared.impact(style: .light)
         }
+        .accessibilityLabel("Search result: \(result.name)")
+        .accessibilityHint("Double tap to view details for \(result.name)")
+        .accessibilityAddTraits(.isButton)
     }
 
     private func placeIcon(for _: SearchResult) -> String {
@@ -277,9 +433,38 @@ struct SearchView: View {
     private func performSearch() {
         guard !searchText.isEmpty else { return }
 
+        // Add to recent searches
+        addToRecentSearches(searchText)
+
         Task {
             print("Searching for: \(searchText) in category: \(selectedCategory)")
+            // TODO: Implement actual search logic
         }
+    }
+    
+    private func loadRecentSearches() {
+        recentSearches = UserDefaults.standard.stringArray(forKey: "recent_searches") ?? []
+    }
+    
+    private func addToRecentSearches(_ search: String) {
+        // Remove if already exists
+        recentSearches.removeAll { $0 == search }
+        
+        // Add to beginning
+        recentSearches.insert(search, at: 0)
+        
+        // Keep only last 10 searches
+        if recentSearches.count > 10 {
+            recentSearches = Array(recentSearches.prefix(10))
+        }
+        
+        // Save to UserDefaults
+        UserDefaults.standard.set(recentSearches, forKey: "recent_searches")
+    }
+    
+    private func removeRecentSearch(_ search: String) {
+        recentSearches.removeAll { $0 == search }
+        UserDefaults.standard.set(recentSearches, forKey: "recent_searches")
     }
 }
 

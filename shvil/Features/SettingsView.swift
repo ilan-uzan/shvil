@@ -10,10 +10,13 @@ import SwiftUI
 struct SettingsView: View {
     @StateObject private var appState = DependencyContainer.shared.appState
     @StateObject private var privacyGuard = DependencyContainer.shared.privacyGuard
+    @StateObject private var settingsService = DependencyContainer.shared.settingsService
+    @StateObject private var authService = DependencyContainer.shared.authenticationService
     @State private var showingPrivacySettings = false
     @State private var showingLocationSettings = false
     @State private var showingNotificationSettings = false
     @State private var showingAbout = false
+    @State private var showingSignIn = false
 
     var body: some View {
         NavigationView {
@@ -42,7 +45,7 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
-            .background(LiquidGlassColors.background.ignoresSafeArea())
+            .background(AppleColors.background.ignoresSafeArea())
         }
         .sheet(isPresented: $showingPrivacySettings) {
             PrivacySettingsView()
@@ -61,71 +64,114 @@ struct SettingsView: View {
     // MARK: - Profile Header
 
     private var profileHeader: some View {
-        VStack(spacing: 16) {
-            // Profile Picture
-            ZStack {
-                Circle()
-                    .fill(LiquidGlassGradients.primaryGradient)
-                    .frame(width: 80, height: 80)
-                    .glassEffect(elevation: .high)
+        AppleGlassCard(style: .elevated) {
+            VStack(spacing: AppleSpacing.md) {
+                // Profile Picture
+                ZStack {
+                    Circle()
+                        .fill(AppleColors.brandGradient)
+                        .frame(width: 80, height: 80)
+                        .appleShadow(AppleShadows.medium)
 
-                Image(systemName: "person.fill")
-                    .font(.system(size: 32))
-                    .foregroundColor(.white)
-            }
+                    Image(systemName: authService.isAuthenticated ? "person.fill" : "person.circle")
+                        .font(.system(size: 32))
+                        .foregroundColor(.white)
+                }
 
-            VStack(spacing: 4) {
-                Text("Welcome to Shvil")
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                VStack(spacing: AppleSpacing.xs) {
+                    Text(authService.isAuthenticated ? (authService.currentUser?.displayName ?? "User") : "Welcome to Shvil")
+                        .font(AppleTypography.title3)
+                        .foregroundColor(AppleColors.textPrimary)
 
-                Text("Your personal navigation assistant")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    Text(authService.isAuthenticated ? authService.currentUser?.email ?? "" : "Your personal navigation assistant")
+                        .font(AppleTypography.footnote)
+                        .foregroundColor(AppleColors.textSecondary)
+                }
+                
+                // Sign In/Out Button
+                AppleGlassButton(
+                    authService.isAuthenticated ? "Sign Out" : "Sign In",
+                    icon: authService.isAuthenticated ? "arrow.right.square" : "person.badge.plus",
+                    style: authService.isAuthenticated ? .destructive : .primary,
+                    size: .medium
+                ) {
+                    if authService.isAuthenticated {
+                        Task {
+                            await authService.signOut()
+                        }
+                    } else {
+                        showingSignIn = true
+                    }
+                }
             }
         }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
-                .glassEffect(elevation: .medium)
-        )
     }
 
     // MARK: - App Settings Section
 
     private var appSettingsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("App Settings")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+        AppleGlassCard(style: .elevated) {
+            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+                Text("App Settings")
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
 
-            VStack(spacing: 12) {
-                SettingsRow(
-                    icon: "globe",
-                    title: "Language",
-                    subtitle: "English"
-                ) {
-                    // TODO: Implement language selection
-                    HapticFeedback.shared.impact(style: .light)
-                }
+                VStack(spacing: AppleSpacing.sm) {
+                    // Language Selection
+                    AppleListRow {
+                        HStack {
+                            Image(systemName: "globe")
+                                .foregroundColor(AppleColors.brandPrimary)
+                                .frame(width: 24)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Language")
+                                    .font(AppleTypography.body)
+                                    .foregroundColor(AppleColors.textPrimary)
+                                
+                                Text(settingsService.selectedLanguage.displayName)
+                                    .font(AppleTypography.footnote)
+                                    .foregroundColor(AppleColors.textSecondary)
+                            }
+                            
+                            Spacer()
+                            
+                            Picker("Language", selection: $settingsService.selectedLanguage) {
+                                ForEach(AppLanguage.allCases, id: \.self) { language in
+                                    Text(language.displayName).tag(language)
+                                }
+                            }
+                            .pickerStyle(MenuPickerStyle())
+                        }
+                    }
 
-                SettingsRow(
-                    icon: "moon.fill",
-                    title: "Appearance",
-                    subtitle: "System"
-                ) {
-                    // TODO: Implement appearance selection
-                    HapticFeedback.shared.impact(style: .light)
-                }
-
-                SettingsRow(
-                    icon: "textformat.size",
-                    title: "Text Size",
-                    subtitle: "Default"
-                ) {
-                    // TODO: Implement text size selection
-                    HapticFeedback.shared.impact(style: .light)
+                    // Theme Selection
+                    AppleListRow {
+                        HStack {
+                            Image(systemName: "moon.fill")
+                                .foregroundColor(AppleColors.brandPrimary)
+                                .frame(width: 24)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Appearance")
+                                    .font(AppleTypography.body)
+                                    .foregroundColor(AppleColors.textPrimary)
+                                
+                                Text(settingsService.selectedTheme.displayName)
+                                    .font(AppleTypography.footnote)
+                                    .foregroundColor(AppleColors.textSecondary)
+                            }
+                            
+                            Spacer()
+                            
+                            Picker("Theme", selection: $settingsService.selectedTheme) {
+                                ForEach(AppTheme.allCases, id: \.self) { theme in
+                                    Text(theme.displayName).tag(theme)
+                                }
+                            }
+                            .pickerStyle(MenuPickerStyle())
+                        }
+                    }
                 }
             }
         }
@@ -134,39 +180,41 @@ struct SettingsView: View {
     // MARK: - Feature Settings Section
 
     private var featureSettingsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Features")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+        AppleGlassCard(style: .elevated) {
+            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+                Text("Features")
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
 
-            VStack(spacing: 12) {
-                ToggleRow(
-                    icon: "person.2.fill",
-                    title: "Friends on Map",
-                    subtitle: "Show friends' locations",
-                    isOn: $appState.enableFriendsOnMap
-                )
+                VStack(spacing: AppleSpacing.sm) {
+                    ToggleRow(
+                        icon: "person.2.fill",
+                        title: "Friends on Map",
+                        subtitle: "Show friends' locations",
+                        isOn: $settingsService.enableFriendsOnMap
+                    )
 
-                ToggleRow(
-                    icon: "shield.fill",
-                    title: "Safety Layer",
-                    subtitle: "Show safety information",
-                    isOn: $appState.enableSafetyLayer
-                )
+                    ToggleRow(
+                        icon: "shield.fill",
+                        title: "Safety Layer",
+                        subtitle: "Show safety information",
+                        isOn: $settingsService.enableSafetyAlerts
+                    )
 
-                ToggleRow(
-                    icon: "lightbulb.fill",
-                    title: "Smart Stops",
-                    subtitle: "Suggest stops along your route",
-                    isOn: $appState.enableSmartStops
-                )
+                    ToggleRow(
+                        icon: "lightbulb.fill",
+                        title: "Smart Stops",
+                        subtitle: "Suggest stops along your route",
+                        isOn: $settingsService.enableSmartStops
+                    )
 
-                ToggleRow(
-                    icon: "mic.fill",
-                    title: "Voice Search",
-                    subtitle: "Search using your voice",
-                    isOn: $appState.enableVoiceSearch
-                )
+                    ToggleRow(
+                        icon: "mic.fill",
+                        title: "Voice Search",
+                        subtitle: "Search using your voice",
+                        isOn: $settingsService.enableVoiceSearch
+                    )
+                }
             }
         }
     }
@@ -174,37 +222,48 @@ struct SettingsView: View {
     // MARK: - Privacy Section
 
     private var privacySection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Privacy & Security")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+        AppleGlassCard(style: .elevated) {
+            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+                Text("Privacy & Security")
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
 
-            VStack(spacing: 12) {
-                SettingsRow(
-                    icon: "shield.checkered",
-                    title: "Privacy Settings",
-                    subtitle: "Control your data and privacy"
-                ) {
-                    showingPrivacySettings = true
-                    HapticFeedback.shared.impact(style: .light)
-                }
+                VStack(spacing: AppleSpacing.sm) {
+                    AppleGlassListRow(
+                        icon: "shield.checkered",
+                        title: "Privacy Settings",
+                        subtitle: "Control your data and privacy",
+                        action: {
+                            showingPrivacySettings = true
+                            HapticFeedback.shared.impact(style: .light)
+                        }
+                    )
 
-                SettingsRow(
-                    icon: "location.fill",
-                    title: "Location Services",
-                    subtitle: locationPermissionText
-                ) {
-                    showingLocationSettings = true
-                    HapticFeedback.shared.impact(style: .light)
-                }
+                    Divider()
+                        .background(AppleColors.glassLight)
 
-                SettingsRow(
-                    icon: "key.fill",
-                    title: "Biometric Lock",
-                    subtitle: "Use Face ID or Touch ID"
-                ) {
-                    // TODO: Implement biometric lock
-                    HapticFeedback.shared.impact(style: .light)
+                    AppleGlassListRow(
+                        icon: "location.fill",
+                        title: "Location Services",
+                        subtitle: locationPermissionText,
+                        action: {
+                            showingLocationSettings = true
+                            HapticFeedback.shared.impact(style: .light)
+                        }
+                    )
+
+                    Divider()
+                        .background(AppleColors.glassLight)
+
+                    AppleGlassListRow(
+                        icon: "key.fill",
+                        title: "Biometric Lock",
+                        subtitle: "Use Face ID or Touch ID",
+                        action: {
+                            // TODO: Implement biometric lock
+                            HapticFeedback.shared.impact(style: .light)
+                        }
+                    )
                 }
             }
         }
@@ -213,34 +272,43 @@ struct SettingsView: View {
     // MARK: - Notifications Section
 
     private var notificationsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Notifications")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+        AppleGlassCard(style: .elevated) {
+            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+                Text("Notifications")
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
 
-            VStack(spacing: 12) {
-                SettingsRow(
-                    icon: "bell.fill",
-                    title: "Notification Settings",
-                    subtitle: notificationPermissionText
-                ) {
-                    showingNotificationSettings = true
-                    HapticFeedback.shared.impact(style: .light)
+                VStack(spacing: AppleSpacing.sm) {
+                    AppleGlassListRow(
+                        icon: "bell.fill",
+                        title: "Notification Settings",
+                        subtitle: notificationPermissionText,
+                        action: {
+                            showingNotificationSettings = true
+                            HapticFeedback.shared.impact(style: .light)
+                        }
+                    )
+
+                    Divider()
+                        .background(AppleColors.glassLight)
+
+                    ToggleRow(
+                        icon: "location.circle.fill",
+                        title: "Location Alerts",
+                        subtitle: "Get notified about nearby places",
+                        isOn: .constant(true) // TODO: Connect to actual setting
+                    )
+
+                    Divider()
+                        .background(AppleColors.glassLight)
+
+                    ToggleRow(
+                        icon: "person.2.circle.fill",
+                        title: "Social Updates",
+                        subtitle: "Updates from friends and groups",
+                        isOn: .constant(true) // TODO: Connect to actual setting
+                    )
                 }
-
-                ToggleRow(
-                    icon: "location.circle.fill",
-                    title: "Location Alerts",
-                    subtitle: "Get notified about nearby places",
-                    isOn: .constant(true) // TODO: Connect to actual setting
-                )
-
-                ToggleRow(
-                    icon: "person.2.circle.fill",
-                    title: "Social Updates",
-                    subtitle: "Updates from friends and groups",
-                    isOn: .constant(true) // TODO: Connect to actual setting
-                )
             }
         }
     }
@@ -248,46 +316,61 @@ struct SettingsView: View {
     // MARK: - Support Section
 
     private var supportSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Support & Info")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+        AppleGlassCard(style: .elevated) {
+            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+                Text("Support & Info")
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
 
-            VStack(spacing: 12) {
-                SettingsRow(
-                    icon: "questionmark.circle.fill",
-                    title: "Help & Support",
-                    subtitle: "Get help and contact support"
-                ) {
-                    // TODO: Open help center
-                    HapticFeedback.shared.impact(style: .light)
-                }
+                VStack(spacing: AppleSpacing.sm) {
+                    AppleGlassListRow(
+                        icon: "questionmark.circle.fill",
+                        title: "Help & Support",
+                        subtitle: "Get help and contact support",
+                        action: {
+                            // TODO: Open help center
+                            HapticFeedback.shared.impact(style: .light)
+                        }
+                    )
 
-                SettingsRow(
-                    icon: "star.fill",
-                    title: "Rate Shvil",
-                    subtitle: "Rate us on the App Store"
-                ) {
-                    // TODO: Open App Store rating
-                    HapticFeedback.shared.impact(style: .light)
-                }
+                    Divider()
+                        .background(AppleColors.glassLight)
 
-                SettingsRow(
-                    icon: "square.and.arrow.up",
-                    title: "Share Shvil",
-                    subtitle: "Tell your friends about Shvil"
-                ) {
-                    // TODO: Open share sheet
-                    HapticFeedback.shared.impact(style: .light)
-                }
+                    AppleGlassListRow(
+                        icon: "star.fill",
+                        title: "Rate Shvil",
+                        subtitle: "Rate us on the App Store",
+                        action: {
+                            // TODO: Open App Store rating
+                            HapticFeedback.shared.impact(style: .light)
+                        }
+                    )
 
-                SettingsRow(
-                    icon: "info.circle.fill",
-                    title: "About Shvil",
-                    subtitle: "Version 1.0.0"
-                ) {
-                    showingAbout = true
-                    HapticFeedback.shared.impact(style: .light)
+                    Divider()
+                        .background(AppleColors.glassLight)
+
+                    AppleGlassListRow(
+                        icon: "square.and.arrow.up",
+                        title: "Share Shvil",
+                        subtitle: "Tell your friends about Shvil",
+                        action: {
+                            // TODO: Open share sheet
+                            HapticFeedback.shared.impact(style: .light)
+                        }
+                    )
+
+                    Divider()
+                        .background(AppleColors.glassLight)
+
+                    AppleGlassListRow(
+                        icon: "info.circle.fill",
+                        title: "About Shvil",
+                        subtitle: "Version 1.0.0",
+                        action: {
+                            showingAbout = true
+                            HapticFeedback.shared.impact(style: .light)
+                        }
+                    )
                 }
             }
         }
@@ -331,31 +414,30 @@ struct ToggleRow: View {
     var body: some View {
         HStack {
             Image(systemName: icon)
-                .font(.system(size: 20))
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(.system(size: 20, weight: .medium))
+                .foregroundColor(AppleColors.accent)
                 .frame(width: 24)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: AppleSpacing.xs) {
                 Text(title)
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodyEmphasized)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Text(subtitle)
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
             }
 
             Spacer()
 
             Toggle("", isOn: $isOn)
-                .toggleStyle(SwitchToggleStyle(tint: LiquidGlassColors.accentDeepAqua))
+                .toggleStyle(SwitchToggleStyle(tint: AppleColors.brandPrimary))
         }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(LiquidGlassColors.glassSurface1)
-                .glassEffect(elevation: .light)
-        )
+        .padding(.vertical, AppleSpacing.sm)
+        .padding(.horizontal, AppleSpacing.md)
+        .accessibilityLabel("\(title): \(subtitle)")
+        .accessibilityHint("Double tap to toggle \(isOn ? "off" : "on")")
+        .accessibilityAddTraits(.isButton)
     }
 }
 

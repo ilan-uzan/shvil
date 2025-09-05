@@ -24,6 +24,8 @@ struct MapView: View {
     @State private var showPlaceDetails = false
     @State private var selectedPlace: SearchResult?
     @State private var rerouteTimer: Timer?
+    @State private var showSearchOverlay = false
+    @State private var searchResults: [SearchResult] = []
 
     // Accessibility support
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -46,6 +48,11 @@ struct MapView: View {
             // Place details modal
             if showPlaceDetails, let place = selectedPlace {
                 PlaceDetailsView(place: place, isPresented: $showPlaceDetails)
+            }
+            
+            // Search overlay
+            if showSearchOverlay {
+                searchOverlay
             }
         }
         .navigationBarHidden(true)
@@ -88,7 +95,7 @@ struct MapView: View {
         VStack(spacing: AppleSpacing.xs) {
             // Apple-style annotation
             ZStack {
-                Circle()
+                    Circle()
                     .fill(AppleColors.glassMedium)
                     .frame(width: 40, height: 40)
                     .overlay(
@@ -124,9 +131,9 @@ struct MapView: View {
         .animation(AppleAnimations.spring, value: selectedAnnotation == result)
         .onTapGesture {
             withAnimation(AppleAnimations.spring) {
-                selectedAnnotation = result
-                selectedPlace = result
-                showPlaceDetails = true
+            selectedAnnotation = result
+            selectedPlace = result
+            showPlaceDetails = true
             }
             HapticFeedback.shared.impact(style: .light)
         }
@@ -161,19 +168,51 @@ struct MapView: View {
                 size: .small,
                 style: .secondary
             ) {
-                print("Profile tapped")
+                    print("Profile tapped")
                 HapticFeedback.shared.impact(style: .light)
-            }
+                }
+                .accessibilityLabel("Profile")
+            .accessibilityHint("Double tap to open profile settings")
 
             // Search Bar
-            AppleGlassSearchBar(
-                text: $searchText,
-                placeholder: "Search places, activities, or locations"
-            ) {
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(AppleColors.textSecondary)
+                    .padding(.leading, AppleSpacing.sm)
+                
+                TextField("Search places, activities, or locations", text: $searchText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textPrimary)
+                    .onSubmit {
+                        if !searchText.isEmpty {
+                            searchService.search(for: searchText)
+                        }
+                    }
+                    .accessibilityLabel("Search field")
+                    .accessibilityHint("Enter a place, activity, or location to search")
+                
                 if !searchText.isEmpty {
-                    searchService.search(for: searchText)
+                Button(action: {
+                        searchText = ""
+                        searchService.searchResults = []
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(AppleColors.textTertiary)
+                    }
+                    .accessibilityLabel("Clear search")
                 }
             }
+            .padding(.horizontal, AppleSpacing.md)
+            .padding(.vertical, AppleSpacing.sm)
+            .background(
+                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                    .fill(AppleColors.glassMedium)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                            .stroke(AppleColors.glassLight, lineWidth: 1)
+                    )
+            )
+            .appleShadow(AppleShadows.light)
 
             // Voice Search Button
             AppleGlassFAB(
@@ -184,6 +223,8 @@ struct MapView: View {
                 print("Voice search tapped")
                 HapticFeedback.shared.impact(style: .light)
             }
+            .accessibilityLabel("Voice search")
+            .accessibilityHint("Double tap to search using your voice")
         }
         .padding(.horizontal, AppleSpacing.md)
         .padding(.top, AppleSpacing.sm)
@@ -243,7 +284,15 @@ struct MapView: View {
             .padding(.vertical, AppleSpacing.md)
         }
         .frame(height: 84)
-        .glassmorphism(intensity: .medium, cornerRadius: AppleCornerRadius.xl)
+        .background(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                .fill(AppleColors.glassMedium)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                        .stroke(AppleColors.glassLight, lineWidth: 1)
+                )
+        )
+        .appleShadow(AppleShadows.medium)
         .padding(.horizontal, AppleSpacing.sm)
         .padding(.top, AppleSpacing.sm)
         .transition(.asymmetric(
@@ -270,7 +319,7 @@ struct MapView: View {
 
             // Stop button
             AppleGlassButton(
-                title: "Stop",
+                "Stop",
                 style: .destructive,
                 size: .medium
             ) {
@@ -291,7 +340,15 @@ struct MapView: View {
         .padding(.horizontal, AppleSpacing.md)
         .padding(.vertical, AppleSpacing.sm)
         .frame(height: 60)
-        .glassmorphism(intensity: .medium, cornerRadius: AppleCornerRadius.xl)
+        .background(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                .fill(AppleColors.glassMedium)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                        .stroke(AppleColors.glassLight, lineWidth: 1)
+                )
+        )
+        .appleShadow(AppleShadows.medium)
         .padding(.horizontal, AppleSpacing.sm)
         .padding(.bottom, AppleSpacing.sm)
         .transition(.asymmetric(
@@ -308,23 +365,39 @@ struct MapView: View {
             VStack(spacing: AppleSpacing.sm) {
                 // Adventure FAB
                 AppleGlassFAB(
-                    icon: "map.fill",
+                    icon: "sparkles",
                     size: .small,
                     style: .secondary
                 ) {
                     print("Adventure tapped")
                     HapticFeedback.shared.impact(style: .light)
                 }
+                .accessibilityLabel("Create Adventure")
+                .accessibilityHint("Double tap to create a new adventure")
 
                 // Layers FAB
                 AppleGlassFAB(
                     icon: "square.stack.3d.up",
-                    size: .medium,
+                    size: .small,
                     style: .secondary
                 ) {
                     print("Layers tapped")
                     HapticFeedback.shared.impact(style: .light)
                 }
+                .accessibilityLabel("Map layers")
+                .accessibilityHint("Double tap to toggle map layers")
+                
+                // Search FAB
+                AppleGlassFAB(
+                    icon: "magnifyingglass",
+                    size: .small,
+                    style: .secondary
+                ) {
+                    showSearchOverlay = true
+                    HapticFeedback.shared.impact(style: .light)
+                }
+                .accessibilityLabel("Search")
+                .accessibilityHint("Double tap to open search overlay")
             }
 
             Spacer()
@@ -332,12 +405,14 @@ struct MapView: View {
             // Locate Me FAB
             AppleGlassFAB(
                 icon: "location.fill",
-                size: .medium,
+                size: .large,
                 style: .primary
             ) {
                 locationService.centerOnUserLocation()
-                HapticFeedback.shared.impact(style: .light)
+                HapticFeedback.shared.impact(style: .medium)
             }
+            .accessibilityLabel("Center on my location")
+            .accessibilityHint("Double tap to center the map on your current location")
         }
         .padding(.horizontal, AppleSpacing.md)
         .padding(.bottom, AppleSpacing.md)
@@ -369,7 +444,20 @@ struct MapView: View {
                     .padding(.bottom, AppleSpacing.md)
                 }
                 .frame(height: isBottomSheetExpanded ? min(geometry.size.height * 0.65, 400) : 84)
-                .glassmorphism(intensity: .medium, cornerRadius: AppleCornerRadius.xl)
+                .background(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.xxl)
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: AppleCornerRadius.xxl)
+                                .fill(AppleColors.glassMedium)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: AppleCornerRadius.xxl)
+                                        .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                        .blendMode(.overlay)
+                                )
+                        )
+                )
+                .appleShadow(AppleShadows.glass)
                 .padding(.horizontal, AppleSpacing.md)
                 .padding(.bottom, AppleSpacing.md)
                 .animation(reduceMotion ? .none : AppleAnimations.complex, value: isBottomSheetExpanded)
@@ -427,7 +515,7 @@ struct MapView: View {
         HStack(spacing: AppleSpacing.sm) {
             // Fastest route chip
             AppleGlassButton(
-                title: "Fastest",
+                "Fastest",
                 icon: "bolt.fill",
                 style: navigationService.selectedRouteIndex == 0 ? .primary : .secondary,
                 size: .small
@@ -437,7 +525,7 @@ struct MapView: View {
 
             // Safest route chip
             AppleGlassButton(
-                title: "Safest",
+                "Safest",
                 icon: "shield.fill",
                 style: navigationService.selectedRouteIndex == 1 ? .primary : .secondary,
                 size: .small
@@ -456,7 +544,7 @@ struct MapView: View {
     private var routeOptions: some View {
         VStack(spacing: AppleSpacing.md) {
             ForEach(Array(navigationService.routes.enumerated()), id: \.offset) { index, route in
-                AppleGlassCard(style: .glassmorphism) {
+                AppleGlassCard(style: .elevated) {
                     HStack {
                         VStack(alignment: .leading, spacing: AppleSpacing.xs) {
                             Text(route.name)
@@ -478,8 +566,8 @@ struct MapView: View {
                     }
                 }
                 .onTapGesture {
-                    navigationService.selectRoute(at: index)
-                }
+                        navigationService.selectRoute(at: index)
+                    }
             }
         }
     }
@@ -487,7 +575,7 @@ struct MapView: View {
     private var actionButtons: some View {
         HStack(spacing: AppleSpacing.md) {
             AppleGlassButton(
-                title: "Share ETA",
+                "Share ETA",
                 icon: "square.and.arrow.up",
                 style: .secondary,
                 size: .medium
@@ -496,7 +584,7 @@ struct MapView: View {
             }
 
             AppleGlassButton(
-                title: "Start",
+                "Start",
                 icon: "play.fill",
                 style: .primary,
                 size: .medium
@@ -522,7 +610,7 @@ struct MapView: View {
                 }
 
             // Dialog content
-            AppleGlassCard(style: .glassmorphism, cornerRadius: AppleCornerRadius.lg) {
+            AppleGlassCard(style: .elevated) {
                 VStack(spacing: AppleSpacing.lg) {
                     VStack(spacing: AppleSpacing.sm) {
                         Image(systemName: "exclamationmark.triangle.fill")
@@ -541,7 +629,7 @@ struct MapView: View {
 
                     HStack(spacing: AppleSpacing.md) {
                         AppleGlassButton(
-                            title: "Cancel",
+                            "Cancel",
                             style: .secondary,
                             size: .medium
                         ) {
@@ -549,7 +637,7 @@ struct MapView: View {
                         }
 
                         AppleGlassButton(
-                            title: "Exit",
+                            "Exit",
                             style: .destructive,
                             size: .medium
                         ) {
@@ -581,10 +669,10 @@ struct MapView: View {
             VStack(spacing: 0) {
                 Spacer()
 
-                AppleGlassCard(style: .glassmorphism, cornerRadius: AppleCornerRadius.lg) {
+                AppleGlassCard(style: .elevated) {
                     VStack(spacing: 0) {
                         // Header
-                        HStack {
+                HStack {
                             Text("Navigation Options")
                                 .font(AppleTypography.title3)
                                 .foregroundColor(AppleColors.textPrimary)
@@ -604,91 +692,40 @@ struct MapView: View {
                         // Menu items
                         VStack(spacing: 0) {
                             AppleGlassListRow(
-                                showChevron: false,
+                                icon: "square.and.arrow.up",
+                                title: "Share ETA",
+                                subtitle: "Send arrival time to friends",
                                 action: {
                                     shareETA()
                                     showOverflowMenu = false
                                 }
-                            ) {
-                                HStack(spacing: AppleSpacing.md) {
-                                    Image(systemName: "square.and.arrow.up")
-                                        .font(.system(size: 20, weight: .medium))
-                                        .foregroundColor(AppleColors.accent)
-                                        .frame(width: 24)
-
-                                    VStack(alignment: .leading, spacing: AppleSpacing.xs) {
-                                        Text("Share ETA")
-                                            .font(AppleTypography.body)
-                                            .foregroundColor(AppleColors.textPrimary)
-
-                                        Text("Send arrival time to friends")
-                                            .font(AppleTypography.caption1)
-                                            .foregroundColor(AppleColors.textSecondary)
-                                    }
-
-                                    Spacer()
-                                }
-                            }
+                            )
 
                             Divider()
                                 .background(AppleColors.glassLight)
 
                             AppleGlassListRow(
-                                showChevron: false,
+                                icon: "plus.circle",
+                                title: "Add Stop",
+                                subtitle: "Add a waypoint to your route",
                                 action: {
                                     addStop()
                                     showOverflowMenu = false
                                 }
-                            ) {
-                                HStack(spacing: AppleSpacing.md) {
-                                    Image(systemName: "plus.circle")
-                                        .font(.system(size: 20, weight: .medium))
-                                        .foregroundColor(AppleColors.accent)
-                                        .frame(width: 24)
-
-                                    VStack(alignment: .leading, spacing: AppleSpacing.xs) {
-                                        Text("Add Stop")
-                                            .font(AppleTypography.body)
-                                            .foregroundColor(AppleColors.textPrimary)
-
-                                        Text("Add a waypoint to your route")
-                                            .font(AppleTypography.caption1)
-                                            .foregroundColor(AppleColors.textSecondary)
-                                    }
-
-                                    Spacer()
-                                }
-                            }
+                            )
 
                             Divider()
                                 .background(AppleColors.glassLight)
 
                             AppleGlassListRow(
-                                showChevron: false,
+                                icon: "speaker.wave.2",
+                                title: "Audio Controls",
+                                subtitle: "Adjust voice guidance settings",
                                 action: {
                                     toggleAudio()
                                     showOverflowMenu = false
                                 }
-                            ) {
-                                HStack(spacing: AppleSpacing.md) {
-                                    Image(systemName: "speaker.wave.2")
-                                        .font(.system(size: 20, weight: .medium))
-                                        .foregroundColor(AppleColors.accent)
-                                        .frame(width: 24)
-
-                                    VStack(alignment: .leading, spacing: AppleSpacing.xs) {
-                                        Text("Audio Controls")
-                                            .font(AppleTypography.body)
-                                            .foregroundColor(AppleColors.textPrimary)
-
-                                        Text("Adjust voice guidance settings")
-                                            .font(AppleTypography.caption1)
-                                            .foregroundColor(AppleColors.textSecondary)
-                                    }
-
-                                    Spacer()
-                                }
-                            }
+                            )
                         }
                     }
                 }
@@ -784,6 +821,258 @@ struct MapView: View {
     private func stopRerouteTimer() {
         rerouteTimer?.invalidate()
         rerouteTimer = nil
+    }
+    
+    // MARK: - Search Overlay
+    
+    private var searchOverlay: some View {
+        ZStack {
+            // Background blur
+            Color.black.opacity(0.3)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(AppleAnimations.spring) {
+                        showSearchOverlay = false
+                    }
+                }
+            
+            VStack(spacing: 0) {
+                // Search header
+                VStack(spacing: AppleSpacing.md) {
+                    // Drag handle
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(AppleColors.textTertiary)
+                        .frame(width: 36, height: 4)
+                        .padding(.top, AppleSpacing.sm)
+                    
+                    // Search bar
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(AppleColors.textSecondary)
+                            .padding(.leading, AppleSpacing.sm)
+                        
+                        TextField("Search places, activities, or locations", text: $searchText)
+                            .font(AppleTypography.body)
+                            .foregroundColor(AppleColors.textPrimary)
+                            .onSubmit {
+                                performMapSearch()
+                            }
+                            .accessibilityLabel("Search field")
+                            .accessibilityHint("Enter a place, activity, or location to search")
+                        
+                        if !searchText.isEmpty {
+                            Button(action: {
+                                searchText = ""
+                                searchResults = []
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(AppleColors.textTertiary)
+                            }
+                            .accessibilityLabel("Clear search")
+                        }
+                    }
+                    .padding(.horizontal, AppleSpacing.md)
+                    .padding(.vertical, AppleSpacing.sm)
+                    .background(
+                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                            .fill(AppleColors.glassMedium)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                                    .stroke(AppleColors.glassLight, lineWidth: 1)
+                            )
+                    )
+                    .appleShadow(AppleShadows.light)
+                }
+                .padding(.horizontal, AppleSpacing.md)
+                .padding(.bottom, AppleSpacing.md)
+                .background(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                                .fill(AppleColors.glassMedium)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                                        .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                        .blendMode(.overlay)
+                                )
+                        )
+                )
+                .appleShadow(AppleShadows.glass)
+                
+                // Search results
+                if !searchResults.isEmpty {
+                    ScrollView {
+                        LazyVStack(spacing: AppleSpacing.sm) {
+                            ForEach(searchResults) { result in
+                                searchResultRow(for: result)
+                            }
+                        }
+                        .padding(.horizontal, AppleSpacing.md)
+                        .padding(.top, AppleSpacing.md)
+                    }
+                    .background(
+                        RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                                    .fill(AppleColors.glassMedium)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                                            .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                            .blendMode(.overlay)
+                                    )
+                            )
+                    )
+                    .appleShadow(AppleShadows.glass)
+                    .padding(.horizontal, AppleSpacing.md)
+                    .padding(.top, AppleSpacing.sm)
+                } else if !searchText.isEmpty {
+                    // Empty state
+                    VStack(spacing: AppleSpacing.lg) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 48, weight: .light))
+                            .foregroundColor(AppleColors.textTertiary)
+                        
+                        Text("No results found")
+                            .font(AppleTypography.title3)
+                            .foregroundColor(AppleColors.textPrimary)
+                        
+                        Text("Try searching for something else")
+                            .font(AppleTypography.body)
+                            .foregroundColor(AppleColors.textSecondary)
+                    }
+                    .padding(.vertical, AppleSpacing.xl)
+                    .background(
+                        RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                                    .fill(AppleColors.glassMedium)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                                            .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                            .blendMode(.overlay)
+                                    )
+                            )
+                    )
+                    .appleShadow(AppleShadows.glass)
+                    .padding(.horizontal, AppleSpacing.md)
+                    .padding(.top, AppleSpacing.sm)
+                }
+                
+                Spacer()
+            }
+        }
+        .animation(reduceMotion ? .none : AppleAnimations.complex, value: showSearchOverlay)
+    }
+    
+    private func searchResultRow(for result: SearchResult) -> some View {
+        HStack(spacing: AppleSpacing.md) {
+            // Place icon
+            ZStack {
+                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                    .fill(AppleColors.surfaceSecondary)
+                    .frame(width: 50, height: 50)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                            .stroke(AppleColors.glassLight, lineWidth: 1)
+                    )
+                    .appleShadow(AppleShadows.light)
+                
+                Image(systemName: "location")
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundColor(AppleColors.accent)
+            }
+            
+            VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+                Text(result.name)
+                    .font(AppleTypography.bodyEmphasized)
+                    .foregroundColor(AppleColors.textPrimary)
+                    .lineLimit(1)
+                
+                Text(result.address ?? "Address not available")
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
+                    .lineLimit(2)
+            }
+            
+            Spacer()
+            
+            Button(action: {
+                selectSearchResult(result)
+            }) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(AppleColors.brandPrimary)
+            }
+            .accessibilityLabel("Add to map")
+            .accessibilityHint("Double tap to add \(result.name) to the map")
+        }
+        .padding(.horizontal, AppleSpacing.md)
+        .padding(.vertical, AppleSpacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                        .fill(AppleColors.glassMedium)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                                .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                .blendMode(.overlay)
+                        )
+                )
+        )
+        .appleShadow(AppleShadows.light)
+        .onTapGesture {
+            selectSearchResult(result)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Search result: \(result.name)")
+        .accessibilityHint("Double tap to add to map")
+        .accessibilityAddTraits(.isButton)
+    }
+    
+    private func performMapSearch() {
+        guard !searchText.isEmpty else { return }
+        
+        // TODO: Implement actual search logic
+        // For now, create mock results
+        searchResults = [
+            SearchResult(
+                name: "\(searchText) Location 1",
+                subtitle: "Popular destination",
+                address: "123 Main St, San Francisco, CA",
+                coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
+            ),
+            SearchResult(
+                name: "\(searchText) Location 2",
+                subtitle: "Highly rated",
+                address: "456 Oak Ave, San Francisco, CA",
+                coordinate: CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4094)
+            )
+        ]
+    }
+    
+    private func selectSearchResult(_ result: SearchResult) {
+        // Add to search results for display on map
+        searchService.searchResults.append(result)
+        
+        // Center map on selected location
+        withAnimation(AppleAnimations.spring) {
+            locationService.region = MKCoordinateRegion(
+                center: result.coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+            )
+        }
+        
+        // Close search overlay
+        withAnimation(AppleAnimations.spring) {
+            showSearchOverlay = false
+        }
+        
+        HapticFeedback.shared.impact(style: .medium)
     }
 }
 

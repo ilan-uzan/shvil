@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-// MARK: - Apple Glass Components
-// Following Apple's design principles with glassmorphism effects
+// MARK: - Apple Glass Components Library
+// Comprehensive glassmorphism components following Apple Design Guidelines
 
-// MARK: - Glass Button
+// MARK: - Glass Button Component
 
 struct AppleGlassButton: View {
     let title: String
@@ -18,154 +18,130 @@ struct AppleGlassButton: View {
     let action: () -> Void
     let style: ButtonStyle
     let size: ButtonSize
+    let isLoading: Bool
+    let isDisabled: Bool
     
     @State private var isPressed = false
     
     enum ButtonStyle {
         case primary
         case secondary
-        case tertiary
         case destructive
+        case ghost
     }
     
     enum ButtonSize {
         case small
         case medium
         case large
-        
-        var padding: EdgeInsets {
-            switch self {
-            case .small: EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
-            case .medium: EdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20)
-            case .large: EdgeInsets(top: 16, leading: 24, bottom: 16, trailing: 24)
-            }
-        }
-        
-        var font: Font {
-            switch self {
-            case .small: AppleTypography.footnoteEmphasized
-            case .medium: AppleTypography.bodyEmphasized
-            case .large: AppleTypography.headline
-            }
-        }
     }
     
     init(
-        title: String,
+        _ title: String,
         icon: String? = nil,
         style: ButtonStyle = .primary,
         size: ButtonSize = .medium,
+        isLoading: Bool = false,
+        isDisabled: Bool = false,
         action: @escaping () -> Void
     ) {
         self.title = title
         self.icon = icon
         self.style = style
         self.size = size
+        self.isLoading = isLoading
+        self.isDisabled = isDisabled
         self.action = action
     }
     
     var body: some View {
         Button(action: action) {
             HStack(spacing: AppleSpacing.sm) {
-                if let icon = icon {
+                if isLoading {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                        .progressViewStyle(CircularProgressViewStyle(tint: textColor))
+                } else if let icon {
                     Image(systemName: icon)
-                        .font(.system(size: 16, weight: .medium))
+                        .font(iconFont)
                 }
                 
                 Text(title)
-                    .font(size.font)
+                    .font(textFont)
+                    .fontWeight(.semibold)
             }
             .foregroundColor(textColor)
-            .padding(size.padding)
+            .padding(.horizontal, horizontalPadding)
+            .padding(.vertical, verticalPadding)
+            .frame(minHeight: minHeight)
             .background(backgroundView)
+            .scaleEffect(isPressed ? 0.98 : 1.0)
+            .opacity(isDisabled ? 0.6 : 1.0)
         }
-        .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(AppleAnimations.micro, value: isPressed)
+        .buttonStyle(PlainButtonStyle())
+        .disabled(isDisabled || isLoading)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-            isPressed = pressing
+            withAnimation(AppleAnimations.micro) {
+                isPressed = pressing
+            }
         }, perform: {})
-        .appleAccessibility(label: title, hint: "Double tap to activate")
+        .appleAccessibility(
+            label: title,
+            hint: isLoading ? "Loading..." : "Double tap to activate"
+        )
+    }
+    
+    private var textFont: Font {
+        switch size {
+        case .small: AppleTypography.footnoteEmphasized
+        case .medium: AppleTypography.bodyEmphasized
+        case .large: AppleTypography.headline
+        }
+    }
+    
+    private var iconFont: Font {
+        switch size {
+        case .small: .system(size: 14, weight: .medium)
+        case .medium: .system(size: 16, weight: .medium)
+        case .large: .system(size: 18, weight: .medium)
+        }
     }
     
     private var textColor: Color {
         switch style {
         case .primary: .white
         case .secondary: AppleColors.textPrimary
-        case .tertiary: AppleColors.accent
         case .destructive: .white
+        case .ghost: AppleColors.brandPrimary
+        }
+    }
+    
+    private var horizontalPadding: CGFloat {
+        switch size {
+        case .small: AppleSpacing.md
+        case .medium: AppleSpacing.lg
+        case .large: AppleSpacing.xl
+        }
+    }
+    
+    private var verticalPadding: CGFloat {
+        switch size {
+        case .small: AppleSpacing.sm
+        case .medium: AppleSpacing.md
+        case .large: AppleSpacing.lg
+        }
+    }
+    
+    private var minHeight: CGFloat {
+        switch size {
+        case .small: 32
+        case .medium: 44
+        case .large: 52
         }
     }
     
     private var backgroundView: some View {
         RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-            .fill(backgroundColor)
-            .overlay(
-                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                    .stroke(highlightColor, lineWidth: 1)
-            )
-            .appleShadow(shadow)
-    }
-    
-    private var backgroundColor: Color {
-        switch style {
-        case .primary: AppleColors.brandPrimary
-        case .secondary: AppleColors.glassMedium
-        case .tertiary: Color.clear
-        case .destructive: AppleColors.danger
-        }
-    }
-    
-    private var highlightColor: Color {
-        switch style {
-        case .primary: Color.white.opacity(0.2)
-        case .secondary: Color.white.opacity(0.1)
-        case .tertiary: AppleColors.accent.opacity(0.3)
-        case .destructive: Color.white.opacity(0.2)
-        }
-    }
-    
-    private var shadow: Shadow {
-        switch style {
-        case .primary: AppleShadows.medium
-        case .secondary: AppleShadows.light
-        case .tertiary: AppleShadows.light
-        case .destructive: AppleShadows.medium
-        }
-    }
-}
-
-// MARK: - Glass Card
-
-struct AppleGlassCard<Content: View>: View {
-    let content: Content
-    let style: CardStyle
-    let cornerRadius: CGFloat
-    
-    enum CardStyle {
-        case elevated
-        case filled
-        case outlined
-        case glassmorphism
-    }
-    
-    init(
-        style: CardStyle = .glassmorphism,
-        cornerRadius: CGFloat = AppleCornerRadius.lg,
-        @ViewBuilder content: () -> Content
-    ) {
-        self.style = style
-        self.cornerRadius = cornerRadius
-        self.content = content()
-    }
-    
-    var body: some View {
-        content
-            .padding(AppleSpacing.md)
-            .background(backgroundView)
-    }
-    
-    private var backgroundView: some View {
-        RoundedRectangle(cornerRadius: cornerRadius)
             .fill(backgroundColor)
             .overlay(overlayView)
             .appleShadow(shadow)
@@ -173,16 +149,98 @@ struct AppleGlassCard<Content: View>: View {
     
     private var backgroundColor: Color {
         switch style {
-        case .elevated: AppleColors.surfaceSecondary
-        case .filled: AppleColors.surfaceTertiary
-        case .outlined: Color.clear
-        case .glassmorphism: AppleColors.glassMedium
+        case .primary: AppleColors.brandPrimary
+        case .secondary: AppleColors.surfaceSecondary
+        case .destructive: AppleColors.danger
+        case .ghost: Color.clear
         }
     }
     
     private var overlayView: some View {
-        RoundedRectangle(cornerRadius: cornerRadius)
-            .stroke(AppleColors.glassLight, lineWidth: 1)
+        Group {
+            if style == .ghost {
+                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                    .stroke(AppleColors.brandPrimary, lineWidth: 1)
+            } else if style == .secondary {
+                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                    .stroke(AppleColors.strokeLight, lineWidth: 1)
+            }
+        }
+    }
+    
+    private var shadow: Shadow {
+        switch style {
+        case .primary: AppleShadows.medium
+        case .secondary: AppleShadows.light
+        case .destructive: AppleShadows.medium
+        case .ghost: AppleShadows.none
+        }
+    }
+}
+
+// MARK: - Glass Card Component
+
+struct AppleGlassCard<Content: View>: View {
+    let content: Content
+    let style: CardStyle
+    let isInteractive: Bool
+    
+    enum CardStyle {
+        case elevated
+        case filled
+        case outlined
+        case floating
+    }
+    
+    init(style: CardStyle = .elevated, isInteractive: Bool = false, @ViewBuilder content: () -> Content) {
+        self.style = style
+        self.isInteractive = isInteractive
+        self.content = content()
+    }
+    
+    var body: some View {
+        content
+            .padding(AppleSpacing.md)
+            .background(backgroundView)
+            .appleShadow(shadow)
+    }
+    
+    private var backgroundView: some View {
+        RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+            .fill(backgroundColor)
+            .overlay(overlayView)
+    }
+    
+    private var backgroundColor: Color {
+        switch style {
+        case .elevated: AppleColors.surfaceSecondary
+        case .filled: AppleColors.surfaceTertiary
+        case .outlined: Color.clear
+        case .floating: AppleColors.surface
+        }
+    }
+    
+    private var overlayView: some View {
+        RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+            .stroke(strokeColor, lineWidth: strokeWidth)
+    }
+    
+    private var strokeColor: Color {
+        switch style {
+        case .elevated: AppleColors.glassLight
+        case .filled: AppleColors.strokeLight
+        case .outlined: AppleColors.brandPrimary
+        case .floating: AppleColors.strokeHairline
+        }
+    }
+    
+    private var strokeWidth: CGFloat {
+        switch style {
+        case .elevated: 1
+        case .filled: 1
+        case .outlined: 2
+        case .floating: 0.5
+        }
     }
     
     private var shadow: Shadow {
@@ -190,18 +248,545 @@ struct AppleGlassCard<Content: View>: View {
         case .elevated: AppleShadows.medium
         case .filled: AppleShadows.light
         case .outlined: AppleShadows.light
-        case .glassmorphism: AppleShadows.glass
+        case .floating: AppleShadows.glass
         }
     }
 }
 
-// MARK: - Glass FAB (Floating Action Button)
+// MARK: - Glass Chip Component
+
+struct AppleGlassChip: View {
+    let title: String
+    let icon: String?
+    let isSelected: Bool
+    let action: () -> Void
+    
+    @State private var isPressed = false
+    
+    init(
+        _ title: String,
+        icon: String? = nil,
+        isSelected: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.icon = icon
+        self.isSelected = isSelected
+        self.action = action
+    }
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: AppleSpacing.xs) {
+                if let icon {
+                    Image(systemName: icon)
+                        .font(.system(size: 14, weight: .medium))
+                }
+                
+                Text(title)
+                    .font(AppleTypography.footnoteEmphasized)
+            }
+            .foregroundColor(textColor)
+            .padding(.horizontal, AppleSpacing.md)
+            .padding(.vertical, AppleSpacing.sm)
+            .background(backgroundView)
+            .scaleEffect(isPressed ? 0.95 : 1.0)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
+            withAnimation(AppleAnimations.micro) {
+                isPressed = pressing
+            }
+        }, perform: {})
+        .appleAccessibility(
+            label: title,
+            hint: isSelected ? "Selected" : "Double tap to select"
+        )
+    }
+    
+    private var textColor: Color {
+        isSelected ? .white : AppleColors.textPrimary
+    }
+    
+    private var backgroundView: some View {
+        Capsule()
+            .fill(backgroundColor)
+            .overlay(overlayView)
+    }
+    
+    private var backgroundColor: Color {
+        isSelected ? AppleColors.brandPrimary : AppleColors.surfaceSecondary
+    }
+    
+    private var overlayView: some View {
+        Capsule()
+            .stroke(AppleColors.brandPrimary, lineWidth: isSelected ? 0 : 1)
+    }
+}
+
+// MARK: - Glass Sheet Component
+
+struct AppleGlassSheet<Content: View>: View {
+    let content: Content
+    let isPresented: Binding<Bool>
+    let title: String?
+    let height: SheetHeight
+    
+    enum SheetHeight {
+        case small
+        case medium
+        case large
+        case custom(CGFloat)
+    }
+    
+    init(
+        isPresented: Binding<Bool>,
+        title: String? = nil,
+        height: SheetHeight = .medium,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.isPresented = isPresented
+        self.title = title
+        self.height = height
+        self.content = content()
+    }
+    
+    var body: some View {
+        ZStack {
+            if isPresented.wrappedValue {
+                // Backdrop
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation(AppleAnimations.standard) {
+                            isPresented.wrappedValue = false
+                        }
+                    }
+                
+                // Sheet Content
+                VStack(spacing: 0) {
+                    // Handle
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(AppleColors.textTertiary)
+                        .frame(width: 36, height: 4)
+                        .padding(.top, AppleSpacing.sm)
+                    
+                    // Title
+                    if let title {
+                        Text(title)
+                            .font(AppleTypography.title3)
+                            .foregroundColor(AppleColors.textPrimary)
+                            .padding(.top, AppleSpacing.md)
+                    }
+                    
+                    // Content
+                    content
+                        .padding(.horizontal, AppleSpacing.md)
+                        .padding(.bottom, AppleSpacing.lg)
+                }
+                .frame(maxHeight: sheetHeight)
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.xxl, style: .continuous)
+                        .fill(AppleColors.surface)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: AppleCornerRadius.xxl, style: .continuous)
+                                .stroke(AppleColors.strokeHairline, lineWidth: 0.5)
+                        )
+                )
+                .appleShadow(AppleShadows.glass)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .animation(AppleAnimations.spring, value: isPresented.wrappedValue)
+            }
+        }
+    }
+    
+    private var sheetHeight: CGFloat {
+        switch height {
+        case .small: 300
+        case .medium: 400
+        case .large: 600
+        case .custom(let height): height
+        }
+    }
+}
+
+// MARK: - Glass Navigation Bar Component
+
+struct AppleGlassNavBar: View {
+    let title: String
+    let leadingButton: NavBarButton?
+    let trailingButton: NavBarButton?
+    
+    struct NavBarButton {
+        let icon: String
+        let action: () -> Void
+    }
+    
+    init(
+        title: String,
+        leadingButton: NavBarButton? = nil,
+        trailingButton: NavBarButton? = nil
+    ) {
+        self.title = title
+        self.leadingButton = leadingButton
+        self.trailingButton = trailingButton
+    }
+    
+    var body: some View {
+        HStack {
+            // Leading Button
+            if let leadingButton {
+                Button(action: leadingButton.action) {
+                    Image(systemName: leadingButton.icon)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(AppleColors.textPrimary)
+                        .frame(width: 44, height: 44)
+                }
+            } else {
+                Spacer()
+                    .frame(width: 44)
+            }
+            
+            // Title
+            Text(title)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
+                .frame(maxWidth: .infinity)
+            
+            // Trailing Button
+            if let trailingButton {
+                Button(action: trailingButton.action) {
+                    Image(systemName: trailingButton.icon)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(AppleColors.textPrimary)
+                        .frame(width: 44, height: 44)
+                }
+            } else {
+                Spacer()
+                    .frame(width: 44)
+            }
+        }
+        .padding(.horizontal, AppleSpacing.md)
+        .padding(.vertical, AppleSpacing.sm)
+        .background(
+            Rectangle()
+                .fill(AppleColors.surface)
+                .overlay(
+                    Rectangle()
+                        .fill(AppleColors.strokeHairline)
+                        .frame(height: 0.5),
+                    alignment: .bottom
+                )
+        )
+        .appleShadow(AppleShadows.light)
+    }
+}
+
+// MARK: - Glass Status Indicator
+
+struct AppleGlassStatusIndicator: View {
+    let status: Status
+    let message: String?
+    
+    enum Status {
+        case success
+        case warning
+        case error
+        case info
+        case loading
+    }
+    
+    init(status: Status, message: String? = nil) {
+        self.status = status
+        self.message = message
+    }
+    
+    var body: some View {
+        HStack(spacing: AppleSpacing.sm) {
+            // Status Icon
+            Group {
+                if status == .loading {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                        .progressViewStyle(CircularProgressViewStyle(tint: iconColor))
+                } else {
+                    Image(systemName: iconName)
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(iconColor)
+                }
+            }
+            
+            // Message
+            if let message {
+                Text(message)
+                    .font(AppleTypography.footnote)
+                    .foregroundColor(AppleColors.textPrimary)
+            }
+        }
+        .padding(.horizontal, AppleSpacing.md)
+        .padding(.vertical, AppleSpacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                .fill(backgroundColor)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                        .stroke(AppleColors.strokeLight, lineWidth: 1)
+                )
+        )
+        .appleShadow(AppleShadows.light)
+    }
+    
+    private var iconName: String {
+        switch status {
+        case .success: "checkmark.circle.fill"
+        case .warning: "exclamationmark.triangle.fill"
+        case .error: "xmark.circle.fill"
+        case .info: "info.circle.fill"
+        case .loading: ""
+        }
+    }
+    
+    private var iconColor: Color {
+        switch status {
+        case .success: AppleColors.success
+        case .warning: AppleColors.warning
+        case .error: AppleColors.danger
+        case .info: AppleColors.info
+        case .loading: AppleColors.brandPrimary
+        }
+    }
+    
+    private var backgroundColor: Color {
+        switch status {
+        case .success: AppleColors.success.opacity(0.1)
+        case .warning: AppleColors.warning.opacity(0.1)
+        case .error: AppleColors.danger.opacity(0.1)
+        case .info: AppleColors.info.opacity(0.1)
+        case .loading: AppleColors.brandPrimary.opacity(0.1)
+        }
+    }
+}
+
+// MARK: - Glass Loading Indicator
+
+struct AppleGlassLoadingIndicator: View {
+    let message: String?
+    let style: LoadingStyle
+    
+    enum LoadingStyle {
+        case circular
+        case linear
+        case dots
+    }
+    
+    init(message: String? = nil, style: LoadingStyle = .circular) {
+        self.message = message
+        self.style = style
+    }
+    
+    var body: some View {
+        VStack(spacing: AppleSpacing.md) {
+            // Loading Indicator
+            Group {
+                switch style {
+                case .circular:
+                    ProgressView()
+                        .scaleEffect(1.2)
+                        .progressViewStyle(CircularProgressViewStyle(tint: AppleColors.brandPrimary))
+                case .linear:
+                    ProgressView()
+                        .progressViewStyle(LinearProgressViewStyle(tint: AppleColors.brandPrimary))
+                case .dots:
+                    HStack(spacing: 4) {
+                        ForEach(0..<3) { index in
+                            Circle()
+                                .fill(AppleColors.brandPrimary)
+                                .frame(width: 8, height: 8)
+                                .scaleEffect(animationScale(for: index))
+                                .animation(
+                                    Animation.easeInOut(duration: 0.6)
+                                        .repeatForever()
+                                        .delay(Double(index) * 0.2),
+                                    value: animationScale(for: index)
+                                )
+                        }
+                    }
+                }
+            }
+            
+            // Message
+            if let message {
+                Text(message)
+                    .font(AppleTypography.footnote)
+                    .foregroundColor(AppleColors.textSecondary)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .padding(AppleSpacing.lg)
+        .background(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                .fill(AppleColors.surface)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                        .stroke(AppleColors.strokeHairline, lineWidth: 0.5)
+                )
+        )
+        .appleShadow(AppleShadows.light)
+    }
+    
+    private func animationScale(for index: Int) -> CGFloat {
+        // This would be animated in a real implementation
+        1.0
+    }
+}
+
+// MARK: - Glass Progress Bar
+
+struct AppleGlassProgressBar: View {
+    let progress: Double
+    let total: Double
+    let style: ProgressStyle
+    
+    enum ProgressStyle {
+        case linear
+        case circular
+    }
+    
+    init(progress: Double, total: Double = 1.0, style: ProgressStyle = .linear) {
+        self.progress = progress
+        self.total = total
+        self.style = style
+    }
+    
+    var body: some View {
+        Group {
+            switch style {
+            case .linear:
+                linearProgress
+            case .circular:
+                circularProgress
+            }
+        }
+    }
+    
+    private var linearProgress: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                // Background
+                RoundedRectangle(cornerRadius: AppleCornerRadius.sm)
+                    .fill(AppleColors.surfaceSecondary)
+                
+                // Progress
+                RoundedRectangle(cornerRadius: AppleCornerRadius.sm)
+                    .fill(AppleColors.brandPrimary)
+                    .frame(width: geometry.size.width * progressRatio)
+                    .animation(AppleAnimations.standard, value: progressRatio)
+            }
+        }
+        .frame(height: 8)
+    }
+    
+    private var circularProgress: some View {
+        ZStack {
+            // Background Circle
+            Circle()
+                .stroke(AppleColors.surfaceSecondary, lineWidth: 4)
+            
+            // Progress Circle
+            Circle()
+                .trim(from: 0, to: progressRatio)
+                .stroke(
+                    AppleColors.brandPrimary,
+                    style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+                .animation(AppleAnimations.standard, value: progressRatio)
+        }
+        .frame(width: 40, height: 40)
+    }
+    
+    private var progressRatio: Double {
+        min(max(progress / total, 0), 1)
+    }
+}
+
+// MARK: - Glass Empty State
+
+struct AppleGlassEmptyState: View {
+    let title: String
+    let description: String
+    let icon: String?
+    let actionTitle: String?
+    let action: (() -> Void)?
+    
+    init(
+        title: String,
+        description: String,
+        icon: String? = nil,
+        actionTitle: String? = nil,
+        action: (() -> Void)? = nil
+    ) {
+        self.title = title
+        self.description = description
+        self.icon = icon
+        self.actionTitle = actionTitle
+        self.action = action
+    }
+    
+    var body: some View {
+        VStack(spacing: AppleSpacing.lg) {
+            // Icon
+            if let icon {
+                Image(systemName: icon)
+                    .font(.system(size: 48, weight: .light))
+                    .foregroundColor(AppleColors.textTertiary)
+            }
+            
+            // Content
+            VStack(spacing: AppleSpacing.sm) {
+                Text(title)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
+                    .multilineTextAlignment(.center)
+                
+                Text(description)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
+                    .multilineTextAlignment(.center)
+            }
+            
+            // Action Button
+            if let actionTitle, let action {
+                AppleGlassButton(
+                    actionTitle,
+                    style: .primary,
+                    size: .medium,
+                    action: action
+                )
+            }
+        }
+        .padding(AppleSpacing.xl)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                .fill(AppleColors.surface)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                        .stroke(AppleColors.strokeHairline, lineWidth: 0.5)
+                )
+        )
+        .appleShadow(AppleShadows.light)
+    }
+}
+
+// MARK: - Floating Action Button (FAB)
 
 struct AppleGlassFAB: View {
     let icon: String
-    let action: () -> Void
     let size: FABSize
     let style: FABStyle
+    let action: () -> Void
     
     @State private var isPressed = false
     
@@ -209,28 +794,12 @@ struct AppleGlassFAB: View {
         case small
         case medium
         case large
-        
-        var frame: CGFloat {
-            switch self {
-            case .small: 44
-            case .medium: 56
-            case .large: 64
-            }
-        }
-        
-        var iconSize: CGFloat {
-            switch self {
-            case .small: 16
-            case .medium: 20
-            case .large: 24
-            }
-        }
     }
     
     enum FABStyle {
         case primary
         case secondary
-        case tertiary
+        case destructive
     }
     
     init(
@@ -248,446 +817,172 @@ struct AppleGlassFAB: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: icon)
-                .font(.system(size: size.iconSize, weight: .medium))
+                .font(iconFont)
                 .foregroundColor(textColor)
+                .frame(width: buttonSize, height: buttonSize)
+                .background(backgroundView)
+                .scaleEffect(isPressed ? 0.95 : 1.0)
+                .animation(.easeInOut(duration: 0.1), value: isPressed)
         }
-        .frame(width: size.frame, height: size.frame)
-        .background(backgroundView)
-        .scaleEffect(isPressed ? 1.05 : 1.0)
-        .animation(AppleAnimations.spring, value: isPressed)
+        .buttonStyle(PlainButtonStyle())
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
-        .appleAccessibility(label: "Floating action button", hint: "Double tap to activate")
+    }
+    
+    private var buttonSize: CGFloat {
+        switch size {
+        case .small: return 44
+        case .medium: return 56
+        case .large: return 64
+        }
+    }
+    
+    private var iconFont: Font {
+        switch size {
+        case .small: return .system(size: 16, weight: .semibold)
+        case .medium: return .system(size: 20, weight: .semibold)
+        case .large: return .system(size: 24, weight: .semibold)
+        }
     }
     
     private var textColor: Color {
         switch style {
-        case .primary: .white
-        case .secondary: AppleColors.textPrimary
-        case .tertiary: AppleColors.accent
+        case .primary: return .white
+        case .secondary: return .primary
+        case .destructive: return .white
         }
     }
     
     private var backgroundView: some View {
-        Circle()
+        RoundedRectangle(cornerRadius: buttonSize / 2)
             .fill(backgroundColor)
             .overlay(
-                Circle()
-                    .stroke(highlightColor, lineWidth: 1)
+                RoundedRectangle(cornerRadius: buttonSize / 2)
+                    .stroke(strokeColor, lineWidth: 1)
             )
-            .appleShadow(shadow)
+            .shadow(
+                color: shadowColor,
+                radius: shadowRadius,
+                x: 0,
+                y: shadowOffset
+            )
     }
     
     private var backgroundColor: Color {
         switch style {
-        case .primary: AppleColors.brandPrimary
-        case .secondary: AppleColors.glassMedium
-        case .tertiary: Color.clear
+        case .primary: return .blue
+        case .secondary: return Color(.systemBackground)
+        case .destructive: return .red
         }
     }
     
-    private var highlightColor: Color {
+    private var strokeColor: Color {
         switch style {
-        case .primary: Color.white.opacity(0.2)
-        case .secondary: Color.white.opacity(0.1)
-        case .tertiary: AppleColors.accent.opacity(0.3)
+        case .primary: return .clear
+        case .secondary: return Color(.separator)
+        case .destructive: return .clear
         }
     }
     
-    private var shadow: Shadow {
+    private var shadowColor: Color {
         switch style {
-        case .primary: AppleShadows.medium
-        case .secondary: AppleShadows.light
-        case .tertiary: AppleShadows.light
+        case .primary: return .blue.opacity(0.3)
+        case .secondary: return .black.opacity(0.1)
+        case .destructive: return .red.opacity(0.3)
+        }
+    }
+    
+    private var shadowRadius: CGFloat {
+        switch size {
+        case .small: return 4
+        case .medium: return 8
+        case .large: return 12
+        }
+    }
+    
+    private var shadowOffset: CGFloat {
+        switch size {
+        case .small: return 2
+        case .medium: return 4
+        case .large: return 6
         }
     }
 }
 
-// MARK: - Glass Bottom Sheet
+// MARK: - List Row Component
 
-struct AppleGlassBottomSheet<Content: View>: View {
-    @Binding var isPresented: Bool
-    let content: Content
-    let height: CGFloat
-    let cornerRadius: CGFloat
-    
-    init(
-        isPresented: Binding<Bool>,
-        height: CGFloat = 300,
-        cornerRadius: CGFloat = AppleCornerRadius.xl,
-        @ViewBuilder content: () -> Content
-    ) {
-        _isPresented = isPresented
-        self.height = height
-        self.cornerRadius = cornerRadius
-        self.content = content()
-    }
-    
-    var body: some View {
-        VStack {
-            Spacer()
-            
-            VStack(spacing: 0) {
-                // Handle
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(AppleColors.textTertiary)
-                    .frame(width: 40, height: 4)
-                    .padding(.top, AppleSpacing.sm)
-                    .padding(.bottom, AppleSpacing.md)
-                
-                content
-                    .padding(.horizontal, AppleSpacing.md)
-                    .padding(.bottom, AppleSpacing.md)
-            }
-            .frame(height: height)
-            .background(backgroundView)
-        }
-        .background(
-            Color.black.opacity(isPresented ? 0.3 : 0)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    isPresented = false
-                }
-        )
-        .opacity(isPresented ? 1 : 0)
-        .animation(AppleAnimations.complex, value: isPresented)
-    }
-    
-    private var backgroundView: some View {
-        RoundedRectangle(cornerRadius: cornerRadius)
-            .fill(AppleColors.surfaceSecondary)
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(AppleColors.glassLight, lineWidth: 1)
-            )
-            .appleShadow(AppleShadows.heavy)
-    }
-}
-
-// MARK: - Glass Search Bar
-
-struct AppleGlassSearchBar: View {
-    @Binding var text: String
-    let placeholder: String
-    let onSearchButtonClicked: (() -> Void)?
-    
-    @FocusState private var isFocused: Bool
-    
-    init(
-        text: Binding<String>,
-        placeholder: String = "Search",
-        onSearchButtonClicked: (() -> Void)? = nil
-    ) {
-        _text = text
-        self.placeholder = placeholder
-        self.onSearchButtonClicked = onSearchButtonClicked
-    }
-    
-    var body: some View {
-        HStack(spacing: AppleSpacing.sm) {
-            Image(systemName: "magnifyingglass")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(AppleColors.textSecondary)
-            
-            TextField(placeholder, text: $text)
-                .font(AppleTypography.body)
-                .foregroundColor(AppleColors.textPrimary)
-                .textFieldStyle(PlainTextFieldStyle())
-                .focused($isFocused)
-                .onSubmit {
-                    onSearchButtonClicked?()
-                }
-            
-            if !text.isEmpty {
-                Button(action: {
-                    text = ""
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(AppleColors.textTertiary)
-                }
-            }
-        }
-        .padding(.horizontal, AppleSpacing.md)
-        .padding(.vertical, AppleSpacing.sm)
-        .background(backgroundView)
-    }
-    
-    private var backgroundView: some View {
-        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-            .fill(AppleColors.glassMedium)
-            .overlay(
-                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                    .stroke(AppleColors.glassLight, lineWidth: 1)
-            )
-            .appleShadow(AppleShadows.light)
-    }
-}
-
-// MARK: - Glass List Row
-
-struct AppleGlassListRow<Content: View>: View {
-    let content: Content
-    let action: (() -> Void)?
-    let showChevron: Bool
-    
-    init(
-        showChevron: Bool = true,
-        action: (() -> Void)? = nil,
-        @ViewBuilder content: () -> Content
-    ) {
-        self.showChevron = showChevron
-        self.action = action
-        self.content = content()
-    }
-    
-    var body: some View {
-        Button(action: action ?? {}) {
-            HStack(spacing: AppleSpacing.md) {
-                content
-                
-                if showChevron && action != nil {
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(AppleColors.textTertiary)
-                }
-            }
-            .padding(.horizontal, AppleSpacing.md)
-            .padding(.vertical, AppleSpacing.sm)
-        }
-        .buttonStyle(PlainButtonStyle())
-        .foregroundColor(AppleColors.textPrimary)
-    }
-}
-
-// MARK: - Glass Progress Bar
-
-struct AppleGlassProgressBar: View {
-    let progress: Double
-    let height: CGFloat
-    let color: Color
-    let showPercentage: Bool
-    
-    @State private var animatedProgress: Double = 0
-    
-    init(
-        progress: Double,
-        height: CGFloat = 8,
-        color: Color = AppleColors.accent,
-        showPercentage: Bool = false
-    ) {
-        self.progress = max(0, min(1, progress))
-        self.height = height
-        self.color = color
-        self.showPercentage = showPercentage
-    }
-    
-    var body: some View {
-        VStack(spacing: AppleSpacing.xs) {
-            if showPercentage {
-                HStack {
-                    Text("\(Int(progress * 100))%")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
-                    Spacer()
-                }
-            }
-            
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    // Background track
-                    RoundedRectangle(cornerRadius: height / 2)
-                        .fill(AppleColors.surfaceTertiary)
-                        .frame(height: height)
-                    
-                    // Progress fill
-                    RoundedRectangle(cornerRadius: height / 2)
-                        .fill(
-                            LinearGradient(
-                                colors: [color, color.opacity(0.8)],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .frame(width: geometry.size.width * animatedProgress, height: height)
-                        .appleShadow(AppleShadows.light)
-                }
-            }
-            .frame(height: height)
-        }
-        .onAppear {
-            withAnimation(AppleAnimations.complex) {
-                animatedProgress = progress
-            }
-        }
-        .onChange(of: progress) { _, newValue in
-            withAnimation(AppleAnimations.standard) {
-                animatedProgress = newValue
-            }
-        }
-    }
-}
-
-// MARK: - Glass Loading Indicator
-
-struct AppleGlassLoadingIndicator: View {
-    let size: CGFloat
-    let color: Color
-    let lineWidth: CGFloat
-    
-    @State private var isAnimating = false
-    
-    init(
-        size: CGFloat = 24,
-        color: Color = AppleColors.accent,
-        lineWidth: CGFloat = 3
-    ) {
-        self.size = size
-        self.color = color
-        self.lineWidth = lineWidth
-    }
-    
-    var body: some View {
-        Circle()
-            .trim(from: 0, to: 0.7)
-            .stroke(
-                LinearGradient(
-                    colors: [color, color.opacity(0.3)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ),
-                style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
-            )
-            .frame(width: size, height: size)
-            .rotationEffect(.degrees(isAnimating ? 360 : 0))
-            .animation(
-                .linear(duration: 1.0)
-                .repeatForever(autoreverses: false),
-                value: isAnimating
-            )
-            .onAppear {
-                isAnimating = true
-            }
-    }
-}
-
-// MARK: - Glass Status Indicator
-
-struct AppleGlassStatusIndicator: View {
-    let status: Status
-    let size: CGFloat
-    
-    @State private var isPulsing = false
-    
-    enum Status {
-        case success
-        case warning
-        case error
-        case info
-        
-        var color: Color {
-            switch self {
-            case .success: AppleColors.success
-            case .warning: AppleColors.warning
-            case .error: AppleColors.danger
-            case .info: AppleColors.info
-            }
-        }
-        
-        var icon: String {
-            switch self {
-            case .success: "checkmark.circle.fill"
-            case .warning: "exclamationmark.triangle.fill"
-            case .error: "xmark.circle.fill"
-            case .info: "info.circle.fill"
-            }
-        }
-    }
-    
-    init(status: Status, size: CGFloat = 20) {
-        self.status = status
-        self.size = size
-    }
-    
-    var body: some View {
-        Image(systemName: status.icon)
-            .font(.system(size: size, weight: .medium))
-            .foregroundColor(status.color)
-            .scaleEffect(isPulsing ? 1.1 : 1.0)
-            .animation(
-                .easeInOut(duration: 0.6)
-                .repeatForever(autoreverses: true),
-                value: isPulsing
-            )
-            .onAppear {
-                isPulsing = true
-            }
-    }
-}
-
-// MARK: - Glass Empty State
-
-struct AppleGlassEmptyState: View {
-    let icon: String
+struct AppleGlassListRow: View {
+    let icon: String?
     let title: String
-    let description: String
-    let actionTitle: String?
-    let action: (() -> Void)?
+    let subtitle: String?
+    let trailing: AnyView?
+    let action: () -> Void
+    
+    @State private var isPressed = false
     
     init(
-        icon: String,
+        icon: String? = nil,
         title: String,
-        description: String,
-        actionTitle: String? = nil,
-        action: (() -> Void)? = nil
+        subtitle: String? = nil,
+        trailing: AnyView? = nil,
+        action: @escaping () -> Void
     ) {
         self.icon = icon
         self.title = title
-        self.description = description
-        self.actionTitle = actionTitle
+        self.subtitle = subtitle
+        self.trailing = trailing
         self.action = action
     }
     
     var body: some View {
-        VStack(spacing: AppleSpacing.lg) {
-            // Icon
-            ZStack {
-                Circle()
-                    .fill(AppleColors.glassMedium)
-                    .frame(width: 80, height: 80)
+        Button(action: action) {
+            HStack(spacing: 12) {
+                if let icon = icon {
+                    Image(systemName: icon)
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(.blue)
+                        .frame(width: 24, height: 24)
+                }
                 
-                Image(systemName: icon)
-                    .font(.system(size: 32, weight: .medium))
-                    .foregroundColor(AppleColors.textSecondary)
-            }
-            
-            // Content
-            VStack(spacing: AppleSpacing.sm) {
-                Text(title)
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
-                    .multilineTextAlignment(.center)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.primary)
+                    
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                            .font(.system(size: 14, weight: .regular))
+                            .foregroundColor(.secondary)
+                    }
+                }
                 
-                Text(description)
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, AppleSpacing.xl)
+                Spacer()
+                
+                if let trailing = trailing {
+                    trailing
+                } else {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.secondary)
+                }
             }
-            
-            // Action button
-            if let actionTitle = actionTitle, let action = action {
-                AppleGlassButton(
-                    title: actionTitle,
-                    style: .primary,
-                    size: .medium,
-                    action: action
-                )
-            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(.systemBackground))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color(.separator), lineWidth: 0.5)
+                    )
+            )
+            .scaleEffect(isPressed ? 0.98 : 1.0)
+            .animation(.easeInOut(duration: 0.1), value: isPressed)
         }
-        .padding(.horizontal, AppleSpacing.xl)
-        .padding(.vertical, AppleSpacing.xxl)
+        .buttonStyle(PlainButtonStyle())
+        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
+            isPressed = pressing
+        }, perform: {})
     }
 }
