@@ -209,73 +209,7 @@ extension View {
 }
 
 // MARK: - Button Styles
-
-struct AppleButtonStyle: ButtonStyle {
-    let variant: ButtonVariant
-    let size: ButtonSize
-    
-    enum ButtonVariant {
-        case primary
-        case secondary
-        case tertiary
-        case destructive
-    }
-    
-    enum ButtonSize {
-        case small
-        case medium
-        case large
-        
-        var padding: EdgeInsets {
-            switch self {
-            case .small: EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
-            case .medium: EdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20)
-            case .large: EdgeInsets(top: 16, leading: 24, bottom: 16, trailing: 24)
-            }
-        }
-        
-        var font: Font {
-            switch self {
-            case .small: AppleTypography.footnoteEmphasized
-            case .medium: AppleTypography.bodyEmphasized
-            case .large: AppleTypography.headline
-            }
-        }
-    }
-    
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(size.font)
-            .foregroundColor(textColor)
-            .padding(size.padding)
-            .background(backgroundView)
-            .scaleEffect(1.0)
-    }
-    
-    private var textColor: Color {
-        switch variant {
-        case .primary: .white
-        case .secondary: AppleColors.textPrimary
-        case .tertiary: AppleColors.accent
-        case .destructive: .white
-        }
-    }
-    
-    private var backgroundView: some View {
-        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-            .fill(backgroundColor)
-            .appleShadow()
-    }
-    
-    private var backgroundColor: Color {
-        switch variant {
-        case .primary: AppleColors.primary
-        case .secondary: AppleColors.surfaceSecondary
-        case .tertiary: Color.clear
-        case .destructive: AppleColors.error
-        }
-    }
-}
+// Note: Button styles are implemented in AppleGlassComponents.swift
 
 // MARK: - Card Component
 

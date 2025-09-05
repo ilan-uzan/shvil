@@ -103,7 +103,7 @@ struct AdventuresView: View {
                 AppleColors.background
                     .ignoresSafeArea()
                 
-                if adventureKit.adventures.isEmpty {
+                if adventureKit.adventureHistory.isEmpty {
                     emptyState
                 } else {
                     adventuresList
@@ -145,7 +145,7 @@ struct AdventuresView: View {
     private var adventuresList: some View {
         ScrollView {
             LazyVStack(spacing: AppleSpacing.md) {
-                ForEach(adventureKit.adventures) { adventure in
+                ForEach(adventureKit.adventureHistory) { adventure in
                     adventureCard(for: adventure)
                 }
             }
@@ -185,7 +185,7 @@ struct AdventuresView: View {
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(AppleColors.accent)
                         
-                        Text(adventure.totalDuration)
+                        Text("\(adventure.totalDuration)h")
                             .font(AppleTypography.caption1)
                             .foregroundColor(AppleColors.textSecondary)
                     }
@@ -441,98 +441,8 @@ struct ProfileView: View {
     }
 }
 
-// MARK: - Settings View
-
-struct SettingsView: View {
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationView {
-            ZStack {
-                AppleColors.background
-                    .ignoresSafeArea()
-                
-                Text("Settings Content")
-                    .font(AppleTypography.title2)
-                    .foregroundColor(AppleColors.textPrimary)
-            }
-            .appleNavigationBar()
-            .navigationTitle("Settings")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    AppleGlassButton(
-                        title: "Done",
-                        style: .primary,
-                        size: .medium
-                    ) {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}
-
-// MARK: - About View
-
-struct AboutView: View {
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationView {
-            ZStack {
-                AppleColors.background
-                    .ignoresSafeArea()
-                
-                VStack(spacing: AppleSpacing.xl) {
-                    // App Icon
-                    ZStack {
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                            .fill(AppleColors.primary)
-                            .frame(width: 100, height: 100)
-                            .appleShadow(AppleShadows.heavy)
-                        
-                        Image(systemName: "map.fill")
-                            .font(.system(size: 40, weight: .medium))
-                            .foregroundColor(.white)
-                    }
-                    
-                    VStack(spacing: AppleSpacing.sm) {
-                        Text("Shvil")
-                            .font(AppleTypography.largeTitle)
-                            .foregroundColor(AppleColors.textPrimary)
-                        
-                        Text("Version 1.0.0")
-                            .font(AppleTypography.body)
-                            .foregroundColor(AppleColors.textSecondary)
-                        
-                        Text("Your adventure companion for discovering amazing places and experiences.")
-                            .font(AppleTypography.body)
-                            .foregroundColor(AppleColors.textSecondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, AppleSpacing.xl)
-                    }
-                    
-                    Spacer()
-                }
-                .padding(.top, AppleSpacing.xxl)
-            }
-            .appleNavigationBar()
-            .navigationTitle("About")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    AppleGlassButton(
-                        title: "Done",
-                        style: .primary,
-                        size: .medium
-                    ) {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}
+// MARK: - Settings and About Views
+// Note: SettingsView and AboutView are implemented in Features/SettingsView.swift
 
 #Preview {
     ContentView()
