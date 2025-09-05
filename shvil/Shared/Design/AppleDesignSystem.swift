@@ -196,7 +196,7 @@ extension View {
     }
     
     func appleShadow(_ shadow: Shadow = AppleShadows.medium) -> some View {
-        shadow(color: shadow.color, radius: shadow.radius, x: shadow.x, y: shadow.y)
+        self.shadow(color: shadow.color, radius: shadow.radius, x: shadow.x, y: shadow.y)
     }
     
     func applePadding(_ spacing: CGFloat = AppleSpacing.md) -> some View {
@@ -249,8 +249,7 @@ struct AppleButtonStyle: ButtonStyle {
             .foregroundColor(textColor)
             .padding(size.padding)
             .background(backgroundView)
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
-            .animation(AppleAnimations.micro, value: configuration.isPressed)
+            .scaleEffect(1.0)
     }
     
     private var textColor: Color {
@@ -403,19 +402,11 @@ extension View {
         value: String? = nil,
         traits: AccessibilityTraits = []
     ) -> some View {
-        var view = self
-        
-        if let label = label {
-            view = view.accessibilityLabel(label)
-        }
-        if let hint = hint {
-            view = view.accessibilityHint(hint)
-        }
-        if let value = value {
-            view = view.accessibilityValue(value)
-        }
-        
-        return view.accessibilityAddTraits(traits)
+        self
+            .accessibilityLabel(label ?? "")
+            .accessibilityHint(hint ?? "")
+            .accessibilityValue(value ?? "")
+            .accessibilityAddTraits(traits)
     }
 }
 
