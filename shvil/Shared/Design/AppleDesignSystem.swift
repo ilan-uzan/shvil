@@ -10,13 +10,13 @@ import SwiftUI
 // MARK: - Apple Design System for Shvil
 // Following Apple's Human Interface Guidelines and iOS Design Principles
 
-// MARK: - Shvil Brand Color System (Icy Ocean Blue Theme)
+// MARK: - Shvil Brand Color System (Icy Turquoise to Deep Aqua Theme)
 
 enum AppleColors {
-    // Brand Primary - Icy Ocean Blue Gradient (from app icon)
-    static let brandPrimary = Color(red: 0.498, green: 0.827, blue: 1.0) // #7FD3FF
-    static let brandPrimaryMid = Color(red: 0.224, green: 0.663, blue: 0.973) // #39A9F8
-    static let brandPrimaryDark = Color(red: 0.059, green: 0.498, blue: 0.871) // #0F7FDE
+    // Brand Primary - Icy Turquoise to Deep Aqua Gradient (Shvil Vision)
+    static let brandPrimary = Color(red: 0.4, green: 0.9, blue: 0.85) // #66E6D9 - Icy Turquoise
+    static let brandPrimaryMid = Color(red: 0.2, green: 0.7, blue: 0.8) // #33B3CC - Mid Aqua
+    static let brandPrimaryDark = Color(red: 0.1, green: 0.5, blue: 0.6) // #1A8099 - Deep Aqua
     
     // Brand Gradient
     static let brandGradient = LinearGradient(
@@ -45,11 +45,13 @@ enum AppleColors {
     static let textTertiary = Color(red: 0.227, green: 0.227, blue: 0.251).opacity(0.6)
     static let textQuaternary = Color(red: 0.227, green: 0.227, blue: 0.251).opacity(0.4)
     
-    // Glass Colors - Enhanced glassmorphism
-    static let glassLight = Color.white.opacity(0.55) // Frosted glass
-    static let glassMedium = Color.white.opacity(0.65) // Medium glass
-    static let glassHeavy = Color.white.opacity(0.75) // Heavy glass
-    static let glassInnerHighlight = Color.white.opacity(0.06) // Inner highlight
+    // Glass Colors - Enhanced Liquid Glass (Shvil Vision)
+    static let glassLight = Color.white.opacity(0.45) // Frosted glass with subtle turquoise tint
+    static let glassMedium = Color.white.opacity(0.55) // Medium glass with aqua undertones
+    static let glassHeavy = Color.white.opacity(0.65) // Heavy glass with deep aqua tint
+    static let glassInnerHighlight = Color.white.opacity(0.08) // Inner highlight for depth
+    static let glassOuterGlow = brandPrimary.opacity(0.15) // Outer glow for Liquid Glass effect
+    static let glassSpecular = Color.white.opacity(0.12) // Specular highlight for glass reflection
     
     // Stroke Colors
     static let strokeHairline = Color.black.opacity(0.06) // Hairline stroke
@@ -194,6 +196,12 @@ enum AppleAnimations {
     
     // Page transitions
     static let pageTransition = Animation.easeInOut(duration: 0.3)
+    
+    // Liquid Glass specific animations (Shvil Vision)
+    static let ripple = Animation.easeOut(duration: 0.4) // For micro-ripples on tap
+    static let glassFloat = Animation.easeInOut(duration: 0.6) // For floating glass effects
+    static let parallax = Animation.easeInOut(duration: 0.8) // For subtle parallax on scroll
+    static let liquidFlow = Animation.easeInOut(duration: 0.5) // For liquid glass transitions
 }
 
 // MARK: - Enhanced Glassmorphism Modifier
@@ -244,6 +252,12 @@ struct GlassmorphismModifier: ViewModifier {
                                 .blendMode(.overlay)
                         )
                         .overlay(
+                            // Specular highlight for glass reflection
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .stroke(AppleColors.glassSpecular, lineWidth: 0.5)
+                                .blendMode(.overlay)
+                        )
+                        .overlay(
                             // Outer stroke for definition
                             RoundedRectangle(cornerRadius: cornerRadius)
                                 .stroke(AppleColors.strokeHairline, lineWidth: 0.5)
@@ -259,6 +273,7 @@ struct GlassmorphismModifier: ViewModifier {
             .shadow(color: AppleShadows.glass.color, radius: AppleShadows.glass.radius, x: AppleShadows.glass.x, y: AppleShadows.glass.y)
             .shadow(color: AppleShadows.medium.color, radius: AppleShadows.medium.radius, x: AppleShadows.medium.x, y: AppleShadows.medium.y)
             .shadow(color: elevationShadow.color, radius: elevationShadow.radius, x: elevationShadow.x, y: elevationShadow.y)
+            .shadow(color: AppleColors.glassOuterGlow, radius: 8, x: 0, y: 0) // Liquid Glass outer glow
     }
     
     private var glassColor: Color {
@@ -755,6 +770,25 @@ extension View {
         self
             .drawingGroup()
             .compositingGroup()
+    }
+    
+    /// Adds micro-ripple effect on tap (Shvil Liquid Glass Vision)
+    func appleRippleEffect() -> some View {
+        self
+            .scaleEffect(1.0)
+            .animation(AppleAnimations.ripple, value: UUID())
+    }
+    
+    /// Adds floating glass effect (Shvil Liquid Glass Vision)
+    func appleGlassFloat() -> some View {
+        self
+            .animation(AppleAnimations.glassFloat, value: UUID())
+    }
+    
+    /// Adds subtle parallax effect on scroll (Shvil Liquid Glass Vision)
+    func appleParallax() -> some View {
+        self
+            .animation(AppleAnimations.parallax, value: UUID())
     }
 }
 
