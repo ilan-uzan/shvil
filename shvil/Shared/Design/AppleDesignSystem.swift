@@ -129,6 +129,9 @@ enum AppleCornerRadius {
 // MARK: - Shadow System (Soft multi-layer shadows)
 
 enum AppleShadows {
+    // No shadow
+    static let none = Shadow(color: Color.clear, radius: 0, x: 0, y: 0)
+    
     // Soft shadows for glassmorphism
     static let light = Shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
     static let medium = Shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
@@ -168,12 +171,14 @@ enum AppleAnimations {
     static let pageTransition = Animation.easeInOut(duration: 0.3)
 }
 
-// MARK: - Glassmorphism Modifier
+// MARK: - Enhanced Glassmorphism Modifier
+// Following Apple's Human Interface Guidelines for glassmorphism
 
 struct GlassmorphismModifier: ViewModifier {
     let intensity: GlassIntensity
     let cornerRadius: CGFloat
     let isInteractive: Bool
+    let elevation: GlassElevation
     
     enum GlassIntensity {
         case light
@@ -181,39 +186,54 @@ struct GlassmorphismModifier: ViewModifier {
         case heavy
     }
     
-    init(intensity: GlassIntensity = .medium, cornerRadius: CGFloat = AppleCornerRadius.xl, isInteractive: Bool = false) {
+    enum GlassElevation {
+        case flat
+        case raised
+        case floating
+        case modal
+    }
+    
+    init(intensity: GlassIntensity = .medium, cornerRadius: CGFloat = AppleCornerRadius.xl, isInteractive: Bool = false, elevation: GlassElevation = .raised) {
         self.intensity = intensity
         self.cornerRadius = cornerRadius
         self.isInteractive = isInteractive
+        self.elevation = elevation
     }
     
     func body(content: Content) -> some View {
         content
             .background(
                 ZStack {
-                    // Backdrop blur effect
+                    // Backdrop blur effect - Apple's recommended approach
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .fill(.ultraThinMaterial)
-                        .opacity(0.8)
+                        .opacity(backdropOpacity)
                     
-                    // Glass surface
+                    // Glass surface with proper layering
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .fill(glassColor)
                         .overlay(
-                            // Inner highlight for depth
+                            // Inner highlight for depth - Apple's specular highlight
                             RoundedRectangle(cornerRadius: cornerRadius)
                                 .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
                                 .blendMode(.overlay)
                         )
                         .overlay(
-                            // Outer stroke
+                            // Outer stroke for definition
                             RoundedRectangle(cornerRadius: cornerRadius)
                                 .stroke(AppleColors.strokeHairline, lineWidth: 0.5)
+                        )
+                        .overlay(
+                            // Interactive state overlay
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .fill(isInteractive ? Color.white.opacity(0.1) : Color.clear)
+                                .opacity(isInteractive ? 1 : 0)
                         )
                 }
             )
             .shadow(color: AppleShadows.glass.color, radius: AppleShadows.glass.radius, x: AppleShadows.glass.x, y: AppleShadows.glass.y)
             .shadow(color: AppleShadows.medium.color, radius: AppleShadows.medium.radius, x: AppleShadows.medium.x, y: AppleShadows.medium.y)
+            .shadow(color: elevationShadow.color, radius: elevationShadow.radius, x: elevationShadow.x, y: elevationShadow.y)
     }
     
     private var glassColor: Color {
@@ -223,13 +243,30 @@ struct GlassmorphismModifier: ViewModifier {
         case .heavy: AppleColors.glassHeavy
         }
     }
+    
+    private var backdropOpacity: Double {
+        switch intensity {
+        case .light: 0.6
+        case .medium: 0.8
+        case .heavy: 0.9
+        }
+    }
+    
+    private var elevationShadow: Shadow {
+        switch elevation {
+        case .flat: AppleShadows.none
+        case .raised: AppleShadows.light
+        case .floating: AppleShadows.medium
+        case .modal: AppleShadows.heavy
+        }
+    }
 }
 
 // MARK: - View Extensions
 
 extension View {
-    func glassmorphism(intensity: GlassmorphismModifier.GlassIntensity = .medium, cornerRadius: CGFloat = AppleCornerRadius.xl, isInteractive: Bool = false) -> some View {
-        modifier(GlassmorphismModifier(intensity: intensity, cornerRadius: cornerRadius, isInteractive: isInteractive))
+    func glassmorphism(intensity: GlassmorphismModifier.GlassIntensity = .medium, cornerRadius: CGFloat = AppleCornerRadius.xl, isInteractive: Bool = false, elevation: GlassmorphismModifier.GlassElevation = .raised) -> some View {
+        modifier(GlassmorphismModifier(intensity: intensity, cornerRadius: cornerRadius, isInteractive: isInteractive, elevation: elevation))
     }
     
     func appleShadow(_ shadow: Shadow = AppleShadows.medium) -> some View {
@@ -297,10 +334,12 @@ struct AppleButton: View {
                 } else if let icon = icon {
                     Image(systemName: icon)
                         .font(iconFont)
+                        .fontWeight(.medium)
                 }
                 
                 Text(title)
                     .font(buttonFont)
+                    .fontWeight(.semibold)
             }
             .foregroundColor(textColor)
             .padding(.horizontal, horizontalPadding)
@@ -308,8 +347,22 @@ struct AppleButton: View {
             .background(backgroundView)
             .opacity(isDisabled ? 0.6 : 1.0)
             .disabled(isDisabled || isLoading)
+            .scaleEffect(isLoading ? 0.98 : 1.0)
+            .animation(.easeInOut(duration: 0.1), value: isLoading)
         }
         .buttonStyle(PlainButtonStyle())
+        .accessibilityLabel(title)
+        .accessibilityHint(accessibilityHint)
+    }
+    
+    private var accessibilityHint: String {
+        if isLoading {
+            return "Loading"
+        } else if isDisabled {
+            return "Disabled"
+        } else {
+            return "Button"
+        }
     }
     
     private var buttonFont: Font {
@@ -337,6 +390,15 @@ struct AppleButton: View {
         }
     }
     
+    private var pressedTextColor: Color {
+        switch style {
+        case .primary: .white.opacity(0.8)
+        case .secondary: AppleColors.textSecondary
+        case .destructive: .white.opacity(0.8)
+        case .ghost: AppleColors.brandPrimary.opacity(0.8)
+        }
+    }
+    
     private var horizontalPadding: CGFloat {
         switch size {
         case .small: AppleSpacing.md
@@ -354,10 +416,18 @@ struct AppleButton: View {
     }
     
     private var backgroundView: some View {
-        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+        RoundedRectangle(cornerRadius: cornerRadius)
             .fill(backgroundColor)
             .overlay(overlayView)
             .appleShadow(shadow)
+    }
+    
+    private var cornerRadius: CGFloat {
+        switch size {
+        case .small: AppleCornerRadius.sm
+        case .medium: AppleCornerRadius.md
+        case .large: AppleCornerRadius.lg
+        }
     }
     
     private var backgroundColor: Color {
@@ -366,6 +436,15 @@ struct AppleButton: View {
         case .secondary: AppleColors.surfaceSecondary
         case .destructive: AppleColors.danger
         case .ghost: Color.clear
+        }
+    }
+    
+    private var pressedBackgroundColor: Color {
+        switch style {
+        case .primary: AppleColors.brandPrimary.opacity(0.8)
+        case .secondary: AppleColors.surfaceTertiary
+        case .destructive: AppleColors.danger.opacity(0.8)
+        case .ghost: AppleColors.brandPrimary.opacity(0.1)
         }
     }
     
@@ -390,6 +469,15 @@ struct AppleButton: View {
         }
     }
     
+    private var pressedShadow: Shadow {
+        switch style {
+        case .primary: AppleShadows.light
+        case .secondary: AppleShadows.none
+        case .destructive: AppleShadows.light
+        case .ghost: AppleShadows.none
+        }
+    }
+    
     private func paddingForSize(_ size: ButtonSize) -> (horizontal: CGFloat, vertical: CGFloat) {
         switch size {
         case .small: return (AppleSpacing.md, AppleSpacing.sm)
@@ -399,9 +487,6 @@ struct AppleButton: View {
     }
 }
 
-extension AppleShadows {
-    static let none = Shadow(color: Color.clear, radius: 0, x: 0, y: 0)
-}
 
 // MARK: - Card Component
 
