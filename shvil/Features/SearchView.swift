@@ -196,8 +196,9 @@ struct SearchView: View {
                         .padding(.horizontal, AppleSpacing.md)
                         
                         LazyVStack(spacing: AppleSpacing.sm) {
-                            ForEach(recentSearches, id: \.self) { search in
+                            ForEach(Array(recentSearches.enumerated()), id: \.offset) { index, search in
                                 recentSearchRow(for: search)
+                                    .id("recent-\(index)")
                             }
                         }
                         .padding(.horizontal, AppleSpacing.md)
@@ -363,8 +364,9 @@ struct SearchView: View {
 
             ScrollView {
                 LazyVStack(spacing: AppleSpacing.sm) {
-                    ForEach(searchService.searchResults) { result in
+                    ForEach(Array(searchService.searchResults.enumerated()), id: \.offset) { index, result in
                         searchResultCard(for: result)
+                            .id("result-\(index)")
                     }
                 }
                 .padding(.horizontal, AppleSpacing.md)

@@ -10,9 +10,10 @@ import MapKit
 import SwiftUI
 
 struct MapView: View {
-    @StateObject private var locationService = LocationService()
-    @StateObject private var navigationService = NavigationService()
-    @StateObject private var searchService = SearchService()
+    // Use DependencyContainer for better performance and memory management
+    @StateObject private var locationService = DependencyContainer.shared.locationService
+    @StateObject private var navigationService = DependencyContainer.shared.navigationService
+    @StateObject private var searchService = DependencyContainer.shared.searchService
 
     @State private var searchText = ""
     @State private var isSearchFocused = false
@@ -866,8 +867,9 @@ struct MapView: View {
                 if !searchResults.isEmpty {
                     ScrollView {
                         LazyVStack(spacing: AppleSpacing.sm) {
-                            ForEach(searchResults) { result in
+                            ForEach(Array(searchResults.enumerated()), id: \.offset) { index, result in
                                 searchResultRow(for: result)
+                                    .id("map-result-\(index)")
                             }
                         }
                         .padding(.horizontal, AppleSpacing.md)

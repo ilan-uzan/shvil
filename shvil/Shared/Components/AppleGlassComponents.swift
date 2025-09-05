@@ -203,6 +203,7 @@ struct AppleGlassCard<Content: View>: View {
             .padding(AppleSpacing.md)
             .background(backgroundView)
             .appleShadow(shadow)
+            .applePerformanceOptimized() // Add performance optimization
     }
     
     private var backgroundView: some View {

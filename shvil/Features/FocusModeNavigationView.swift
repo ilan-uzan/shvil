@@ -12,9 +12,9 @@ import CoreLocation
 /// Complete Focus Mode navigation interface with top slab and bottom bar
 struct FocusModeNavigationView: View {
     // MARK: - Dependencies
-    @StateObject private var routingEngine = RoutingEngine()
-    @StateObject private var locationService = LocationService()
-    @StateObject private var hapticFeedback = HapticFeedback()
+    @StateObject private var routingEngine = DependencyContainer.shared.routingEngine
+    @StateObject private var locationService = DependencyContainer.shared.locationService
+    @StateObject private var hapticFeedback = DependencyContainer.shared.hapticFeedback
     @StateObject private var smartStopsService = SmartStopsService(
         contextEngine: ContextEngine(),
         locationService: LocationService()
