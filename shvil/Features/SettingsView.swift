@@ -89,7 +89,7 @@ struct SettingsView: View {
                 }
                 
                 // Sign In/Out Button
-                AppleGlassButton(
+                AppleButton(
                     authService.isAuthenticated ? "Sign Out" : "Sign In",
                     icon: authService.isAuthenticated ? "arrow.right.square" : "person.badge.plus",
                     style: authService.isAuthenticated ? .destructive : .primary,
@@ -452,12 +452,12 @@ struct LocationSettingsView: View {
                     // Location Permission Status
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Location Services")
-                            .font(LiquidGlassTypography.titleXL)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.largeTitle)
+                            .foregroundColor(AppleColors.textPrimary)
 
                         Text("Shvil needs access to your location to provide navigation and location-based features.")
-                            .font(LiquidGlassTypography.body)
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .font(AppleTypography.body)
+                            .foregroundColor(AppleColors.textSecondary)
 
                         HStack {
                             Image(systemName: locationStatusIcon)
@@ -465,22 +465,22 @@ struct LocationSettingsView: View {
                                 .foregroundColor(locationStatusColor)
 
                             Text(locationStatusText)
-                                .font(LiquidGlassTypography.bodySemibold)
-                                .foregroundColor(LiquidGlassColors.primaryText)
+                                .font(AppleTypography.bodySemibold)
+                                .foregroundColor(AppleColors.textPrimary)
                         }
                         .padding(16)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(locationStatusColor.opacity(0.1))
-                                .glassEffect(elevation: .light)
+                                .glassmorphism(intensity: .light, cornerRadius: 12)
                         )
                     }
 
                     // Location Features
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Location Features")
-                            .font(LiquidGlassTypography.title)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.title3)
+                            .foregroundColor(AppleColors.textPrimary)
 
                         VStack(spacing: 12) {
                             LocationFeatureRow(
@@ -510,13 +510,13 @@ struct LocationSettingsView: View {
                             HapticFeedback.shared.impact(style: .medium)
                         }) {
                             Text("Open Settings")
-                                .font(LiquidGlassTypography.bodySemibold)
+                                .font(AppleTypography.bodySemibold)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(16)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(LiquidGlassGradients.primaryGradient)
+                                        .fill(AppleColors.brandGradient)
                                 )
                         }
                     }
@@ -530,7 +530,7 @@ struct LocationSettingsView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                    .foregroundColor(AppleColors.brandPrimary)
                 }
             }
         }
@@ -583,12 +583,12 @@ struct LocationFeatureRow: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodySemibold)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Text(description)
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
             }
 
             Spacer()
@@ -600,8 +600,8 @@ struct LocationFeatureRow: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(LiquidGlassColors.glassSurface1)
-                .glassEffect(elevation: .light)
+                .fill(AppleColors.surfaceTertiary)
+                .glassmorphism(intensity: .light, cornerRadius: 12)
         )
     }
 }
@@ -617,12 +617,12 @@ struct NotificationSettingsView: View {
                     // Notification Permission Status
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Notifications")
-                            .font(LiquidGlassTypography.titleXL)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.largeTitle)
+                            .foregroundColor(AppleColors.textPrimary)
 
                         Text("Stay updated with important information about your navigation and social features.")
-                            .font(LiquidGlassTypography.body)
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .font(AppleTypography.body)
+                            .foregroundColor(AppleColors.textSecondary)
 
                         HStack {
                             Image(systemName: notificationStatusIcon)
@@ -630,22 +630,22 @@ struct NotificationSettingsView: View {
                                 .foregroundColor(notificationStatusColor)
 
                             Text(notificationStatusText)
-                                .font(LiquidGlassTypography.bodySemibold)
-                                .foregroundColor(LiquidGlassColors.primaryText)
+                                .font(AppleTypography.bodySemibold)
+                                .foregroundColor(AppleColors.textPrimary)
                         }
                         .padding(16)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(notificationStatusColor.opacity(0.1))
-                                .glassEffect(elevation: .light)
+                                .glassmorphism(intensity: .light, cornerRadius: 12)
                         )
                     }
 
                     // Notification Types
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Notification Types")
-                            .font(LiquidGlassTypography.title)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.title3)
+                            .foregroundColor(AppleColors.textPrimary)
 
                         VStack(spacing: 12) {
                             NotificationTypeRow(
@@ -675,13 +675,13 @@ struct NotificationSettingsView: View {
                             HapticFeedback.shared.impact(style: .medium)
                         }) {
                             Text("Open Settings")
-                                .font(LiquidGlassTypography.bodySemibold)
+                                .font(AppleTypography.bodySemibold)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(16)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(LiquidGlassGradients.primaryGradient)
+                                        .fill(AppleColors.brandGradient)
                                 )
                         }
                     }
@@ -695,7 +695,7 @@ struct NotificationSettingsView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                    .foregroundColor(AppleColors.brandPrimary)
                 }
             }
         }
@@ -744,12 +744,12 @@ struct NotificationTypeRow: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodySemibold)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Text(description)
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
             }
 
             Spacer()
@@ -761,8 +761,8 @@ struct NotificationTypeRow: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(LiquidGlassColors.glassSurface1)
-                .glassEffect(elevation: .light)
+                .fill(AppleColors.surfaceTertiary)
+                .glassmorphism(intensity: .light, cornerRadius: 12)
         )
     }
 }
@@ -778,9 +778,9 @@ struct AboutView: View {
                     VStack(spacing: 16) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(LiquidGlassGradients.primaryGradient)
+                                .fill(AppleColors.brandGradient)
                                 .frame(width: 100, height: 100)
-                                .glassEffect(elevation: .high)
+                                .glassmorphism(intensity: .heavy, cornerRadius: 12)
 
                             Image(systemName: "map.fill")
                                 .font(.system(size: 40))
@@ -789,31 +789,31 @@ struct AboutView: View {
 
                         VStack(spacing: 8) {
                             Text("Shvil")
-                                .font(LiquidGlassTypography.titleXL)
-                                .foregroundColor(LiquidGlassColors.primaryText)
+                                .font(AppleTypography.largeTitle)
+                                .foregroundColor(AppleColors.textPrimary)
 
                             Text("Version 1.0.0")
-                                .font(LiquidGlassTypography.caption)
-                                .foregroundColor(LiquidGlassColors.secondaryText)
+                                .font(AppleTypography.caption1)
+                                .foregroundColor(AppleColors.textSecondary)
                         }
                     }
 
                     // App Description
                     VStack(alignment: .leading, spacing: 16) {
                         Text("About Shvil")
-                            .font(LiquidGlassTypography.title)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.title3)
+                            .foregroundColor(AppleColors.textPrimary)
 
                         Text("Shvil is your personal navigation assistant that helps you discover new places, plan adventures, and stay connected with friends. Built with privacy and safety in mind.")
-                            .font(LiquidGlassTypography.body)
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .font(AppleTypography.body)
+                            .foregroundColor(AppleColors.textSecondary)
                     }
 
                     // Features
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Features")
-                            .font(LiquidGlassTypography.title)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.title3)
+                            .foregroundColor(AppleColors.textPrimary)
 
                         VStack(alignment: .leading, spacing: 12) {
                             FeatureItem(title: "Smart Navigation", description: "AI-powered route planning")
@@ -828,12 +828,12 @@ struct AboutView: View {
                         Button("Privacy Policy") {
                             // TODO: Open privacy policy
                         }
-                        .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                        .foregroundColor(AppleColors.brandPrimary)
 
                         Button("Terms of Service") {
                             // TODO: Open terms of service
                         }
-                        .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                        .foregroundColor(AppleColors.brandPrimary)
                     }
                 }
                 .padding(20)
@@ -845,7 +845,7 @@ struct AboutView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                    .foregroundColor(AppleColors.brandPrimary)
                 }
             }
         }
@@ -860,17 +860,17 @@ struct FeatureItem: View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 16))
-                .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                .foregroundColor(AppleColors.brandPrimary)
                 .padding(.top, 2)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodySemibold)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Text(description)
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
             }
         }
     }

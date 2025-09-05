@@ -63,24 +63,6 @@ struct ContentView: View {
         }
         .appleTabBar()
         .accentColor(AppleColors.brandPrimary)
-        .overlay(
-            // Floating Adventure Button
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-                    AppleGlassFAB(
-                        icon: "plus",
-                        size: .large,
-                        style: .primary
-                    ) {
-                        showAdventureSetup = true
-                    }
-                    .padding(.trailing, AppleSpacing.md)
-                    .padding(.bottom, 100) // Above tab bar
-                }
-            }
-        )
         .sheet(isPresented: $showAdventureSetup) {
             AdventureSetupView()
         }
@@ -111,17 +93,24 @@ struct AdventuresView: View {
                 }
             }
             .appleNavigationBar()
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    AppleGlassFAB(
-                        icon: "plus",
-                        size: .small,
-                        style: .secondary
-                    ) {
-                        showAdventureSetup = true
+            .overlay(
+                // Floating Adventure Button
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        AppleGlassFAB(
+                            icon: "plus",
+                            size: .large,
+                            style: .primary
+                        ) {
+                            showAdventureSetup = true
+                        }
+                        .padding(.trailing, AppleSpacing.md)
+                        .padding(.bottom, 100) // Above tab bar
                     }
                 }
-            }
+            )
         }
         .sheet(isPresented: $showAdventureSetup) {
             AdventureSetupView()

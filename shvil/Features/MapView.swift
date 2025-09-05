@@ -162,18 +162,6 @@ struct MapView: View {
 
     private var topBar: some View {
         HStack(spacing: AppleSpacing.sm) {
-            // Profile Button
-            AppleGlassFAB(
-                icon: "person.circle.fill",
-                size: .small,
-                style: .secondary
-            ) {
-                    print("Profile tapped")
-                HapticFeedback.shared.impact(style: .light)
-                }
-                .accessibilityLabel("Profile")
-            .accessibilityHint("Double tap to open profile settings")
-
             // Search Bar
             HStack {
                 Image(systemName: "magnifyingglass")
@@ -362,43 +350,17 @@ struct MapView: View {
 
     private var floatingButtons: some View {
         HStack {
-            VStack(spacing: AppleSpacing.sm) {
-                // Adventure FAB
-                AppleGlassFAB(
-                    icon: "sparkles",
-                    size: .small,
-                    style: .secondary
-                ) {
-                    print("Adventure tapped")
-                    HapticFeedback.shared.impact(style: .light)
-                }
-                .accessibilityLabel("Create Adventure")
-                .accessibilityHint("Double tap to create a new adventure")
-
-                // Layers FAB
-                AppleGlassFAB(
-                    icon: "square.stack.3d.up",
-                    size: .small,
-                    style: .secondary
-                ) {
+            // Layers FAB
+            AppleGlassFAB(
+                icon: "square.stack.3d.up",
+                size: .medium,
+                style: .secondary
+            ) {
                     print("Layers tapped")
-                    HapticFeedback.shared.impact(style: .light)
+                HapticFeedback.shared.impact(style: .light)
                 }
-                .accessibilityLabel("Map layers")
-                .accessibilityHint("Double tap to toggle map layers")
-                
-                // Search FAB
-                AppleGlassFAB(
-                    icon: "magnifyingglass",
-                    size: .small,
-                    style: .secondary
-                ) {
-                    showSearchOverlay = true
-                    HapticFeedback.shared.impact(style: .light)
-                }
-                .accessibilityLabel("Search")
-                .accessibilityHint("Double tap to open search overlay")
-            }
+            .accessibilityLabel("Map layers")
+            .accessibilityHint("Double tap to toggle map layers")
 
             Spacer()
 
@@ -574,7 +536,7 @@ struct MapView: View {
 
     private var actionButtons: some View {
         HStack(spacing: AppleSpacing.md) {
-            AppleGlassButton(
+            AppleButton(
                 "Share ETA",
                 icon: "square.and.arrow.up",
                 style: .secondary,
@@ -583,7 +545,7 @@ struct MapView: View {
                 print("Share ETA tapped")
             }
 
-            AppleGlassButton(
+            AppleButton(
                 "Start",
                 icon: "play.fill",
                 style: .primary,

@@ -848,9 +848,9 @@ struct AppleGlassFAB: View {
     
     private var textColor: Color {
         switch style {
-        case .primary: return .white
-        case .secondary: return .primary
-        case .destructive: return .white
+        case .primary: .white
+        case .secondary: AppleColors.textPrimary
+        case .destructive: .white
         }
     }
     
@@ -871,25 +871,25 @@ struct AppleGlassFAB: View {
     
     private var backgroundColor: Color {
         switch style {
-        case .primary: return .blue
-        case .secondary: return Color(.systemBackground)
-        case .destructive: return .red
+        case .primary: AppleColors.brandPrimary
+        case .secondary: AppleColors.surfaceSecondary
+        case .destructive: AppleColors.danger
         }
     }
     
     private var strokeColor: Color {
         switch style {
-        case .primary: return .clear
-        case .secondary: return Color(.separator)
-        case .destructive: return .clear
+        case .primary: .clear
+        case .secondary: AppleColors.strokeLight
+        case .destructive: .clear
         }
     }
     
     private var shadowColor: Color {
         switch style {
-        case .primary: return .blue.opacity(0.3)
-        case .secondary: return .black.opacity(0.1)
-        case .destructive: return .red.opacity(0.3)
+        case .primary: AppleColors.brandPrimary.opacity(0.3)
+        case .secondary: AppleShadows.light.color
+        case .destructive: AppleColors.danger.opacity(0.3)
         }
     }
     
@@ -941,19 +941,19 @@ struct AppleGlassListRow: View {
                 if let icon = icon {
                     Image(systemName: icon)
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.blue)
+                        .foregroundColor(AppleColors.brandPrimary)
                         .frame(width: 24, height: 24)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.primary)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.textPrimary)
                     
                     if let subtitle = subtitle {
                         Text(subtitle)
-                            .font(.system(size: 14, weight: .regular))
-                            .foregroundColor(.secondary)
+                            .font(AppleTypography.caption1)
+                            .foregroundColor(AppleColors.textSecondary)
                     }
                 }
                 
@@ -964,17 +964,17 @@ struct AppleGlassListRow: View {
                 } else {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemBackground))
+                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                    .fill(AppleColors.surfaceSecondary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color(.separator), lineWidth: 0.5)
+                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                            .stroke(AppleColors.strokeLight, lineWidth: 0.5)
                     )
             )
             .scaleEffect(isPressed ? 0.98 : 1.0)

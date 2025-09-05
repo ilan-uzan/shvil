@@ -39,20 +39,6 @@ struct AdventureSetupView: View {
 
                 ScrollView {
                     VStack(spacing: AppleSpacing.xl) {
-                        // Cancel Button
-                        HStack {
-                            AppleGlassButton(
-                                "Cancel",
-                                style: .ghost,
-                                size: .medium
-                            ) {
-                                dismiss()
-                            }
-                            Spacer()
-                        }
-                        .padding(.horizontal, AppleSpacing.md)
-                        .padding(.top, AppleSpacing.sm)
-                        
                         // Header
                         headerSection
 
@@ -87,6 +73,13 @@ struct AdventureSetupView: View {
             .appleNavigationBar()
             .navigationBarBackButtonHidden(true)
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    AppleButton("Cancel", style: .ghost, size: .small) {
+                        dismiss()
+                    }
+                }
+            }
         }
         .alert("Error", isPresented: $showError) {
             Button("OK") {
@@ -466,7 +459,7 @@ struct AdventureSetupView: View {
     // MARK: - Generate Button
 
     private var generateButton: some View {
-        AppleGlassButton(
+        AppleButton(
             isGenerating ? "Creating Adventure..." : "Create Adventure",
             icon: isGenerating ? nil : "sparkles",
             style: .primary,

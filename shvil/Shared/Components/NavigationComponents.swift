@@ -23,16 +23,16 @@ struct NavigationButton: View {
                 Image(systemName: icon)
                     .font(.system(size: 20, weight: .medium))
                 Text(title)
-                    .font(LiquidGlassTypography.captionSmall)
+                    .font(AppleTypography.caption2)
             }
-            .foregroundColor(isActive ? LiquidGlassColors.accentText : LiquidGlassColors.secondaryText)
+            .foregroundColor(isActive ? AppleColors.brandPrimary : AppleColors.textSecondary)
             .frame(width: 48, height: 48)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isActive ? LiquidGlassColors.glassSurface2 : LiquidGlassColors.glassSurface1)
+                    .fill(isActive ? AppleColors.surfaceSecondary : AppleColors.surfaceTertiary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(isActive ? LiquidGlassColors.accentText.opacity(0.3) : Color.clear, lineWidth: 1)
+                            .stroke(isActive ? AppleColors.brandPrimary.opacity(0.3) : Color.clear, lineWidth: 1)
                     )
             )
         }
@@ -54,27 +54,27 @@ struct TurnInstructionCard: View {
             // Turn Icon
             Image(systemName: turnIcon(for: step))
                 .font(.system(size: 24, weight: .medium))
-                .foregroundColor(LiquidGlassColors.accentText)
+                .foregroundColor(AppleColors.brandPrimary)
                 .frame(width: 32, height: 32)
                 .background(
                     Circle()
-                        .fill(LiquidGlassColors.glassSurface2)
+                        .fill(AppleColors.surfaceSecondary)
                         .overlay(
                             Circle()
-                                .stroke(LiquidGlassColors.accentText.opacity(0.3), lineWidth: 1)
+                                .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 1)
                         )
                 )
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(step.instructions)
-                    .font(LiquidGlassTypography.titleXL)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.largeTitle)
+                    .foregroundColor(AppleColors.textPrimary)
                     .lineLimit(2)
                 
                 if let nextStep = nextStep {
                     Text("Then \(nextStep.instructions)")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                         .lineLimit(1)
                 }
             }
@@ -83,8 +83,8 @@ struct TurnInstructionCard: View {
             
             // Distance to Turn
             Text(MKDistanceFormatter().string(fromDistance: distance))
-                .font(LiquidGlassTypography.captionMedium)
-                .foregroundColor(LiquidGlassColors.accentText)
+                .font(AppleTypography.caption1Medium)
+                .foregroundColor(AppleColors.brandPrimary)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
@@ -123,21 +123,21 @@ struct RouteOptionSelector: View {
                 Button(action: { onSelectionChanged(option) }) {
                     VStack(spacing: 4) {
                         Text(option.name)
-                            .font(LiquidGlassTypography.captionMedium)
-                            .foregroundColor(option.id == selectedOption.id ? LiquidGlassColors.accentText : LiquidGlassColors.secondaryText)
+                            .font(AppleTypography.caption1Medium)
+                            .foregroundColor(option.id == selectedOption.id ? AppleColors.brandPrimary : AppleColors.textSecondary)
                         
                         Text(option.formattedTime)
-                            .font(LiquidGlassTypography.captionSmall)
-                            .foregroundColor(option.id == selectedOption.id ? LiquidGlassColors.accentText : LiquidGlassColors.secondaryText)
+                            .font(AppleTypography.caption2)
+                            .foregroundColor(option.id == selectedOption.id ? AppleColors.brandPrimary : AppleColors.textSecondary)
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(option.id == selectedOption.id ? LiquidGlassColors.glassSurface2 : LiquidGlassColors.glassSurface1)
+                            .fill(option.id == selectedOption.id ? AppleColors.surfaceSecondary : AppleColors.surfaceTertiary)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 16)
-                                    .stroke(option.id == selectedOption.id ? LiquidGlassColors.accentText.opacity(0.3) : Color.clear, lineWidth: 1)
+                                    .stroke(option.id == selectedOption.id ? AppleColors.brandPrimary.opacity(0.3) : Color.clear, lineWidth: 1)
                             )
                     )
                 }
@@ -160,23 +160,23 @@ struct NavigationStatusIndicator: View {
         HStack(spacing: 8) {
             // Status Dot
             Circle()
-                .fill(isActive ? LiquidGlassColors.accentText : LiquidGlassColors.secondaryText)
+                .fill(isActive ? AppleColors.brandPrimary : AppleColors.textSecondary)
                 .frame(width: 8, height: 8)
                 .scaleEffect(isActive ? 1.2 : 1.0)
-                .animation(LiquidGlassAnimations.microInteraction, value: isActive)
+                .animation(AppleAnimations.microInteraction, value: isActive)
             
             if isActive {
                 Text(formattedTime)
-                    .font(LiquidGlassTypography.captionMedium)
-                    .foregroundColor(LiquidGlassColors.accentText)
+                    .font(AppleTypography.caption1Medium)
+                    .foregroundColor(AppleColors.brandPrimary)
                 
                 Text("•")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
                 
                 Text(formattedDistance)
-                    .font(LiquidGlassTypography.captionMedium)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1Medium)
+                    .foregroundColor(AppleColors.textSecondary)
             }
         }
     }
@@ -209,16 +209,16 @@ struct EmergencyButton: View {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 20, weight: .medium))
                 Text("Help")
-                    .font(LiquidGlassTypography.captionSmall)
+                    .font(AppleTypography.caption2)
             }
-            .foregroundColor(LiquidGlassColors.accident)
+            .foregroundColor(AppleColors.error)
             .frame(width: 48, height: 48)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(LiquidGlassColors.glassSurface2)
+                    .fill(AppleColors.surfaceSecondary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(LiquidGlassColors.accident.opacity(0.3), lineWidth: 1)
+                            .stroke(AppleColors.error.opacity(0.3), lineWidth: 1)
                     )
             )
         }
@@ -255,17 +255,20 @@ struct NavigationGlassSurface: View {
     private var glassColor: Color {
         switch elevation {
         case .light:
-            return LiquidGlassColors.glassSurface1
+            return AppleColors.surfaceTertiary
+        case .low:
+            return AppleColors.surfaceTertiary
         case .medium:
-            return LiquidGlassColors.glassSurface2
+            return AppleColors.surfaceSecondary
         case .high:
-            return LiquidGlassColors.glassSurface3
+            return AppleColors.surfacePrimary
         }
     }
     
     private var shadowRadius: CGFloat {
         switch elevation {
         case .light: return 4
+        case .low: return 6
         case .medium: return 8
         case .high: return 12
         }
@@ -274,6 +277,7 @@ struct NavigationGlassSurface: View {
     private var shadowOffset: CGFloat {
         switch elevation {
         case .light: return 2
+        case .low: return 3
         case .medium: return 4
         case .high: return 6
         }

@@ -46,7 +46,17 @@ struct OnboardingView: View {
             // Subtle wavy path decoration
             VStack {
                 Spacer()
-                WavyPathMotif(style: .subtle, color: AppleColors.brandPrimary.opacity(0.3))
+                // Simple wave illustration
+                RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                    .fill(AppleColors.brandPrimary.opacity(0.1))
+                    .frame(width: 120, height: 80)
+                    .overlay(
+                        Path { path in
+                            path.move(to: CGPoint(x: 0, y: 40))
+                            path.addQuadCurve(to: CGPoint(x: 120, y: 40), control: CGPoint(x: 60, y: 20))
+                        }
+                        .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 2)
+                    )
                     .frame(height: 100)
                     .offset(y: 50)
             }
@@ -356,7 +366,7 @@ struct OnboardingView: View {
     private var navigationButtons: some View {
         HStack(spacing: AppleSpacing.md) {
             if currentStep > 0 {
-                AppleGlassButton(
+                AppleButton(
                     "back".localized,
                     style: .secondary,
                     size: .medium
@@ -368,7 +378,7 @@ struct OnboardingView: View {
                 }
             }
             
-            AppleGlassButton(
+            AppleButton(
                 currentStep < totalSteps - 1 ? "next".localized : "get_started".localized,
                 style: .primary,
                 size: .medium

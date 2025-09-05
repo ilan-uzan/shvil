@@ -40,28 +40,28 @@ struct SmartStopCard: View {
                 // Content
                 VStack(alignment: .leading, spacing: 4) {
                     Text(suggestion.title)
-                        .font(LiquidGlassTypography.title)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.title3)
+                        .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(1)
                     
                     Text(suggestion.subtitle)
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                         .lineLimit(2)
                     
                     // Distance and Time
                     HStack(spacing: 8) {
                         Label(distanceText, systemImage: "location")
-                            .font(LiquidGlassTypography.captionSmall)
-                            .foregroundColor(LiquidGlassColors.accentText)
+                            .font(AppleTypography.caption2)
+                            .foregroundColor(AppleColors.brandPrimary)
                         
                         Text("•")
-                            .font(LiquidGlassTypography.captionSmall)
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .font(AppleTypography.caption2)
+                            .foregroundColor(AppleColors.textSecondary)
                         
                         Label(timeText, systemImage: "clock")
-                            .font(LiquidGlassTypography.captionSmall)
-                            .foregroundColor(LiquidGlassColors.accentText)
+                            .font(AppleTypography.caption2)
+                            .foregroundColor(AppleColors.brandPrimary)
                     }
                 }
                 
@@ -71,20 +71,20 @@ struct SmartStopCard: View {
                 VStack(spacing: 8) {
                     // Add Stop Button
                     Button(action: {
-                        withAnimation(LiquidGlassAnimations.microInteraction) {
+                        withAnimation(AppleAnimations.microInteraction) {
                             onAddStop()
                         }
                     }) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(LiquidGlassColors.accentText)
+                            .foregroundColor(AppleColors.brandPrimary)
                             .frame(width: 32, height: 32)
                             .background(
                                 Circle()
-                                    .fill(LiquidGlassColors.glassSurface2)
+                                    .fill(AppleColors.surfaceSecondary)
                                     .overlay(
                                         Circle()
-                                            .stroke(LiquidGlassColors.accentText.opacity(0.3), lineWidth: 1)
+                                            .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 1)
                                     )
                             )
                     }
@@ -95,13 +95,13 @@ struct SmartStopCard: View {
                     
                     // Dismiss Button
                     Button(action: {
-                        withAnimation(LiquidGlassAnimations.microInteraction) {
+                        withAnimation(AppleAnimations.microInteraction) {
                             onDismiss()
                         }
                     }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .foregroundColor(AppleColors.textSecondary)
                             .frame(width: 24, height: 24)
                     }
                     .buttonAccessibility(
@@ -117,13 +117,13 @@ struct SmartStopCard: View {
             if showDetails {
                 VStack(spacing: 12) {
                     Divider()
-                        .background(LiquidGlassColors.secondaryText.opacity(0.3))
+                        .background(AppleColors.textSecondary.opacity(0.3))
                     
                     // Additional Actions
                     HStack(spacing: 16) {
                         // Snooze Button
                         Button(action: {
-                            withAnimation(LiquidGlassAnimations.microInteraction) {
+                            withAnimation(AppleAnimations.microInteraction) {
                                 onSnooze()
                             }
                         }) {
@@ -131,17 +131,17 @@ struct SmartStopCard: View {
                                 Image(systemName: "clock.arrow.circlepath")
                                     .font(.system(size: 14, weight: .medium))
                                 Text("Snooze")
-                                    .font(LiquidGlassTypography.captionMedium)
+                                    .font(AppleTypography.caption1Medium)
                             }
-                            .foregroundColor(LiquidGlassColors.accentText)
+                            .foregroundColor(AppleColors.brandPrimary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(LiquidGlassColors.glassSurface2)
+                                    .fill(AppleColors.surfaceSecondary)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 12)
-                                            .stroke(LiquidGlassColors.accentText.opacity(0.3), lineWidth: 1)
+                                            .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 1)
                                     )
                             )
                         }
@@ -155,8 +155,8 @@ struct SmartStopCard: View {
                         // Relevance Score Indicator
                         HStack(spacing: 4) {
                             Text("Relevance")
-                                .font(LiquidGlassTypography.captionSmall)
-                                .foregroundColor(LiquidGlassColors.secondaryText)
+                                .font(AppleTypography.caption2)
+                                .foregroundColor(AppleColors.textSecondary)
                             
                             RelevanceIndicator(score: suggestion.relevanceScore)
                         }
@@ -168,7 +168,7 @@ struct SmartStopCard: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface1)
+                .fill(AppleColors.surfaceTertiary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(suggestion.color.color.opacity(0.3), lineWidth: 1)
@@ -176,9 +176,9 @@ struct SmartStopCard: View {
                 .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
         )
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
+        .animation(AppleAnimations.microInteraction, value: isPressed)
         .onTapGesture {
-            withAnimation(LiquidGlassAnimations.standard) {
+            withAnimation(AppleAnimations.standard) {
                 showDetails.toggle()
             }
         }
@@ -186,7 +186,7 @@ struct SmartStopCard: View {
             isPressed = pressing
         } perform: {
             // Long press action - could show more details
-            withAnimation(LiquidGlassAnimations.standard) {
+            withAnimation(AppleAnimations.standard) {
                 showDetails.toggle()
             }
         }
@@ -231,7 +231,7 @@ struct RelevanceIndicator: View {
         HStack(spacing: 2) {
             ForEach(0..<5) { index in
                 Circle()
-                    .fill(index < Int(score * 5) ? LiquidGlassColors.accentText : LiquidGlassColors.secondaryText.opacity(0.3))
+                    .fill(index < Int(score * 5) ? AppleColors.brandPrimary : AppleColors.textSecondary.opacity(0.3))
                     .frame(width: 4, height: 4)
             }
         }

@@ -397,10 +397,12 @@ public class GuidanceService: NSObject, ObservableObject {
 
 // MARK: - CLLocationManagerDelegate
 
-extension GuidanceService: CLLocationManagerDelegate {
-    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+extension GuidanceService: @preconcurrency CLLocationManagerDelegate {
+    nonisolated public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        updateLocation(location)
+        Task { @MainActor in
+            updateLocation(location)
+        }
     }
     
     nonisolated public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

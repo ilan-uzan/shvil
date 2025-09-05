@@ -25,7 +25,7 @@ struct AdventureSheetView: View {
         NavigationView {
             ZStack {
                 // Background
-                LiquidGlassColors.background
+                AppleColors.background
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
@@ -54,32 +54,31 @@ struct AdventureSheetView: View {
         VStack(spacing: 0) {
             // Drag Handle
             RoundedRectangle(cornerRadius: 2)
-                .fill(LiquidGlassColors.secondaryText)
+                .fill(AppleColors.textTertiary)
                 .frame(width: 36, height: 4)
-                .padding(.top, 8)
+                .padding(.top, AppleSpacing.sm)
 
-            HStack(spacing: 16) {
+            HStack(spacing: AppleSpacing.md) {
                 // Close Button
-                Button(action: { dismiss() }) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(LiquidGlassColors.primaryText)
-                        .frame(width: 32, height: 32)
-                        .background(
-                            Circle()
-                                .fill(LiquidGlassColors.glassSurface1)
-                        )
+                AppleButton(
+                    "",
+                    icon: "xmark",
+                    style: .ghost,
+                    size: .small
+                ) {
+                    dismiss()
                 }
+                .frame(width: 32, height: 32)
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
                     Text(adventure.title)
-                        .font(LiquidGlassTypography.title)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.title3)
+                        .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(1)
 
                     Text(adventure.description)
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                         .lineLimit(1)
                 }
 
@@ -88,40 +87,39 @@ struct AdventureSheetView: View {
                 // Status Badge
                 statusBadge
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            .padding(.horizontal, AppleSpacing.lg)
+            .padding(.vertical, AppleSpacing.md)
         }
         .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(LiquidGlassColors.glassSurface1)
-                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
+            RoundedRectangle(cornerRadius: AppleCornerRadius.xl, style: .continuous)
+                .fill(AppleColors.surfaceSecondary)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl, style: .continuous)
+                        .stroke(AppleColors.glassLight, lineWidth: 1)
+                )
+                .appleShadow(AppleShadows.medium)
         )
     }
 
     private var statusBadge: some View {
-        HStack(spacing: 6) {
-            Circle()
-                .fill(statusColor)
-                .frame(width: 8, height: 8)
-
-            Text(adventure.status.displayName)
-                .font(LiquidGlassTypography.caption)
-                .foregroundColor(LiquidGlassColors.primaryText)
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(LiquidGlassColors.glassSurface2)
-        )
+        Text(adventure.status.displayName)
+            .font(AppleTypography.caption2)
+            .fontWeight(.semibold)
+            .foregroundColor(.white)
+            .padding(.horizontal, AppleSpacing.sm)
+            .padding(.vertical, AppleSpacing.xs)
+            .background(
+                RoundedRectangle(cornerRadius: AppleCornerRadius.sm)
+                    .fill(statusColor)
+            )
     }
 
     private var statusColor: Color {
         switch adventure.status {
-        case .draft: LiquidGlassColors.secondaryText
-        case .active: LiquidGlassColors.accentDeepAqua
-        case .completed: .green
-        case .cancelled: .red
+        case .draft: AppleColors.textTertiary
+        case .active: AppleColors.brandPrimary
+        case .completed: AppleColors.success
+        case .cancelled: AppleColors.error
         }
     }
 
@@ -161,7 +159,7 @@ struct AdventureSheetView: View {
         }) {
             ZStack {
                 Circle()
-                    .fill(LiquidGlassGradients.primaryGradient)
+                    .fill(AppleColors.brandGradient)
                     .frame(width: 32, height: 32)
 
                 Image(systemName: stopIcon(for: stop.category))
@@ -199,7 +197,7 @@ struct AdventureSheetView: View {
         VStack(spacing: 0) {
             // Drag Handle
             RoundedRectangle(cornerRadius: 2)
-                .fill(LiquidGlassColors.secondaryText)
+                .fill(AppleColors.textSecondary)
                 .frame(width: 36, height: 4)
                 .padding(.top, 12)
 
@@ -219,7 +217,7 @@ struct AdventureSheetView: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(LiquidGlassColors.glassSurface1)
+                .fill(AppleColors.surfaceTertiary)
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
         )
     }
@@ -230,11 +228,11 @@ struct AdventureSheetView: View {
             VStack(spacing: 4) {
                 Image(systemName: moodIcon)
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                    .foregroundColor(AppleColors.brandPrimary)
 
                 Text(adventure.theme.displayName)
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
             }
 
             Divider()
@@ -243,12 +241,12 @@ struct AdventureSheetView: View {
             // Duration
             VStack(spacing: 4) {
                 Text("\(adventure.totalDuration / 60)h")
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Text("Duration")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
             }
 
             Divider()
@@ -257,19 +255,19 @@ struct AdventureSheetView: View {
             // Stops Count
             VStack(spacing: 4) {
                 Text("\(adventure.stops.count)")
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Text("Stops")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
             }
         }
         .padding(.vertical, 16)
         .padding(.horizontal, 20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(LiquidGlassColors.glassSurface2)
+                .fill(AppleColors.surfaceSecondary)
         )
     }
 
@@ -286,8 +284,8 @@ struct AdventureSheetView: View {
     private var stopsListSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Adventure Stops")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
@@ -310,42 +308,42 @@ struct AdventureSheetView: View {
                 // Stop Number
                 HStack {
                     Text("\(index + 1)")
-                        .font(LiquidGlassTypography.caption)
+                        .font(AppleTypography.caption1)
                         .foregroundColor(.white)
                         .frame(width: 24, height: 24)
                         .background(
                             Circle()
-                                .fill(LiquidGlassGradients.primaryGradient)
+                                .fill(AppleColors.brandGradient)
                         )
 
                     Spacer()
 
                     Image(systemName: stopIcon(for: stop.category))
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                        .foregroundColor(AppleColors.brandPrimary)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(stop.name)
-                        .font(LiquidGlassTypography.bodyMedium)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(2)
 
                     Text(stop.description)
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                         .lineLimit(1)
 
                     Text("\(stop.estimatedDuration) min")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.accentDeepAqua)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.brandPrimary)
                 }
             }
             .padding(16)
             .frame(width: 160)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(LiquidGlassColors.glassSurface2)
+                    .fill(AppleColors.surfaceSecondary)
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -360,7 +358,7 @@ struct AdventureSheetView: View {
                         .font(.system(size: 16, weight: .medium))
 
                     Text("Start Adventure")
-                        .font(LiquidGlassTypography.bodyMedium)
+                        .font(AppleTypography.body)
                         .fontWeight(.semibold)
                 }
                 .foregroundColor(.white)
@@ -368,7 +366,7 @@ struct AdventureSheetView: View {
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(LiquidGlassGradients.primaryGradient)
+                        .fill(AppleColors.brandGradient)
                 )
             }
 
@@ -376,11 +374,11 @@ struct AdventureSheetView: View {
             Button(action: shareAdventure) {
                 Image(systemName: "square.and.arrow.up")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .foregroundColor(AppleColors.textPrimary)
                     .frame(width: 48, height: 48)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(LiquidGlassColors.glassSurface2)
+                            .fill(AppleColors.surfaceSecondary)
                     )
             }
         }

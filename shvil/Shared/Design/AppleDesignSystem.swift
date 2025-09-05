@@ -29,11 +29,13 @@ enum AppleColors {
     static let success = Color(red: 0.137, green: 0.769, blue: 0.514) // #23C483
     static let warning = Color(red: 1.0, green: 0.784, blue: 0.341) // #FFC857
     static let danger = Color(red: 1.0, green: 0.420, blue: 0.420) // #FF6B6B
+    static let error = Color(red: 1.0, green: 0.420, blue: 0.420) // #FF6B6B - Same as danger
     static let info = brandPrimaryMid
     
     // Surface Colors - Light, glassy theme
     static let background = Color(red: 0.98, green: 0.98, blue: 0.99) // Near white
     static let surface = Color.white.opacity(0.55) // Glass surface
+    static let surfacePrimary = Color.white.opacity(0.55) // Primary glass surface
     static let surfaceSecondary = Color.white.opacity(0.45) // Secondary glass
     static let surfaceTertiary = Color.white.opacity(0.35) // Tertiary glass
     
@@ -80,6 +82,7 @@ enum AppleTypography {
     // Body (17pt, regular)
     static let body = Font.system(.body, design: .default)
     static let bodyEmphasized = Font.system(.body, design: .default).weight(.medium)
+    static let bodySemibold = Font.system(.body, design: .default).weight(.semibold)
     
     // Callout (16pt, regular)
     static let callout = Font.system(.callout, design: .default)
@@ -93,6 +96,7 @@ enum AppleTypography {
     
     // Caption 1 (12pt, regular)
     static let caption1 = Font.system(.caption, design: .default)
+    static let caption1Medium = Font.system(.caption, design: .default).weight(.medium)
     
     // Caption 2 (11pt, regular)
     static let caption2 = Font.system(.caption2, design: .default)
@@ -148,6 +152,7 @@ struct Shadow {
 enum AppleAnimations {
     // Micro-interactions (100-200ms)
     static let micro = Animation.easeInOut(duration: 0.15)
+    static let microInteraction = Animation.easeInOut(duration: 0.15)
     
     // Standard interactions (200-300ms)
     static let standard = Animation.easeInOut(duration: 0.25)
@@ -544,5 +549,35 @@ extension View {
 extension View {
     func appleRTL() -> some View {
         environment(\.layoutDirection, .leftToRight)
+    }
+}
+
+// MARK: - Accessibility Extensions
+
+extension View {
+    func buttonAccessibility(label: String, hint: String? = nil) -> some View {
+        self
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(label)
+            .accessibilityHint(hint ?? "")
+            .accessibilityAddTraits(.isButton)
+    }
+}
+
+// MARK: - Glass Elevation
+
+enum GlassElevation {
+    case light
+    case low
+    case medium
+    case high
+    
+    var opacity: Double {
+        switch self {
+        case .light: return 0.05
+        case .low: return 0.1
+        case .medium: return 0.2
+        case .high: return 0.3
+        }
     }
 }

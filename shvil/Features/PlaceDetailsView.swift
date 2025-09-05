@@ -115,7 +115,7 @@ struct PlaceDetailsView: View {
     private var primaryActionsRow: some View {
         HStack(spacing: 12) {
             // Route button
-            AppleGlassButton(
+            AppleButton(
                 "Route",
                 icon: "arrow.triangle.turn.up.right.diamond",
                 style: .primary,
@@ -129,7 +129,7 @@ struct PlaceDetailsView: View {
             .accessibilityHint("Double tap to get directions to this place")
 
             // Save button
-            AppleGlassButton(
+            AppleButton(
                 isSaved ? "Saved" : "Save",
                 icon: isSaved ? "bookmark.fill" : "bookmark",
                 style: isSaved ? .secondary : .ghost,

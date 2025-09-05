@@ -350,7 +350,7 @@ struct SearchView: View {
 
                 Spacer()
 
-                AppleGlassButton(
+                AppleButton(
                     "Filters",
                     icon: "slider.horizontal.3",
                     style: .ghost,

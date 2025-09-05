@@ -58,6 +58,70 @@ struct FocusModeNavigationView: View {
         return formatter.string(fromDistance: routingEngine.remainingDistance)
     }
     
+    // MARK: - Button Components
+    private var voiceGuidanceButton: some View {
+        Button(action: toggleVoiceGuidance) {
+            VStack(spacing: 4) {
+                Image(systemName: isVoiceGuidanceEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
+                    .font(.system(size: 20, weight: .medium))
+                Text("Voice")
+                    .font(AppleTypography.caption2)
+            }
+            .foregroundColor(isVoiceGuidanceEnabled ? AppleColors.brandPrimary : AppleColors.textSecondary)
+            .frame(width: 48, height: 48)
+            .background(buttonBackground(isEnabled: isVoiceGuidanceEnabled, color: AppleColors.brandPrimary))
+        }
+        .buttonAccessibility(
+            label: isVoiceGuidanceEnabled ? "Voice guidance on" : "Voice guidance off",
+            hint: "Tap to toggle voice guidance"
+        )
+    }
+    
+    private var routeOverviewButton: some View {
+        Button(action: { showRouteOverview = true }) {
+            VStack(spacing: 4) {
+                Image(systemName: "map.fill")
+                    .font(.system(size: 20, weight: .medium))
+                Text("Route")
+                    .font(AppleTypography.caption2)
+            }
+            .foregroundColor(AppleColors.brandPrimary)
+            .frame(width: 48, height: 48)
+            .background(buttonBackground(isEnabled: true, color: AppleColors.brandPrimary))
+        }
+        .buttonAccessibility(
+            label: "Route overview",
+            hint: "Tap to view full route details"
+        )
+    }
+    
+    private var emergencyButton: some View {
+        Button(action: { showEmergencyOptions = true }) {
+            VStack(spacing: 4) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 20, weight: .medium))
+                Text("Help")
+                    .font(AppleTypography.caption2)
+            }
+            .foregroundColor(AppleColors.error)
+            .frame(width: 48, height: 48)
+            .background(buttonBackground(isEnabled: true, color: AppleColors.error))
+        }
+        .buttonAccessibility(
+            label: "Emergency options",
+            hint: "Tap for emergency options"
+        )
+    }
+    
+    private func buttonBackground(isEnabled: Bool, color: Color) -> some View {
+        RoundedRectangle(cornerRadius: 12)
+            .fill(isEnabled ? AppleColors.surfaceSecondary : AppleColors.surfaceTertiary)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isEnabled ? color.opacity(0.3) : Color.clear, lineWidth: 1)
+            )
+    }
+    
     // MARK: - Body
     var body: some View {
         ZStack {
@@ -135,23 +199,23 @@ struct FocusModeNavigationView: View {
                 // Destination Info
                 VStack(alignment: .leading, spacing: 4) {
                     Text(destination.isEmpty ? "Navigation" : destination)
-                        .font(LiquidGlassTypography.title)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.title3)
+                        .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(1)
                     
                     if routingEngine.isNavigating {
                         HStack(spacing: 8) {
                             Text(formattedRemainingTime)
-                                .font(LiquidGlassTypography.captionMedium)
-                                .foregroundColor(LiquidGlassColors.accentText)
+                                .font(AppleTypography.caption1)
+                                .foregroundColor(AppleColors.brandPrimary)
                             
                             Text("•")
-                                .font(LiquidGlassTypography.caption)
-                                .foregroundColor(LiquidGlassColors.secondaryText)
+                                .font(AppleTypography.caption1)
+                                .foregroundColor(AppleColors.textSecondary)
                             
                             Text(formattedRemainingDistance)
-                                .font(LiquidGlassTypography.captionMedium)
-                                .foregroundColor(LiquidGlassColors.secondaryText)
+                                .font(AppleTypography.caption1)
+                                .foregroundColor(AppleColors.textSecondary)
                         }
                     }
                 }
@@ -166,17 +230,17 @@ struct FocusModeNavigationView: View {
                                 .font(.system(size: 16, weight: .medium))
                             
                             Text(routingEngine.selectedRouteOption.name)
-                                .font(LiquidGlassTypography.captionMedium)
+                                .font(AppleTypography.caption1)
                         }
-                        .foregroundColor(LiquidGlassColors.accentText)
+                        .foregroundColor(AppleColors.brandPrimary)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 16)
-                                .fill(LiquidGlassColors.glassSurface2)
+                                .fill(AppleColors.surfaceSecondary)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 16)
-                                        .stroke(LiquidGlassColors.accentText.opacity(0.3), lineWidth: 1)
+                                        .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 1)
                                 )
                         )
                     }
@@ -190,11 +254,11 @@ struct FocusModeNavigationView: View {
                 Button(action: endNavigation) {
                     Image(systemName: "xmark")
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .foregroundColor(AppleColors.textPrimary)
                         .frame(width: 44, height: 44)
                         .background(
                             Circle()
-                                .fill(LiquidGlassColors.glassSurface2)
+                                .fill(AppleColors.surfaceSecondary)
                                 .overlay(
                                     Circle()
                                         .stroke(Color.white.opacity(0.2), lineWidth: 1)
@@ -211,7 +275,7 @@ struct FocusModeNavigationView: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 24)
-                .fill(LiquidGlassColors.glassSurface1)
+                .fill(AppleColors.surfaceTertiary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 24)
                         .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -233,27 +297,27 @@ struct FocusModeNavigationView: View {
                         // Turn Icon
                         Image(systemName: turnIcon(for: currentStep))
                             .font(.system(size: 24, weight: .medium))
-                            .foregroundColor(LiquidGlassColors.accentText)
+                            .foregroundColor(AppleColors.brandPrimary)
                             .frame(width: 32, height: 32)
                             .background(
                                 Circle()
-                                    .fill(LiquidGlassColors.glassSurface2)
+                                    .fill(AppleColors.surfaceSecondary)
                                     .overlay(
                                         Circle()
-                                            .stroke(LiquidGlassColors.accentText.opacity(0.3), lineWidth: 1)
+                                            .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 1)
                                     )
                             )
                         
                         VStack(alignment: .leading, spacing: 2) {
                             Text(currentStep.instructions)
-                                .font(LiquidGlassTypography.titleXL)
-                                .foregroundColor(LiquidGlassColors.primaryText)
+                                .font(AppleTypography.largeTitle)
+                                .foregroundColor(AppleColors.textPrimary)
                                 .lineLimit(2)
                             
                             if let nextStep = nextStep {
                                 Text("Then \(nextStep.instructions)")
-                                    .font(LiquidGlassTypography.caption)
-                                    .foregroundColor(LiquidGlassColors.secondaryText)
+                                    .font(AppleTypography.caption1)
+                                    .foregroundColor(AppleColors.textSecondary)
                                     .lineLimit(1)
                             }
                         }
@@ -262,8 +326,8 @@ struct FocusModeNavigationView: View {
                         
                         // Distance to Turn
                         Text(MKDistanceFormatter().string(fromDistance: currentStep.distance))
-                            .font(LiquidGlassTypography.captionMedium)
-                            .foregroundColor(LiquidGlassColors.accentText)
+                            .font(AppleTypography.caption1)
+                            .foregroundColor(AppleColors.brandPrimary)
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
@@ -272,88 +336,18 @@ struct FocusModeNavigationView: View {
             
             // Control Buttons
             HStack(spacing: 16) {
-                // Voice Guidance Toggle
-                Button(action: toggleVoiceGuidance) {
-                    VStack(spacing: 4) {
-                        Image(systemName: isVoiceGuidanceEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
-                            .font(.system(size: 20, weight: .medium))
-                        Text("Voice")
-                            .font(LiquidGlassTypography.captionSmall)
-                    }
-                    .foregroundColor(isVoiceGuidanceEnabled ? LiquidGlassColors.accentText : LiquidGlassColors.secondaryText)
-                    .frame(width: 48, height: 48)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(isVoiceGuidanceEnabled ? LiquidGlassColors.glassSurface2 : LiquidGlassColors.glassSurface1)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(isVoiceGuidanceEnabled ? LiquidGlassColors.accentText.opacity(0.3) : Color.clear, lineWidth: 1)
-                            )
-                    )
-                }
-                .buttonAccessibility(
-                    label: isVoiceGuidanceEnabled ? "Voice guidance on" : "Voice guidance off",
-                    hint: "Tap to toggle voice guidance"
-                )
-                
+                voiceGuidanceButton
                 Spacer()
-                
-                // Route Overview Button
-                Button(action: { showRouteOverview = true }) {
-                    VStack(spacing: 4) {
-                        Image(systemName: "map.fill")
-                            .font(.system(size: 20, weight: .medium))
-                        Text("Route")
-                            .font(LiquidGlassTypography.captionSmall)
-                    }
-                    .foregroundColor(LiquidGlassColors.accentText)
-                    .frame(width: 48, height: 48)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(LiquidGlassColors.glassSurface2)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(LiquidGlassColors.accentText.opacity(0.3), lineWidth: 1)
-                            )
-                    )
-                }
-                .buttonAccessibility(
-                    label: "Route overview",
-                    hint: "Tap to view full route details"
-                )
-                
+                routeOverviewButton
                 Spacer()
-                
-                // Emergency Button
-                Button(action: { showEmergencyOptions = true }) {
-                    VStack(spacing: 4) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.system(size: 20, weight: .medium))
-                        Text("Help")
-                            .font(LiquidGlassTypography.captionSmall)
-                    }
-                    .foregroundColor(LiquidGlassColors.accident)
-                    .frame(width: 48, height: 48)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(LiquidGlassColors.glassSurface2)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(LiquidGlassColors.accident.opacity(0.3), lineWidth: 1)
-                            )
-                    )
-                }
-                .buttonAccessibility(
-                    label: "Emergency options",
-                    hint: "Tap for emergency options"
-                )
+                emergencyButton
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
         }
         .background(
             RoundedRectangle(cornerRadius: 24)
-                .fill(LiquidGlassColors.glassSurface1)
+                .fill(AppleColors.surfaceTertiary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 24)
                         .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -446,35 +440,35 @@ struct RouteOverviewSheet: View {
                     .overlay(
                         // Route polyline would be rendered here
                         Rectangle()
-                            .fill(LiquidGlassColors.accentText.opacity(0.3))
+                            .fill(AppleColors.brandPrimary.opacity(0.3))
                             .frame(height: 4)
                     )
                     
                     // Route Details
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Route Details")
-                            .font(LiquidGlassTypography.title)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.title3)
+                            .foregroundColor(AppleColors.textPrimary)
                         
                         HStack {
                             VStack(alignment: .leading) {
                                 Text("Distance")
-                                    .font(LiquidGlassTypography.caption)
-                                    .foregroundColor(LiquidGlassColors.secondaryText)
+                                    .font(AppleTypography.caption1)
+                                    .foregroundColor(AppleColors.textSecondary)
                                 Text(selectedOption.formattedDistance)
-                                    .font(LiquidGlassTypography.bodySemibold)
-                                    .foregroundColor(LiquidGlassColors.primaryText)
+                                    .font(AppleTypography.body)
+                                    .foregroundColor(AppleColors.textPrimary)
                             }
                             
                             Spacer()
                             
                             VStack(alignment: .trailing) {
                                 Text("Time")
-                                    .font(LiquidGlassTypography.caption)
-                                    .foregroundColor(LiquidGlassColors.secondaryText)
+                                    .font(AppleTypography.caption1)
+                                    .foregroundColor(AppleColors.textSecondary)
                                 Text(selectedOption.formattedTime)
-                                    .font(LiquidGlassTypography.bodySemibold)
-                                    .foregroundColor(LiquidGlassColors.primaryText)
+                                    .font(AppleTypography.body)
+                                    .foregroundColor(AppleColors.textPrimary)
                             }
                         }
                     }
@@ -490,7 +484,7 @@ struct RouteOverviewSheet: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(LiquidGlassColors.accentText)
+                    .foregroundColor(AppleColors.brandPrimary)
                 }
             }
         }

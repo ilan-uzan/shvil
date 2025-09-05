@@ -96,8 +96,8 @@ struct SocialPlansView: View {
                 VStack(spacing: 16) {
                     HStack {
                         Text("Social Plans")
-                            .font(LiquidGlassTypography.titleXL)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.largeTitle)
+                            .foregroundColor(AppleColors.textPrimary)
 
                         Spacer()
 
@@ -106,7 +106,7 @@ struct SocialPlansView: View {
                         }) {
                             Image(systemName: "plus.circle.fill")
                                 .font(.system(size: 24))
-                                .foregroundColor(LiquidGlassColors.accentText)
+                                .foregroundColor(AppleColors.brandPrimary)
                         }
                         .accessibilityLabel("Create New Plan")
                     }
@@ -152,7 +152,7 @@ struct SocialPlansView: View {
 
                 Spacer()
             }
-            .background(LiquidGlassColors.mapBase)
+            .background(AppleColors.background)
             .navigationBarHidden(true)
         }
         .sheet(isPresented: $showCreatePlan) {
@@ -183,18 +183,18 @@ struct FilterChip: View {
         Button(action: onTap) {
             HStack(spacing: 6) {
                 Text(title)
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(isSelected ? .white : LiquidGlassColors.primaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(isSelected ? .white : AppleColors.textPrimary)
 
                 if count > 0 {
                     Text("\(count)")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(isSelected ? .white : LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(isSelected ? .white : AppleColors.textSecondary)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(isSelected ? Color.white.opacity(0.3) : LiquidGlassColors.glassSurface2)
+                                .fill(isSelected ? Color.white.opacity(0.3) : AppleColors.surfaceSecondary)
                         )
                 }
             }
@@ -202,7 +202,7 @@ struct FilterChip: View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(isSelected ? AnyShapeStyle(LiquidGlassGradients.primaryGradient) : AnyShapeStyle(LiquidGlassColors.glassSurface1))
+                    .fill(isSelected ? AnyShapeStyle(AppleColors.brandGradient) : AnyShapeStyle(AppleColors.surfaceTertiary))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -210,7 +210,7 @@ struct FilterChip: View {
             )
         }
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
+        .animation(AppleAnimations.microInteraction, value: isPressed)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
@@ -231,13 +231,13 @@ struct PlanCard: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(plan.title)
-                            .font(LiquidGlassTypography.title)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.title3)
+                            .foregroundColor(AppleColors.textPrimary)
                             .lineLimit(1)
 
                         Text(plan.description)
-                            .font(LiquidGlassTypography.body)
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .font(AppleTypography.body)
+                            .foregroundColor(AppleColors.textSecondary)
                             .lineLimit(2)
                     }
 
@@ -250,23 +250,23 @@ struct PlanCard: View {
                 // Host Info
                 HStack(spacing: 8) {
                     Circle()
-                        .fill(LiquidGlassGradients.primaryGradient)
+                        .fill(AppleColors.brandGradient)
                         .frame(width: 24, height: 24)
                         .overlay(
                             Text(plan.hostName.prefix(1))
-                                .font(LiquidGlassTypography.caption)
+                                .font(AppleTypography.caption1)
                                 .foregroundColor(.white)
                         )
 
                     Text("Hosted by \(plan.hostName)")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
 
                     Spacer()
 
                     Text("\(plan.participants.count) participants")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
 
                 // Plan-specific content based on status
@@ -284,7 +284,7 @@ struct PlanCard: View {
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(LiquidGlassColors.glassSurface1)
+                    .fill(AppleColors.surfaceTertiary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -293,7 +293,7 @@ struct PlanCard: View {
             )
         }
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
+        .animation(AppleAnimations.microInteraction, value: isPressed)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
@@ -307,7 +307,7 @@ struct StatusBadge: View {
 
     var body: some View {
         Text(status.displayName)
-            .font(LiquidGlassTypography.caption)
+            .font(AppleTypography.caption1)
             .foregroundColor(.white)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
@@ -335,8 +335,8 @@ struct VotingContent: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Vote for your favorite option:")
-                .font(LiquidGlassTypography.bodySemibold)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.bodySemibold)
+                .foregroundColor(AppleColors.textPrimary)
 
             LazyVStack(spacing: 8) {
                 ForEach(plan.options.prefix(3)) { option in
@@ -348,22 +348,22 @@ struct VotingContent: View {
 
             if plan.options.count > 3 {
                 Text("+ \(plan.options.count - 3) more options")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
             }
 
             HStack {
                 Text("Voting ends in \(timeRemaining)")
-                    .font(LiquidGlassTypography.caption)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.caption1)
+                    .foregroundColor(AppleColors.textSecondary)
 
                 Spacer()
 
                 Button("Vote Now") {
                     print("Open voting interface")
                 }
-                .font(LiquidGlassTypography.caption)
-                .foregroundColor(LiquidGlassColors.accentText)
+                .font(AppleTypography.caption1)
+                .foregroundColor(AppleColors.brandPrimary)
             }
         }
     }
@@ -392,13 +392,13 @@ struct VotingOptionRow: View {
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(option.name)
-                        .font(LiquidGlassTypography.bodySemibold)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.bodySemibold)
+                        .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(1)
 
                     Text(option.address)
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                         .lineLimit(1)
                 }
 
@@ -406,18 +406,18 @@ struct VotingOptionRow: View {
 
                 VStack(spacing: 4) {
                     Text("\(option.votes)")
-                        .font(LiquidGlassTypography.title)
-                        .foregroundColor(LiquidGlassColors.accentText)
+                        .font(AppleTypography.title3)
+                        .foregroundColor(AppleColors.brandPrimary)
 
                     Text("votes")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
             }
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(LiquidGlassColors.glassSurface2)
+                    .fill(AppleColors.surfaceSecondary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.white.opacity(0.2), lineWidth: 1)
@@ -425,7 +425,7 @@ struct VotingOptionRow: View {
             )
         }
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(LiquidGlassAnimations.microInteraction, value: isPressed)
+        .animation(AppleAnimations.microInteraction, value: isPressed)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
@@ -449,24 +449,24 @@ struct LockedContent: View {
                     .foregroundColor(.green)
 
                 Text("Decision Made!")
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodySemibold)
+                    .foregroundColor(AppleColors.textPrimary)
             }
 
             if let winner = winningOption {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Winner: \(winner.name)")
-                        .font(LiquidGlassTypography.bodySemibold)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.bodySemibold)
+                        .foregroundColor(AppleColors.textPrimary)
 
                     Text(winner.address)
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
                 .padding(12)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(LiquidGlassColors.glassSurface2)
+                        .fill(AppleColors.surfaceSecondary)
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(Color.green.opacity(0.3), lineWidth: 1)
@@ -478,23 +478,23 @@ struct LockedContent: View {
                 Button("Start Group Trip") {
                     print("Start group trip")
                 }
-                .font(LiquidGlassTypography.bodySemibold)
+                .font(AppleTypography.bodySemibold)
                 .foregroundColor(.white)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                .background(LiquidGlassGradients.primaryGradient)
+                .background(AppleColors.brandGradient)
                 .cornerRadius(20)
 
                 Button("Share ETA") {
                     print("Share ETA")
                 }
-                .font(LiquidGlassTypography.bodySemibold)
-                .foregroundColor(LiquidGlassColors.accentText)
+                .font(AppleTypography.bodySemibold)
+                .foregroundColor(AppleColors.brandPrimary)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(LiquidGlassColors.accentText, lineWidth: 2)
+                        .stroke(AppleColors.brandPrimary, lineWidth: 2)
                 )
             }
         }
@@ -514,8 +514,8 @@ struct LiveContent: View {
                     .frame(width: 8, height: 8)
 
                 Text("Live Now")
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodySemibold)
+                    .foregroundColor(AppleColors.textPrimary)
             }
 
             // Participants with presence indicators
@@ -529,23 +529,23 @@ struct LiveContent: View {
                 Button("View Live") {
                     print("View live plan")
                 }
-                .font(LiquidGlassTypography.bodySemibold)
+                .font(AppleTypography.bodySemibold)
                 .foregroundColor(.white)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                .background(LiquidGlassGradients.primaryGradient)
+                .background(AppleColors.brandGradient)
                 .cornerRadius(20)
 
                 Button("Join") {
                     print("Join live plan")
                 }
-                .font(LiquidGlassTypography.bodySemibold)
-                .foregroundColor(LiquidGlassColors.accentText)
+                .font(AppleTypography.bodySemibold)
+                .foregroundColor(AppleColors.brandPrimary)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(LiquidGlassColors.accentText, lineWidth: 2)
+                        .stroke(AppleColors.brandPrimary, lineWidth: 2)
                 )
             }
         }
@@ -562,11 +562,11 @@ struct ParticipantAvatar: View {
         VStack(spacing: 4) {
             ZStack {
                 Circle()
-                    .fill(LiquidGlassGradients.primaryGradient)
+                    .fill(AppleColors.brandGradient)
                     .frame(width: 32, height: 32)
                     .overlay(
                         Text(participant.name.prefix(1))
-                            .font(LiquidGlassTypography.caption)
+                            .font(AppleTypography.caption1)
                             .foregroundColor(.white)
                     )
 
@@ -579,8 +579,8 @@ struct ParticipantAvatar: View {
             }
 
             Text(participant.name)
-                .font(LiquidGlassTypography.caption)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.caption1)
+                .foregroundColor(AppleColors.textPrimary)
                 .lineLimit(1)
         }
     }
@@ -595,16 +595,16 @@ struct EmptyPlansView: View {
         VStack(spacing: 24) {
             Image(systemName: "calendar.badge.plus")
                 .font(.system(size: 60))
-                .foregroundColor(LiquidGlassColors.accentText.opacity(0.6))
+                .foregroundColor(AppleColors.brandPrimary.opacity(0.6))
 
             VStack(spacing: 12) {
                 Text("No Plans Yet")
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Text("Create your first plan to start planning with friends")
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
                     .multilineTextAlignment(.center)
             }
 
@@ -613,11 +613,11 @@ struct EmptyPlansView: View {
                     Image(systemName: "plus")
                     Text("Create Your First Plan")
                 }
-                .font(LiquidGlassTypography.bodySemibold)
+                .font(AppleTypography.bodySemibold)
                 .foregroundColor(.white)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
-                .background(LiquidGlassGradients.primaryGradient)
+                .background(AppleColors.brandGradient)
                 .cornerRadius(25)
             }
         }
@@ -644,7 +644,7 @@ struct CreatePlanView: View {
                 HStack(spacing: 8) {
                     ForEach(1 ... 3, id: \.self) { step in
                         Circle()
-                            .fill(step <= currentStep ? LiquidGlassColors.accentText : LiquidGlassColors.glassSurface2)
+                            .fill(step <= currentStep ? AppleColors.brandPrimary : AppleColors.surfaceSecondary)
                             .frame(width: 12, height: 12)
                     }
                 }
@@ -672,13 +672,13 @@ struct CreatePlanView: View {
                                 currentStep -= 1
                             }
                         }
-                        .font(LiquidGlassTypography.bodySemibold)
-                        .foregroundColor(LiquidGlassColors.accentText)
+                        .font(AppleTypography.bodySemibold)
+                        .foregroundColor(AppleColors.brandPrimary)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
                         .background(
                             RoundedRectangle(cornerRadius: 20)
-                                .stroke(LiquidGlassColors.accentText, lineWidth: 2)
+                                .stroke(AppleColors.brandPrimary, lineWidth: 2)
                         )
                     }
 
@@ -693,11 +693,11 @@ struct CreatePlanView: View {
                             }
                         }
                     }
-                    .font(LiquidGlassTypography.bodySemibold)
+                    .font(AppleTypography.bodySemibold)
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)
-                    .background(LiquidGlassGradients.primaryGradient)
+                    .background(AppleColors.brandGradient)
                     .cornerRadius(20)
                     .disabled(currentStep == 1 && (planTitle.isEmpty || planDescription.isEmpty))
                 }
@@ -749,27 +749,27 @@ struct Step1Content: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Plan Details")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             VStack(alignment: .leading, spacing: 12) {
                 Text("Plan Title")
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodySemibold)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 TextField("Enter plan title", text: $title)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .font(LiquidGlassTypography.body)
+                    .font(AppleTypography.body)
             }
 
             VStack(alignment: .leading, spacing: 12) {
                 Text("Description")
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodySemibold)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 TextField("Describe your plan", text: $description, axis: .vertical)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .font(LiquidGlassTypography.body)
+                    .font(AppleTypography.body)
                     .lineLimit(3 ... 6)
             }
         }
@@ -786,18 +786,18 @@ struct Step2Content: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Add Options")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             Text("Add places or activities for your friends to vote on")
-                .font(LiquidGlassTypography.body)
-                .foregroundColor(LiquidGlassColors.secondaryText)
+                .font(AppleTypography.body)
+                .foregroundColor(AppleColors.textSecondary)
 
             // Add new option
             HStack {
                 TextField("Add option", text: $newOption)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .font(LiquidGlassTypography.body)
+                    .font(AppleTypography.body)
 
                 Button("Add") {
                     if !newOption.isEmpty {
@@ -805,8 +805,8 @@ struct Step2Content: View {
                         newOption = ""
                     }
                 }
-                .font(LiquidGlassTypography.bodySemibold)
-                .foregroundColor(LiquidGlassColors.accentText)
+                .font(AppleTypography.bodySemibold)
+                .foregroundColor(AppleColors.brandPrimary)
                 .disabled(newOption.isEmpty)
             }
 
@@ -815,21 +815,21 @@ struct Step2Content: View {
                 ForEach(selectedOptions, id: \.self) { option in
                     HStack {
                         Text(option)
-                            .font(LiquidGlassTypography.body)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.body)
+                            .foregroundColor(AppleColors.textPrimary)
 
                         Spacer()
 
                         Button("Remove") {
                             selectedOptions.removeAll { $0 == option }
                         }
-                        .font(LiquidGlassTypography.caption)
+                        .font(AppleTypography.caption1)
                         .foregroundColor(.red)
                     }
                     .padding(12)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(LiquidGlassColors.glassSurface2)
+                            .fill(AppleColors.surfaceSecondary)
                     )
                 }
             }
@@ -848,22 +848,22 @@ struct Step3Content: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Review Plan")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             VStack(alignment: .leading, spacing: 12) {
                 Text(planTitle)
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 Text(planDescription)
-                    .font(LiquidGlassTypography.body)
-                    .foregroundColor(LiquidGlassColors.secondaryText)
+                    .font(AppleTypography.body)
+                    .foregroundColor(AppleColors.textSecondary)
             }
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(LiquidGlassColors.glassSurface1)
+                    .fill(AppleColors.surfaceTertiary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -872,22 +872,22 @@ struct Step3Content: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("Options (\(selectedOptions.count))")
-                    .font(LiquidGlassTypography.bodySemibold)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.bodySemibold)
+                    .foregroundColor(AppleColors.textPrimary)
 
                 LazyVStack(spacing: 8) {
                     ForEach(selectedOptions, id: \.self) { option in
                         HStack {
                             Text(option)
-                                .font(LiquidGlassTypography.body)
-                                .foregroundColor(LiquidGlassColors.primaryText)
+                                .font(AppleTypography.body)
+                                .foregroundColor(AppleColors.textPrimary)
 
                             Spacer()
                         }
                         .padding(12)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(LiquidGlassColors.glassSurface2)
+                                .fill(AppleColors.surfaceSecondary)
                         )
                     }
                 }
@@ -910,12 +910,12 @@ struct PlanDetailsView: View {
                     // Plan Header
                     VStack(alignment: .leading, spacing: 12) {
                         Text(plan.title)
-                            .font(LiquidGlassTypography.titleXL)
-                            .foregroundColor(LiquidGlassColors.primaryText)
+                            .font(AppleTypography.largeTitle)
+                            .foregroundColor(AppleColors.textPrimary)
 
                         Text(plan.description)
-                            .font(LiquidGlassTypography.body)
-                            .foregroundColor(LiquidGlassColors.secondaryText)
+                            .font(AppleTypography.body)
+                            .foregroundColor(AppleColors.textSecondary)
 
                         HStack {
                             StatusBadge(status: plan.status)
@@ -923,14 +923,14 @@ struct PlanDetailsView: View {
                             Spacer()
 
                             Text("Hosted by \(plan.hostName)")
-                                .font(LiquidGlassTypography.caption)
-                                .foregroundColor(LiquidGlassColors.secondaryText)
+                                .font(AppleTypography.caption1)
+                                .foregroundColor(AppleColors.textSecondary)
                         }
                     }
                     .padding(16)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(LiquidGlassColors.glassSurface1)
+                            .fill(AppleColors.surfaceTertiary)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 16)
                                     .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -972,8 +972,8 @@ struct VotingDetailsContent: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Vote for your favorite option")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             LazyVStack(spacing: 12) {
                 ForEach(plan.options) { option in
@@ -998,27 +998,27 @@ struct LockedDetailsContent: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Decision Made!")
-                .font(LiquidGlassTypography.title)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.title3)
+                .foregroundColor(AppleColors.textPrimary)
 
             if let winner = winningOption {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Winner: \(winner.name)")
-                        .font(LiquidGlassTypography.title)
-                        .foregroundColor(LiquidGlassColors.primaryText)
+                        .font(AppleTypography.title3)
+                        .foregroundColor(AppleColors.textPrimary)
 
                     Text(winner.address)
-                        .font(LiquidGlassTypography.body)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.body)
+                        .foregroundColor(AppleColors.textSecondary)
 
                     Text("\(winner.votes) votes")
-                        .font(LiquidGlassTypography.caption)
-                        .foregroundColor(LiquidGlassColors.secondaryText)
+                        .font(AppleTypography.caption1)
+                        .foregroundColor(AppleColors.textSecondary)
                 }
                 .padding(16)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(LiquidGlassColors.glassSurface1)
+                        .fill(AppleColors.surfaceTertiary)
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
                                 .stroke(Color.green.opacity(0.3), lineWidth: 2)
@@ -1042,13 +1042,13 @@ struct LiveDetailsContent: View {
                     .frame(width: 12, height: 12)
 
                 Text("Live Now")
-                    .font(LiquidGlassTypography.title)
-                    .foregroundColor(LiquidGlassColors.primaryText)
+                    .font(AppleTypography.title3)
+                    .foregroundColor(AppleColors.textPrimary)
             }
 
             Text("Participants (\(plan.participants.count))")
-                .font(LiquidGlassTypography.bodySemibold)
-                .foregroundColor(LiquidGlassColors.primaryText)
+                .font(AppleTypography.bodySemibold)
+                .foregroundColor(AppleColors.textPrimary)
 
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 12) {
                 ForEach(plan.participants) { participant in
