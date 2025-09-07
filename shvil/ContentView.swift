@@ -48,17 +48,34 @@ struct ContentView: View {
             }
             .animation(.easeInOut(duration: 0.3), value: selectedTab)
             
-            // Floating Navigation Pill
-            FloatingNavigationPill(
-                selectedTab: $selectedTab,
-                tabs: [
-                    TabItem(icon: "map.fill", title: "Map"),
-                    TabItem(icon: "person.3.fill", title: "Socialize"),
-                    TabItem(icon: "flag.fill", title: "Hunt"),
-                    TabItem(icon: "sparkles", title: "Adventure"),
-                    TabItem(icon: "gearshape.fill", title: "Settings")
-                ]
-            )
+            // Liquid Glass Navigation
+            if FeatureFlags.shared.isEnabled(.liquidGlassNavV1) {
+                GlassTabBar(
+                    tabs: [
+                        GlassTabItem(icon: "map", selectedIcon: "map.fill", title: "Map", route: "map"),
+                        GlassTabItem(icon: "person.3", selectedIcon: "person.3.fill", title: "Socialize", route: "socialize"),
+                        GlassTabItem(icon: "flag", selectedIcon: "flag.fill", title: "Hunt", route: "hunt"),
+                        GlassTabItem(icon: "sparkles", selectedIcon: "sparkles", title: "Adventure", route: "adventure"),
+                        GlassTabItem(icon: "gearshape", selectedIcon: "gearshape.fill", title: "Settings", route: "settings")
+                    ],
+                    selectedTab: $selectedTab,
+                    onSelect: { index in
+                        selectedTab = index
+                    }
+                )
+            } else {
+                // Fallback to floating pill navigation
+                FloatingNavigationPill(
+                    selectedTab: $selectedTab,
+                    tabs: [
+                        TabItem(icon: "map.fill", title: "Map"),
+                        TabItem(icon: "person.3.fill", title: "Socialize"),
+                        TabItem(icon: "flag.fill", title: "Hunt"),
+                        TabItem(icon: "sparkles", title: "Adventure"),
+                        TabItem(icon: "gearshape.fill", title: "Settings")
+                    ]
+                )
+            }
         }
         .sheet(isPresented: $showAdventureSetup) {
             AdventureSetupView()

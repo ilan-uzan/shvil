@@ -20,6 +20,7 @@ public class FeatureFlags: ObservableObject {
     
     // Design System
     @Published public var liquidGlassV2: Bool = true
+    @Published public var liquidGlassNavV1: Bool = true
     @Published public var newMapOverlay: Bool = false
     @Published public var newHuntEngine: Bool = false
     
@@ -114,6 +115,10 @@ public class FeatureFlags: ObservableObject {
         // Observe changes and persist to UserDefaults
         $liquidGlassV2
             .sink { UserDefaults.standard.set($0, forKey: "feature_liquid_glass_v2") }
+            .store(in: &cancellables)
+        
+        $liquidGlassNavV1
+            .sink { UserDefaults.standard.set($0, forKey: "feature_liquid_glass_nav_v1") }
             .store(in: &cancellables)
         
         $newMapOverlay
@@ -237,6 +242,7 @@ public class FeatureFlags: ObservableObject {
     public func isEnabled(_ feature: Feature) -> Bool {
         switch feature {
         case .liquidGlassV2: return liquidGlassV2
+        case .liquidGlassNavV1: return liquidGlassNavV1
         case .newMapOverlay: return newMapOverlay
         case .newHuntEngine: return newHuntEngine
         case .appleSignIn: return appleSignInEnabled
@@ -272,6 +278,7 @@ public class FeatureFlags: ObservableObject {
     public func enable(_ feature: Feature) {
         switch feature {
         case .liquidGlassV2: liquidGlassV2 = true
+        case .liquidGlassNavV1: liquidGlassNavV1 = true
         case .newMapOverlay: newMapOverlay = true
         case .newHuntEngine: newHuntEngine = true
         case .appleSignIn: appleSignInEnabled = true
@@ -307,6 +314,7 @@ public class FeatureFlags: ObservableObject {
     public func disable(_ feature: Feature) {
         switch feature {
         case .liquidGlassV2: liquidGlassV2 = false
+        case .liquidGlassNavV1: liquidGlassNavV1 = false
         case .newMapOverlay: newMapOverlay = false
         case .newHuntEngine: newHuntEngine = false
         case .appleSignIn: appleSignInEnabled = false
@@ -376,6 +384,7 @@ public class FeatureFlags: ObservableObject {
 
 public enum Feature: String, CaseIterable {
     case liquidGlassV2 = "liquid_glass_v2"
+    case liquidGlassNavV1 = "liquid_glass_nav_v1"
     case newMapOverlay = "new_map_overlay"
     case newHuntEngine = "new_hunt_engine"
     case appleSignIn = "apple_signin"
@@ -408,6 +417,7 @@ public enum Feature: String, CaseIterable {
     public var displayName: String {
         switch self {
         case .liquidGlassV2: return "Liquid Glass V2"
+        case .liquidGlassNavV1: return "Liquid Glass Navigation V1"
         case .newMapOverlay: return "New Map Overlay"
         case .newHuntEngine: return "New Hunt Engine"
         case .appleSignIn: return "Apple Sign In"
@@ -442,6 +452,7 @@ public enum Feature: String, CaseIterable {
     public var description: String {
         switch self {
         case .liquidGlassV2: return "Enable the new Liquid Glass design system"
+        case .liquidGlassNavV1: return "Enable Apple Music-style Liquid Glass navigation"
         case .newMapOverlay: return "Enable new map overlay components"
         case .newHuntEngine: return "Enable the new scavenger hunt engine"
         case .appleSignIn: return "Enable Apple Sign In authentication"
