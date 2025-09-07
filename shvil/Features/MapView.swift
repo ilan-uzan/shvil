@@ -152,7 +152,9 @@ struct MapView: View {
             Spacer()
             if !isFocusMode {
                 floatingButtons
-                bottomSheet
+                if navigationService.currentRoute != nil {
+                    bottomSheet
+                }
             } else {
                 focusModeBottomBar
             }

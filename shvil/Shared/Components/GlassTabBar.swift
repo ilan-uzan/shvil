@@ -41,17 +41,17 @@ struct GlassTabBar: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
             .background(
                 ZStack {
-                    // Apple Music-style frosted glass background
-                    RoundedRectangle(cornerRadius: 25)
+                    // Apple Music-style frosted glass background - more rounded
+                    RoundedRectangle(cornerRadius: 35)
                         .fill(.ultraThinMaterial)
                         .saturation(1.2)
                         .overlay(
                             // Subtle tint overlay
-                            RoundedRectangle(cornerRadius: 25)
+                            RoundedRectangle(cornerRadius: 35)
                                 .fill(
                                     LinearGradient(
                                         colors: [
@@ -65,7 +65,7 @@ struct GlassTabBar: View {
                         )
                         .overlay(
                             // Subtle border
-                            RoundedRectangle(cornerRadius: 25)
+                            RoundedRectangle(cornerRadius: 35)
                                 .stroke(
                                     LinearGradient(
                                         colors: [
@@ -96,8 +96,8 @@ struct GlassTabBar: View {
                 x: 0,
                 y: 8
             )
-            .padding(.horizontal, 20)
-            .padding(.bottom, 34) // Above home indicator
+            .padding(.horizontal, 16)
+            .padding(.bottom, 20) // Lower positioning
         }
         .onAppear {
             updateCapsulePosition()
@@ -127,7 +127,9 @@ struct GlassTabBar: View {
     }
     
     private func updateCapsulePosition() {
-        let tabWidth = (UIScreen.main.bounds.width - 40) / CGFloat(tabs.count) // Account for padding
+        // Calculate the actual tab width accounting for padding
+        let totalPadding = 32.0 // 16pt padding on each side
+        let tabWidth = (UIScreen.main.bounds.width - totalPadding) / CGFloat(tabs.count)
         let newOffset = CGFloat(selectedTab) * tabWidth
         let newWidth = tabWidth * 0.7 // 70% of tab width for Apple Music look
         
@@ -226,8 +228,8 @@ struct AppleMusicLens: View {
     
     var body: some View {
         ZStack {
-            // Main lens background with Apple Music styling
-            RoundedRectangle(cornerRadius: 20)
+            // Main lens background with Apple Music styling - more rounded
+            RoundedRectangle(cornerRadius: 30)
                 .fill(
                     RadialGradient(
                         colors: [
@@ -242,7 +244,7 @@ struct AppleMusicLens: View {
                 )
                 .overlay(
                     // Apple Music-style lens reflection
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: 30)
                         .fill(
                             LinearGradient(
                                 colors: [
@@ -258,7 +260,7 @@ struct AppleMusicLens: View {
                 )
                 .overlay(
                     // Subtle border like Apple Music
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: 30)
                         .stroke(
                             LinearGradient(
                                 colors: [
@@ -274,13 +276,13 @@ struct AppleMusicLens: View {
                 )
                 .overlay(
                     // Soft glow effect
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: 30)
                         .stroke(tint.opacity(0.4), lineWidth: 0.5)
                         .blur(radius: 1)
                 )
             
             // Inner highlight for lens effect
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 28)
                 .fill(
                     RadialGradient(
                         colors: [
