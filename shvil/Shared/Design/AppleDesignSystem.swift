@@ -3,70 +3,69 @@
 //  shvil
 //
 //  Created by ilan on 2024.
+//  DEPRECATED: Use DesignSystem/Theme.swift and DesignSystem/Components.swift instead
 //
 
 import SwiftUI
 
-// MARK: - Apple Design System for Shvil
-// Following Apple's Human Interface Guidelines and iOS Design Principles
+// MARK: - Legacy Apple Design System (DEPRECATED)
+// This file is maintained for backward compatibility during migration
+// New code should use DesignSystem/Theme.swift and DesignSystem/Components.swift
 
-// MARK: - Shvil Brand Color System (Icy Turquoise to Deep Aqua Theme)
+// MARK: - Legacy Color System (DEPRECATED)
 
+@available(*, deprecated, message: "Use DesignTokens.Brand, DesignTokens.Semantic, etc. instead")
 enum AppleColors {
     // Brand Primary - Icy Turquoise to Deep Aqua Gradient (Shvil Vision)
-    static let brandPrimary = Color(red: 0.4, green: 0.9, blue: 0.85) // #66E6D9 - Icy Turquoise
-    static let brandPrimaryMid = Color(red: 0.2, green: 0.7, blue: 0.8) // #33B3CC - Mid Aqua
-    static let brandPrimaryDark = Color(red: 0.1, green: 0.5, blue: 0.6) // #1A8099 - Deep Aqua
+    static let brandPrimary = DesignTokens.Brand.primary
+    static let brandPrimaryMid = DesignTokens.Brand.primaryMid
+    static let brandPrimaryDark = DesignTokens.Brand.primaryDark
     
     // Brand Gradient
-    static let brandGradient = LinearGradient(
-        colors: [brandPrimary, brandPrimaryMid, brandPrimaryDark],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    static let brandGradient = DesignTokens.Brand.gradient
     
     // Semantic Colors
-    static let success = Color(red: 0.137, green: 0.769, blue: 0.514) // #23C483
-    static let warning = Color(red: 1.0, green: 0.784, blue: 0.341) // #FFC857
-    static let danger = Color(red: 1.0, green: 0.420, blue: 0.420) // #FF6B6B
-    static let error = Color(red: 1.0, green: 0.420, blue: 0.420) // #FF6B6B - Same as danger
-    static let info = brandPrimaryMid
+    static let success = DesignTokens.Semantic.success
+    static let warning = DesignTokens.Semantic.warning
+    static let danger = DesignTokens.Semantic.error
+    static let error = DesignTokens.Semantic.error
+    static let info = DesignTokens.Semantic.info
     
     // Surface Colors - Light, glassy theme
-    static let background = Color(red: 0.98, green: 0.98, blue: 0.99) // Near white
-    static let surface = Color.white.opacity(0.55) // Glass surface
-    static let surfacePrimary = Color.white.opacity(0.55) // Primary glass surface
-    static let surfaceSecondary = Color.white.opacity(0.45) // Secondary glass
-    static let surfaceTertiary = Color.white.opacity(0.35) // Tertiary glass
+    static let background = DesignTokens.Surface.background
+    static let surface = DesignTokens.Surface.primary
+    static let surfacePrimary = DesignTokens.Surface.primary
+    static let surfaceSecondary = DesignTokens.Surface.secondary
+    static let surfaceTertiary = DesignTokens.Surface.tertiary
     
     // Text Colors - Near black on light
-    static let textPrimary = Color(red: 0.043, green: 0.043, blue: 0.047) // #0B0B0C at 80-90%
-    static let textSecondary = Color(red: 0.227, green: 0.227, blue: 0.251) // #3A3A40 at 70%
-    static let textTertiary = Color(red: 0.227, green: 0.227, blue: 0.251).opacity(0.6)
-    static let textQuaternary = Color(red: 0.227, green: 0.227, blue: 0.251).opacity(0.4)
+    static let textPrimary = DesignTokens.Text.primary
+    static let textSecondary = DesignTokens.Text.secondary
+    static let textTertiary = DesignTokens.Text.tertiary
+    static let textQuaternary = DesignTokens.Text.quaternary
     
     // Glass Colors - Enhanced Liquid Glass (Shvil Vision)
-    static let glassLight = Color.white.opacity(0.45) // Frosted glass with subtle turquoise tint
-    static let glassMedium = Color.white.opacity(0.55) // Medium glass with aqua undertones
-    static let glassHeavy = Color.white.opacity(0.65) // Heavy glass with deep aqua tint
-    static let glassInnerHighlight = Color.white.opacity(0.08) // Inner highlight for depth
-    static let glassOuterGlow = brandPrimary.opacity(0.15) // Outer glow for Liquid Glass effect
-    static let glassSpecular = Color.white.opacity(0.12) // Specular highlight for glass reflection
+    static let glassLight = DesignTokens.Glass.light
+    static let glassMedium = DesignTokens.Glass.medium
+    static let glassHeavy = DesignTokens.Glass.heavy
+    static let glassInnerHighlight = DesignTokens.Glass.innerHighlight
+    static let glassOuterGlow = DesignTokens.Glass.outerGlow
+    static let glassSpecular = DesignTokens.Glass.specular
     
     // Stroke Colors
-    static let strokeHairline = Color.black.opacity(0.06) // Hairline stroke
-    static let strokeLight = Color.black.opacity(0.12) // Light stroke
-    static let strokeMedium = Color.black.opacity(0.18) // Medium stroke
+    static let strokeHairline = DesignTokens.Stroke.hairline
+    static let strokeLight = DesignTokens.Stroke.light
+    static let strokeMedium = DesignTokens.Stroke.medium
     
     // Accent Colors
-    static let accent = brandPrimary
-    static let accentSecondary = brandPrimaryMid
+    static let accent = DesignTokens.Brand.primary
+    static let accentSecondary = DesignTokens.Brand.primaryMid
     
     // Accessibility Colors
-    static let accessibilitySuccess = Color(red: 0.137, green: 0.769, blue: 0.514) // High contrast green
-    static let accessibilityWarning = Color(red: 1.0, green: 0.784, blue: 0.341) // High contrast orange
-    static let accessibilityDanger = Color(red: 1.0, green: 0.420, blue: 0.420) // High contrast red
-    static let accessibilityInfo = brandPrimaryMid // High contrast blue
+    static let accessibilitySuccess = DesignTokens.Semantic.successHighContrast
+    static let accessibilityWarning = DesignTokens.Semantic.warningHighContrast
+    static let accessibilityDanger = DesignTokens.Semantic.errorHighContrast
+    static let accessibilityInfo = DesignTokens.Semantic.infoHighContrast
     
     // High Contrast Colors
     static let highContrastPrimary = Color.primary
