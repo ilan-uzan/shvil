@@ -164,20 +164,17 @@ struct MapView: View {
 
     private var topBar: some View {
         VStack(spacing: 0) {
-            // Top row with search bar and buttons
+            // Top row with search pill and action buttons
             HStack(spacing: DesignTokens.Spacing.sm) {
-                // Enhanced Search Bar
-                MapSearchBar(
-                    searchText: $searchText,
-                    isSearching: $isSearchFocused,
+                // New rounded search pill with logo
+                MapsSearchPill(
                     onSearch: { searchQuery in
                         searchService.search(for: searchQuery)
                         isSearchFocused = false
                     },
-                    onCancel: {
-                        searchText = ""
-                        searchService.searchResults = []
-                        isSearchFocused = false
+                    onVoiceSearch: {
+                        print("Voice search activated")
+                        HapticFeedback.shared.impact(style: .light)
                     }
                 )
                 
@@ -207,26 +204,6 @@ struct MapView: View {
             }
             .padding(.horizontal, DesignTokens.Spacing.lg)
             .padding(.top, DesignTokens.Spacing.sm)
-            
-            // Voice Search Button (when not searching)
-            if !isSearchFocused {
-                HStack {
-                    Spacer()
-                    
-                    AppleGlassFAB(
-                        icon: "mic.fill",
-                        size: .small,
-                        style: .secondary
-                    ) {
-                        print("Voice search tapped")
-                        HapticFeedback.shared.impact(style: .light)
-                    }
-                    .accessibilityLabel("Voice search")
-                    .accessibilityHint("Double tap to search using your voice")
-                }
-                .padding(.horizontal, DesignTokens.Spacing.lg)
-                .padding(.top, DesignTokens.Spacing.sm)
-            }
         }
     }
 
