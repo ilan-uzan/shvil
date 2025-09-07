@@ -97,7 +97,7 @@ struct AdventuresView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                AppleColors.background
+                DesignTokens.Surface.background
                     .ignoresSafeArea()
                 
                 if adventureKit.adventureHistory.isEmpty {
@@ -106,21 +106,31 @@ struct AdventuresView: View {
                     adventuresList
                 }
             }
-            .appleNavigationBar()
             .overlay(
                 // Floating Adventure Button
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
-                        AppleGlassFAB(
-                            icon: "plus",
-                            size: .large,
-                            style: .primary
-                        ) {
+                        Button(action: {
                             showAdventureSetup = true
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundColor(.white)
+                                .frame(width: 56, height: 56)
+                                .background(
+                                    Circle()
+                                        .fill(DesignTokens.Brand.gradient)
+                                        .shadow(
+                                            color: DesignTokens.Shadow.heavy.color,
+                                            radius: DesignTokens.Shadow.heavy.radius,
+                                            x: DesignTokens.Shadow.heavy.x,
+                                            y: DesignTokens.Shadow.heavy.y
+                                        )
+                                )
                         }
-                        .padding(.trailing, AppleSpacing.md)
+                        .padding(.trailing, DesignTokens.Spacing.md)
                         .padding(.bottom, 100) // Above tab bar
                     }
                 }
@@ -135,14 +145,14 @@ struct AdventuresView: View {
     }
     
     private var emptyState: some View {
-        VStack(spacing: AppleSpacing.xl) {
+        VStack(spacing: DesignTokens.Spacing.xl) {
             Spacer()
             
             // Empty state illustration
             ZStack {
                 // Background wave
-                RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                    .fill(AppleColors.brandPrimary.opacity(0.1))
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                    .fill(DesignTokens.Brand.primary.opacity(0.1))
                     .frame(width: 120, height: 80)
                     .overlay(
                         // Wave pattern
@@ -150,152 +160,180 @@ struct AdventuresView: View {
                             path.move(to: CGPoint(x: 0, y: 40))
                             path.addQuadCurve(to: CGPoint(x: 120, y: 40), control: CGPoint(x: 60, y: 20))
                         }
-                        .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 2)
+                        .stroke(DesignTokens.Brand.primary.opacity(0.3), lineWidth: 2)
                     )
                 
                 // Adventure icon
                 Image(systemName: "sparkles")
                     .font(.system(size: 32, weight: .medium))
-                    .foregroundColor(AppleColors.brandPrimary)
+                    .foregroundColor(DesignTokens.Brand.primary)
             }
             
-            VStack(spacing: AppleSpacing.md) {
+            VStack(spacing: DesignTokens.Spacing.md) {
                 Text("No Adventures Yet")
-                    .font(AppleTypography.title2)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title2)
+                    .foregroundColor(DesignTokens.Text.primary)
                     .multilineTextAlignment(.center)
                 
                 Text("Create your first adventure to start exploring amazing places and experiences.")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, AppleSpacing.lg)
+                    .padding(.horizontal, DesignTokens.Spacing.lg)
             }
             
             // Create Adventure Button
-            AppleButton(
-                "Create Adventure",
-                icon: "plus",
-                style: .primary,
-                size: .large
-            ) {
+            Button(action: {
                 showAdventureSetup = true
+            }) {
+                HStack(spacing: DesignTokens.Spacing.sm) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 16, weight: .semibold))
+                    Text("Create Adventure")
+                        .font(DesignTokens.Typography.body)
+                        .fontWeight(.semibold)
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, DesignTokens.Spacing.lg)
+                .padding(.vertical, DesignTokens.Spacing.md)
+                .background(
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                        .fill(DesignTokens.Brand.gradient)
+                )
             }
-            .padding(.horizontal, AppleSpacing.xl)
+            .padding(.horizontal, DesignTokens.Spacing.xl)
             
             Spacer()
         }
-        .padding(.horizontal, AppleSpacing.lg)
+        .padding(.horizontal, DesignTokens.Spacing.lg)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("No Adventures Yet. Create your first adventure to start exploring amazing places and experiences.")
     }
     
     private var adventuresList: some View {
         ScrollView {
-            LazyVStack(spacing: AppleSpacing.md) {
+            LazyVStack(spacing: DesignTokens.Spacing.md) {
                 ForEach(adventureKit.adventureHistory) { adventure in
                     adventureCard(for: adventure)
                 }
             }
-            .padding(.horizontal, AppleSpacing.md)
-            .padding(.top, AppleSpacing.sm)
+            .padding(.horizontal, DesignTokens.Spacing.md)
+            .padding(.top, DesignTokens.Spacing.sm)
         }
     }
     
     private func adventureCard(for adventure: AdventurePlan) -> some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.md) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             // Header
             HStack {
-                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                     Text(adventure.theme.displayName)
-                        .font(AppleTypography.title3)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title3)
+                        .foregroundColor(DesignTokens.Text.primary)
                     
                     Text(adventure.description)
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .lineLimit(2)
                 }
                 
                 Spacer()
                 
-                AppleGlassStatusIndicator(
-                    status: adventure.status == .completed ? .success : .info
-                )
+                Circle()
+                    .fill(adventure.status == .completed ? DesignTokens.Semantic.success : DesignTokens.Semantic.info)
+                    .frame(width: 12, height: 12)
             }
             
             // Stats
-            HStack(spacing: AppleSpacing.lg) {
-                HStack(spacing: AppleSpacing.xs) {
+            HStack(spacing: DesignTokens.Spacing.lg) {
+                HStack(spacing: DesignTokens.Spacing.xs) {
                     Image(systemName: "clock")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(AppleColors.accent)
+                        .foregroundColor(DesignTokens.Brand.primary)
                     
                     Text("\(adventure.totalDuration)h")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
                 
-                HStack(spacing: AppleSpacing.xs) {
+                HStack(spacing: DesignTokens.Spacing.xs) {
                     Image(systemName: "location")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(AppleColors.accent)
+                        .foregroundColor(DesignTokens.Brand.primary)
                     
                     Text("\(adventure.stops.count) stops")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
                 
                 Spacer()
             }
             
             // Action buttons
-            HStack(spacing: AppleSpacing.sm) {
-                AppleButton(
-                    "View",
-                    style: .secondary,
-                    size: .small
-                ) {
+            HStack(spacing: DesignTokens.Spacing.sm) {
+                Button("View") {
                     selectedAdventure = adventure
                 }
+                .font(DesignTokens.Typography.caption1)
+                .fontWeight(.medium)
+                .foregroundColor(DesignTokens.Text.secondary)
+                .padding(.horizontal, DesignTokens.Spacing.md)
+                .padding(.vertical, DesignTokens.Spacing.sm)
+                .background(
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
+                        .fill(DesignTokens.Surface.secondary)
+                )
                 
                 if adventure.status == .draft {
-                    AppleButton(
-                        "Start",
-                        style: .primary,
-                        size: .small
-                    ) {
-                        // Start adventure logic
+                    Button("Start") {
                         startAdventure(adventure)
                     }
+                    .font(DesignTokens.Typography.caption1)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                    .padding(.vertical, DesignTokens.Spacing.sm)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
+                            .fill(DesignTokens.Brand.primary)
+                    )
                 } else if adventure.status == .completed {
-                    AppleButton(
-                        "Share",
-                        style: .secondary,
-                        size: .small
-                    ) {
-                        // Share adventure logic
+                    Button("Share") {
                         shareAdventure(adventure)
                     }
+                    .font(DesignTokens.Typography.caption1)
+                    .fontWeight(.medium)
+                    .foregroundColor(DesignTokens.Text.secondary)
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                    .padding(.vertical, DesignTokens.Spacing.sm)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
+                            .fill(DesignTokens.Surface.secondary)
+                    )
                 }
             }
         }
-        .padding(.horizontal, AppleSpacing.lg)
-        .padding(.vertical, AppleSpacing.lg)
+        .padding(.horizontal, DesignTokens.Spacing.lg)
+        .padding(.vertical, DesignTokens.Spacing.lg)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
                 .fill(.ultraThinMaterial)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                        .fill(AppleColors.glassMedium)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                        .fill(DesignTokens.Glass.medium)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                                .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                 .blendMode(.overlay)
                         )
                 )
         )
-        .appleShadow(AppleShadows.medium)
+        .shadow(
+    color: DesignTokens.Shadow.medium.color,
+    radius: DesignTokens.Shadow.medium.radius,
+    x: DesignTokens.Shadow.medium.x,
+    y: DesignTokens.Shadow.medium.y
+)
         .onTapGesture {
             selectedAdventure = adventure
         }
@@ -326,16 +364,16 @@ struct ProfileView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                AppleColors.background
+                DesignTokens.Surface.background
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: AppleSpacing.xl) {
+                    VStack(spacing: DesignTokens.Spacing.xl) {
                         // Profile Header
                         profileHeader
                         
                         // Settings Sections
-                        VStack(spacing: AppleSpacing.md) {
+                        VStack(spacing: DesignTokens.Spacing.md) {
                             if authService.currentUser == nil {
                                 loginSection
                             }
@@ -344,11 +382,10 @@ struct ProfileView: View {
                             aboutSection
                         }
                     }
-                    .padding(.horizontal, AppleSpacing.md)
-                    .padding(.top, AppleSpacing.sm)
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                    .padding(.top, DesignTokens.Spacing.sm)
                 }
             }
-            .appleNavigationBar()
             .navigationTitle("Profile")
         }
         .sheet(isPresented: $showSettings) {
@@ -363,26 +400,31 @@ struct ProfileView: View {
     }
     
     private var profileHeader: some View {
-        VStack(spacing: AppleSpacing.lg) {
+        VStack(spacing: DesignTokens.Spacing.lg) {
             // Profile Picture with enhanced glassmorphism
             ZStack {
                 // Outer glow
                 Circle()
-                    .fill(AppleColors.brandGradient)
+                    .fill(DesignTokens.Brand.gradient)
                     .frame(width: 100, height: 100)
                     .blur(radius: 8)
                     .opacity(0.3)
                 
                 // Main avatar
                 Circle()
-                    .fill(AppleColors.brandGradient)
+                    .fill(DesignTokens.Brand.gradient)
                     .frame(width: 80, height: 80)
                     .overlay(
                         Circle()
-                            .stroke(AppleColors.glassInnerHighlight, lineWidth: 2)
+                            .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 2)
                             .blendMode(.overlay)
                     )
-                    .appleShadow(AppleShadows.glass)
+                    .shadow(
+    color: DesignTokens.Shadow.glass.color,
+    radius: DesignTokens.Shadow.glass.radius,
+    x: DesignTokens.Shadow.glass.x,
+    y: DesignTokens.Shadow.glass.y
+)
                 
                 if let user = authService.currentUser {
                     // Show user initials if available
@@ -396,188 +438,373 @@ struct ProfileView: View {
                 }
             }
             
-            VStack(spacing: AppleSpacing.sm) {
+            VStack(spacing: DesignTokens.Spacing.sm) {
                 if let user = authService.currentUser {
                     Text("Welcome back, \(user.displayName)")
-                        .font(AppleTypography.title2)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title2)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .multilineTextAlignment(.center)
                     
                     Text(user.email)
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .multilineTextAlignment(.center)
                 } else {
                     Text("Welcome to Shvil")
-                        .font(AppleTypography.title2)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title2)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .multilineTextAlignment(.center)
                     
                     Text("Your adventure companion")
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .multilineTextAlignment(.center)
                 }
             }
         }
-        .padding(.horizontal, AppleSpacing.lg)
-        .padding(.vertical, AppleSpacing.xl)
+        .padding(.horizontal, DesignTokens.Spacing.lg)
+        .padding(.vertical, DesignTokens.Spacing.xl)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.xxl)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xxl)
                 .fill(.ultraThinMaterial)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.xxl)
-                        .fill(AppleColors.glassMedium)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xxl)
+                        .fill(DesignTokens.Glass.medium)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.xxl)
-                                .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xxl)
+                                .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                 .blendMode(.overlay)
                         )
                 )
         )
-        .appleShadow(AppleShadows.glass)
+        .shadow(
+    color: DesignTokens.Shadow.glass.color,
+    radius: DesignTokens.Shadow.glass.radius,
+    x: DesignTokens.Shadow.glass.x,
+    y: DesignTokens.Shadow.glass.y
+)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(authService.currentUser != nil ? "Welcome back, \(authService.currentUser?.displayName ?? "User")" : "Welcome to Shvil, Your adventure companion")
     }
     
     private var loginSection: some View {
-        AppleGlassCard(style: .elevated) {
-            VStack(spacing: AppleSpacing.lg) {
-                VStack(spacing: AppleSpacing.sm) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+            VStack(spacing: DesignTokens.Spacing.lg) {
+                VStack(spacing: DesignTokens.Spacing.sm) {
                     Text("Sign in to sync your adventures")
-                        .font(AppleTypography.title3)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title3)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .multilineTextAlignment(.center)
                     
                     Text("Access your saved adventures across all devices")
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .multilineTextAlignment(.center)
                 }
                 
-                AppleButton(
-                    "Sign In",
-                    icon: "person.circle",
-                    style: .primary,
-                    size: .large
-                ) {
+                Button(action: {
                     showLogin = true
+                }) {
+                    HStack(spacing: DesignTokens.Spacing.sm) {
+                        Image(systemName: "person.circle")
+                            .font(.system(size: 16, weight: .semibold))
+                        Text("Sign In")
+                            .font(DesignTokens.Typography.body)
+                            .fontWeight(.semibold)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, DesignTokens.Spacing.lg)
+                    .padding(.vertical, DesignTokens.Spacing.md)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                            .fill(DesignTokens.Brand.gradient)
+                    )
                 }
             }
         }
+        .padding(DesignTokens.Spacing.lg)
+        .background(
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                        .fill(DesignTokens.Glass.medium)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
+                        )
+                )
+        )
+        .shadow(
+            color: DesignTokens.Shadow.glass.color,
+            radius: DesignTokens.Shadow.glass.radius,
+            x: DesignTokens.Shadow.glass.x,
+            y: DesignTokens.Shadow.glass.y
+        )
     }
     
     private var settingsSection: some View {
-        AppleGlassCard(style: .elevated) {
-            VStack(alignment: .leading, spacing: AppleSpacing.md) {
-                Text("Settings")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
-                
-                VStack(spacing: 0) {
-                    AppleGlassListRow(
-                        icon: "gear",
-                        title: "General Settings",
-                        action: {
-                            showSettings = true
-                        }
-                    )
-                    
-                    Divider()
-                        .background(AppleColors.glassLight)
-                    
-                    AppleGlassListRow(
-                        icon: "bell",
-                        title: "Notifications",
-                        action: {
-                            // Notification settings
-                        }
-                    )
-                    
-                    if authService.currentUser != nil {
-                        Divider()
-                            .background(AppleColors.glassLight)
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+            Text("Settings")
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
+            
+            VStack(spacing: 0) {
+                Button(action: {
+                    showSettings = true
+                }) {
+                    HStack(spacing: DesignTokens.Spacing.md) {
+                        Image(systemName: "gear")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(DesignTokens.Brand.primary)
+                            .frame(width: 24, height: 24)
                         
-                        AppleGlassListRow(
-                            icon: "rectangle.portrait.and.arrow.right",
-                            title: "Sign Out",
-                            action: {
-                                Task {
-                                    await authService.signOut()
-                                }
-                            }
-                        )
+                        Text("General Settings")
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.primary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(DesignTokens.Text.tertiary)
                     }
+                    .padding(.vertical, DesignTokens.Spacing.sm)
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                Divider()
+                    .background(DesignTokens.Glass.light)
+                
+                Button(action: {
+                    // Notification settings
+                }) {
+                    HStack(spacing: DesignTokens.Spacing.md) {
+                        Image(systemName: "bell")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(DesignTokens.Brand.primary)
+                            .frame(width: 24, height: 24)
+                        
+                        Text("Notifications")
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.primary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(DesignTokens.Text.tertiary)
+                    }
+                    .padding(.vertical, DesignTokens.Spacing.sm)
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                if authService.currentUser != nil {
+                    Divider()
+                        .background(DesignTokens.Glass.light)
+                    
+                    Button(action: {
+                        Task {
+                            await authService.signOut()
+                        }
+                    }) {
+                        HStack(spacing: DesignTokens.Spacing.md) {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(DesignTokens.Semantic.error)
+                                .frame(width: 24, height: 24)
+                            
+                            Text("Sign Out")
+                                .font(DesignTokens.Typography.body)
+                                .foregroundColor(DesignTokens.Semantic.error)
+                            
+                            Spacer()
+                        }
+                        .padding(.vertical, DesignTokens.Spacing.sm)
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
         }
+        .padding(DesignTokens.Spacing.lg)
+        .background(
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                        .fill(DesignTokens.Glass.medium)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
+                        )
+                )
+        )
+        .shadow(
+            color: DesignTokens.Shadow.glass.color,
+            radius: DesignTokens.Shadow.glass.radius,
+            x: DesignTokens.Shadow.glass.x,
+            y: DesignTokens.Shadow.glass.y
+        )
     }
     
     private var preferencesSection: some View {
-        AppleGlassCard(style: .elevated) {
-            VStack(alignment: .leading, spacing: AppleSpacing.md) {
-                Text("Preferences")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
-                
-                VStack(spacing: 0) {
-                    AppleGlassListRow(
-                        icon: "globe",
-                        title: "Language",
-                        trailing: AnyView(
-                            Text(localizationManager.currentLanguage.displayName)
-                                .font(AppleTypography.caption1)
-                                .foregroundColor(AppleColors.textSecondary)
-                        ),
-                        action: {
-                            // Language settings
-                        }
-                    )
-                    
-                    Divider()
-                        .background(AppleColors.glassLight)
-                    
-                    AppleGlassListRow(
-                        icon: "paintbrush",
-                        title: "Appearance",
-                        action: {
-                            // Theme settings
-                        }
-                    )
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+            Text("Preferences")
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
+            
+            VStack(spacing: 0) {
+                Button(action: {
+                    // Language settings
+                }) {
+                    HStack(spacing: DesignTokens.Spacing.md) {
+                        Image(systemName: "globe")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(DesignTokens.Brand.primary)
+                            .frame(width: 24, height: 24)
+                        
+                        Text("Language")
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.primary)
+                        
+                        Spacer()
+                        
+                        Text(localizationManager.currentLanguage.displayName)
+                            .font(DesignTokens.Typography.caption1)
+                            .foregroundColor(DesignTokens.Text.secondary)
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(DesignTokens.Text.tertiary)
+                    }
+                    .padding(.vertical, DesignTokens.Spacing.sm)
                 }
+                .buttonStyle(PlainButtonStyle())
+                
+                Divider()
+                    .background(DesignTokens.Glass.light)
+                
+                Button(action: {
+                    // Theme settings
+                }) {
+                    HStack(spacing: DesignTokens.Spacing.md) {
+                        Image(systemName: "paintbrush")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(DesignTokens.Brand.primary)
+                            .frame(width: 24, height: 24)
+                        
+                        Text("Appearance")
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.primary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(DesignTokens.Text.tertiary)
+                    }
+                    .padding(.vertical, DesignTokens.Spacing.sm)
+                }
+                .buttonStyle(PlainButtonStyle())
             }
         }
+        .padding(DesignTokens.Spacing.lg)
+        .background(
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                        .fill(DesignTokens.Glass.medium)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
+                        )
+                )
+        )
+        .shadow(
+            color: DesignTokens.Shadow.glass.color,
+            radius: DesignTokens.Shadow.glass.radius,
+            x: DesignTokens.Shadow.glass.x,
+            y: DesignTokens.Shadow.glass.y
+        )
     }
     
     private var aboutSection: some View {
-        AppleGlassCard(style: .elevated) {
-            VStack(alignment: .leading, spacing: AppleSpacing.md) {
-                Text("About")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
-                
-                VStack(spacing: 0) {
-                    AppleGlassListRow(
-                        icon: "info.circle",
-                        title: "About Shvil",
-                        action: {
-                            showAbout = true
-                        }
-                    )
-                    
-                    Divider()
-                        .background(AppleColors.glassLight)
-                    
-                    AppleGlassListRow(
-                        icon: "hand.raised",
-                        title: "Privacy Policy",
-                        action: {
-                            // Privacy policy
-                        }
-                    )
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+            Text("About")
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
+            
+            VStack(spacing: 0) {
+                Button(action: {
+                    showAbout = true
+                }) {
+                    HStack(spacing: DesignTokens.Spacing.md) {
+                        Image(systemName: "info.circle")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(DesignTokens.Brand.primary)
+                            .frame(width: 24, height: 24)
+                        
+                        Text("About Shvil")
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.primary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(DesignTokens.Text.tertiary)
+                    }
+                    .padding(.vertical, DesignTokens.Spacing.sm)
                 }
+                .buttonStyle(PlainButtonStyle())
+                
+                Divider()
+                    .background(DesignTokens.Glass.light)
+                
+                Button(action: {
+                    // Privacy policy
+                }) {
+                    HStack(spacing: DesignTokens.Spacing.md) {
+                        Image(systemName: "hand.raised")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(DesignTokens.Brand.primary)
+                            .frame(width: 24, height: 24)
+                        
+                        Text("Privacy Policy")
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.primary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(DesignTokens.Text.tertiary)
+                    }
+                    .padding(.vertical, DesignTokens.Spacing.sm)
+                }
+                .buttonStyle(PlainButtonStyle())
             }
         }
+        .padding(DesignTokens.Spacing.lg)
+        .background(
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                        .fill(DesignTokens.Glass.medium)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
+                        )
+                )
+        )
+        .shadow(
+            color: DesignTokens.Shadow.glass.color,
+            radius: DesignTokens.Shadow.glass.radius,
+            x: DesignTokens.Shadow.glass.x,
+            y: DesignTokens.Shadow.glass.y
+        )
     }
 }
 
