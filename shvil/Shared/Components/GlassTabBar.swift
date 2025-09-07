@@ -97,13 +97,17 @@ struct GlassTabBar: View {
                 y: 8
             )
             .padding(.horizontal, 16)
-            .padding(.bottom, 8) // Much lower positioning for iPhone rounded corners
+            .padding(.bottom, 2) // Right above iPhone homescreen bar
         }
         .onAppear {
-            updateCapsulePosition()
+            // Small delay to ensure view is fully rendered
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                updateCapsulePosition()
+            }
         }
         .onChange(of: selectedTab) { _ in
             updateCapsulePosition()
+            HapticFeedback.shared.selection()
         }
         .onChange(of: scrollOffset) { _ in
             // Update blur intensity based on scroll
@@ -129,13 +133,14 @@ struct GlassTabBar: View {
     private func updateCapsulePosition() {
         // Calculate the actual tab width accounting for padding
         let totalPadding = 32.0 // 16pt padding on each side
-        let tabWidth = (UIScreen.main.bounds.width - totalPadding) / CGFloat(tabs.count)
+        let availableWidth = UIScreen.main.bounds.width - totalPadding
+        let tabWidth = availableWidth / CGFloat(tabs.count)
         let newWidth = tabWidth * 0.7 // 70% of tab width for Apple Music look
         
-        // Center the capsule on the selected tab
+        // Calculate the center position of the selected tab
         let tabCenter = CGFloat(selectedTab) * tabWidth + tabWidth / 2
-        let screenCenter = UIScreen.main.bounds.width / 2
-        let newOffset = tabCenter - screenCenter
+        let containerCenter = availableWidth / 2
+        let newOffset = tabCenter - containerCenter
         
         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
             capsuleOffset = newOffset
