@@ -31,7 +31,7 @@ struct GlassTabBar: View {
             Spacer()
             
             // Apple Music-style Navigation Bar
-            HStack(spacing: 0) {
+            HStack(spacing: 8) {
                 ForEach(Array(tabs.enumerated()), id: \.offset) { index, tab in
                     AppleMusicTabButton(
                         tab: tab,
@@ -59,7 +59,8 @@ struct GlassTabBar: View {
                         // Calculate tab width based on HStack content area (without padding)
                         let screenWidth = UIScreen.main.bounds.width
                         let hStackPadding = 32.0 // 16pt padding on each side
-                        let availableWidth = screenWidth - hStackPadding
+                        let tabSpacing = 8.0 * CGFloat(tabs.count - 1) // 8pt spacing between tabs
+                        let availableWidth = screenWidth - hStackPadding - tabSpacing
                         let tabWidth = availableWidth / CGFloat(tabs.count)
                         
                         // Calculate which tab the finger is over
@@ -70,8 +71,9 @@ struct GlassTabBar: View {
                         
                         if tabIndex >= 0 && tabIndex < tabs.count {
                             // Update capsule position to follow finger
-                            let tabCenter = CGFloat(tabIndex) * tabWidth + tabWidth / 2
-                            let containerCenter = availableWidth / 2
+                            let spacingOffset = CGFloat(tabIndex) * 8.0 // 8pt spacing before each tab
+                            let tabCenter = CGFloat(tabIndex) * tabWidth + tabWidth / 2 + spacingOffset
+                            let containerCenter = (availableWidth + tabSpacing) / 2
                             dragOffset = tabCenter - containerCenter
                             print("🎯 Tab Center: \(tabCenter), Container Center: \(containerCenter), Drag Offset: \(dragOffset)")
                         }
@@ -83,7 +85,8 @@ struct GlassTabBar: View {
                         // Calculate which tab to select
                         let screenWidth = UIScreen.main.bounds.width
                         let hStackPadding = 32.0
-                        let availableWidth = screenWidth - hStackPadding
+                        let tabSpacing = 8.0 * CGFloat(tabs.count - 1) // 8pt spacing between tabs
+                        let availableWidth = screenWidth - hStackPadding - tabSpacing
                         let tabWidth = availableWidth / CGFloat(tabs.count)
                         let touchX = value.location.x
                         let tabIndex = Int(touchX / tabWidth)
@@ -187,19 +190,19 @@ struct GlassTabBar: View {
     }
     
     private func updateCapsulePosition() {
-        // Calculate the actual tab width accounting for HStack padding
+        // Calculate the actual tab width accounting for HStack padding and spacing
         let screenWidth = UIScreen.main.bounds.width
         let hStackPadding = 32.0 // 16pt padding on each side
-        let availableWidth = screenWidth - hStackPadding
+        let tabSpacing = 8.0 * CGFloat(tabs.count - 1) // 8pt spacing between tabs
+        let availableWidth = screenWidth - hStackPadding - tabSpacing
         let tabWidth = availableWidth / CGFloat(tabs.count)
         let newWidth = tabWidth * 0.9 // 90% of tab width for bigger pill
         
         // Calculate the center position of the selected tab
-        // The tab center is: (selectedTab * tabWidth) + (tabWidth / 2)
-        // The container center is: availableWidth / 2
-        // The offset is: tabCenter - containerCenter
-        let tabCenter = CGFloat(selectedTab) * tabWidth + tabWidth / 2
-        let containerCenter = availableWidth / 2
+        // Account for spacing between tabs: each tab has 8pt spacing after it (except the last)
+        let spacingOffset = CGFloat(selectedTab) * 8.0 // 8pt spacing before each tab
+        let tabCenter = CGFloat(selectedTab) * tabWidth + tabWidth / 2 + spacingOffset
+        let containerCenter = (availableWidth + tabSpacing) / 2
         let newOffset = tabCenter - containerCenter
         
         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
