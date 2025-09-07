@@ -226,7 +226,8 @@ public class AsyncRoutingService: ObservableObject {
     
     /// Get alternative routes for the current selection
     public func getAlternativeRoutes() -> [Route] {
-        return routes.filter { $0.id != selectedRoute?.id }
+        guard let selectedRoute = selectedRoute else { return routes }
+        return routes.filter { $0.id != selectedRoute.id }
     }
     
     /// Get traffic conditions for a route

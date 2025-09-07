@@ -76,7 +76,7 @@ struct SearchPill: View {
             ForEach(Array(searchService.autocompleteSuggestions.enumerated()), id: \.element.id) { index, suggestion in
                 suggestionRow(suggestion)
                 
-                if suggestion.id != searchService.autocompleteSuggestions.last?.id {
+                if let lastSuggestion = searchService.autocompleteSuggestions.last, suggestion.id != lastSuggestion.id {
                     Divider()
                         .background(AppleColors.surfacePrimary)
                 }

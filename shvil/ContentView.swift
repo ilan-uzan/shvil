@@ -423,7 +423,7 @@ struct ProfileView: View {
         )
         .appleShadow(AppleShadows.glass)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(authService.currentUser != nil ? "Welcome back, \(authService.currentUser?.displayName ?? "")" : "Welcome to Shvil, Your adventure companion")
+        .accessibilityLabel(authService.currentUser != nil ? "Welcome back, \(authService.currentUser?.displayName ?? "User")" : "Welcome to Shvil, Your adventure companion")
     }
     
     private var loginSection: some View {
