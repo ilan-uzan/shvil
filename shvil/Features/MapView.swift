@@ -77,7 +77,7 @@ struct MapView: View {
             userTrackingMode: .constant(.none),
             annotationItems: searchService.searchResults)
         { result in
-            MapAnnotation(coordinate: result.coordinate) {
+            MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: result.latitude, longitude: result.longitude)) {
                 annotationView(for: result)
             }
         }
@@ -312,7 +312,9 @@ struct MapView: View {
                 style: .destructive,
                 size: .medium
             ) {
-                navigationService.stopNavigation()
+                Task {
+                    await navigationService.stopNavigation()
+                }
                 isFocusMode = false
                 stopRerouteTimer()
             }
@@ -483,7 +485,9 @@ struct MapView: View {
                 style: navigationService.selectedRouteIndex == 0 ? .primary : .secondary,
                 size: .small
             ) {
-                navigationService.selectRoute(at: 0)
+                Task {
+                    await navigationService.selectRoute(at: 0)
+                }
             }
 
             // Safest route chip
@@ -494,7 +498,9 @@ struct MapView: View {
                 size: .small
             ) {
                 if navigationService.routes.count > 1 {
-                    navigationService.selectRoute(at: 1)
+                    Task {
+                        await navigationService.selectRoute(at: 1)
+                    }
                 }
             }
             .disabled(navigationService.routes.count <= 1)
@@ -529,7 +535,9 @@ struct MapView: View {
                     }
                 }
                 .onTapGesture {
-                        navigationService.selectRoute(at: index)
+                        Task {
+                            await navigationService.selectRoute(at: index)
+                        }
                     }
             }
         }
@@ -552,7 +560,9 @@ struct MapView: View {
                 style: .primary,
                 size: .medium
             ) {
-                navigationService.startNavigation()
+                Task {
+                    await navigationService.startNavigation()
+                }
                 withAnimation(reduceMotion ? .none : AppleAnimations.standard) {
                     isFocusMode = true
                 }
@@ -604,7 +614,9 @@ struct MapView: View {
                             style: .destructive,
                             size: .medium
                         ) {
-                            navigationService.stopNavigation()
+                            Task {
+                                await navigationService.stopNavigation()
+                            }
                             withAnimation(reduceMotion ? .none : AppleAnimations.standard) {
                                 isFocusMode = false
                                 showExitConfirmation = false
@@ -1005,16 +1017,26 @@ struct MapView: View {
         // For now, create mock results
         searchResults = [
             SearchResult(
+                id: UUID(),
                 name: "\(searchText) Location 1",
-                subtitle: "Popular destination",
                 address: "123 Main St, San Francisco, CA",
-                coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
+                latitude: 37.7749,
+                longitude: -122.4194,
+                category: "popular",
+                rating: 4.5,
+                distance: 1000.0,
+                isOpen: true
             ),
             SearchResult(
+                id: UUID(),
                 name: "\(searchText) Location 2",
-                subtitle: "Highly rated",
                 address: "456 Oak Ave, San Francisco, CA",
-                coordinate: CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4094)
+                latitude: 37.7849,
+                longitude: -122.4094,
+                category: "rated",
+                rating: 4.8,
+                distance: 1500.0,
+                isOpen: true
             )
         ]
     }
@@ -1026,7 +1048,7 @@ struct MapView: View {
         // Center map on selected location
         withAnimation(AppleAnimations.spring) {
             locationService.region = MKCoordinateRegion(
-                center: result.coordinate,
+                center: CLLocationCoordinate2D(latitude: result.latitude, longitude: result.longitude),
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             )
         }

@@ -214,8 +214,8 @@ class ContractTestingService: ObservableObject {
                 title: "Test Adventure",
                 description: "Test Description",
                 routeData: RouteData(
-                    origin: LocationData(latitude: 37.7749, longitude: -122.4194, address: "Origin", name: "Origin"),
-                    destination: LocationData(latitude: 37.7849, longitude: -122.4094, address: "Destination", name: "Destination"),
+                    origin: LocationData(latitude: 37.7749, longitude: -122.4194, address: "Origin"),
+                    destination: LocationData(latitude: 37.7849, longitude: -122.4094, address: "Destination"),
                     waypoints: [],
                     distance: 1000,
                     duration: 600,

@@ -10,6 +10,23 @@ import CoreLocation
 import Foundation
 import MapKit
 
+enum NavigationError: LocalizedError {
+    case noRoutesFound
+    case locationUnavailable
+    case permissionDenied
+    
+    var errorDescription: String? {
+        switch self {
+        case .noRoutesFound:
+            return "No routes found for the specified locations"
+        case .locationUnavailable:
+            return "Location services are unavailable"
+        case .permissionDenied:
+            return "Location permission denied"
+        }
+    }
+}
+
 /// High-performance async navigation service with modern concurrency
 @MainActor
 public class AsyncNavigationService: NSObject, ObservableObject {

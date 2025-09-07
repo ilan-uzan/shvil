@@ -362,7 +362,7 @@ public struct LiquidGlassTextField: View {
     }
     
     private var borderWidth: CGFloat {
-        if let _ = errorMessage || isFocused {
+        if errorMessage != nil || isFocused {
             return 2
         } else {
             return 1
@@ -578,5 +578,27 @@ extension View {
     public func liquidGlassRTLSupport() -> some View {
         environment(\.layoutDirection, .leftToRight)
             .environment(\.layoutDirection, .rightToLeft)
+    }
+}
+
+// MARK: - Text Field Components
+
+/// Liquid Glass text field style
+public struct LiquidGlassTextFieldStyle: TextFieldStyle {
+    public init() {}
+    
+    public func _body(configuration: TextField<Self._Label>) -> some View {
+        configuration
+            .padding(DesignTokens.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
+                    .fill(DesignTokens.Surface.secondary)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
+                            .stroke(DesignTokens.Glass.light, lineWidth: 1)
+                    )
+            )
+            .foregroundColor(DesignTokens.Text.primary)
+            .font(DesignTokens.Typography.body)
     }
 }

@@ -100,9 +100,9 @@ public class AIKit: ObservableObject {
         Budget: \(input.budget.displayName)
         Companions: \(input.companions.map(\.displayName).joined(separator: ", "))
         Transportation: \(input.transportationMode.displayName)
-        Interests: \(input.preferences.interests.joined(separator: ", "))
-        Avoid Crowds: \(input.preferences.avoidCrowds ? "Yes" : "No")
-        Max Walking Distance: \(input.preferences.maxWalkingDistance) meters
+        Interests: Not available
+        Avoid Crowds: Not available
+        Max Walking Distance: Not available
 
         Return a JSON response with this exact structure:
         {
@@ -285,14 +285,13 @@ public class AIKit: ObservableObject {
             id: UUID(),
             name: name,
             description: description,
-            coordinate: CLLocationCoordinate2D(latitude: 0, longitude: 0), // Will be set by caller
+            location: LocationData(
+                latitude: 0,
+                longitude: 0,
+                address: nil
+            ),
             category: category,
-            estimatedDuration: duration,
-            openingHours: "",
-            priceLevel: .medium,
-            rating: 0,
-            isAccessible: true,
-            tags: []
+            estimatedDuration: TimeInterval(duration)
         )
     }
 

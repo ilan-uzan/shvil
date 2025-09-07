@@ -240,13 +240,14 @@ class SearchService: ObservableObject {
                 
                 let results = response.mapItems.compactMap { item in
                     SearchResult(
+                        id: UUID(),
                         name: item.name ?? "Unknown",
-                        subtitle: item.placemark.title,
-                        address: item.placemark.title,
-                        coordinate: item.placemark.coordinate,
-                        mapItem: item,
-                        category: self.determineCategory(from: item),
+                        address: item.placemark.title ?? "",
+                        latitude: item.placemark.coordinate.latitude,
+                        longitude: item.placemark.coordinate.longitude,
+                        category: self.determineCategory(from: item).rawValue,
                         rating: self.extractRating(from: item),
+                        distance: 0.0, // Distance calculation not available
                         isOpen: self.isPlaceOpen(item: item)
                     )
                 }
@@ -272,13 +273,14 @@ class SearchService: ObservableObject {
                 
                 let results = placemarks.compactMap { placemark in
                     SearchResult(
+                        id: UUID(),
                         name: placemark.name ?? "Address",
-                        subtitle: placemark.locality,
                         address: self.formatAddress(from: placemark),
-                        coordinate: placemark.location?.coordinate ?? CLLocationCoordinate2D(),
-                        mapItem: nil,
-                        category: .all,
+                        latitude: placemark.location?.coordinate.latitude ?? 0,
+                        longitude: placemark.location?.coordinate.longitude ?? 0,
+                        category: "address",
                         rating: nil,
+                        distance: nil,
                         isOpen: nil
                     )
                 }
@@ -298,7 +300,7 @@ class SearchService: ObservableObject {
         return recentSearches
             .filter { $0.name.localizedCaseInsensitiveContains(query) }
             .prefix(3)
-            .map { SearchSuggestion(text: $0.name, type: .recent, category: $0.category) }
+            .map { SearchSuggestion(id: UUID(), text: $0.name, category: $0.category, popularity: 1) }
     }
     
     private func getPopularSuggestions(query: String) -> [SearchSuggestion] {
@@ -310,7 +312,7 @@ class SearchService: ObservableObject {
         return popularSearches
             .filter { $0.localizedCaseInsensitiveContains(query) }
             .prefix(2)
-            .map { SearchSuggestion(text: $0, type: .popular, category: .all) }
+            .map { SearchSuggestion(id: UUID(), text: $0, category: "popular", popularity: 5) }
     }
     
     private func getMKPointOfInterestFilter(for category: SearchCategory) -> MKPointOfInterestFilter {
@@ -383,7 +385,7 @@ class SearchService: ObservableObject {
         
         // Apply category filter
         if selectedCategory != .all {
-            filteredResults = filteredResults.filter { $0.category == selectedCategory }
+            filteredResults = filteredResults.filter { $0.category == selectedCategory.rawValue }
         }
         
         // Apply other filters
@@ -400,7 +402,7 @@ class SearchService: ObservableObject {
         
         if searchFilters.maxDistance > 0, let userLocation = getCurrentLocation() {
             filteredResults = filteredResults.filter { result in
-                let resultLocation = CLLocation(latitude: result.coordinate.latitude, longitude: result.coordinate.longitude)
+                let resultLocation = CLLocation(latitude: result.latitude, longitude: result.longitude)
                 return userLocation.distance(from: resultLocation) <= searchFilters.maxDistance
             }
         }
@@ -429,118 +431,9 @@ class SearchService: ObservableObject {
     }
 }
 
-public struct SearchResult: Identifiable, Codable, Equatable {
-    public let id = UUID()
-    public let name: String
-    public let subtitle: String?
-    public let address: String?
-    public let coordinate: CLLocationCoordinate2D
-    public let mapItem: MKMapItem?
-    public let category: SearchCategory
-    public let rating: Double?
-    public let isOpen: Bool?
-    public let phoneNumber: String?
-    public let website: String?
-    public let hours: [String]?
-    public let priceLevel: Int?
-    public let photos: [String]?
-
-    public init(
-        name: String,
-        subtitle: String? = nil,
-        address: String? = nil,
-        coordinate: CLLocationCoordinate2D,
-        mapItem: MKMapItem? = nil,
-        category: SearchCategory = .all,
-        rating: Double? = nil,
-        isOpen: Bool? = nil,
-        phoneNumber: String? = nil,
-        website: String? = nil,
-        hours: [String]? = nil,
-        priceLevel: Int? = nil,
-        photos: [String]? = nil
-    ) {
-        self.name = name
-        self.subtitle = subtitle
-        self.address = address
-        self.coordinate = coordinate
-        self.mapItem = mapItem
-        self.category = category
-        self.rating = rating
-        self.isOpen = isOpen
-        self.phoneNumber = phoneNumber
-        self.website = website
-        self.hours = hours
-        self.priceLevel = priceLevel
-        self.photos = photos
-    }
-
-    // Custom Codable implementation for CLLocationCoordinate2D
-    private enum CodingKeys: String, CodingKey {
-        case name, subtitle, address, latitude, longitude, category, rating, isOpen, phoneNumber, website, hours, priceLevel, photos
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        name = try container.decode(String.self, forKey: .name)
-        subtitle = try container.decodeIfPresent(String.self, forKey: .subtitle)
-        address = try container.decodeIfPresent(String.self, forKey: .address)
-        let latitude = try container.decode(Double.self, forKey: .latitude)
-        let longitude = try container.decode(Double.self, forKey: .longitude)
-        coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-        mapItem = nil
-        category = try container.decodeIfPresent(SearchCategory.self, forKey: .category) ?? .all
-        rating = try container.decodeIfPresent(Double.self, forKey: .rating)
-        isOpen = try container.decodeIfPresent(Bool.self, forKey: .isOpen)
-        phoneNumber = try container.decodeIfPresent(String.self, forKey: .phoneNumber)
-        website = try container.decodeIfPresent(String.self, forKey: .website)
-        hours = try container.decodeIfPresent([String].self, forKey: .hours)
-        priceLevel = try container.decodeIfPresent(Int.self, forKey: .priceLevel)
-        photos = try container.decodeIfPresent([String].self, forKey: .photos)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(name, forKey: .name)
-        try container.encodeIfPresent(subtitle, forKey: .subtitle)
-        try container.encodeIfPresent(address, forKey: .address)
-        try container.encode(coordinate.latitude, forKey: .latitude)
-        try container.encode(coordinate.longitude, forKey: .longitude)
-        try container.encode(category, forKey: .category)
-        try container.encodeIfPresent(rating, forKey: .rating)
-        try container.encodeIfPresent(isOpen, forKey: .isOpen)
-        try container.encodeIfPresent(phoneNumber, forKey: .phoneNumber)
-        try container.encodeIfPresent(website, forKey: .website)
-        try container.encodeIfPresent(hours, forKey: .hours)
-        try container.encodeIfPresent(priceLevel, forKey: .priceLevel)
-        try container.encodeIfPresent(photos, forKey: .photos)
-    }
-    
-    public static func == (lhs: SearchResult, rhs: SearchResult) -> Bool {
-        return lhs.name == rhs.name && 
-               lhs.coordinate.latitude == rhs.coordinate.latitude && 
-               lhs.coordinate.longitude == rhs.coordinate.longitude
-    }
-}
 
 // MARK: - Search Suggestion Model
 
-public struct SearchSuggestion: Identifiable, Codable, Equatable {
-    public let id = UUID()
-    public let text: String
-    public let type: SuggestionType
-    public let category: SearchCategory
-    
-    public init(text: String, type: SuggestionType, category: SearchCategory) {
-        self.text = text
-        self.type = type
-        self.category = category
-    }
-    
-    public static func == (lhs: SearchSuggestion, rhs: SearchSuggestion) -> Bool {
-        return lhs.text == rhs.text && lhs.type == rhs.type
-    }
-}
 
 // MARK: - Suggestion Type
 

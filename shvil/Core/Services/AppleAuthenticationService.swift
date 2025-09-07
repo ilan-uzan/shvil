@@ -170,8 +170,7 @@ public class AppleAuthenticationService: NSObject, ObservableObject {
     
     /// Check if Apple Sign-in is available
     public var isAppleSignInAvailable: Bool {
-        return featureFlags.isEnabled(.appleSignIn) && 
-               ASAuthorizationAppleIDProvider().authorizationController != nil
+        return featureFlags.isEnabled(.appleSignIn) // Apple Sign In is always available on iOS
     }
     
     /// Check if magic link is available
@@ -275,8 +274,9 @@ public class AppleAuthenticationService: NSObject, ObservableObject {
                 displayName: [appleIDCredential.fullName?.givenName, appleIDCredential.fullName?.familyName]
                     .compactMap { $0 }
                     .joined(separator: " "),
-                avatarURL: nil,
-                createdAt: Date()
+                avatarUrl: nil,
+                createdAt: Date(),
+                updatedAt: Date()
             )
             
             await MainActor.run {
@@ -323,29 +323,6 @@ extension AppleAuthenticationService: ASAuthorizationControllerPresentationConte
     }
 }
 
-// MARK: - User Model
-
-public struct User: Identifiable, Codable {
-    public let id: UUID
-    public let email: String
-    public let displayName: String?
-    public let avatarURL: String?
-    public let createdAt: Date
-    
-    public init(
-        id: UUID,
-        email: String,
-        displayName: String? = nil,
-        avatarURL: String? = nil,
-        createdAt: Date = Date()
-    ) {
-        self.id = id
-        self.email = email
-        self.displayName = displayName
-        self.avatarURL = avatarURL
-        self.createdAt = createdAt
-    }
-}
 
 // MARK: - Authentication Errors
 

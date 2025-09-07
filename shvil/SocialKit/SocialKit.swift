@@ -12,15 +12,6 @@ import Supabase
 
 // MARK: - Data Models
 
-struct User: Codable, Identifiable {
-    let id: UUID
-    let email: String
-    let displayName: String
-    let avatarURL: String?
-    let createdAt: Date
-    let updatedAt: Date
-}
-
 /// Supabase integration for social features
 class SocialKit: ObservableObject {
     // MARK: - Published Properties
@@ -70,7 +61,7 @@ class SocialKit: ObservableObject {
             id: authUser.id,
             email: authUser.email ?? "",
             displayName: (authUser.userMetadata["display_name"] as? String) ?? "",
-            avatarURL: (authUser.userMetadata["avatar_url"] as? String),
+            avatarUrl: (authUser.userMetadata["avatar_url"] as? String),
             createdAt: authUser.createdAt,
             updatedAt: authUser.updatedAt
         )
@@ -393,13 +384,6 @@ struct Coordinate: Codable {
     }
 }
 
-struct Friend: Identifiable, Codable {
-    let id: UUID
-    let userId: UUID
-    let displayName: String
-    let avatarUrl: String?
-    let isOnline: Bool
-}
 
 struct ETASession: Identifiable, Codable {
     let id: UUID

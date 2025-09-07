@@ -39,7 +39,7 @@ public class ErrorHandlingService: ObservableObject {
         
         // Log error for analytics
         if featureFlags.isEnabled(.analytics) {
-            analytics.logError(appError)
+            analytics.logError(appError.message)
         }
         
         // Add to error queue
@@ -55,7 +55,7 @@ public class ErrorHandlingService: ObservableObject {
     public func handleAppError(_ appError: AppError) {
         // Log error for analytics
         if featureFlags.isEnabled(.analytics) {
-            analytics.logError(appError)
+            analytics.logError(appError.message)
         }
         
         // Add to error queue
@@ -190,21 +190,21 @@ public struct AppError: Identifiable, Equatable {
         } else if let authError = error as? AuthenticationError {
             self.type = .authentication
             self.title = "Authentication Error"
-            self.message = authError.userFriendlyMessage
+            self.message = authError.localizedDescription
             self.severity = .error
             self.canRetry = true
             self.retryAction = nil
         } else if let navigationError = error as? NavigationError {
             self.type = .navigation
             self.title = "Navigation Error"
-            self.message = navigationError.userFriendlyMessage
+            self.message = navigationError.localizedDescription
             self.severity = .warning
             self.canRetry = true
             self.retryAction = nil
-        } else if let routingError = error as? RoutingError {
+        } else if let routingError = error as? NavigationError {
             self.type = .routing
             self.title = "Routing Error"
-            self.message = routingError.userFriendlyMessage
+            self.message = routingError.localizedDescription
             self.severity = .warning
             self.canRetry = true
             self.retryAction = nil

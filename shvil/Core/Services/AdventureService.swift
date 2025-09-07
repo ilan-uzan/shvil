@@ -26,7 +26,7 @@ public class AdventureService: ObservableObject {
     
     private let aiKit: AIKit
     private let mapEngine: MapEngine
-    private let routingService: RoutingService
+    private let routingService: AsyncRoutingService
     private let locationService: LocationService
     private let offlineManager: OfflineManager
     private var cancellables = Set<AnyCancellable>()
@@ -41,7 +41,7 @@ public class AdventureService: ObservableObject {
     public init(
         aiKit: AIKit,
         mapEngine: MapEngine,
-        routingService: RoutingService,
+        routingService: AsyncRoutingService,
         locationService: LocationService,
         offlineManager: OfflineManager
     ) {
@@ -202,7 +202,19 @@ public class AdventureService: ObservableObject {
             companions: companions,
             transportationMode: .walking, // Default
             origin: locationService.currentLocation?.coordinate ?? CLLocationCoordinate2D(),
-            preferences: UserPreferences()
+            preferences: UserPreferences(
+                language: "en",
+                theme: "light",
+                notifications: NotificationSettings(),
+                privacy: PrivacySettings(
+                    privacyPolicy: true,
+                    locationSharing: true,
+                    friendsOnMap: true,
+                    etaSharing: true,
+                    analytics: true,
+                    panicSwitch: false
+                )
+            )
         )
         
         return try await aiKit.generateStopAlternatives(stop: currentStop, input: input)
@@ -293,14 +305,13 @@ public class AdventureService: ObservableObject {
                     id: stop.id,
                     name: bestMatch.name,
                     description: stop.description,
-                    coordinate: bestMatch.coordinate,
+                    location: LocationData(
+                        latitude: bestMatch.latitude,
+                        longitude: bestMatch.longitude,
+                        address: bestMatch.address
+                    ),
                     category: stop.category,
-                    estimatedDuration: stop.estimatedDuration,
-                    openingHours: bestMatch.hours?.first,
-                    priceLevel: stop.priceLevel,
-                    rating: bestMatch.rating,
-                    isAccessible: stop.isAccessible,
-                    tags: stop.tags
+                    estimatedDuration: stop.estimatedDuration
                 )
                 enhancedStops.append(enhancedStop)
             } else {

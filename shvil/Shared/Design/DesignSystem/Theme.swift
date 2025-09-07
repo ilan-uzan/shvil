@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 // MARK: - Liquid Glass Design System 2.0
 // Centralized design tokens and theme management for Shvil
@@ -305,11 +306,13 @@ public class ThemeManager: ObservableObject {
 
 extension Color {
     /// Returns the appropriate color based on current theme
+    @MainActor
     public func themeAware(light: Color, dark: Color) -> Color {
         ThemeManager.shared.isDarkMode ? dark : light
     }
     
     /// Returns high contrast variant if enabled
+    @MainActor
     public func highContrast(_ highContrastColor: Color) -> Color {
         ThemeManager.shared.isHighContrast ? highContrastColor : self
     }

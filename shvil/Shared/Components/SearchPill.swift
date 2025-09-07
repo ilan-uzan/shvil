@@ -105,7 +105,7 @@ struct SearchPill: View {
             isFocused = false
         }) {
             HStack(spacing: 12) {
-                Image(systemName: suggestion.type.icon)
+                Image(systemName: "magnifyingglass")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(AppleColors.brandPrimary)
                     .frame(width: 20)
@@ -116,7 +116,7 @@ struct SearchPill: View {
                         .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(1)
                     
-                    Text(suggestion.type.displayName)
+                    Text(suggestion.category ?? "Unknown")
                         .font(AppleTypography.caption1)
                         .foregroundColor(AppleColors.textSecondary)
                 }

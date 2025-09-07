@@ -56,10 +56,15 @@ public class SafetyKit: ObservableObject {
     func submitReport(type: SafetyReportType, coordinate: CLLocationCoordinate2D, description: String? = nil) async throws {
         let report = SafetyReport(
             id: UUID(),
-            type: type,
-            coordinate: coordinate,
+            userId: UUID(), // TODO: Use actual user ID
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude,
+            reportType: type.rawValue,
             description: description ?? "",
-            createdAt: Date()
+            severity: 2, // Default severity (medium)
+            isResolved: false,
+            createdAt: Date(),
+            updatedAt: Date()
         )
 
         // Check for duplicates
@@ -85,7 +90,7 @@ public class SafetyKit: ObservableObject {
         let centerCoordinate = center ?? CLLocationCoordinate2D(latitude: 0, longitude: 0)
         let nearby = safetyReports.filter { report in
             let distance = CLLocation(latitude: centerCoordinate.latitude, longitude: centerCoordinate.longitude)
-                .distance(from: CLLocation(latitude: report.coordinate.latitude, longitude: report.coordinate.longitude))
+                .distance(from: CLLocation(latitude: report.latitude, longitude: report.longitude))
             return distance < 10000 // Within 10km
         }
 
@@ -103,9 +108,9 @@ public class SafetyKit: ObservableObject {
         guard isSafetyLayerEnabled else { return nil }
 
         return SafetyAlert(
-            type: report.type,
-            message: alertMessage(for: report.type),
-            coordinate: report.coordinate,
+            type: SafetyReportType(rawValue: report.reportType) ?? .other,
+            message: alertMessage(for: SafetyReportType(rawValue: report.reportType) ?? .other),
+            coordinate: CLLocationCoordinate2D(latitude: report.latitude, longitude: report.longitude),
             severity: severityForReport(report)
         )
     }
@@ -135,7 +140,7 @@ public class SafetyKit: ObservableObject {
     }
 
     private func isDuplicateReport(_ report: SafetyReport) -> Bool {
-        let sameType = safetyReports.filter { $0.type == report.type }
+        let sameType = safetyReports.filter { $0.reportType == report.reportType }
         let recent = sameType.filter {
             abs($0.createdAt.timeIntervalSince(report.createdAt)) < 300 // 5 minutes
         }
@@ -157,7 +162,7 @@ public class SafetyKit: ObservableObject {
     }
 
     private func isReportNearRoute(_ report: SafetyReport, routeCoordinates: [CLLocationCoordinate2D]) -> Bool {
-        let reportLocation = CLLocation(latitude: report.coordinate.latitude, longitude: report.coordinate.longitude)
+        let reportLocation = CLLocation(latitude: report.latitude, longitude: report.longitude)
 
         for coordinate in routeCoordinates {
             let routeLocation = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
@@ -195,7 +200,7 @@ public class SafetyKit: ObservableObject {
     private func severityForReport(_ report: SafetyReport) -> SafetyAlertSeverity {
         let age = Date().timeIntervalSince(report.createdAt)
 
-        switch report.type {
+        switch SafetyReportType(rawValue: report.reportType) ?? .other {
         case .accident:
             return age < 15 * 60 ? .high : .medium
         case .police:

@@ -17,70 +17,8 @@ struct SavedPlacesView: View {
     @State private var showPlaceDetails = false
     @State private var selectedPlace: SavedPlace?
 
-    // Sample data for demonstration
-    @State private var samplePlaces: [SavedPlace] = [
-        SavedPlace(
-            id: UUID(),
-            name: "Home",
-            address: "123 Main Street, San Francisco, CA",
-            latitude: 37.7749,
-            longitude: -122.4194,
-            type: .home,
-            createdAt: Date(),
-            userId: UUID()
-        ),
-        SavedPlace(
-            id: UUID(),
-            name: "Work Office",
-            address: "456 Market Street, San Francisco, CA",
-            latitude: 37.7849,
-            longitude: -122.4094,
-            type: .work,
-            createdAt: Date(),
-            userId: UUID()
-        ),
-        SavedPlace(
-            id: UUID(),
-            name: "Blue Bottle Coffee",
-            address: "789 Valencia Street, San Francisco, CA",
-            latitude: 37.7649,
-            longitude: -122.4294,
-            type: .favorite,
-            createdAt: Date(),
-            userId: UUID()
-        ),
-        SavedPlace(
-            id: UUID(),
-            name: "Golden Gate Park",
-            address: "Golden Gate Park, San Francisco, CA",
-            latitude: 37.7694,
-            longitude: -122.4862,
-            type: .custom,
-            createdAt: Date(),
-            userId: UUID()
-        ),
-    ]
-
-    @State private var sampleCollections: [PlaceCollection] = [
-        PlaceCollection(
-            id: UUID(),
-            name: "Coffee Shops",
-            color: .orange,
-            places: []
-        ),
-        PlaceCollection(
-            id: UUID(),
-            name: "Restaurants",
-            color: .red,
-            places: []
-        ),
-        PlaceCollection(
-            id: UUID(),
-            name: "Parks",
-            color: .green,
-            places: []
-        ),
-    ]
+    @State private var samplePlaces: [SavedPlace] = []
+    @State private var sampleCollections: [PlaceCollection] = []
 
     var filteredPlaces: [SavedPlace] {
         if searchText.isEmpty {
@@ -165,9 +103,9 @@ struct SavedPlacesView: View {
                 PlaceDetailsView(
                     place: SearchResult(
                         name: place.name,
-                        subtitle: place.type.rawValue.capitalized,
                         address: place.address,
-                        coordinate: place.coordinate
+                        latitude: place.latitude,
+                        longitude: place.longitude
                     ),
                     isPresented: $showPlaceDetails
                 )
@@ -183,15 +121,15 @@ struct QuickAccessSection: View {
     let onPlaceTap: (SavedPlace) -> Void
 
     var homePlace: SavedPlace? {
-        places.first { $0.type == .home }
+        places.first { $0.placeType == .home }
     }
 
     var workPlace: SavedPlace? {
-        places.first { $0.type == .work }
+        places.first { $0.placeType == .work }
     }
 
     var favoritePlaces: [SavedPlace] {
-        places.filter { $0.type == .favorite }
+        places.filter { $0.placeType == .favorite }
     }
 
     var body: some View {
@@ -583,29 +521,29 @@ struct SavedPlaceRow: View {
     }
 
     private var placeIcon: String {
-        switch place.type {
+        switch place.placeType {
         case .home: "house.fill"
         case .work: "building.2.fill"
         case .favorite: "heart.fill"
-        case .custom: "location.fill"
+        case .other: "location.fill"
         }
     }
 
     private var placeColor: Color {
-        switch place.type {
+        switch place.placeType {
         case .home: AppleColors.brandPrimary
         case .work: AppleColors.brandPrimary
         case .favorite: Color.pink
-        case .custom: AppleColors.textSecondary
+        case .other: AppleColors.textSecondary
         }
     }
 
     private var placeTypeText: String {
-        switch place.type {
+        switch place.placeType {
         case .home: "HOME"
         case .work: "WORK"
         case .favorite: "FAV"
-        case .custom: "CUSTOM"
+        case .other: "OTHER"
         }
     }
 }

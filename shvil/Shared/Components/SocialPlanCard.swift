@@ -42,7 +42,7 @@ struct SocialPlanCard: View {
                             .stroke(DesignTokens.Stroke.light, lineWidth: 1)
                     )
             )
-            .shadow(color: DesignTokens.Shadows.light.color, radius: DesignTokens.Shadows.light.radius, x: DesignTokens.Shadows.light.x, y: DesignTokens.Shadows.light.y)
+            .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(PlainButtonStyle())
         .performanceOptimized()

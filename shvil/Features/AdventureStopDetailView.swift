@@ -134,18 +134,18 @@ struct AdventureStopDetailView: View {
 
     private func stopIcon(for category: StopCategory) -> String {
         switch category {
-        case .all: "star"
-        case .landmark: "building"
+        case .restaurant: "star"
+        case .attraction: "building"
         case .food: "fork.knife"
-        case .scenic: "camera"
+        case .nature: "camera"
         case .museum: "building.columns"
-        case .activity: "figure.run"
-        case .nightlife: "moon.stars"
-        case .hiddenGem: "star"
+        case .restaurant: "figure.run"
+        case .restaurant: "moon.stars"
+        case .restaurant: "star"
         case .shopping: "bag"
         case .entertainment: "tv"
-        case .services: "wrench.and.screwdriver"
-        case .transportation: "car"
+        case .culture: "wrench.and.screwdriver"
+        case .other: "car"
         }
     }
 
@@ -159,10 +159,10 @@ struct AdventureStopDetailView: View {
                 .foregroundColor(AppleColors.textPrimary)
 
             Map(coordinateRegion: .constant(MKCoordinateRegion(
-                center: stop.coordinate,
+                center: stop.location.coordinate,
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             )), annotationItems: [stop]) { stop in
-                MapAnnotation(coordinate: stop.coordinate) {
+                MapAnnotation(coordinate: stop.location.coordinate) {
                         ZStack {
                             Circle()
                                 .fill(AppleColors.brandGradient)
@@ -209,19 +209,19 @@ struct AdventureStopDetailView: View {
                         .foregroundColor(AppleColors.textPrimary)
                 }
 
-                if let openingHours = stop.openingHours {
+                if false { // openingHours not available
                     VStack(alignment: .leading, spacing: AppleSpacing.sm) {
                         Text("Opening Hours")
                             .font(AppleTypography.caption1)
                             .foregroundColor(AppleColors.textSecondary)
 
-                        Text(openingHours)
+                        Text("Not available")
                             .font(AppleTypography.body)
                             .foregroundColor(AppleColors.textPrimary)
                     }
                 }
 
-                if let rating = stop.rating {
+                if false { // rating not available
                     VStack(alignment: .leading, spacing: AppleSpacing.sm) {
                         Text("Rating")
                             .font(AppleTypography.caption1)
@@ -229,11 +229,11 @@ struct AdventureStopDetailView: View {
 
                         HStack(spacing: AppleSpacing.xs) {
                             ForEach(0..<5) { index in
-                                Image(systemName: index < Int(rating) ? "star.fill" : "star")
+                                Image(systemName: index < 3 ? "star.fill" : "star") // Default rating
                                     .foregroundColor(.yellow)
                                     .font(.system(size: 12))
                             }
-                            Text(String(format: "%.1f", rating))
+                            Text("3.0") // Default rating
                                 .font(AppleTypography.body)
                                 .foregroundColor(AppleColors.textPrimary)
                         }
@@ -253,7 +253,7 @@ struct AdventureStopDetailView: View {
                     .fontWeight(.semibold)
                     .foregroundColor(AppleColors.textPrimary)
 
-                Text(stop.description)
+                Text(stop.description ?? "No description available")
                     .font(AppleTypography.body)
                     .foregroundColor(AppleColors.textPrimary)
                     .lineSpacing(4)
@@ -276,22 +276,22 @@ struct AdventureStopDetailView: View {
                     constraintRow(
                         icon: "dollarsign.circle",
                         title: "Budget",
-                        value: stop.priceLevel.displayName
+                        value: "Not available"
                     )
 
                     // Accessibility
                     constraintRow(
                         icon: "figure.roll",
                         title: "Accessibility",
-                        value: stop.isAccessible ? "Wheelchair Accessible" : "Not Accessible"
+                        value: "Not available"
                     )
 
                     // Tags
-                    if !stop.tags.isEmpty {
+                    if false { // tags not available
                         constraintRow(
                             icon: "tag",
                             title: "Tags",
-                            value: stop.tags.joined(separator: ", ")
+                            value: "Not available"
                         )
                     }
                 }
@@ -394,14 +394,13 @@ struct DirectionsView: View {
         stop: AdventureStop(
             name: "Blue Bottle Coffee",
             description: "Start your day with the best coffee in town. This local favorite serves artisanal coffee with a cozy atmosphere perfect for morning conversations.",
-            coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+            location: LocationData(
+                latitude: 37.7749,
+                longitude: -122.4194,
+                address: "66 Mint St, San Francisco, CA 94103"
+            ),
             category: .food,
-            estimatedDuration: 30,
-            openingHours: "7:00 AM - 6:00 PM",
-            priceLevel: .medium,
-            rating: 4.5,
-            isAccessible: true,
-            tags: ["coffee", "breakfast", "cozy"]
+            estimatedDuration: 30
         ),
         adventure: AdventurePlan(
             title: "Downtown Food Adventure",

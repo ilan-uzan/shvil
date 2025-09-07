@@ -36,7 +36,11 @@ class DependencyContainer {
     lazy var locationService: LocationService = .init()
     lazy var searchService: SearchService = .init()
     lazy var navigationService: AsyncNavigationService = .init()
-    lazy var routingService: AsyncRoutingService = .init()
+    lazy var offlineManager: OfflineManager = .init()
+    lazy var routingService: AsyncRoutingService = .init(
+        locationService: locationService,
+        offlineManager: offlineManager
+    )
     lazy var aiKit: AIKit = {
         do {
             return try AIKit()
@@ -54,6 +58,8 @@ class DependencyContainer {
         persistence: persistence
     )
     lazy var supabaseService: SupabaseService = .shared
+    lazy var socialService: SocialService = .init()
+    lazy var huntService: HuntService = .init()
 
     // MARK: - Utility Services
 

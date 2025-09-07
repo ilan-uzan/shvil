@@ -75,7 +75,8 @@ public class MapEngine: NSObject, ObservableObject {
             SearchResult(
                 name: item.name ?? "Unknown",
                 address: item.placemark.title ?? "",
-                coordinate: item.placemark.coordinate
+                latitude: item.placemark.coordinate.latitude,
+                longitude: item.placemark.coordinate.longitude
             )
         }
     }
@@ -105,8 +106,8 @@ public class MapEngine: NSObject, ObservableObject {
                     SearchResult(
                         name: mapItem.name ?? "Unknown",
                         address: mapItem.placemark.title ?? "",
-                        coordinate: mapItem.placemark.coordinate,
-                        mapItem: mapItem
+                        latitude: mapItem.placemark.coordinate.latitude,
+                        longitude: mapItem.placemark.coordinate.longitude
                     )
                 }
                 self?.searchResults = results
@@ -200,10 +201,15 @@ extension MapEngine: MKLocalSearchCompleterDelegate {
     public nonisolated func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         let results = completer.results.map { completion in
             SearchResult(
+                id: UUID(),
                 name: completion.title,
                 address: completion.subtitle,
-                coordinate: CLLocationCoordinate2D(latitude: 0, longitude: 0), // Will be filled when selected
-                mapItem: nil
+                latitude: 0, // Will be filled when selected
+                longitude: 0, // Will be filled when selected
+                category: nil,
+                rating: nil,
+                distance: nil,
+                isOpen: nil
             )
         }
         Task { @MainActor in

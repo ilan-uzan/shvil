@@ -52,115 +52,9 @@ public struct AdventurePlan: Codable, Identifiable {
     }
 }
 
-/// Individual stop in an adventure
-public struct AdventureStop: Codable, Identifiable {
-    public let id: UUID
-    public let name: String
-    public let description: String
-    public let coordinate: CLLocationCoordinate2D
-    public let category: StopCategory
-    public let estimatedDuration: Int // in minutes
-    public let openingHours: String?
-    public let priceLevel: PriceLevel
-    public let rating: Double?
-    public let isAccessible: Bool
-    public let tags: [String]
 
-    public init(
-        id: UUID = UUID(),
-        name: String,
-        description: String,
-        coordinate: CLLocationCoordinate2D,
-        category: StopCategory,
-        estimatedDuration: Int,
-        openingHours: String? = nil,
-        priceLevel: PriceLevel = .medium,
-        rating: Double? = nil,
-        isAccessible: Bool = true,
-        tags: [String] = []
-    ) {
-        self.id = id
-        self.name = name
-        self.description = description
-        self.coordinate = coordinate
-        self.category = category
-        self.estimatedDuration = estimatedDuration
-        self.openingHours = openingHours
-        self.priceLevel = priceLevel
-        self.rating = rating
-        self.isAccessible = isAccessible
-        self.tags = tags
-    }
-}
 
-/// Adventure mood types
-public enum AdventureMood: String, CaseIterable, Codable {
-    case fun
-    case relaxing
-    case cultural
-    case romantic
-    case adventurous
 
-    public var displayName: String {
-        switch self {
-        case .fun: "Fun & Playful"
-        case .relaxing: "Relaxing & Chill"
-        case .cultural: "Cultural & Educational"
-        case .romantic: "Romantic & Intimate"
-        case .adventurous: "Adventurous & Bold"
-        }
-    }
-}
-
-/// Stop categories for adventure planning
-public enum StopCategory: String, CaseIterable, Codable {
-    case all
-    case food
-    case shopping
-    case entertainment
-    case services
-    case transportation
-    case landmark
-    case scenic
-    case museum
-    case activity
-    case nightlife
-    case hiddenGem = "hidden_gem"
-
-    public var displayName: String {
-        switch self {
-        case .all: "All"
-        case .food: "Food & Drink"
-        case .shopping: "Shopping"
-        case .entertainment: "Entertainment"
-        case .services: "Services"
-        case .transportation: "Transportation"
-        case .landmark: "Landmark"
-        case .scenic: "Scenic View"
-        case .museum: "Museum"
-        case .activity: "Activity"
-        case .nightlife: "Nightlife"
-        case .hiddenGem: "Hidden Gem"
-        }
-    }
-}
-
-/// Price levels for adventure stops
-public enum PriceLevel: String, CaseIterable, Codable {
-    case low
-    case medium
-    case high
-    case premium
-
-    public var displayName: String {
-        switch self {
-        case .low: "Budget-Friendly"
-        case .medium: "Moderate"
-        case .high: "Expensive"
-        case .premium: "Premium"
-        }
-    }
-}
 
 /// Constraints for adventure stops
 public struct StopConstraints: Codable {
@@ -197,22 +91,6 @@ public enum BudgetLevel: String, CaseIterable, Codable {
     }
 }
 
-/// Adventure status
-public enum AdventureStatus: String, CaseIterable, Codable {
-    case draft
-    case active
-    case completed
-    case cancelled
-
-    public var displayName: String {
-        switch self {
-        case .draft: "Draft"
-        case .active: "Active"
-        case .completed: "Completed"
-        case .cancelled: "Cancelled"
-        }
-    }
-}
 
 // MARK: - Adventure Generation Input
 
@@ -245,25 +123,6 @@ public struct AdventureGenerationInput: Codable {
     }
 }
 
-/// User preferences for adventure generation
-public struct UserPreferences: Codable {
-    public let transportation: [TransportationMode]
-    public let interests: [String]
-    public let avoidCrowds: Bool
-    public let maxWalkingDistance: Int // meters
-
-    public init(
-        transportation: [TransportationMode] = [.walking],
-        interests: [String] = [],
-        avoidCrowds: Bool = false,
-        maxWalkingDistance: Int = 1000
-    ) {
-        self.transportation = transportation
-        self.interests = interests
-        self.avoidCrowds = avoidCrowds
-        self.maxWalkingDistance = maxWalkingDistance
-    }
-}
 
 /// Time frames for adventures
 public enum TimeFrame: String, CaseIterable, Codable {
@@ -434,7 +293,7 @@ public class AdventureKit: ObservableObject {
             let searchResults = try await mapEngine.searchPlaces(
                 query: stop.name,
                 region: MKCoordinateRegion(
-                    center: stop.coordinate,
+                    center: stop.location.coordinate,
                     latitudinalMeters: 1000,
                     longitudinalMeters: 1000
                 )
@@ -445,14 +304,13 @@ public class AdventureKit: ObservableObject {
                     id: stop.id,
                     name: bestMatch.name,
                     description: stop.description,
-                    coordinate: bestMatch.coordinate,
+                    location: LocationData(
+                        latitude: bestMatch.latitude,
+                        longitude: bestMatch.longitude,
+                        address: bestMatch.address
+                    ),
                     category: stop.category,
-                    estimatedDuration: stop.estimatedDuration,
-                    openingHours: bestMatch.hours?.first,
-                    priceLevel: stop.priceLevel,
-                    rating: bestMatch.rating,
-                    isAccessible: stop.isAccessible,
-                    tags: stop.tags
+                    estimatedDuration: stop.estimatedDuration
                 )
                 validatedStops.append(validatedStop)
             } else {
@@ -480,7 +338,7 @@ public class AdventureKit: ObservableObject {
         var safeStops: [AdventureStop] = []
 
         for stop in plan.stops {
-            guard stop.coordinate != nil else {
+            guard stop.location.latitude != 0 && stop.location.longitude != 0 else {
                 safeStops.append(stop)
                 continue
             }

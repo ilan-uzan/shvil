@@ -1,229 +1,169 @@
-# Shvil Architecture Documentation
+# Shvil Architecture Analysis
 
-**Version:** 3.0 (Deep Audit & Cleanup)  
-**Date:** December 2024  
-**Status:** Comprehensive audit and refactor in progress
+## Current Architecture Overview
 
-## 🏗️ Current Architecture Overview
+### Core Modules
+- **AppCore/**: Configuration, AppState, DependencyContainer, FeatureFlags
+- **Core/**: Models (APIModels), Services (AdventureService, AsyncRoutingService, etc.)
+- **Features/**: UI Views (MapView, SearchView, AdventureSetupView, etc.)
+- **Shared/**: Components, Design System, Services
+- **AIKit/**: AI-powered adventure generation
+- **MapEngine/**: Map functionality and routing
+- **SafetyKit/**: Safety features and emergency services
+- **SocialKit/**: Social features (currently minimal)
+- **LocationKit/**: Location services
+- **PrivacyGuard/**: Privacy controls
+- **Persistence/**: Local data storage
 
-### Core Architecture Pattern
-Shvil follows a **Modular MVVM + Service Layer** architecture with clear separation of concerns:
+### Design System
+- **DesignSystem/Theme.swift**: Centralized design tokens (Liquid Glass 2.0)
+- **DesignSystem/Components.swift**: Reusable UI components
+- **AppleDesignSystem.swift**: Legacy system (DEPRECATED)
 
+### Backend Integration
+- **SupabaseService.swift**: Main backend integration
+- **Auth**: Apple Sign-In + Email/Magic Link
+- **Database**: PostgreSQL with RLS
+- **Storage**: File uploads
+- **Functions**: Edge functions for complex operations
+
+## Proposed Architecture Improvements
+
+### 1. Enhanced Social Features Module
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Presentation Layer                       │
-├─────────────────────────────────────────────────────────────┤
-│  SwiftUI Views  │  ViewModels  │  State Management         │
-├─────────────────────────────────────────────────────────────┤
-│                    Service Layer                            │
-├─────────────────────────────────────────────────────────────┤
-│  Core Services  │  Feature Services  │  Utility Services   │
-├─────────────────────────────────────────────────────────────┤
-│                    Data Layer                               │
-├─────────────────────────────────────────────────────────────┤
-│  Supabase  │  Core Data  │  File System  │  UserDefaults   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## 📊 Current Module Analysis
-
-### **AppCore** - Central State Management
-- `AppState.swift` - Main app state and feature flags ✅
-- `DependencyContainer.swift` - Service dependency injection ✅
-- `Configuration.swift` - Environment and API configuration ✅
-- `FeatureFlags.swift` - Feature toggle management ✅
-
-**Issues Found:**
-- No proper dependency graph validation
-- Missing service lifecycle management
-- Configuration validation could be improved
-
-### **Core Services** - Business Logic
-- `NavigationService.swift` - Turn-by-turn guidance ⚠️ (Legacy)
-- `AsyncNavigationService.swift` - Modern async/await version ✅
-- `RoutingService.swift` - Multi-mode routing ⚠️ (Legacy)
-- `AsyncRoutingService.swift` - Modern async/await version ✅
-- `AdventureService.swift` - AI-powered adventure generation ✅
-- `AuthenticationService.swift` - User authentication ✅
-- `AppleAuthenticationService.swift` - Apple Sign-in ✅
-- `GuidanceService.swift` - Voice and haptic feedback ✅
-- `LiveActivityService.swift` - Dynamic Island integration ✅
-- `OfflineManager.swift` - Offline data management ✅
-- `SafetyService.swift` - Emergency and safety features ✅
-- `SettingsService.swift` - User preferences ✅
-- `ErrorHandlingService.swift` - Centralized error management ✅
-
-**Issues Found:**
-- Duplicate services (legacy + async versions)
-- Some services missing proper error handling
-- Main-thread blocking in some operations
-
-### **Feature Modules** - Specialized Functionality
-- `AdventureKit/` - Adventure generation and management ✅
-- `AIKit/` - OpenAI integration ✅
-- `LocationKit/` - Core Location wrapper ✅
-- `MapEngine/` - MapKit integration ✅
-- `RoutingEngine/` - Route calculation ✅
-- `ContextEngine/` - Contextual information ✅
-- `SocialKit/` - Social features ✅
-- `SafetyKit/` - Safety and emergency ✅
-- `PrivacyGuard/` - Privacy protection ✅
-
-**Issues Found:**
-- Some modules have tight coupling
-- Missing proper abstraction layers
-- Inconsistent error handling patterns
-
-### **Shared Components** - Reusable UI
-- `Design/AppleDesignSystem.swift` - Legacy design system ⚠️ (Deprecated)
-- `Design/DesignSystem/Theme.swift` - New design tokens ✅
-- `Design/DesignSystem/Components.swift` - Reusable components ✅
-- `Components/` - Various UI components ✅
-- `Services/` - Shared service utilities ✅
-
-**Issues Found:**
-- Mixed usage of old and new design systems
-- Some components not using design tokens
-- Missing accessibility features in some components
-
-## 🎨 Design System Architecture
-
-### Current State (Post-Refactor)
-- **Unified Token System**: Centralized design tokens in `Theme.swift` ✅
-- **Component Library**: Comprehensive, reusable components ✅
-- **Liquid Glass Aesthetics**: Translucent depth and animations ✅
-- **Accessibility Support**: VoiceOver, Dynamic Type, RTL ✅
-
-### Issues to Address
-- **Legacy System**: `AppleDesignSystem.swift` still referenced in some places
-- **Inconsistent Usage**: Some components still use hard-coded values
-- **Missing Components**: Some UI patterns not covered by design system
-
-## 🔄 Data Flow Architecture
-
-### Authentication Flow
-```
-User Action → AuthenticationService → Supabase → AppState → UI Update
+SocialKit/
+├── SocialHub/
+│   ├── SocialHubView.swift
+│   ├── FriendsListView.swift
+│   ├── GroupInviteView.swift
+│   └── QRCodeShareView.swift
+├── ScavengerHunt/
+│   ├── HuntHubView.swift
+│   ├── CreateHuntView.swift
+│   ├── JoinHuntView.swift
+│   ├── HuntDetailView.swift
+│   ├── LeaderboardView.swift
+│   └── CheckpointSubmissionView.swift
+└── Services/
+    ├── SocialService.swift
+    ├── HuntService.swift
+    └── InviteService.swift
 ```
 
-### Navigation Flow
+### 2. Improved Design System Structure
 ```
-User Input → AsyncNavigationService → MapEngine → UI Update
+DesignSystem/
+├── Theme.swift (Centralized tokens)
+├── Components/
+│   ├── Buttons/
+│   ├── Cards/
+│   ├── Sheets/
+│   ├── Forms/
+│   └── Navigation/
+├── Tokens/
+│   ├── Colors.swift
+│   ├── Typography.swift
+│   ├── Spacing.swift
+│   └── Shadows.swift
+└── Utilities/
+    ├── ViewModifiers.swift
+    ├── Extensions.swift
+    └── Accessibility.swift
 ```
 
-### Adventure Flow
+### 3. Enhanced Service Layer
 ```
-User Request → AdventureService → AIKit → MapEngine → UI Update
+Core/Services/
+├── Network/
+│   ├── APIClient.swift
+│   ├── NetworkMonitor.swift
+│   └── OfflineQueue.swift
+├── Data/
+│   ├── CacheManager.swift
+│   ├── PersistenceManager.swift
+│   └── SyncManager.swift
+└── Business/
+    ├── AdventureService.swift
+    ├── SocialService.swift
+    ├── HuntService.swift
+    └── LocationService.swift
 ```
 
-## 🚨 Critical Issues Identified
+## Key Architectural Decisions
 
-### 1. **Duplicate Services**
-- `NavigationService` vs `AsyncNavigationService`
-- `RoutingService` vs `AsyncRoutingService`
-- Both versions exist, causing confusion
+### 1. Feature Flags Strategy
+- `SOCIALIZE_V1`: Enable social features
+- `HUNT_V1`: Enable scavenger hunt features
+- `APPLE_SIGNIN`: Enable Apple Sign-In (graceful degradation)
 
-### 2. **Main-Thread Blocking**
-- Several services perform heavy operations on main thread
-- Network calls not properly async
-- File I/O operations blocking UI
+### 2. State Management
+- Use `@StateObject` for service dependencies
+- Centralized state in `AppState`
+- Reactive updates with `@Published` properties
 
-### 3. **Error Handling Inconsistency**
-- Some services use completion handlers
-- Others use async/await
-- Error types not standardized
+### 3. Navigation Architecture
+- Tab-based navigation with floating action buttons
+- Bottom sheet patterns for detail views
+- Modal presentations for critical flows
 
-### 4. **Memory Management**
-- Potential retain cycles in some services
-- Missing weak references in closures
-- No proper cleanup in some cases
+### 4. Data Flow
+- Unidirectional data flow
+- Service layer handles all business logic
+- Views are purely reactive
 
-## 🎯 Proposed Architecture Improvements
+## Migration Strategy
 
-### 1. **Service Consolidation**
-- Remove legacy services
-- Standardize on async/await
-- Implement proper service lifecycle
+### Phase 1: Design System Migration
+1. Replace all `AppleColors` with `DesignTokens`
+2. Update components to use centralized tokens
+3. Implement proper glass effects
 
-### 2. **Error Handling Standardization**
-- Use `ErrorHandlingService` everywhere
-- Standardize error types
-- Implement proper error recovery
+### Phase 2: Social Features
+1. Add Socialize tab and hub
+2. Implement basic friend management
+3. Add group creation and invites
 
-### 3. **Performance Optimization**
-- Move heavy operations to background queues
-- Implement proper caching strategies
-- Add performance monitoring
+### Phase 3: Scavenger Hunt
+1. Add Hunt tab and hub
+2. Implement hunt creation flow
+3. Add join hunt functionality
+4. Build leaderboard system
 
-### 4. **Testing Architecture**
-- Add unit tests for all services
-- Implement snapshot tests for UI
-- Add integration tests for critical flows
+### Phase 4: Backend Integration
+1. Add typed models for all endpoints
+2. Implement proper error handling
+3. Add offline support and caching
 
-## 📈 Performance Metrics
+## Performance Considerations
 
-### Current State
-- **Build Time**: ~45 seconds
-- **App Launch**: ~2.1 seconds
-- **Memory Usage**: ~85MB average
-- **Frame Rate**: 60fps (with occasional drops)
+### 1. Lazy Loading
+- Implement pagination for long lists
+- Use `LazyVStack` for performance
+- Cache frequently accessed data
 
-### Target State
-- **Build Time**: <30 seconds
-- **App Launch**: <1.5 seconds
-- **Memory Usage**: <70MB average
-- **Frame Rate**: Consistent 60fps
+### 2. Memory Management
+- Use `@StateObject` appropriately
+- Implement proper cleanup in `deinit`
+- Monitor memory usage with `PerformanceMonitor`
 
-## 🔧 Technical Debt
+### 3. Network Optimization
+- Implement request deduplication
+- Use background queues for heavy operations
+- Add proper cancellation support
 
-### High Priority
-1. Remove duplicate services
-2. Fix main-thread blocking
-3. Standardize error handling
-4. Implement proper testing
+## Security Considerations
 
-### Medium Priority
-1. Optimize asset loading
-2. Improve caching strategies
-3. Add performance monitoring
-4. Enhance accessibility
+### 1. Authentication
+- Graceful degradation for Apple Sign-In
+- Secure token storage
+- Proper session management
 
-### Low Priority
-1. Refactor legacy components
-2. Improve documentation
-3. Add more unit tests
-4. Optimize build process
+### 2. Data Protection
+- Encrypt sensitive data
+- Use RLS for database access
+- Implement proper privacy controls
 
-## 🚀 Migration Strategy
-
-### Phase 1: Cleanup (Week 1)
-- Remove duplicate services
-- Fix critical bugs
-- Standardize error handling
-
-### Phase 2: Optimization (Week 2)
-- Performance improvements
-- Asset optimization
-- Memory management fixes
-
-### Phase 3: Testing (Week 3)
-- Add comprehensive tests
-- Implement CI/CD improvements
-- Add monitoring
-
-### Phase 4: Documentation (Week 4)
-- Update architecture docs
-- Add API documentation
-- Create developer guides
-
-## 📋 Success Criteria
-
-- [ ] Zero duplicate services
-- [ ] No main-thread blocking
-- [ ] Consistent error handling
-- [ ] 90%+ test coverage
-- [ ] <1.5s app launch time
-- [ ] Consistent 60fps performance
-- [ ] Full accessibility compliance
-- [ ] Clean Git history
-- [ ] Proper CI/CD pipeline
+### 3. API Security
+- Validate all inputs
+- Implement rate limiting
+- Use HTTPS for all communications

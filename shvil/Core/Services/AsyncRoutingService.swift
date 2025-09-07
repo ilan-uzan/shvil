@@ -186,7 +186,7 @@ public class AsyncRoutingService: ObservableObject {
     /// Add a waypoint to the current route
     public func addWaypoint(_ coordinate: CLLocationCoordinate2D) async throws {
         guard let currentRoute = selectedRoute else {
-            throw RoutingError.noRouteSelected
+            throw NavigationError.noRoutesFound
         }
         
         // Recalculate route with new waypoint
@@ -204,7 +204,7 @@ public class AsyncRoutingService: ObservableObject {
     /// Remove a waypoint from the current route
     public func removeWaypoint(at index: Int) async throws {
         guard let currentRoute = selectedRoute else {
-            throw RoutingError.noRouteSelected
+            throw NavigationError.noRoutesFound
         }
         
         // Recalculate route without the waypoint
@@ -244,7 +244,7 @@ public class AsyncRoutingService: ObservableObject {
             group.addTask {
                 // This would typically call a traffic API
                 // For now, return mock data
-                return self.generateMockTrafficConditions(for: route)
+                return await self.generateMockTrafficConditions(for: route)
             }
             
             var allConditions: [TrafficCondition] = []
@@ -302,11 +302,11 @@ public class AsyncRoutingService: ObservableObject {
                     
                     // Add waypoints
                     if !waypoints.isEmpty {
-                        request.transportType = self.mapKitTransportType(for: options.transportationMode)
+                        request.transportType = await self.mapKitTransportType(for: options.transportationMode)
                     }
                     
                     // Configure request based on options
-                    self.configureRequest(request, with: options)
+                    await self.configureRequest(request, with: options)
                     
                     let directions = MKDirections(request: request)
                     
@@ -454,10 +454,15 @@ public class AsyncRoutingService: ObservableObject {
         // Generate mock traffic conditions
         return [
             TrafficCondition(
-                coordinate: route.polyline.first ?? CLLocationCoordinate2D(),
-                severity: .moderate,
+                id: UUID(),
+                routeId: "mock-route",
+                severity: .medium,
                 description: "Moderate traffic",
-                delay: 5 * 60 // 5 minutes
+                location: route.polyline.first ?? CLLocationCoordinate2D(),
+                startTime: Date(),
+                endTime: Date().addingTimeInterval(3600),
+                delay: 5, // 5 minutes
+                distance: 1000.0 // 1km
             )
         ]
     }
@@ -466,10 +471,13 @@ public class AsyncRoutingService: ObservableObject {
         // Generate mock toll costs
         return [
             TollCost(
-                coordinate: route.polyline.first ?? CLLocationCoordinate2D(),
-                name: "Highway Toll",
+                id: UUID(),
+                routeId: "mock-route",
+                tollName: "Highway Toll",
                 cost: 15.0,
-                currency: "ILS"
+                currency: "ILS",
+                location: route.polyline.first ?? CLLocationCoordinate2D(),
+                paymentMethod: .electronic
             )
         ]
     }

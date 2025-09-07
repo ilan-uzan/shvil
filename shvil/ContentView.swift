@@ -45,13 +45,29 @@ struct ContentView: View {
                 }
                 .tag(1)
 
+            // Socialize Tab
+            SocializeView()
+                .tabItem {
+                    Image(systemName: "person.3.fill")
+                    Text("Socialize")
+                }
+                .tag(2)
+
+            // Hunt Tab
+            HuntView()
+                .tabItem {
+                    Image(systemName: "flag.fill")
+                    Text("Hunt")
+                }
+                .tag(3)
+
             // Adventures Tab
             AdventuresView()
                 .tabItem {
                     Image(systemName: "sparkles")
                     Text("Adventures")
                 }
-                .tag(2)
+                .tag(4)
 
             // Profile Tab
             ProfileView()
@@ -59,10 +75,10 @@ struct ContentView: View {
                     Image(systemName: "person.circle.fill")
                     Text("Profile")
                 }
-                .tag(3)
+                .tag(5)
         }
         .appleTabBar()
-        .accentColor(AppleColors.brandPrimary)
+        .accentColor(DesignTokens.Brand.primary)
         .sheet(isPresented: $showAdventureSetup) {
             AdventureSetupView()
         }

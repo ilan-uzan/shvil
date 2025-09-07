@@ -77,7 +77,14 @@ class MockAPIService: ObservableObject {
             language: "en",
             theme: "light",
             notifications: NotificationSettings(),
-            privacy: PrivacySettings()
+            privacy: PrivacySettings(
+                privacyPolicy: true,
+                locationSharing: true,
+                friendsOnMap: true,
+                etaSharing: true,
+                analytics: true,
+                panicSwitch: true
+            )
         )
         
         let stats = UserStats(
@@ -151,8 +158,8 @@ class MockAPIService: ObservableObject {
                 title: "City Walk",
                 description: "A nice walk around the city",
                 routeData: RouteData(
-                    origin: LocationData(latitude: 37.7749, longitude: -122.4194, address: "Start", name: "Start"),
-                    destination: LocationData(latitude: 37.7849, longitude: -122.4094, address: "End", name: "End"),
+                    origin: LocationData(latitude: 37.7749, longitude: -122.4194, address: "Start"),
+                    destination: LocationData(latitude: 37.7849, longitude: -122.4094, address: "End"),
                     waypoints: [],
                     distance: 2000,
                     duration: 1200,
@@ -197,8 +204,8 @@ class MockAPIService: ObservableObject {
             title: request.title ?? "Updated Adventure",
             description: request.description,
             routeData: RouteData(
-                origin: LocationData(latitude: 37.7749, longitude: -122.4194, address: "Start", name: "Start"),
-                destination: LocationData(latitude: 37.7849, longitude: -122.4094, address: "End", name: "End"),
+                origin: LocationData(latitude: 37.7749, longitude: -122.4194, address: "Start"),
+                destination: LocationData(latitude: 37.7849, longitude: -122.4094, address: "End"),
                 waypoints: [],
                 distance: 2000,
                 duration: 1200,
@@ -292,10 +299,10 @@ class MockAPIService: ObservableObject {
 
 // MARK: - Additional Models
 
-struct NotificationSettings: Codable {
-    let push: Bool
-    let email: Bool
-    let sms: Bool
+public struct NotificationSettings: Codable {
+    public let push: Bool
+    public let email: Bool
+    public let sms: Bool
     
     init() {
         self.push = true
@@ -304,14 +311,3 @@ struct NotificationSettings: Codable {
     }
 }
 
-struct PrivacySettings: Codable {
-    let shareLocation: Bool
-    let shareAdventures: Bool
-    let sharePlaces: Bool
-    
-    init() {
-        self.shareLocation = false
-        self.shareAdventures = false
-        self.sharePlaces = false
-    }
-}

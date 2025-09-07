@@ -81,7 +81,7 @@ public struct ErrorToast: View {
                     dragOffset = value.translation
                 }
                 .onEnded { value in
-                    if abs(value.translation.x) > 100 {
+                    if abs(value.translation.width) > 100 {
                         onDismiss()
                     } else {
                         dragOffset = .zero

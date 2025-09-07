@@ -83,8 +83,8 @@ struct PlaceDetailsView: View {
                         .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(2)
 
-                    if let subtitle = place.subtitle {
-                        Text(subtitle)
+                    if false { // subtitle not available
+                        Text("Not available")
                             .font(AppleTypography.caption1)
                             .foregroundColor(AppleColors.textSecondary)
                             .lineLimit(1)
@@ -338,7 +338,7 @@ struct PlaceDetailsView: View {
             }
 
             VStack(alignment: .leading, spacing: AppleSpacing.sm) {
-                Text("This is a sample place with additional details that would typically include amenities, reviews, and other relevant information.")
+                Text("Additional details about this place including amenities, reviews, and other relevant information.")
                     .font(AppleTypography.body)
                     .foregroundColor(AppleColors.textSecondary)
                     .multilineTextAlignment(.leading)
@@ -386,7 +386,7 @@ struct PlaceDetailsView: View {
                 // Calculate route
                 routingService.calculateRoute(
                     from: currentLocation.coordinate,
-                    to: place.coordinate,
+                    to: CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longitude),
                     transportType: .automobile
                 )
                 
@@ -413,13 +413,14 @@ struct PlaceDetailsView: View {
             // Save to persistence
             let savedPlace = SavedPlace(
                 id: UUID(),
+                userId: UUID(), // TODO: Use actual user ID
                 name: place.name,
                 address: place.address ?? "Unknown Address",
-                latitude: place.coordinate.latitude,
-                longitude: place.coordinate.longitude,
-                type: .custom, // Default type
+                latitude: place.latitude,
+                longitude: place.longitude,
+                placeType: .other, // Use valid case
                 createdAt: Date(),
-                userId: UUID() // TODO: Use actual user ID
+                updatedAt: Date()
             )
             await persistence.savePlace(savedPlace)
             
@@ -437,10 +438,11 @@ struct PlaceDetailsView: View {
 #Preview {
     PlaceDetailsView(
         place: SearchResult(
-            name: "Sample Restaurant",
-            subtitle: "Italian Cuisine",
+            name: "Restaurant",
             address: "123 Main Street, San Francisco, CA 94102",
-            coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
+            latitude: 37.7749,
+            longitude: -122.4194,
+            category: "restaurant"
         ),
         isPresented: .constant(true)
     )

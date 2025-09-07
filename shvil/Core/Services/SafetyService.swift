@@ -120,7 +120,7 @@ public class SafetyService: NSObject, ObservableObject {
     /// Get safety reports near location
     public func getSafetyReports(near location: CLLocation, radius: Double = 1000) -> [SafetyReport] {
         return safetyReports.filter { report in
-            let reportLocation = CLLocation(latitude: report.coordinate.latitude, longitude: report.coordinate.longitude)
+            let reportLocation = CLLocation(latitude: report.latitude, longitude: report.longitude)
             return location.distance(from: reportLocation) <= radius
         }
     }
@@ -135,7 +135,7 @@ public class SafetyService: NSObject, ObservableObject {
         
         // Check if any reports are near the route
         for report in recentReports {
-            let reportLocation = CLLocation(latitude: report.coordinate.latitude, longitude: report.coordinate.longitude)
+            let reportLocation = CLLocation(latitude: report.latitude, longitude: report.longitude)
             
             for coordinate in route.polyline {
                 let routeLocation = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
@@ -259,7 +259,7 @@ public class SafetyService: NSObject, ObservableObject {
     private func broadcastSafetyReport(_ report: SafetyReport) {
         // This would typically send the report to a server for distribution
         // For now, we'll just log it
-        print("Broadcasting safety report: \(report.type.rawValue) at \(report.coordinate)")
+        print("Broadcasting safety report: \(report.reportType) at \(report.latitude), \(report.longitude)")
     }
     
     private func showSOSConfirmation() {
@@ -360,38 +360,6 @@ public struct EmergencyContact: Identifiable, Codable {
     }
 }
 
-// MARK: - Safety Report Model
-
-public struct SafetyReport: Identifiable, Codable {
-    public let id: UUID
-    public let type: SafetyReportType
-    public let coordinate: CLLocationCoordinate2D
-    public let description: String
-    public let severity: SafetySeverity
-    public let createdAt: Date
-    public let reporterId: UUID?
-    public let isVerified: Bool
-    
-    public init(
-        id: UUID = UUID(),
-        type: SafetyReportType,
-        coordinate: CLLocationCoordinate2D,
-        description: String,
-        severity: SafetySeverity = .medium,
-        createdAt: Date = Date(),
-        reporterId: UUID? = nil,
-        isVerified: Bool = false
-    ) {
-        self.id = id
-        self.type = type
-        self.coordinate = coordinate
-        self.description = description
-        self.severity = severity
-        self.createdAt = createdAt
-        self.reporterId = reporterId
-        self.isVerified = isVerified
-    }
-}
 
 // MARK: - Safety Report Type
 

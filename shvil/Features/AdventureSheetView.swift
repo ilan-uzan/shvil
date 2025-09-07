@@ -128,7 +128,7 @@ struct AdventureSheetView: View {
     private var mapSection: some View {
         GeometryReader { geometry in
             Map(coordinateRegion: .constant(mapRegion), annotationItems: adventure.stops) { stop in
-                MapAnnotation(coordinate: stop.coordinate) {
+                MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: stop.location.latitude, longitude: stop.location.longitude)) {
                     adventureStopAnnotation(for: stop)
                 }
             }
@@ -146,7 +146,7 @@ struct AdventureSheetView: View {
         }
 
         return MKCoordinateRegion(
-            center: firstStop.coordinate,
+            center: CLLocationCoordinate2D(latitude: firstStop.location.latitude, longitude: firstStop.location.longitude),
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         )
     }
@@ -176,18 +176,18 @@ struct AdventureSheetView: View {
 
     private func stopIcon(for category: StopCategory) -> String {
         switch category {
-        case .all: "star"
-        case .landmark: "building"
+        case .restaurant: "star"
+        case .attraction: "building"
         case .food: "fork.knife"
-        case .scenic: "camera"
+        case .nature: "camera"
         case .museum: "building.columns"
-        case .activity: "figure.run"
-        case .nightlife: "moon.stars"
-        case .hiddenGem: "star"
+        case .restaurant: "figure.run"
+        case .restaurant: "moon.stars"
+        case .restaurant: "star"
         case .shopping: "bag"
         case .entertainment: "tv"
-        case .services: "wrench.and.screwdriver"
-        case .transportation: "car"
+        case .other: "wrench.and.screwdriver"
+        case .culture: "car"
         }
     }
 
@@ -276,7 +276,7 @@ struct AdventureSheetView: View {
         case .fun: "face.smiling"
         case .relaxing: "leaf"
         case .cultural: "building.columns"
-        case .romantic: "heart"
+        case .adventurous: "heart"
         case .adventurous: "mountain.2"
         }
     }
@@ -329,7 +329,7 @@ struct AdventureSheetView: View {
                         .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(2)
 
-                    Text(stop.description)
+                    Text(stop.description ?? "No description available")
                         .font(AppleTypography.caption1)
                         .foregroundColor(AppleColors.textSecondary)
                         .lineLimit(1)
@@ -407,26 +407,26 @@ struct AdventureSheetView: View {
             AdventureStop(
                 name: "Blue Bottle Coffee",
                 description: "Start your day with the best coffee in town",
-                coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+                location: LocationData(
+                    latitude: 37.7749,
+                    longitude: -122.4194,
+                    address: "123 Market St, San Francisco, CA"
+                ),
                 category: .food,
-                estimatedDuration: 30,
-                openingHours: "7:00 AM - 6:00 PM",
-                priceLevel: .medium,
-                rating: 4.5,
-                isAccessible: true,
-                tags: ["coffee", "breakfast"]
+                order: 0,
+                estimatedDuration: 1800
             ),
             AdventureStop(
                 name: "Modern Art Gallery",
                 description: "Explore contemporary art",
-                coordinate: CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4094),
+                location: LocationData(
+                    latitude: 37.7849,
+                    longitude: -122.4094,
+                    address: "456 Union St, San Francisco, CA"
+                ),
                 category: .museum,
-                estimatedDuration: 45,
-                openingHours: "10:00 AM - 6:00 PM",
-                priceLevel: .high,
-                rating: 4.2,
-                isAccessible: true,
-                tags: ["art", "culture"]
+                order: 1,
+                estimatedDuration: 2700
             ),
         ],
         totalDuration: 180,

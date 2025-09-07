@@ -9,7 +9,7 @@ import CoreLocation
 import Foundation
 import Supabase
 
-class SupabaseService: ObservableObject {
+public class SupabaseService: ObservableObject {
     static let shared = SupabaseService()
 
     let client: SupabaseClient
@@ -19,10 +19,7 @@ class SupabaseService: ObservableObject {
     private init() {
         // Use configuration system for proper setup
         guard let url = URL(string: Configuration.supabaseURL) else {
-            print("⚠️ WARNING: Invalid Supabase URL: \(Configuration.supabaseURL)")
-            // Create a dummy client for development
-            client = SupabaseClient(supabaseURL: URL(string: "https://placeholder.supabase.co")!, supabaseKey: "placeholder-key")
-            return
+            fatalError("Invalid Supabase URL: \(Configuration.supabaseURL)")
         }
 
         client = SupabaseClient(supabaseURL: url, supabaseKey: Configuration.supabaseAnonKey)
@@ -179,11 +176,21 @@ class SupabaseService: ObservableObject {
     func shareETA(route: RouteInfo, recipients: [String]) async throws {
         let shareData = ETAShare(
             id: UUID(),
-            route: route,
-            recipients: recipients,
+            userId: UUID(), // Default user ID
+            routeData: RouteData(
+                origin: LocationData(latitude: 0, longitude: 0), // Default origin
+                destination: LocationData(latitude: 0, longitude: 0), // Default destination
+                waypoints: [], // Empty waypoints
+                distance: Double(route.distance) ?? 0.0, // Convert string to double
+                duration: TimeInterval(route.duration) ?? 0.0, // Convert string to TimeInterval
+                transportMode: route.type,
+                estimatedArrival: Date().addingTimeInterval(TimeInterval(route.duration) ?? 0.0)
+            ),
+            recipients: recipients.compactMap { UUID(uuidString: $0) },
             isActive: true,
+            expiresAt: Date().addingTimeInterval(3600), // 1 hour
             createdAt: Date(),
-            expiresAt: Date().addingTimeInterval(3600) // 1 hour
+            updatedAt: Date()
         )
 
         try await client
@@ -235,66 +242,6 @@ class SupabaseService: ObservableObject {
 
 // MARK: - Data Models
 
-enum PlaceType: String, Codable, CaseIterable {
-    case home
-    case work
-    case favorite
-    case custom
-}
-
-struct SavedPlace: Codable, Identifiable {
-    let id: UUID
-    let name: String
-    let address: String
-    let latitude: Double
-    let longitude: Double
-    let type: PlaceType
-    let createdAt: Date
-    let userId: UUID
-
-    var coordinate: CLLocationCoordinate2D {
-        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-    }
-
-    // Custom initializer for dictionary data
-    static func from(dictionary: [String: Any]) -> SavedPlace? {
-        guard let idString = dictionary["id"] as? String,
-              let id = UUID(uuidString: idString),
-              let name = dictionary["name"] as? String,
-              let address = dictionary["address"] as? String,
-              let latitude = dictionary["latitude"] as? Double,
-              let longitude = dictionary["longitude"] as? Double,
-              let typeString = dictionary["type"] as? String,
-              let type = PlaceType(rawValue: typeString),
-              let createdAtTimestamp = dictionary["createdAt"] as? TimeInterval,
-              let userIdString = dictionary["userId"] as? String,
-              let userId = UUID(uuidString: userIdString)
-        else {
-            return nil
-        }
-
-        return SavedPlace(
-            id: id,
-            name: name,
-            address: address,
-            latitude: latitude,
-            longitude: longitude,
-            type: type,
-            createdAt: Date(timeIntervalSince1970: createdAtTimestamp),
-            userId: userId
-        )
-    }
-}
-
-struct ETAShare: Codable, Identifiable {
-    let id: UUID
-    let route: RouteInfo
-    let recipients: [String]
-    let isActive: Bool
-    let createdAt: Date
-    let expiresAt: Date
-}
-
 struct RouteInfo: Codable {
     let duration: String
     let distance: String
@@ -328,5 +275,213 @@ enum SupabaseError: LocalizedError {
         case let .unknown(error):
             "Unknown error: \(error.localizedDescription)"
         }
+    }
+}
+
+// MARK: - Social Features
+
+extension SupabaseService {
+    // MARK: - Group Management
+    
+    func createGroup(_ group: SocialGroup) async throws -> SocialGroup {
+        let response: SocialGroup = try await client
+            .from("social_groups")
+            .insert(group)
+            .select()
+            .single()
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    func joinGroup(inviteCode: String) async throws -> SocialGroup {
+        let response: SocialGroup = try await client
+            .from("social_groups")
+            .select()
+            .eq("invite_code", value: inviteCode)
+            .single()
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    func leaveGroup(groupId: UUID) async throws {
+        try await client
+            .from("group_members")
+            .delete()
+            .eq("group_id", value: groupId)
+            .execute()
+    }
+    
+    func updateGroup(_ group: SocialGroup) async throws -> SocialGroup {
+        let response: SocialGroup = try await client
+            .from("social_groups")
+            .update(group)
+            .eq("id", value: group.id)
+            .select()
+            .single()
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    func getUserGroups() async throws -> [SocialGroup] {
+        let response: [SocialGroup] = try await client
+            .from("social_groups")
+            .select()
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    // MARK: - Friend Management
+    
+    func addFriend(userId: UUID) async throws {
+        // TODO: Implement friend addition
+    }
+    
+    func removeFriend(userId: UUID) async throws {
+        // TODO: Implement friend removal
+    }
+    
+    func searchUsers(query: String) async throws -> [User] {
+        let response: [User] = try await client
+            .from("users")
+            .select()
+            .ilike("display_name", value: "%\(query)%")
+            .execute()
+            .value
+        
+        return response
+    }
+}
+
+// MARK: - Hunt Features
+
+extension SupabaseService {
+    // MARK: - Hunt Management
+    
+    func createHunt(_ hunt: ScavengerHunt) async throws -> ScavengerHunt {
+        let response: ScavengerHunt = try await client
+            .from("scavenger_hunts")
+            .insert(hunt)
+            .select()
+            .single()
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    func joinHunt(huntCode: String) async throws -> ScavengerHunt {
+        let response: ScavengerHunt = try await client
+            .from("scavenger_hunts")
+            .select()
+            .eq("invite_code", value: huntCode)
+            .single()
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    func startHunt(huntId: UUID) async throws -> ScavengerHunt {
+        let response: ScavengerHunt = try await client
+            .from("scavenger_hunts")
+            .update(["status": "active", "start_time": Date().ISO8601Format()])
+            .eq("id", value: huntId)
+            .select()
+            .single()
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    func completeHunt(huntId: UUID) async throws -> ScavengerHunt {
+        let response: ScavengerHunt = try await client
+            .from("scavenger_hunts")
+            .update(["status": "completed", "end_time": Date().ISO8601Format()])
+            .eq("id", value: huntId)
+            .select()
+            .single()
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    func cancelHunt(huntId: UUID) async throws -> ScavengerHunt {
+        let response: ScavengerHunt = try await client
+            .from("scavenger_hunts")
+            .update(["status": "cancelled"])
+            .eq("id", value: huntId)
+            .select()
+            .single()
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    func getHunt(huntId: UUID) async throws -> ScavengerHunt {
+        let response: ScavengerHunt = try await client
+            .from("scavenger_hunts")
+            .select()
+            .eq("id", value: huntId)
+            .single()
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    func getUserHunts() async throws -> [ScavengerHunt] {
+        let response: [ScavengerHunt] = try await client
+            .from("scavenger_hunts")
+            .select()
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    // MARK: - Checkpoint Management
+    
+    func getHuntCheckpoints(huntId: UUID) async throws -> [HuntCheckpoint] {
+        let response: [HuntCheckpoint] = try await client
+            .from("hunt_checkpoints")
+            .select()
+            .eq("hunt_id", value: huntId)
+            .order("order_index")
+            .execute()
+            .value
+        
+        return response
+    }
+    
+    func submitCheckpoint(_ submission: CheckpointSubmission) async throws {
+        try await client
+            .from("checkpoint_submissions")
+            .insert(submission)
+            .execute()
+    }
+    
+    // MARK: - Leaderboard
+    
+    func getHuntLeaderboard(huntId: UUID) async throws -> [LeaderboardParticipant] {
+        let response: [LeaderboardParticipant] = try await client
+            .from("hunt_leaderboard")
+            .select()
+            .eq("hunt_id", value: huntId)
+            .order("score", ascending: false)
+            .execute()
+            .value
+        
+        return response
     }
 }

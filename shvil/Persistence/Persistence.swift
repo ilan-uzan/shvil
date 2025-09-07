@@ -147,7 +147,7 @@ public class Persistence: ObservableObject {
             sqlite3_bind_text(statement, 3, place.address, -1, nil)
             sqlite3_bind_double(statement, 4, place.latitude)
             sqlite3_bind_double(statement, 5, place.longitude)
-            sqlite3_bind_text(statement, 6, place.type.rawValue, -1, nil)
+            sqlite3_bind_text(statement, 6, place.placeType.rawValue, -1, nil)
             sqlite3_bind_double(statement, 7, place.createdAt.timeIntervalSince1970)
             sqlite3_bind_text(statement, 8, place.userId.uuidString, -1, nil)
 
@@ -312,11 +312,11 @@ public class Persistence: ObservableObject {
         if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
             for report in reports {
                 sqlite3_bind_text(statement, 1, report.id.uuidString, -1, nil)
-                sqlite3_bind_text(statement, 2, report.type.rawValue, -1, nil)
-                sqlite3_bind_double(statement, 3, report.coordinate.latitude)
-                sqlite3_bind_double(statement, 4, report.coordinate.longitude)
+                sqlite3_bind_text(statement, 2, report.reportType, -1, nil)
+                sqlite3_bind_double(statement, 3, report.latitude)
+                sqlite3_bind_double(statement, 4, report.longitude)
                 sqlite3_bind_text(statement, 5, report.description, -1, nil)
-                sqlite3_bind_text(statement, 6, report.reporterId?.uuidString, -1, nil)
+                sqlite3_bind_text(statement, 6, report.userId.uuidString, -1, nil)
                 sqlite3_bind_double(statement, 7, report.createdAt.timeIntervalSince1970)
                 sqlite3_bind_double(statement, 8, 0.0) // expiresAt not available
                 sqlite3_bind_int(statement, 9, 1) // isActive not available, default to true
@@ -440,13 +440,14 @@ extension SavedPlace {
 
         self.init(
             id: id,
+            userId: userId,
             name: String(cString: name),
             address: String(cString: address),
             latitude: latitude,
             longitude: longitude,
-            type: type,
+            placeType: type,
             createdAt: createdAt,
-            userId: userId
+            updatedAt: createdAt
         )
     }
 }
@@ -493,13 +494,15 @@ extension SafetyReport {
 
         self.init(
             id: id,
-            type: type,
-            coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
-            description: description ?? "",
-            severity: .medium, // Default severity
+            userId: reporterId as? UUID ?? UUID(),
+            latitude: latitude,
+            longitude: longitude,
+            reportType: type.rawValue,
+            description: description,
+            severity: 2, // Default severity (medium)
+            isResolved: false,
             createdAt: createdAt,
-            reporterId: reporterId as? UUID,
-            isVerified: false // Default to false
+            updatedAt: createdAt
         )
     }
 }
@@ -566,15 +569,15 @@ extension Persistence {
             sqlite3_bind_text(statement, 2, stop.id.uuidString, -1, nil)
             sqlite3_bind_text(statement, 3, stop.name, -1, nil)
             sqlite3_bind_text(statement, 4, stop.description, -1, nil)
-            sqlite3_bind_double(statement, 5, stop.coordinate.latitude)
-            sqlite3_bind_double(statement, 6, stop.coordinate.longitude)
+            sqlite3_bind_double(statement, 5, stop.location.latitude)
+            sqlite3_bind_double(statement, 6, stop.location.longitude)
             sqlite3_bind_text(statement, 7, stop.category.rawValue, -1, nil)
             sqlite3_bind_int(statement, 8, Int32(stop.estimatedDuration))
-            sqlite3_bind_text(statement, 9, stop.openingHours ?? "", -1, nil)
-            sqlite3_bind_text(statement, 10, stop.priceLevel.rawValue, -1, nil)
-            sqlite3_bind_double(statement, 11, stop.rating ?? 0.0)
-            sqlite3_bind_int(statement, 12, stop.isAccessible ? 1 : 0)
-            sqlite3_bind_text(statement, 13, stop.tags.joined(separator: ","), -1, nil)
+            sqlite3_bind_text(statement, 9, "", -1, nil) // openingHours not available
+            sqlite3_bind_text(statement, 10, "", -1, nil) // priceLevel not available
+            sqlite3_bind_double(statement, 11, 0.0) // rating not available
+            sqlite3_bind_int(statement, 12, 1) // isAccessible not available, default to true
+            sqlite3_bind_text(statement, 13, "", -1, nil) // tags not available
 
             if sqlite3_step(statement) != SQLITE_DONE {
                 throw PersistenceError.saveFailed

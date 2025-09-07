@@ -136,7 +136,7 @@ struct AdventureNavigationView: View {
                     .foregroundColor(AppleColors.textPrimary)
                     .lineLimit(1)
 
-                Text(stop.description)
+                Text(stop.description ?? "No description available")
                     .font(AppleTypography.body)
                     .foregroundColor(AppleColors.textSecondary)
                     .lineLimit(1)
@@ -155,18 +155,18 @@ struct AdventureNavigationView: View {
 
     private func stopIcon(for category: StopCategory) -> String {
         switch category {
-        case .all: "star"
-        case .landmark: "building"
+        case .restaurant: "star"
+        case .attraction: "building"
         case .food: "fork.knife"
-        case .scenic: "camera"
+        case .nature: "camera"
         case .museum: "building.columns"
-        case .activity: "figure.run"
-        case .nightlife: "moon.stars"
-        case .hiddenGem: "star"
+        case .restaurant: "figure.run"
+        case .restaurant: "moon.stars"
+        case .other: "star"
         case .shopping: "bag"
         case .entertainment: "tv"
-        case .services: "wrench.and.screwdriver"
-        case .transportation: "car"
+        case .other: "wrench.and.screwdriver"
+        case .culture: "car"
         }
     }
 
@@ -175,7 +175,7 @@ struct AdventureNavigationView: View {
     private var mapSection: some View {
         GeometryReader { geometry in
             Map(coordinateRegion: .constant(mapRegion), annotationItems: adventure.stops) { stop in
-                MapAnnotation(coordinate: stop.coordinate) {
+                MapAnnotation(coordinate: stop.location.coordinate) {
                     adventureStopAnnotation(for: stop)
                 }
             }
@@ -193,7 +193,7 @@ struct AdventureNavigationView: View {
         }
 
         return MKCoordinateRegion(
-            center: currentStop.coordinate,
+            center: currentStop.location.coordinate,
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         )
     }
@@ -362,7 +362,7 @@ struct AdventureNavigationView: View {
                         .foregroundColor(AppleColors.textPrimary)
                         .lineLimit(1)
 
-                    Text(nextStop.description)
+                    Text(nextStop.description ?? "No description available")
                         .font(AppleTypography.caption1)
                         .foregroundColor(AppleColors.textSecondary)
                         .lineLimit(1)
@@ -420,26 +420,24 @@ struct AdventureNavigationView: View {
             AdventureStop(
                 name: "Blue Bottle Coffee",
                 description: "Start your day with the best coffee in town",
-                coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+                location: LocationData(
+                    latitude: 37.7749,
+                    longitude: -122.4194,
+                    address: "66 Mint St, San Francisco, CA 94103"
+                ),
                 category: .food,
-                estimatedDuration: 30,
-                openingHours: "7:00 AM - 6:00 PM",
-                priceLevel: .medium,
-                rating: 4.5,
-                isAccessible: true,
-                tags: ["coffee", "breakfast"]
+                estimatedDuration: 30
             ),
             AdventureStop(
                 name: "Modern Art Gallery",
                 description: "Explore contemporary art",
-                coordinate: CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4094),
+                location: LocationData(
+                    latitude: 37.7849,
+                    longitude: -122.4094,
+                    address: "151 3rd St, San Francisco, CA 94103"
+                ),
                 category: .museum,
-                estimatedDuration: 45,
-                openingHours: "10:00 AM - 6:00 PM",
-                priceLevel: .high,
-                rating: 4.2,
-                isAccessible: true,
-                tags: ["art", "culture"]
+                estimatedDuration: 45
             ),
         ],
         totalDuration: 180,

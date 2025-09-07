@@ -259,13 +259,13 @@ struct PrivacySummary {
     let panicSwitch: Bool
 }
 
-struct PrivacySettings: Codable {
-    let privacyPolicy: Bool
-    let locationSharing: Bool
-    let friendsOnMap: Bool
-    let etaSharing: Bool
-    let analytics: Bool
-    let panicSwitch: Bool
+public struct PrivacySettings: Codable {
+    public let privacyPolicy: Bool
+    public let locationSharing: Bool
+    public let friendsOnMap: Bool
+    public let etaSharing: Bool
+    public let analytics: Bool
+    public let panicSwitch: Bool
 }
 
 // MARK: - Persistence Extensions

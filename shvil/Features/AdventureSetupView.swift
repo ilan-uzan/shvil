@@ -232,7 +232,7 @@ struct AdventureSetupView: View {
         case .fun: "face.smiling"
         case .relaxing: "leaf"
         case .cultural: "building.columns"
-        case .romantic: "heart"
+        case .adventurous: "heart"
         case .adventurous: "mountain.2"
         }
     }
@@ -534,7 +534,19 @@ struct AdventureSetupView: View {
             companions: companions,
             transportationMode: selectedTransport,
             origin: locationService.currentLocation!.coordinate,
-            preferences: UserPreferences()
+            preferences: UserPreferences(
+                language: "en",
+                theme: "light",
+                notifications: NotificationSettings(),
+                privacy: PrivacySettings(
+                    privacyPolicy: true,
+                    locationSharing: true,
+                    friendsOnMap: true,
+                    etaSharing: true,
+                    analytics: true,
+                    panicSwitch: true
+                )
+            )
         )
 
         Task {

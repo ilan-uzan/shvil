@@ -14,51 +14,6 @@ struct SocialPlansView: View {
     @State private var showPlanDetails = false
     @State private var selectedPlan: Plan?
     
-    // Sample data for demonstration
-    @State private var samplePlans: [Plan] = [
-        Plan(
-            title: "Weekend Brunch Adventure",
-            description: "Let's explore the best brunch spots in the city!",
-            hostId: UUID(),
-            hostName: "Sarah Chen",
-            status: .voting,
-            votingEndsAt: Calendar.current.date(byAdding: .hour, value: 24, to: Date()),
-            participants: [
-                PlanParticipant(userId: UUID(), name: "Sarah Chen"),
-                PlanParticipant(userId: UUID(), name: "Mike Johnson"),
-                PlanParticipant(userId: UUID(), name: "Emma Wilson"),
-            ],
-            options: [
-                PlanOption(name: "Blue Bottle Coffee", address: "123 Market St", votes: 3),
-                PlanOption(name: "Farmers Market", address: "456 Union St", votes: 2),
-                PlanOption(name: "Golden Gate Park", address: "789 Park Ave", votes: 1),
-            ]
-        ),
-        Plan(
-            title: "Friday Night Out",
-            description: "Dinner and drinks in the Mission",
-            hostId: UUID(),
-            hostName: "Alex Rodriguez",
-            status: .locked,
-            participants: [
-                PlanParticipant(userId: UUID(), name: "Alex Rodriguez"),
-                PlanParticipant(userId: UUID(), name: "Lisa Park"),
-            ]
-        ),
-        Plan(
-            title: "Hiking in Marin",
-            description: "Early morning hike at Mount Tamalpais",
-            hostId: UUID(),
-            hostName: "David Kim",
-            status: .active,
-            participants: [
-                PlanParticipant(userId: UUID(), name: "David Kim"),
-                PlanParticipant(userId: UUID(), name: "Rachel Green"),
-                PlanParticipant(userId: UUID(), name: "Tom Wilson"),
-                PlanParticipant(userId: UUID(), name: "Anna Lee"),
-            ]
-        )
-    ]
     
     var body: some View {
         NavigationView {
@@ -174,7 +129,8 @@ struct SocialPlansView: View {
     
     private func loadPlans() {
         // In a real app, this would load from a service
-        plans = samplePlans
+        // For now, initialize with empty array
+        plans = []
     }
     
     private func joinPlan(_ plan: Plan) {
@@ -189,22 +145,7 @@ struct SocialPlansView: View {
     
     private func loadMorePlans() {
         // In a real app, this would load more plans from a service
-        // For now, we'll just add more sample data
-        let morePlans = [
-            Plan(
-                title: "Coffee & Code",
-                description: "Work session at a local coffee shop",
-                hostId: UUID(),
-                hostName: "Tech Meetup",
-                status: .voting,
-                participants: [
-                    PlanParticipant(userId: UUID(), name: "Tech Meetup"),
-                    PlanParticipant(userId: UUID(), name: "Developer 1"),
-                    PlanParticipant(userId: UUID(), name: "Developer 2"),
-                ]
-            )
-        ]
-        plans.append(contentsOf: morePlans)
+        // For now, do nothing
     }
 }
 

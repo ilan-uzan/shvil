@@ -1,377 +1,145 @@
-# Shvil Cleanup Plan
+# Cleanup Plan
 
-**Date:** December 2024  
-**Auditor:** Principal Engineer  
-**Scope:** Comprehensive codebase cleanup and optimization
+## Phase 1: Design System Migration (P0)
 
-## 📋 Executive Summary
+### 1.1 Replace AppleColors with DesignTokens
+- [ ] Find all `AppleColors` usage (200+ instances)
+- [ ] Replace with `DesignTokens` equivalents
+- [ ] Update all view files
+- [ ] Update all component files
+- [ ] Remove `AppleDesignSystem.swift` (deprecated)
 
-This plan outlines a systematic approach to cleaning up the Shvil codebase, removing technical debt, and improving code quality. The cleanup is organized into 5 sequential PRs, each focusing on specific areas of improvement.
+### 1.2 Centralize Design Tokens
+- [ ] Move all design tokens to `DesignSystem/Theme.swift`
+- [ ] Create proper token categories (Brand, Semantic, Surface, Text, Glass)
+- [ ] Add proper documentation
+- [ ] Add accessibility variants
 
-## 🎯 Cleanup Objectives
+## Phase 2: Remove Duplicates (P0)
 
-### Primary Goals
-1. **Remove Dead Code** - Eliminate unused files, functions, and assets
-2. **Fix Code Smells** - Address force unwraps, main-thread blocking, and poor patterns
-3. **Optimize Performance** - Improve app performance and reduce resource usage
-4. **Harden Contracts** - Strengthen frontend-backend integration
-5. **Add Testing** - Implement comprehensive test coverage
+### 2.1 Model Definitions
+- [ ] Keep `APIModels.swift` as canonical
+- [ ] Remove duplicates from `AdventureKit.swift`
+- [ ] Remove duplicates from `MapEngine.swift`
+- [ ] Remove duplicates from `SafetyKit.swift`
+- [ ] Update all references to use canonical models
 
-### Success Metrics
-- [ ] Zero critical issues
-- [ ] <5 high priority issues
-- [ ] 90%+ test coverage
-- [ ] <1.5s app launch time
-- [ ] Consistent 60fps performance
-- [ ] Clean Git history
+### 2.2 Service Duplicates
+- [ ] Consolidate similar services
+- [ ] Remove unused service methods
+- [ ] Update dependency injection
 
-## 🚀 PR 1: Dead Code & Duplicates Removal
+## Phase 3: Add Missing Features (P0)
 
-### Scope
-Remove unused files, duplicate code, and dead assets to reduce codebase complexity.
+### 3.1 Social Features
+- [ ] Add Socialize tab to main navigation
+- [ ] Create `SocialHubView.swift`
+- [ ] Add friend management
+- [ ] Add group creation and invites
+- [ ] Add QR code sharing
 
-### Files to Remove
-- [ ] `NavigationService.swift` (legacy - replaced by AsyncNavigationService)
-- [ ] `RoutingService.swift` (legacy - replaced by AsyncRoutingService)
-- [ ] `SimpleTests.swift` (placeholder test file)
-- [ ] `TestHelpers.swift` (unused test utilities)
+### 3.2 Scavenger Hunt Features
+- [ ] Add Hunt tab to main navigation
+- [ ] Create `HuntHubView.swift`
+- [ ] Add hunt creation flow
+- [ ] Add hunt joining flow
+- [ ] Add leaderboard system
 
-### Duplicate Code to Merge
-- [ ] Consolidate similar UI patterns in views
-- [ ] Merge duplicate utility functions
-- [ ] Unify error handling patterns
-- [ ] Standardize naming conventions
+## Phase 4: Fix Code Quality (P1)
 
-### Assets to Clean Up
-- [ ] Remove unused images from Assets.xcassets
-- [ ] Convert PNG files to PDF vectors where possible
-- [ ] Optimize remaining assets for different screen densities
-- [ ] Add dark mode variants for assets
+### 4.1 Force Unwraps
+- [ ] Find all force unwraps
+- [ ] Replace with proper optional handling
+- [ ] Add error handling where needed
 
-### Scripts to Add
-- [ ] `scripts/verify-deadcode.sh` - Automated dead code detection
-- [ ] `scripts/check-duplicates.sh` - Duplicate code detection
-- [ ] `scripts/optimize-assets.sh` - Asset optimization
+### 4.2 Main Thread Issues
+- [ ] Find main thread blocking code
+- [ ] Move to background queues
+- [ ] Add proper async/await patterns
 
-### Expected Impact
-- **Code Reduction:** ~20% reduction in codebase size
-- **Build Time:** ~10% faster build times
-- **Maintenance:** Easier to maintain and understand
-- **Bundle Size:** ~15% smaller app bundle
+### 4.3 Memory Leaks
+- [ ] Find potential memory leaks
+- [ ] Add proper cleanup
+- [ ] Use weak references where needed
 
-### Risk Assessment
-- **Risk:** Low - Removing unused code is safe
-- **Mitigation:** Thorough testing before removal
-- **Rollback:** Easy to revert if issues found
+## Phase 5: Accessibility & i18n (P1)
 
-## 🔧 PR 2: Code Smells & Safety Fixes
-
-### Scope
-Address code quality issues, safety concerns, and architectural problems.
-
-### Force Unwraps to Fix
-- [ ] `AsyncRoutingService.swift:229` - Safe optional binding
-- [ ] `ContentView.swift:426` - Safe string interpolation
-- [ ] `SearchPill.swift:79` - Safe array access
-- [ ] `RoutingService.swift:191` - Safe optional binding
-
-### Main-Thread Blocking to Fix
-- [ ] `LocationService.swift` - Move to background queues
-- [ ] `NetworkMonitor.swift` - Use async/await
-- [ ] `MapEngine.swift` - Background processing
-- [ ] `RoutingEngine.swift` - Async operations
-
-### Memory Management Issues
-- [ ] Add weak references in closures
-- [ ] Fix potential retain cycles
-- [ ] Implement proper cleanup
-- [ ] Add memory leak detection
-
-### Code Smells to Address
-- [ ] Break down large views (MapView, SettingsView)
-- [ ] Implement proper MVVM pattern
-- [ ] Add proper abstraction layers
-- [ ] Centralize constants and magic numbers
-
-### Error Handling Improvements
-- [ ] Standardize error types across services
-- [ ] Implement proper error recovery
-- [ ] Add comprehensive error logging
-- [ ] Improve user-facing error messages
-
-### Expected Impact
-- **Stability:** Significantly improved app stability
-- **Performance:** Better performance and responsiveness
-- **Maintainability:** Easier to maintain and extend
-- **User Experience:** Fewer crashes and better error handling
-
-### Risk Assessment
-- **Risk:** Medium - Changes to core functionality
-- **Mitigation:** Extensive testing, gradual rollout
-- **Rollback:** Feature flags for easy rollback
-
-## ⚡ PR 3: Performance & Assets Optimization
-
-### Scope
-Optimize app performance, improve asset management, and enhance user experience.
-
-### Performance Optimizations
-- [ ] Implement lazy loading for long lists
-- [ ] Add pagination for networked data
-- [ ] Optimize view rendering
-- [ ] Improve memory management
-- [ ] Add performance monitoring
-
-### Asset Optimizations
-- [ ] Convert PNGs to PDF vectors
-- [ ] Use SF Symbols where appropriate
-- [ ] Optimize images for different screen densities
-- [ ] Implement progressive image loading
-- [ ] Add asset caching strategies
-
-### Caching Improvements
-- [ ] Implement smart caching for API responses
-- [ ] Add image caching
-- [ ] Optimize database queries
-- [ ] Add cache invalidation strategies
-
-### UI Performance
-- [ ] Optimize SwiftUI view updates
-- [ ] Reduce view complexity
-- [ ] Implement proper state management
-- [ ] Add performance metrics
-
-### Expected Impact
-- **Launch Time:** <1.5s app launch time
-- **Memory Usage:** <70MB average memory usage
-- **Frame Rate:** Consistent 60fps performance
-- **Battery Life:** Improved battery efficiency
-
-### Risk Assessment
-- **Risk:** Low - Performance improvements are safe
-- **Mitigation:** A/B testing for performance changes
-- **Rollback:** Easy to revert performance changes
-
-## 🔗 PR 4: Frontend-Backend Contract Hardening
-
-### Scope
-Strengthen the integration between frontend and backend, improve type safety, and add contract testing.
-
-### Type Safety Improvements
-- [ ] Generate typed models for all API endpoints
-- [ ] Add proper error type definitions
-- [ ] Implement request/response validation
-- [ ] Add schema validation
-
-### Contract Testing
-- [ ] Add unit tests for API calls
-- [ ] Implement integration tests
-- [ ] Add mock services for testing
-- [ ] Create test data factories
-
-### Supabase Integration
-- [ ] Validate all database operations
-- [ ] Test RLS policies
-- [ ] Verify real-time subscriptions
-- [ ] Test file uploads
-
-### Error Handling
-- [ ] Standardize error responses
-- [ ] Implement retry strategies
-- [ ] Add offline handling
-- [ ] Improve error recovery
-
-### Documentation
-- [ ] Update API documentation
-- [ ] Add integration examples
-- [ ] Create troubleshooting guides
-- [ ] Document error codes
-
-### Expected Impact
-- **Reliability:** More reliable backend integration
-- **Type Safety:** Compile-time error detection
-- **Testing:** Better test coverage
-- **Documentation:** Clearer integration guidelines
-
-### Risk Assessment
-- **Risk:** Medium - Backend integration changes
-- **Mitigation:** Thorough testing, gradual rollout
-- **Rollback:** Feature flags for easy rollback
-
-## 🧪 PR 5: Tests & Accessibility
-
-### Scope
-Add comprehensive testing and improve accessibility compliance.
-
-### Unit Tests
-- [ ] Add tests for all services
-- [ ] Test view models
-- [ ] Add utility function tests
-- [ ] Test error handling
-
-### Integration Tests
-- [ ] Test complete user flows
-- [ ] Test API integrations
-- [ ] Test real-time features
-- [ ] Test offline scenarios
-
-### UI Tests
-- [ ] Add snapshot tests for key screens
-- [ ] Test user interactions
-- [ ] Test responsive design
-- [ ] Test dark mode
-
-### Accessibility Improvements
-- [ ] Add VoiceOver support
-- [ ] Implement Dynamic Type
-- [ ] Add high contrast support
-- [ ] Ensure proper hit targets
+### 5.1 Accessibility
 - [ ] Add accessibility labels
+- [ ] Add accessibility hints
+- [ ] Ensure 44pt hit targets
+- [ ] Add Dynamic Type support
 
-### Performance Tests
-- [ ] Add memory usage tests
-- [ ] Test CPU performance
-- [ ] Test network performance
-- [ ] Test battery usage
+### 5.2 Internationalization
+- [ ] Replace hardcoded strings
+- [ ] Add RTL support
+- [ ] Test Hebrew layout
 
-### Expected Impact
-- **Quality:** Significantly improved code quality
-- **Accessibility:** Full accessibility compliance
-- **Testing:** 90%+ test coverage
-- **Reliability:** More reliable app
+## Phase 6: Performance (P2)
 
-### Risk Assessment
-- **Risk:** Low - Adding tests and accessibility is safe
-- **Mitigation:** Gradual test addition
-- **Rollback:** Easy to disable tests if needed
+### 6.1 Lazy Loading
+- [ ] Implement pagination for lists
+- [ ] Use `LazyVStack` for performance
+- [ ] Add proper caching
 
-## 📅 Implementation Timeline
+### 6.2 Asset Optimization
+- [ ] Remove unused assets
+- [ ] Convert PNGs to PDFs/SF Symbols
+- [ ] Optimize image sizes
+
+## Phase 7: Testing (P1)
+
+### 7.1 Re-enable Tests
+- [ ] Uncomment test files
+- [ ] Fix compilation issues
+- [ ] Add basic test coverage
+
+### 7.2 Add New Tests
+- [ ] Unit tests for services
+- [ ] Integration tests for API
+- [ ] UI tests for critical flows
+
+## Implementation Order
 
 ### Week 1: Foundation
-- **Days 1-2:** PR 1 - Dead Code & Duplicates
-- **Days 3-5:** PR 2 - Code Smells & Safety
+1. Design system migration
+2. Remove duplicates
+3. Add basic social features
 
-### Week 2: Optimization
-- **Days 1-3:** PR 3 - Performance & Assets
-- **Days 4-5:** PR 4 - Frontend-Backend Contract
+### Week 2: Features
+1. Complete social features
+2. Add scavenger hunt features
+3. Fix critical code quality issues
 
-### Week 3: Testing & Polish
-- **Days 1-3:** PR 5 - Tests & Accessibility
-- **Days 4-5:** Final testing and documentation
+### Week 3: Polish
+1. Accessibility improvements
+2. Performance optimization
+3. Testing implementation
 
-## 🔍 Quality Gates
+### Week 4: Final
+1. Bug fixes
+2. Documentation
+3. Release preparation
 
-### PR 1: Dead Code & Duplicates
-- [ ] All unused files removed
-- [ ] No duplicate code remaining
-- [ ] Assets optimized
-- [ ] Build time improved
-- [ ] Bundle size reduced
-
-### PR 2: Code Smells & Safety
-- [ ] Zero force unwraps
-- [ ] No main-thread blocking
-- [ ] Memory leaks fixed
-- [ ] Code smells addressed
-- [ ] Error handling improved
-
-### PR 3: Performance & Assets
-- [ ] App launch time <1.5s
-- [ ] Memory usage <70MB
-- [ ] 60fps performance
-- [ ] Assets optimized
-- [ ] Caching implemented
-
-### PR 4: Frontend-Backend Contract
-- [ ] Typed models generated
-- [ ] Contract tests added
-- [ ] Error handling standardized
-- [ ] Documentation updated
-- [ ] Integration tested
-
-### PR 5: Tests & Accessibility
-- [ ] 90%+ test coverage
-- [ ] Full accessibility compliance
-- [ ] Performance tests added
-- [ ] UI tests implemented
-- [ ] Documentation complete
-
-## 🚨 Risk Mitigation
-
-### Technical Risks
-- **Code Breakage:** Extensive testing before each PR
-- **Performance Regression:** Performance monitoring
-- **Integration Issues:** Gradual rollout with feature flags
-- **Test Failures:** Comprehensive test suite
-
-### Business Risks
-- **User Impact:** Minimal user-facing changes
-- **Timeline Delays:** Buffer time in schedule
-- **Resource Constraints:** Prioritized implementation
-- **Quality Issues:** Multiple review cycles
-
-## 📊 Success Metrics
+## Success Metrics
 
 ### Code Quality
-- [ ] Zero critical issues
-- [ ] <5 high priority issues
-- [ ] 90%+ test coverage
-- [ ] Clean code standards
+- [ ] 0 force unwraps
+- [ ] 0 main thread blocking
+- [ ] 0 memory leaks
+- [ ] 100% DesignTokens usage
 
-### Performance
-- [ ] <1.5s app launch time
-- [ ] <70MB memory usage
-- [ ] 60fps performance
-- [ ] <30s build time
+### Features
+- [ ] Socialize tab functional
+- [ ] Hunt tab functional
+- [ ] All critical flows working
 
 ### Accessibility
-- [ ] Full VoiceOver support
+- [ ] All elements have labels
 - [ ] Dynamic Type support
-- [ ] High contrast support
-- [ ] Proper hit targets
+- [ ] RTL layout working
 
-### Maintainability
-- [ ] Consistent code style
-- [ ] Comprehensive documentation
-- [ ] Clean Git history
-- [ ] Automated testing
-
-## 🎯 Post-Cleanup Benefits
-
-### Developer Experience
-- **Faster Development:** Cleaner code, better structure
-- **Easier Debugging:** Better error handling, logging
-- **Improved Testing:** Comprehensive test coverage
-- **Better Documentation:** Clear architecture, APIs
-
-### User Experience
-- **Better Performance:** Faster app, smoother interactions
-- **Improved Accessibility:** Better for all users
-- **Fewer Bugs:** More reliable app
-- **Better Error Handling:** Clearer error messages
-
-### Business Value
-- **Reduced Maintenance:** Less technical debt
-- **Faster Feature Development:** Cleaner architecture
-- **Better Quality:** Fewer bugs, better performance
-- **Improved Scalability:** Better foundation for growth
-
-## 🔄 Continuous Improvement
-
-### Ongoing Monitoring
-- [ ] Code quality metrics
-- [ ] Performance monitoring
-- [ ] Test coverage tracking
-- [ ] User feedback analysis
-
-### Regular Reviews
-- [ ] Monthly code reviews
-- [ ] Quarterly architecture reviews
-- [ ] Annual technical debt assessment
-- [ ] Continuous improvement planning
-
-### Future Enhancements
-- [ ] Advanced testing strategies
-- [ ] Performance optimization
-- [ ] Architecture improvements
-- [ ] New feature development
+### Performance
+- [ ] 60fps on all screens
+- [ ] < 2s app launch time
+- [ ] < 100MB memory usage
