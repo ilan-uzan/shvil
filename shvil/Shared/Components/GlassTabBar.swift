@@ -295,7 +295,7 @@ struct AppleMusicTabButton: View {
                 // Icon
                 Image(systemName: isSelected ? tab.selectedIcon : tab.icon)
                     .font(.system(size: 18, weight: isSelected ? .semibold : .medium))
-                    .foregroundColor(isSelected ? dynamicTint : Color.white.opacity(0.7))
+                    .foregroundColor(isSelected ? dynamicTint : Color.gray.opacity(0.6))
                     .scaleEffect(isPressed ? 0.9 : (isSelected ? 1.1 : 1.0))
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
                     .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSelected)
@@ -303,7 +303,7 @@ struct AppleMusicTabButton: View {
                 // Label
                 Text(tab.title)
                     .font(.system(size: 9, weight: isSelected ? .semibold : .medium))
-                    .foregroundColor(isSelected ? dynamicTint : Color.white.opacity(0.7))
+                    .foregroundColor(isSelected ? dynamicTint : Color.gray.opacity(0.6))
                     .lineLimit(1)
                     .scaleEffect(isPressed ? 0.95 : (isSelected ? 1.05 : 1.0))
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
