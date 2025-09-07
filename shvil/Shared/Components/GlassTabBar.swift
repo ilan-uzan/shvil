@@ -60,7 +60,7 @@ struct GlassTabBar: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 10)
+                .padding(.vertical, 16)
                 .gesture(
                     DragGesture()
                         .onChanged { value in
@@ -103,7 +103,7 @@ struct GlassTabBar: View {
                         }
                 )
             }
-            .frame(height: 60)
+            .frame(height: 80)
             .background(
                 ZStack {
                     // Apple Music-style frosted glass background - more rounded
@@ -218,7 +218,7 @@ struct GlassTabBar: View {
             let tabCenter = selectedTabFrame.midX
             let containerCenter = UIScreen.main.bounds.width / 2
             let newOffset = tabCenter - containerCenter
-            let newWidth = selectedTabFrame.width * 0.85
+            let newWidth = selectedTabFrame.width * 1.1
             
             withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                 capsuleOffset = newOffset
@@ -231,7 +231,7 @@ struct GlassTabBar: View {
             let hStackPadding = 32.0
             let availableWidth = screenWidth - hStackPadding
             let tabWidth = availableWidth / CGFloat(tabs.count)
-            let newWidth = tabWidth * 0.85
+            let newWidth = tabWidth * 1.1
             
             let tabCenter = CGFloat(selectedTab) * tabWidth + tabWidth / 2
             let containerCenter = availableWidth / 2
