@@ -19,6 +19,9 @@ struct GlassTabBar: View {
     @State private var capsuleWidth: CGFloat = 0
     @State private var isAnimating = false
     @State private var scrollOffset: CGFloat = 0
+    @State private var isDragging: Bool = false
+    @State private var dragOffset: CGFloat = 0
+    @State private var dragScale: CGFloat = 1.0
     
     // Feature flag
     private let liquidGlassEnabled = FeatureFlags.shared.isEnabled(.liquidGlassNavV1)
@@ -41,6 +44,47 @@ struct GlassTabBar: View {
                     .frame(maxWidth: .infinity)
                 }
             }
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        if !isDragging {
+                            isDragging = true
+                            dragScale = 1.1 // Zoom in when dragging starts
+                        }
+                        
+                        // Calculate which tab the finger is over
+                        let totalPadding = 32.0
+                        let availableWidth = UIScreen.main.bounds.width - totalPadding
+                        let tabWidth = availableWidth / CGFloat(tabs.count)
+                        let touchX = value.location.x - 16 // Account for padding
+                        let tabIndex = Int(touchX / tabWidth)
+                        
+                        if tabIndex >= 0 && tabIndex < tabs.count {
+                            // Update capsule position to follow finger
+                            let tabCenter = CGFloat(tabIndex) * tabWidth + tabWidth / 2
+                            let containerCenter = availableWidth / 2
+                            dragOffset = tabCenter - containerCenter
+                        }
+                    }
+                    .onEnded { value in
+                        isDragging = false
+                        dragScale = 1.0 // Zoom out when released
+                        
+                        // Calculate which tab to select
+                        let totalPadding = 32.0
+                        let availableWidth = UIScreen.main.bounds.width - totalPadding
+                        let tabWidth = availableWidth / CGFloat(tabs.count)
+                        let touchX = value.location.x - 16
+                        let tabIndex = Int(touchX / tabWidth)
+                        
+                        if tabIndex >= 0 && tabIndex < tabs.count && tabIndex != selectedTab {
+                            selectTab(tabIndex)
+                        } else {
+                            // Reset to current tab position
+                            updateCapsulePosition()
+                        }
+                    }
+            )
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(
@@ -82,10 +126,11 @@ struct GlassTabBar: View {
                     // Floating Lens Effect for Selected Tab
                     if selectedTab < tabs.count {
                         AppleMusicLens(
-                            offset: capsuleOffset,
+                            offset: isDragging ? dragOffset : capsuleOffset,
                             width: capsuleWidth,
                             tint: dynamicTint,
-                            isAnimating: isAnimating
+                            isAnimating: isAnimating,
+                            scale: dragScale
                         )
                     }
                 }
@@ -138,6 +183,9 @@ struct GlassTabBar: View {
         let newWidth = tabWidth * 0.7 // 70% of tab width for Apple Music look
         
         // Calculate the center position of the selected tab
+        // The tab center is: (selectedTab * tabWidth) + (tabWidth / 2)
+        // The container center is: availableWidth / 2
+        // The offset is: tabCenter - containerCenter
         let tabCenter = CGFloat(selectedTab) * tabWidth + tabWidth / 2
         let containerCenter = availableWidth / 2
         let newOffset = tabCenter - containerCenter
@@ -234,6 +282,7 @@ struct AppleMusicLens: View {
     let width: CGFloat
     let tint: Color
     let isAnimating: Bool
+    let scale: CGFloat
     
     var body: some View {
         ZStack {
@@ -308,9 +357,10 @@ struct AppleMusicLens: View {
         }
         .frame(width: width, height: 45)
         .offset(x: offset)
-        .scaleEffect(isAnimating ? 1.05 : 1.0)
+        .scaleEffect(scale)
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: offset)
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: width)
+        .animation(.spring(response: 0.2, dampingFraction: 0.8), value: scale)
         .shadow(
             color: tint.opacity(0.4),
             radius: 8,
