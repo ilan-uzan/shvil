@@ -27,6 +27,7 @@ struct GlassTabBar: View {
         VStack(spacing: 0) {
             Spacer()
             
+            // Floating Navigation Pill with Magnifier Effect
             HStack(spacing: 0) {
                 ForEach(Array(tabs.enumerated()), id: \.offset) { index, tab in
                     GlassTabButton(
@@ -40,76 +41,57 @@ struct GlassTabBar: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            .padding(.horizontal, DesignTokens.Spacing.md)
-            .padding(.vertical, DesignTokens.Spacing.sm)
+            .padding(.horizontal, DesignTokens.Spacing.lg)
+            .padding(.vertical, DesignTokens.Spacing.md)
             .background(
                 ZStack {
-                    // Backdrop Blur Layer
-                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                    // Magnifier Lens Effect with Colored Reflections
+                    RoundedRectangle(cornerRadius: 25) // More rounded
                         .fill(.ultraThinMaterial)
-                        .saturation(1.2) // Wet glass effect
+                        .saturation(1.25) // Enhanced wet glass effect
                         .overlay(
-                            // Film grain overlay
-                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                            // Colored lens reflections
+                            RoundedRectangle(cornerRadius: 25)
                                 .fill(
+                                    RadialGradient(
+                                        colors: [
+                                            dynamicTint.opacity(0.2),
+                                            dynamicTint.opacity(0.05),
+                                            Color.clear
+                                        ],
+                                        center: .topLeading,
+                                        startRadius: 0,
+                                        endRadius: 60
+                                    )
+                                )
+                        )
+                        .overlay(
+                            // Corner reflections like a real lens
+                            RoundedRectangle(cornerRadius: 25)
+                                .stroke(
                                     LinearGradient(
                                         colors: [
-                                            Color.white.opacity(0.02),
-                                            Color.black.opacity(0.01)
+                                            Color.white.opacity(0.6),
+                                            dynamicTint.opacity(0.3),
+                                            Color.white.opacity(0.2),
+                                            Color.black.opacity(0.1)
                                         ],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
-                                    )
+                                    ),
+                                    lineWidth: 1.5
                                 )
-                        )
-                    
-                    // Glass Body Layer
-                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    dynamicTint.opacity(0.15),
-                                    dynamicTint.opacity(0.08)
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
                         )
                         .overlay(
-                            // Inner specular gradient
-                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-                                .fill(
-                                    LinearGradient(
-                                        colors: [
-                                            Color.white.opacity(0.3),
-                                            Color.white.opacity(0.1),
-                                            Color.clear
-                                        ],
-                                        startPoint: .top,
-                                        endPoint: .center
-                                    )
-                                )
-                                .offset(y: scrollOffset * 0.5) // Parallax effect
+                            // Micro-bloom effect around edges
+                            RoundedRectangle(cornerRadius: 25)
+                                .stroke(dynamicTint.opacity(0.4), lineWidth: 0.5)
+                                .blur(radius: 1)
                         )
                     
-                    // Border Highlight
-                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    Color.white.opacity(0.4),
-                                    Color.white.opacity(0.1),
-                                    Color.black.opacity(0.1)
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            ),
-                            lineWidth: 0.5
-                        )
-                    
-                    // Selection Capsule
+                    // Floating Selection Capsule with Magnifier Effect
                     if selectedTab < tabs.count {
-                        LiquidCapsule(
+                        MagnifierCapsule(
                             offset: capsuleOffset,
                             width: capsuleWidth,
                             tint: dynamicTint,
@@ -119,13 +101,19 @@ struct GlassTabBar: View {
                 }
             )
             .shadow(
-                color: DesignTokens.Shadow.heavy.color,
-                radius: DesignTokens.Shadow.heavy.radius,
-                x: DesignTokens.Shadow.heavy.x,
-                y: DesignTokens.Shadow.heavy.y
+                color: dynamicTint.opacity(0.3),
+                radius: 20,
+                x: 0,
+                y: 8
             )
-            .padding(.horizontal, DesignTokens.Spacing.lg)
-            .padding(.bottom, DesignTokens.Spacing.lg)
+            .shadow(
+                color: Color.black.opacity(0.1),
+                radius: 8,
+                x: 0,
+                y: 4
+            )
+            .padding(.horizontal, DesignTokens.Spacing.xl)
+            .padding(.bottom, 34) // Lower positioning above home indicator
         }
         .onAppear {
             updateCapsulePosition()
@@ -257,51 +245,96 @@ struct GlassTabButton: View {
     }
 }
 
-/// Liquid capsule that morphs between tabs
-struct LiquidCapsule: View {
+/// Magnifier-style floating capsule with lens effects
+struct MagnifierCapsule: View {
     let offset: CGFloat
     let width: CGFloat
     let tint: Color
     let isAnimating: Bool
     
     var body: some View {
-        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-            .fill(
-                LinearGradient(
-                    colors: [
-                        tint.opacity(0.25),
-                        tint.opacity(0.15)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .overlay(
-                // Extra gloss stripe
-                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(0.4),
-                                Color.white.opacity(0.1),
-                                Color.clear
-                            ],
-                            startPoint: .top,
-                            endPoint: .center
-                        )
+        ZStack {
+            // Main capsule with magnifier lens effect
+            RoundedRectangle(cornerRadius: 20)
+                .fill(
+                    RadialGradient(
+                        colors: [
+                            tint.opacity(0.3),
+                            tint.opacity(0.15),
+                            tint.opacity(0.05)
+                        ],
+                        center: .topLeading,
+                        startRadius: 0,
+                        endRadius: 40
                     )
-            )
-            .overlay(
-                // Micro-bloom effect
-                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                    .stroke(tint.opacity(0.3), lineWidth: 1)
-                    .blur(radius: 0.5)
-            )
-            .frame(width: width, height: 40)
-            .offset(x: offset)
-            .scaleEffect(isAnimating ? 1.02 : 1.0)
-            .animation(.spring(response: 0.35, dampingFraction: 0.8), value: offset)
-            .animation(.spring(response: 0.35, dampingFraction: 0.8), value: width)
+                )
+                .overlay(
+                    // Lens reflection gradient
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.5),
+                                    Color.white.opacity(0.2),
+                                    Color.clear,
+                                    tint.opacity(0.1)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                )
+                .overlay(
+                    // Corner lens reflections
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.8),
+                                    tint.opacity(0.4),
+                                    Color.white.opacity(0.3),
+                                    Color.black.opacity(0.1)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+                .overlay(
+                    // Micro-bloom lens effect
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(tint.opacity(0.5), lineWidth: 1)
+                        .blur(radius: 1.5)
+                )
+            
+            // Inner lens highlight
+            RoundedRectangle(cornerRadius: 18)
+                .fill(
+                    RadialGradient(
+                        colors: [
+                            Color.white.opacity(0.6),
+                            Color.white.opacity(0.2),
+                            Color.clear
+                        ],
+                        center: .topLeading,
+                        startRadius: 0,
+                        endRadius: 25
+                    )
+                )
+                .blendMode(.overlay)
+        }
+        .frame(width: width, height: 44)
+        .offset(x: offset)
+        .scaleEffect(isAnimating ? 1.05 : 1.0)
+        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: offset)
+        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: width)
+        .shadow(
+            color: tint.opacity(0.4),
+            radius: 8,
+            x: 0,
+            y: 4
+        )
     }
 }
 
