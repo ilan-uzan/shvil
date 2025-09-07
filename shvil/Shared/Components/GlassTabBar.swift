@@ -13,6 +13,18 @@ struct GlassTabBar: View {
     let tabs: [GlassTabItem]
     @Binding var selectedTab: Int
     let onSelect: (Int) -> Void
+    let dynamicIconColor: Color
+    let dynamicTextColor: Color
+    
+    init(tabs: [GlassTabItem], selectedTab: Binding<Int>, onSelect: @escaping (Int) -> Void, 
+         dynamicIconColor: Color = Color.gray.opacity(0.6),
+         dynamicTextColor: Color = Color.gray.opacity(0.6)) {
+        self.tabs = tabs
+        self._selectedTab = selectedTab
+        self.onSelect = onSelect
+        self.dynamicIconColor = dynamicIconColor
+        self.dynamicTextColor = dynamicTextColor
+    }
     
     @State private var dynamicTint: Color = DesignTokens.Brand.primary
     @State private var capsuleOffset: CGFloat = 0
@@ -39,6 +51,8 @@ struct GlassTabBar: View {
                             tab: tab,
                             isSelected: selectedTab == index,
                             dynamicTint: dynamicTint,
+                            dynamicIconColor: dynamicIconColor,
+                            dynamicTextColor: dynamicTextColor,
                             onTap: {
                                 selectTab(index)
                             }
@@ -285,6 +299,8 @@ struct AppleMusicTabButton: View {
     let tab: GlassTabItem
     let isSelected: Bool
     let dynamicTint: Color
+    let dynamicIconColor: Color
+    let dynamicTextColor: Color
     let onTap: () -> Void
     
     @State private var isPressed = false
@@ -295,7 +311,7 @@ struct AppleMusicTabButton: View {
                 // Icon
                 Image(systemName: isSelected ? tab.selectedIcon : tab.icon)
                     .font(.system(size: 18, weight: isSelected ? .semibold : .medium))
-                    .foregroundColor(isSelected ? dynamicTint : Color.gray.opacity(0.6))
+                    .foregroundColor(isSelected ? dynamicTint : dynamicIconColor)
                     .scaleEffect(isPressed ? 0.9 : (isSelected ? 1.1 : 1.0))
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
                     .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSelected)
@@ -303,7 +319,7 @@ struct AppleMusicTabButton: View {
                 // Label
                 Text(tab.title)
                     .font(.system(size: 9, weight: isSelected ? .semibold : .medium))
-                    .foregroundColor(isSelected ? dynamicTint : Color.gray.opacity(0.6))
+                    .foregroundColor(isSelected ? dynamicTint : dynamicTextColor)
                     .lineLimit(1)
                     .scaleEffect(isPressed ? 0.95 : (isSelected ? 1.05 : 1.0))
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)

@@ -215,7 +215,9 @@ struct MapView: View {
                     onVoiceSearch: {
                         print("Voice search activated")
                         HapticFeedback.shared.impact(style: .light)
-                    }
+                    },
+                    dynamicTextColor: getDynamicColors(for: selectedMapLayer).textColor,
+                    dynamicIconColor: getDynamicColors(for: selectedMapLayer).iconColor
                 )
                 
                 Spacer()
@@ -245,19 +247,29 @@ struct MapView: View {
     // MARK: - Floating Action Buttons
     
     private var floatingActionButtons: some View {
-        VStack {
-            Spacer()
-            
-            HStack {
+        ZStack {
+            // Layers selector - positioned absolutely
+            VStack {
                 Spacer()
                 
-                VStack(spacing: DesignTokens.Spacing.sm) {
-                    // Layers selector
+                HStack {
+                    Spacer()
+                    
                     MapLayersSelector(selectedLayer: $selectedMapLayer)
                         .accessibilityLabel("Map layers")
                         .accessibilityHint("Double tap to toggle map layers")
+                        .padding(.trailing, DesignTokens.Spacing.lg)
+                        .padding(.bottom, 200) // Position above locate button
+                }
+            }
+            
+            // Locate Me button - positioned absolutely
+            VStack {
+                Spacer()
+                
+                HStack {
+                    Spacer()
                     
-                    // Locate Me button
                     LocateMeButton(isLocating: $isLocating) {
                         locationService.centerOnUserLocation()
                         isLocating = true
@@ -270,9 +282,9 @@ struct MapView: View {
                     }
                     .accessibilityLabel("Center on my location")
                     .accessibilityHint("Double tap to center the map on your current location")
+                    .padding(.trailing, DesignTokens.Spacing.lg)
+                    .padding(.bottom, 150) // Fixed position above nav bar
                 }
-                .padding(.trailing, DesignTokens.Spacing.lg)
-                .padding(.bottom, 150) // Position higher above nav bar
             }
         }
     }

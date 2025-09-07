@@ -16,6 +16,18 @@ struct MapsSearchPill: View {
     
     let onSearch: (String) -> Void
     let onVoiceSearch: () -> Void
+    let dynamicTextColor: Color
+    let dynamicIconColor: Color
+    
+    init(onSearch: @escaping (String) -> Void, 
+         onVoiceSearch: @escaping () -> Void,
+         dynamicTextColor: Color = DesignTokens.Text.primary,
+         dynamicIconColor: Color = Color.gray.opacity(0.6)) {
+        self.onSearch = onSearch
+        self.onVoiceSearch = onVoiceSearch
+        self.dynamicTextColor = dynamicTextColor
+        self.dynamicIconColor = dynamicIconColor
+    }
     
     var body: some View {
         HStack(spacing: 12) {
@@ -68,7 +80,7 @@ struct MapsSearchPill: View {
         HStack {
             TextField("Search here", text: $searchText)
                 .font(DesignTokens.Typography.body)
-                .foregroundColor(DesignTokens.Text.primary)
+                .foregroundColor(dynamicTextColor)
                 .textFieldStyle(PlainTextFieldStyle())
                 .onSubmit {
                     if !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -96,7 +108,7 @@ struct MapsSearchPill: View {
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 16))
-                        .foregroundColor(DesignTokens.Text.secondary)
+                        .foregroundColor(dynamicIconColor)
                 }
             }
         }
@@ -121,7 +133,7 @@ struct MapsSearchPill: View {
                     .foregroundColor(
                         isVoiceSearching ? 
                         .white : 
-                        Color.gray.opacity(0.6)
+                        dynamicIconColor
                     )
             }
         }
@@ -140,7 +152,7 @@ struct MapsSearchPill: View {
                 
                 Image(systemName: "person.circle.fill")
                     .font(.system(size: 16))
-                    .foregroundColor(Color.gray.opacity(0.6))
+                    .foregroundColor(dynamicIconColor)
             }
         }
     }
