@@ -97,7 +97,7 @@ struct GlassTabBar: View {
                 y: 8
             )
             .padding(.horizontal, 16)
-            .padding(.bottom, 20) // Lower positioning
+            .padding(.bottom, 8) // Much lower positioning for iPhone rounded corners
         }
         .onAppear {
             updateCapsulePosition()
@@ -130,8 +130,12 @@ struct GlassTabBar: View {
         // Calculate the actual tab width accounting for padding
         let totalPadding = 32.0 // 16pt padding on each side
         let tabWidth = (UIScreen.main.bounds.width - totalPadding) / CGFloat(tabs.count)
-        let newOffset = CGFloat(selectedTab) * tabWidth
         let newWidth = tabWidth * 0.7 // 70% of tab width for Apple Music look
+        
+        // Center the capsule on the selected tab
+        let tabCenter = CGFloat(selectedTab) * tabWidth + tabWidth / 2
+        let screenCenter = UIScreen.main.bounds.width / 2
+        let newOffset = tabCenter - screenCenter
         
         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
             capsuleOffset = newOffset

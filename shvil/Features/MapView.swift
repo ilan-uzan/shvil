@@ -151,7 +151,6 @@ struct MapView: View {
             }
             Spacer()
             if !isFocusMode {
-                floatingButtons
                 if navigationService.currentRoute != nil {
                     bottomSheet
                 }
@@ -165,20 +164,49 @@ struct MapView: View {
 
     private var topBar: some View {
         VStack(spacing: 0) {
-            // Enhanced Search Bar
-            MapSearchBar(
-                searchText: $searchText,
-                isSearching: $isSearchFocused,
-                onSearch: { searchQuery in
-                    searchService.search(for: searchQuery)
-                    isSearchFocused = false
-                },
-                onCancel: {
-                    searchText = ""
-                    searchService.searchResults = []
-                    isSearchFocused = false
+            // Top row with search bar and buttons
+            HStack(spacing: DesignTokens.Spacing.sm) {
+                // Enhanced Search Bar
+                MapSearchBar(
+                    searchText: $searchText,
+                    isSearching: $isSearchFocused,
+                    onSearch: { searchQuery in
+                        searchService.search(for: searchQuery)
+                        isSearchFocused = false
+                    },
+                    onCancel: {
+                        searchText = ""
+                        searchService.searchResults = []
+                        isSearchFocused = false
+                    }
+                )
+                
+                // Layers FAB
+                AppleGlassFAB(
+                    icon: "square.stack.3d.up",
+                    size: .medium,
+                    style: .secondary
+                ) {
+                    print("Layers tapped")
+                    HapticFeedback.shared.impact(style: .light)
                 }
-            )
+                .accessibilityLabel("Map layers")
+                .accessibilityHint("Double tap to toggle map layers")
+                
+                // Locate Me FAB
+                AppleGlassFAB(
+                    icon: "location.fill",
+                    size: .medium,
+                    style: .primary
+                ) {
+                    locationService.centerOnUserLocation()
+                    HapticFeedback.shared.impact(style: .medium)
+                }
+                .accessibilityLabel("Center on my location")
+                .accessibilityHint("Double tap to center the map on your current location")
+            }
+            .padding(.horizontal, DesignTokens.Spacing.lg)
+            .padding(.top, DesignTokens.Spacing.sm)
             
             // Voice Search Button (when not searching)
             if !isSearchFocused {
