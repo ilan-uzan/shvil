@@ -60,6 +60,7 @@ class DependencyContainer {
     lazy var networkMonitor: NetworkMonitor = .shared
     lazy var analytics: Analytics = .shared
     lazy var hapticFeedback: HapticFeedback = .shared
+    lazy var performanceMonitor: PerformanceMonitor = .shared
 
     // MARK: - Reset for Testing
 

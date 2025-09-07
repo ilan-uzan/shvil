@@ -125,11 +125,18 @@ struct SocialPlansView: View {
                             voteForOption(option, in: plan)
                         }
                     )
+                    .onAppear {
+                        // Load more plans when reaching the end
+                        if plan.id == filteredPlans.last?.id {
+                            loadMorePlans()
+                        }
+                    }
                 }
             }
             .padding(.horizontal, DesignTokens.Spacing.md)
             .padding(.bottom, DesignTokens.Spacing.xl)
         }
+        .performanceOptimized()
     }
     
     private var emptyState: some View {
@@ -178,6 +185,26 @@ struct SocialPlansView: View {
     private func voteForOption(_ option: PlanOption, in plan: Plan) {
         // In a real app, this would call a service to vote
         print("Voting for option: \(option.name) in plan: \(plan.title)")
+    }
+    
+    private func loadMorePlans() {
+        // In a real app, this would load more plans from a service
+        // For now, we'll just add more sample data
+        let morePlans = [
+            Plan(
+                title: "Coffee & Code",
+                description: "Work session at a local coffee shop",
+                hostId: UUID(),
+                hostName: "Tech Meetup",
+                status: .voting,
+                participants: [
+                    PlanParticipant(userId: UUID(), name: "Tech Meetup"),
+                    PlanParticipant(userId: UUID(), name: "Developer 1"),
+                    PlanParticipant(userId: UUID(), name: "Developer 2"),
+                ]
+            )
+        ]
+        plans.append(contentsOf: morePlans)
     }
 }
 

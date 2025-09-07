@@ -25,6 +25,11 @@ class SearchService: ObservableObject {
     private let debounceDelay: TimeInterval = 0.3
     private var cancellables = Set<AnyCancellable>()
     
+    // Caching
+    private let searchCache = NSCache<NSString, NSArray>()
+    private let autocompleteCache = NSCache<NSString, NSArray>()
+    private let cacheExpirationTime: TimeInterval = 300 // 5 minutes
+    
     // Search categories and filters
     @Published var selectedCategory: SearchCategory = .all
     @Published var searchFilters: SearchFilters = SearchFilters()
@@ -32,6 +37,12 @@ class SearchService: ObservableObject {
     init() {
         loadRecentSearches()
         setupSearchTextObserver()
+        setupCaches()
+    }
+    
+    private func setupCaches() {
+        searchCache.countLimit = 50
+        autocompleteCache.countLimit = 100
     }
     
     func search(for query: String) {
@@ -39,6 +50,13 @@ class SearchService: ObservableObject {
             searchResults = []
             autocompleteSuggestions = []
             isShowingSuggestions = false
+            return
+        }
+        
+        // Check cache first
+        let cacheKey = "\(query)_\(selectedCategory.rawValue)" as NSString
+        if let cachedResults = searchCache.object(forKey: cacheKey) as? [SearchResult] {
+            searchResults = cachedResults
             return
         }
         
@@ -54,6 +72,14 @@ class SearchService: ObservableObject {
         guard !query.isEmpty else {
             autocompleteSuggestions = []
             isShowingSuggestions = false
+            return
+        }
+        
+        // Check cache first
+        let cacheKey = query as NSString
+        if let cachedSuggestions = autocompleteCache.object(forKey: cacheKey) as? [SearchSuggestion] {
+            autocompleteSuggestions = cachedSuggestions
+            isShowingSuggestions = true
             return
         }
         
@@ -149,6 +175,10 @@ class SearchService: ObservableObject {
                 self.searchResults = filteredResults
                 self.isSearching = false
                 self.isShowingSuggestions = false
+                
+                // Cache the results
+                let cacheKey = "\(query)_\(self.selectedCategory.rawValue)" as NSString
+                self.searchCache.setObject(filteredResults as NSArray, forKey: cacheKey)
             }
         } catch {
             await MainActor.run {
@@ -171,6 +201,10 @@ class SearchService: ObservableObject {
         await MainActor.run {
             self.autocompleteSuggestions = Array(allSuggestions)
             self.isShowingSuggestions = !self.autocompleteSuggestions.isEmpty
+            
+            // Cache the suggestions
+            let cacheKey = query as NSString
+            self.autocompleteCache.setObject(Array(allSuggestions) as NSArray, forKey: cacheKey)
         }
     }
     

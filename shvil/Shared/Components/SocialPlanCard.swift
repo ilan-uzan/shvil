@@ -45,6 +45,7 @@ struct SocialPlanCard: View {
             .shadow(color: DesignTokens.Shadows.light.color, radius: DesignTokens.Shadows.light.radius, x: DesignTokens.Shadows.light.x, y: DesignTokens.Shadows.light.y)
         }
         .buttonStyle(PlainButtonStyle())
+        .performanceOptimized()
     }
     
     private var planHeader: some View {
