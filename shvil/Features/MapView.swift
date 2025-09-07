@@ -27,6 +27,8 @@ struct MapView: View {
     @State private var rerouteTimer: Timer?
     @State private var showSearchOverlay = false
     @State private var searchResults: [SearchResult] = []
+    @State private var selectedMapLayer: MapLayer = .standard
+    @State private var isLocating: Bool = false
 
     // Accessibility support
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -81,7 +83,7 @@ struct MapView: View {
                 annotationView(for: result)
             }
         }
-        .mapStyle(.standard(elevation: .realistic))
+        .mapStyle(mapStyleForLayer(selectedMapLayer))
         .ignoresSafeArea()
         .safeAreaInset(edge: .bottom) {
             // Bottom content inset
@@ -89,6 +91,21 @@ struct MapView: View {
         }
         .onAppear {
             locationService.requestLocationPermission()
+        }
+    }
+    
+    private func mapStyleForLayer(_ layer: MapLayer) -> MapStyle {
+        switch layer {
+        case .standard:
+            return .standard(elevation: .realistic)
+        case .satellite:
+            return .imagery(elevation: .realistic)
+        case .hybrid:
+            return .hybrid(elevation: .realistic)
+        case .threeD:
+            return .standard(elevation: .realistic)
+        case .twoD:
+            return .standard(elevation: .flat)
         }
     }
 
@@ -143,19 +160,26 @@ struct MapView: View {
     // MARK: - Overlay UI
 
     private var overlayUI: some View {
-        VStack(spacing: 0) {
-            if isFocusMode {
-                focusModeTopSlab
-            } else {
-                topBar
-            }
-            Spacer()
-            if !isFocusMode {
-                if navigationService.currentRoute != nil {
-                    bottomSheet
+        ZStack {
+            VStack(spacing: 0) {
+                if isFocusMode {
+                    focusModeTopSlab
+                } else {
+                    topBar
                 }
-            } else {
-                focusModeBottomBar
+                Spacer()
+                if !isFocusMode {
+                    if navigationService.currentRoute != nil {
+                        bottomSheet
+                    }
+                } else {
+                    focusModeBottomBar
+                }
+            }
+            
+            // Floating action buttons above nav bar
+            if !isFocusMode {
+                floatingActionButtons
             }
         }
     }
@@ -164,8 +188,8 @@ struct MapView: View {
 
     private var topBar: some View {
         VStack(spacing: 0) {
-            // Top row with search pill and action buttons
-            HStack(spacing: DesignTokens.Spacing.sm) {
+            // Top row with search pill only
+            HStack {
                 // New rounded search pill with logo
                 MapsSearchPill(
                     onSearch: { searchQuery in
@@ -178,32 +202,58 @@ struct MapView: View {
                     }
                 )
                 
-                // Layers FAB
-                AppleGlassFAB(
-                    icon: "square.stack.3d.up",
-                    size: .medium,
-                    style: .secondary
-                ) {
-                    print("Layers tapped")
-                    HapticFeedback.shared.impact(style: .light)
-                }
-                .accessibilityLabel("Map layers")
-                .accessibilityHint("Double tap to toggle map layers")
-                
-                // Locate Me FAB
-                AppleGlassFAB(
-                    icon: "location.fill",
-                    size: .medium,
-                    style: .primary
-                ) {
-                    locationService.centerOnUserLocation()
-                    HapticFeedback.shared.impact(style: .medium)
-                }
-                .accessibilityLabel("Center on my location")
-                .accessibilityHint("Double tap to center the map on your current location")
+                Spacer()
             }
             .padding(.horizontal, DesignTokens.Spacing.lg)
             .padding(.top, DesignTokens.Spacing.sm)
+            
+            // Popular destinations pills
+            PopularDestinationsPills { destination in
+                handlePopularDestinationSelection(destination)
+            }
+            .padding(.top, DesignTokens.Spacing.sm)
+        }
+    }
+    
+    private func handlePopularDestinationSelection(_ destination: PopularDestination) {
+        // Handle popular destination selection
+        let searchQuery = destination.title.lowercased()
+        searchService.search(for: searchQuery)
+        HapticFeedback.shared.impact(style: .light)
+    }
+    
+    // MARK: - Floating Action Buttons
+    
+    private var floatingActionButtons: some View {
+        VStack {
+            Spacer()
+            
+            HStack {
+                Spacer()
+                
+                VStack(spacing: DesignTokens.Spacing.sm) {
+                    // Layers selector
+                    MapLayersSelector(selectedLayer: $selectedMapLayer)
+                        .accessibilityLabel("Map layers")
+                        .accessibilityHint("Double tap to toggle map layers")
+                    
+                    // Locate Me button
+                    LocateMeButton(isLocating: $isLocating) {
+                        locationService.centerOnUserLocation()
+                        isLocating = true
+                        HapticFeedback.shared.impact(style: .medium)
+                        
+                        // Reset locating state after animation
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                            isLocating = false
+                        }
+                    }
+                    .accessibilityLabel("Center on my location")
+                    .accessibilityHint("Double tap to center the map on your current location")
+                }
+                .padding(.trailing, DesignTokens.Spacing.lg)
+                .padding(.bottom, 150) // Position higher above nav bar
+            }
         }
     }
 

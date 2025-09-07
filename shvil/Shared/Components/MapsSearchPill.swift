@@ -31,15 +31,15 @@ struct MapsSearchPill: View {
             // Profile button
             profileButton
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 16)
         .background(
             // Liquid glass background
-            RoundedRectangle(cornerRadius: 25)
+            RoundedRectangle(cornerRadius: 30)
                 .fill(.ultraThinMaterial)
                 .saturation(1.1)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 25)
+                    RoundedRectangle(cornerRadius: 30)
                         .stroke(
                             LinearGradient(
                                 colors: [
@@ -71,15 +71,28 @@ struct MapsSearchPill: View {
                 .foregroundColor(DesignTokens.Text.primary)
                 .textFieldStyle(PlainTextFieldStyle())
                 .onSubmit {
-                    onSearch(searchText)
+                    if !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        onSearch(searchText)
+                    }
                 }
                 .onTapGesture {
                     isSearchFocused = true
+                }
+                .onChange(of: searchText) { _, newValue in
+                    // Auto-search as user types (with debouncing)
+                    if !newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            if searchText == newValue { // Only search if text hasn't changed
+                                onSearch(newValue)
+                            }
+                        }
+                    }
                 }
             
             if !searchText.isEmpty {
                 Button(action: {
                     searchText = ""
+                    isSearchFocused = false
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 16))
@@ -108,7 +121,7 @@ struct MapsSearchPill: View {
                     .foregroundColor(
                         isVoiceSearching ? 
                         .white : 
-                        DesignTokens.Text.secondary
+                        Color.gray.opacity(0.6)
                     )
             }
         }
@@ -127,7 +140,7 @@ struct MapsSearchPill: View {
                 
                 Image(systemName: "person.circle.fill")
                     .font(.system(size: 16))
-                    .foregroundColor(DesignTokens.Brand.primary)
+                    .foregroundColor(Color.gray.opacity(0.6))
             }
         }
     }
