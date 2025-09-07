@@ -76,13 +76,7 @@ struct MapView: View {
         Map(coordinateRegion: $locationManager.region,
             interactionModes: .all,
             showsUserLocation: true,
-            userTrackingMode: .constant(.none),
-            annotationItems: []) // Remove problematic annotation binding
-        { result in
-            MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: result.latitude, longitude: result.longitude)) {
-                annotationView(for: result)
-            }
-        }
+            userTrackingMode: .constant(.none))
         .mapStyle(mapStyleForLayer(selectedMapLayer))
         .ignoresSafeArea()
         .safeAreaInset(edge: .bottom) {

@@ -17,7 +17,7 @@ struct FocusModeNavigationView: View {
     @StateObject private var hapticFeedback = DependencyContainer.shared.hapticFeedback
     @StateObject private var smartStopsService = SmartStopsService(
         contextEngine: ContextEngine(),
-        locationService: locationManager
+        locationService: LocationService()
     )
     
     // MARK: - State

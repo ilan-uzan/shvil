@@ -23,7 +23,7 @@ public class AsyncRoutingService: ObservableObject {
     
     // MARK: - Private Properties
     
-    private let locationService: LocationServiceProtocol
+    private let locationService: any LocationServiceProtocol
     private let offlineManager: OfflineManager
     
     // Performance optimization
@@ -39,7 +39,7 @@ public class AsyncRoutingService: ObservableObject {
     
     // MARK: - Initialization
     
-    public init(locationService: LocationServiceProtocol, offlineManager: OfflineManager) {
+    public init(locationService: any LocationServiceProtocol, offlineManager: OfflineManager) {
         self.locationService = locationService
         self.offlineManager = offlineManager
         setupCaches()
