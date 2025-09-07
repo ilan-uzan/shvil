@@ -104,13 +104,13 @@ struct GlassTabBar: View {
                             print("🎯 Started dragging, scale: \(dragScale)")
                         }
                         
-                        // Calculate which tab the finger is over
-                        // The gesture location is relative to the HStack, not the screen
+                        // Use screen width for consistent calculation
+                        let screenWidth = UIScreen.main.bounds.width
                         let totalPadding = 32.0 // 16pt padding on each side
-                        let availableWidth = UIScreen.main.bounds.width - totalPadding
+                        let availableWidth = screenWidth - totalPadding
                         let tabWidth = availableWidth / CGFloat(tabs.count)
                         
-                        // Use the gesture location directly (it's already relative to the HStack)
+                        // Calculate which tab the finger is over
                         let touchX = value.location.x
                         let tabIndex = Int(touchX / tabWidth)
                         
@@ -129,8 +129,9 @@ struct GlassTabBar: View {
                         dragScale = 1.0 // Zoom out when released
                         
                         // Calculate which tab to select
+                        let screenWidth = UIScreen.main.bounds.width
                         let totalPadding = 32.0
-                        let availableWidth = UIScreen.main.bounds.width - totalPadding
+                        let availableWidth = screenWidth - totalPadding
                         let tabWidth = availableWidth / CGFloat(tabs.count)
                         let touchX = value.location.x
                         let tabIndex = Int(touchX / tabWidth)
@@ -190,7 +191,7 @@ struct GlassTabBar: View {
         let totalPadding = 32.0 // 16pt padding on each side
         let availableWidth = UIScreen.main.bounds.width - totalPadding
         let tabWidth = availableWidth / CGFloat(tabs.count)
-        let newWidth = tabWidth * 0.7 // 70% of tab width for Apple Music look
+        let newWidth = tabWidth * 0.9 // 90% of tab width for bigger pill
         
         // Calculate the center position of the selected tab
         // The tab center is: (selectedTab * tabWidth) + (tabWidth / 2)
@@ -365,7 +366,7 @@ struct AppleMusicLens: View {
                 )
                 .blendMode(.overlay)
         }
-        .frame(width: width, height: 45)
+        .frame(width: width, height: 55)
         .offset(x: offset)
         .scaleEffect(scale)
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: offset)
