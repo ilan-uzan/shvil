@@ -41,22 +41,22 @@ struct GlassTabBar: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            .padding(.horizontal, DesignTokens.Spacing.lg)
-            .padding(.vertical, DesignTokens.Spacing.sm)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
             .background(
                 ZStack {
                     // Apple Music-style frosted glass background
-                    RoundedRectangle(cornerRadius: 30)
+                    RoundedRectangle(cornerRadius: 25)
                         .fill(.ultraThinMaterial)
-                        .saturation(1.15)
+                        .saturation(1.2)
                         .overlay(
                             // Subtle tint overlay
-                            RoundedRectangle(cornerRadius: 30)
+                            RoundedRectangle(cornerRadius: 25)
                                 .fill(
                                     LinearGradient(
                                         colors: [
-                                            dynamicTint.opacity(0.08),
-                                            dynamicTint.opacity(0.03)
+                                            dynamicTint.opacity(0.1),
+                                            dynamicTint.opacity(0.05)
                                         ],
                                         startPoint: .top,
                                         endPoint: .bottom
@@ -65,12 +65,12 @@ struct GlassTabBar: View {
                         )
                         .overlay(
                             // Subtle border
-                            RoundedRectangle(cornerRadius: 30)
+                            RoundedRectangle(cornerRadius: 25)
                                 .stroke(
                                     LinearGradient(
                                         colors: [
-                                            Color.white.opacity(0.3),
-                                            Color.white.opacity(0.1)
+                                            Color.white.opacity(0.4),
+                                            Color.white.opacity(0.2)
                                         ],
                                         startPoint: .top,
                                         endPoint: .bottom
@@ -91,12 +91,12 @@ struct GlassTabBar: View {
                 }
             )
             .shadow(
-                color: Color.black.opacity(0.15),
-                radius: 12,
+                color: Color.black.opacity(0.2),
+                radius: 15,
                 x: 0,
-                y: 6
+                y: 8
             )
-            .padding(.horizontal, DesignTokens.Spacing.xl)
+            .padding(.horizontal, 20)
             .padding(.bottom, 34) // Above home indicator
         }
         .onAppear {
@@ -127,9 +127,9 @@ struct GlassTabBar: View {
     }
     
     private func updateCapsulePosition() {
-        let tabWidth = (UIScreen.main.bounds.width - (DesignTokens.Spacing.lg * 2) - (DesignTokens.Spacing.md * 2)) / CGFloat(tabs.count)
+        let tabWidth = (UIScreen.main.bounds.width - 40) / CGFloat(tabs.count) // Account for padding
         let newOffset = CGFloat(selectedTab) * tabWidth
-        let newWidth = tabWidth - (DesignTokens.Spacing.sm * 2)
+        let newWidth = tabWidth * 0.7 // 70% of tab width for Apple Music look
         
         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
             capsuleOffset = newOffset
@@ -184,25 +184,25 @@ struct AppleMusicTabButton: View {
     
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: 4) {
+            VStack(spacing: 3) {
                 // Icon
                 Image(systemName: isSelected ? tab.selectedIcon : tab.icon)
-                    .font(.system(size: 20, weight: isSelected ? .semibold : .medium))
-                    .foregroundColor(isSelected ? dynamicTint : DesignTokens.Text.secondary)
+                    .font(.system(size: 18, weight: isSelected ? .semibold : .medium))
+                    .foregroundColor(isSelected ? dynamicTint : Color.white.opacity(0.7))
                     .scaleEffect(isPressed ? 0.9 : (isSelected ? 1.1 : 1.0))
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
                     .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSelected)
                 
                 // Label
                 Text(tab.title)
-                    .font(.system(size: 10, weight: isSelected ? .semibold : .medium))
-                    .foregroundColor(isSelected ? dynamicTint : DesignTokens.Text.secondary)
+                    .font(.system(size: 9, weight: isSelected ? .semibold : .medium))
+                    .foregroundColor(isSelected ? dynamicTint : Color.white.opacity(0.7))
                     .lineLimit(1)
                     .scaleEffect(isPressed ? 0.95 : (isSelected ? 1.05 : 1.0))
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
                     .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSelected)
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, 10)
             .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
@@ -227,29 +227,29 @@ struct AppleMusicLens: View {
     var body: some View {
         ZStack {
             // Main lens background with Apple Music styling
-            RoundedRectangle(cornerRadius: 22)
+            RoundedRectangle(cornerRadius: 20)
                 .fill(
                     RadialGradient(
                         colors: [
-                            tint.opacity(0.25),
-                            tint.opacity(0.12),
+                            tint.opacity(0.3),
+                            tint.opacity(0.15),
                             tint.opacity(0.05)
                         ],
                         center: .topLeading,
                         startRadius: 0,
-                        endRadius: 35
+                        endRadius: 30
                     )
                 )
                 .overlay(
                     // Apple Music-style lens reflection
-                    RoundedRectangle(cornerRadius: 22)
+                    RoundedRectangle(cornerRadius: 20)
                         .fill(
                             LinearGradient(
                                 colors: [
-                                    Color.white.opacity(0.4),
-                                    Color.white.opacity(0.15),
+                                    Color.white.opacity(0.5),
+                                    Color.white.opacity(0.2),
                                     Color.clear,
-                                    tint.opacity(0.08)
+                                    tint.opacity(0.1)
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -258,53 +258,53 @@ struct AppleMusicLens: View {
                 )
                 .overlay(
                     // Subtle border like Apple Music
-                    RoundedRectangle(cornerRadius: 22)
+                    RoundedRectangle(cornerRadius: 20)
                         .stroke(
                             LinearGradient(
                                 colors: [
-                                    Color.white.opacity(0.6),
-                                    tint.opacity(0.3),
-                                    Color.white.opacity(0.2)
+                                    Color.white.opacity(0.7),
+                                    tint.opacity(0.4),
+                                    Color.white.opacity(0.3)
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),
-                            lineWidth: 1
+                            lineWidth: 1.5
                         )
                 )
                 .overlay(
                     // Soft glow effect
-                    RoundedRectangle(cornerRadius: 22)
-                        .stroke(tint.opacity(0.3), lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(tint.opacity(0.4), lineWidth: 0.5)
                         .blur(radius: 1)
                 )
             
             // Inner highlight for lens effect
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 18)
                 .fill(
                     RadialGradient(
                         colors: [
-                            Color.white.opacity(0.5),
-                            Color.white.opacity(0.15),
+                            Color.white.opacity(0.6),
+                            Color.white.opacity(0.2),
                             Color.clear
                         ],
                         center: .topLeading,
                         startRadius: 0,
-                        endRadius: 20
+                        endRadius: 18
                     )
                 )
                 .blendMode(.overlay)
         }
-        .frame(width: width, height: 50)
+        .frame(width: width, height: 45)
         .offset(x: offset)
-        .scaleEffect(isAnimating ? 1.02 : 1.0)
+        .scaleEffect(isAnimating ? 1.05 : 1.0)
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: offset)
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: width)
         .shadow(
-            color: tint.opacity(0.3),
-            radius: 6,
+            color: tint.opacity(0.4),
+            radius: 8,
             x: 0,
-            y: 3
+            y: 4
         )
     }
 }

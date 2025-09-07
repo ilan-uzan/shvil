@@ -422,14 +422,6 @@ struct MapView: View {
                     Text("\(String(format: "%.1f", route.distance / 1000)) km via \(route.name)")
                         .font(AppleTypography.caption1)
                         .foregroundColor(AppleColors.textSecondary)
-                } else {
-                    Text("Search for a destination")
-                        .font(AppleTypography.title3)
-                        .foregroundColor(AppleColors.textPrimary)
-
-                    Text("Tap on a location to get directions")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
                 }
             }
 
