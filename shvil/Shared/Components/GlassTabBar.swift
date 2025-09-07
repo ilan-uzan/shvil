@@ -30,7 +30,7 @@ struct GlassTabBar: View {
         VStack(spacing: 0) {
             Spacer()
             
-            // Apple Music-style Navigation Bar with custom spacing
+            // Apple Music-style Navigation Bar
             HStack(spacing: 0) {
                 ForEach(Array(tabs.enumerated()), id: \.offset) { index, tab in
                     AppleMusicTabButton(
@@ -42,12 +42,6 @@ struct GlassTabBar: View {
                         }
                     )
                     .frame(maxWidth: .infinity)
-                    
-                    // Custom spacing between tabs
-                    if index < tabs.count - 1 {
-                        Spacer()
-                            .frame(width: getSpacingForTab(index))
-                    }
                 }
             }
             .padding(.horizontal, 16)
@@ -62,37 +56,22 @@ struct GlassTabBar: View {
                             print("🎯 Started dragging, scale: \(dragScale)")
                         }
                         
-                        // Calculate tab width based on HStack content area with custom spacing
+                        // Simplified calculation using screen width and tab count
                         let screenWidth = UIScreen.main.bounds.width
                         let hStackPadding = 32.0 // 16pt padding on each side
-                        let totalCustomSpacing = getSpacingForTab(0) + getSpacingForTab(1) + getSpacingForTab(2) + getSpacingForTab(3)
-                        let availableWidth = screenWidth - hStackPadding - totalCustomSpacing
+                        let availableWidth = screenWidth - hStackPadding
                         let tabWidth = availableWidth / CGFloat(tabs.count)
                         
                         // Calculate which tab the finger is over
                         let touchX = value.location.x
-                        var tabIndex = 0
-                        var currentX: CGFloat = 0
-                        
-                        for i in 0..<tabs.count {
-                            if touchX >= currentX && touchX < currentX + tabWidth {
-                                tabIndex = i
-                                break
-                            }
-                            currentX += tabWidth + (i < tabs.count - 1 ? getSpacingForTab(i) : 0)
-                        }
+                        let tabIndex = Int(touchX / tabWidth)
                         
                         print("🎯 Touch X: \(touchX), Tab Width: \(tabWidth), Tab Index: \(tabIndex)")
                         
                         if tabIndex >= 0 && tabIndex < tabs.count {
                             // Update capsule position to follow finger
-                            var tabCenter: CGFloat = 0
-                            for i in 0..<tabIndex {
-                                tabCenter += tabWidth + getSpacingForTab(i)
-                            }
-                            tabCenter += tabWidth / 2
-                            
-                            let containerCenter = (availableWidth + totalCustomSpacing) / 2
+                            let tabCenter = CGFloat(tabIndex) * tabWidth + tabWidth / 2
+                            let containerCenter = availableWidth / 2
                             dragOffset = tabCenter - containerCenter
                             print("🎯 Tab Center: \(tabCenter), Container Center: \(containerCenter), Drag Offset: \(dragOffset)")
                         }
@@ -101,24 +80,13 @@ struct GlassTabBar: View {
                         isDragging = false
                         dragScale = 1.0 // Zoom out when released
                         
-                        // Calculate which tab to select with custom spacing
+                        // Simplified calculation using screen width and tab count
                         let screenWidth = UIScreen.main.bounds.width
                         let hStackPadding = 32.0
-                        let totalCustomSpacing = getSpacingForTab(0) + getSpacingForTab(1) + getSpacingForTab(2) + getSpacingForTab(3)
-                        let availableWidth = screenWidth - hStackPadding - totalCustomSpacing
+                        let availableWidth = screenWidth - hStackPadding
                         let tabWidth = availableWidth / CGFloat(tabs.count)
                         let touchX = value.location.x
-                        
-                        var tabIndex = 0
-                        var currentX: CGFloat = 0
-                        
-                        for i in 0..<tabs.count {
-                            if touchX >= currentX && touchX < currentX + tabWidth {
-                                tabIndex = i
-                                break
-                            }
-                            currentX += tabWidth + (i < tabs.count - 1 ? getSpacingForTab(i) : 0)
-                        }
+                        let tabIndex = Int(touchX / tabWidth)
                         
                         print("🎯 Drag ended at X: \(touchX), Tab Index: \(tabIndex)")
                         
@@ -218,36 +186,18 @@ struct GlassTabBar: View {
         updateDynamicTint(for: index)
     }
     
-    private func getSpacingForTab(_ index: Int) -> CGFloat {
-        // Custom spacing: Map-Socialize (4pt), Socialize-Hunt (8pt), Hunt-Adventure (8pt), Adventure-Settings (12pt)
-        switch index {
-        case 0: return 4.0  // Map -> Socialize: closer
-        case 1: return 8.0  // Socialize -> Hunt: normal
-        case 2: return 8.0  // Hunt -> Adventure: normal
-        case 3: return 12.0 // Adventure -> Settings: wider
-        default: return 8.0
-        }
-    }
-    
     private func updateCapsulePosition() {
-        // Calculate the actual tab width accounting for HStack padding and custom spacing
+        // Simplified calculation using screen width and tab count
         let screenWidth = UIScreen.main.bounds.width
         let hStackPadding = 32.0 // 16pt padding on each side
-        
-        // Calculate total custom spacing
-        let totalCustomSpacing = getSpacingForTab(0) + getSpacingForTab(1) + getSpacingForTab(2) + getSpacingForTab(3)
-        let availableWidth = screenWidth - hStackPadding - totalCustomSpacing
+        let availableWidth = screenWidth - hStackPadding
         let tabWidth = availableWidth / CGFloat(tabs.count)
-        let newWidth = tabWidth * 1.1 // 110% of tab width for wider pill
+        let newWidth = tabWidth * 0.85 // 85% of tab width for proper fit
         
-        // Calculate the center position of the selected tab with custom spacing
-        var tabCenter: CGFloat = 0
-        for i in 0..<selectedTab {
-            tabCenter += tabWidth + getSpacingForTab(i)
-        }
-        tabCenter += tabWidth / 2
-        
-        let containerCenter = (availableWidth + totalCustomSpacing) / 2
+        // Calculate the center position of the selected tab
+        // Each tab takes up equal space, so center is: (selectedTab * tabWidth) + (tabWidth / 2)
+        let tabCenter = CGFloat(selectedTab) * tabWidth + tabWidth / 2
+        let containerCenter = availableWidth / 2
         let newOffset = tabCenter - containerCenter
         
         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
