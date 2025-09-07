@@ -35,7 +35,8 @@ class DependencyContainer {
 
     lazy var locationService: LocationService = .init()
     lazy var searchService: SearchService = .init()
-    lazy var navigationService: NavigationService = .init()
+    lazy var navigationService: AsyncNavigationService = .init()
+    lazy var routingService: AsyncRoutingService = .init()
     lazy var aiKit: AIKit = {
         do {
             return try AIKit()

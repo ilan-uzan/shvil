@@ -1,463 +1,536 @@
 # Shvil API Contract Documentation
 
-**Version:** 2.0 (Liquid Glass Refactor)  
+**Version:** 1.0  
 **Date:** December 2024  
-**Backend:** Supabase (PostgreSQL + Auth + Realtime)
+**Backend:** Supabase (PostgreSQL + Auth + Realtime + Storage)
 
-## 🔐 Authentication Endpoints
+## 📋 Overview
 
-### User Registration
-```http
-POST /auth/v1/signup
-Content-Type: application/json
+This document defines the complete API contract between the Shvil iOS app and the Supabase backend, including all tables, RPCs, Edge Functions, and real-time subscriptions.
 
-{
-  "email": "user@example.com",
-  "password": "securePassword123",
-  "options": {
-    "data": {
-      "display_name": "John Doe"
-    }
-  }
-}
+## 🔐 Authentication
+
+### Supabase Auth Configuration
+- **Provider:** Supabase Auth
+- **Methods:** Email/Password, Magic Link, Apple Sign-in (planned)
+- **Session Management:** Automatic refresh, secure storage
+- **Error Handling:** Centralized via `ErrorHandlingService`
+
+### Auth Endpoints
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/auth/v1/signup` | User registration | No |
+| POST | `/auth/v1/token` | User login | No |
+| POST | `/auth/v1/logout` | User logout | Yes |
+| POST | `/auth/v1/recover` | Password reset | No |
+| GET | `/auth/v1/user` | Get current user | Yes |
+
+## 🗄️ Database Schema
+
+### Tables Overview
+| Table | Purpose | RLS Enabled | Indexes |
+|-------|---------|-------------|---------|
+| `users` | User profiles | ✅ | Primary key, email |
+| `saved_places` | User's saved locations | ✅ | User ID, place type |
+| `friends` | User relationships | ✅ | User ID, friend ID |
+| `eta_shares` | ETA sharing | ✅ | User ID, created_at |
+| `adventure_plans` | Adventure itineraries | ✅ | User ID, status |
+| `safety_reports` | Safety incidents | ✅ | Location, created_at |
+
+### Detailed Table Schemas
+
+#### 1. `users` Table
+```sql
+CREATE TABLE public.users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email TEXT UNIQUE NOT NULL,
+    display_name TEXT,
+    avatar_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 ```
 
-**Response:**
+**Fields:**
+- `id`: UUID primary key
+- `email`: User's email address (unique)
+- `display_name`: User's display name
+- `avatar_url`: Profile picture URL
+- `created_at`: Account creation timestamp
+- `updated_at`: Last update timestamp
+
+**RLS Policies:**
+- Users can view their own profile
+- Users can update their own profile
+- Public profiles are readable by friends
+
+#### 2. `saved_places` Table
+```sql
+CREATE TABLE public.saved_places (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    address TEXT NOT NULL,
+    latitude DOUBLE PRECISION NOT NULL,
+    longitude DOUBLE PRECISION NOT NULL,
+    place_type place_type NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Fields:**
+- `id`: UUID primary key
+- `user_id`: Foreign key to users table
+- `name`: Place name
+- `address`: Full address string
+- `latitude`: GPS latitude
+- `longitude`: GPS longitude
+- `place_type`: Enum (home, work, favorite, other)
+- `created_at`: Creation timestamp
+- `updated_at`: Last update timestamp
+
+**RLS Policies:**
+- Users can view their own saved places
+- Users can create/update/delete their own saved places
+
+#### 3. `friends` Table
+```sql
+CREATE TABLE public.friends (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    friend_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    status friend_status NOT NULL DEFAULT 'pending',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, friend_id)
+);
+```
+
+**Fields:**
+- `id`: UUID primary key
+- `user_id`: User who sent the request
+- `friend_id`: User who received the request
+- `status`: Enum (pending, accepted, blocked)
+- `created_at`: Request timestamp
+- `updated_at`: Status update timestamp
+
+**RLS Policies:**
+- Users can view their own friend relationships
+- Users can create friend requests
+- Users can update friend request status
+
+#### 4. `eta_shares` Table
+```sql
+CREATE TABLE public.eta_shares (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    route_data JSONB NOT NULL,
+    recipients JSONB NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Fields:**
+- `id`: UUID primary key
+- `user_id`: User sharing the ETA
+- `route_data`: JSON containing route information
+- `recipients`: JSON array of recipient user IDs
+- `is_active`: Whether the share is still active
+- `expires_at`: When the share expires
+- `created_at`: Share creation timestamp
+- `updated_at`: Last update timestamp
+
+**RLS Policies:**
+- Users can view their own ETA shares
+- Users can view active ETA shares they're recipients of
+- Users can create/update/delete their own ETA shares
+
+#### 5. `adventure_plans` Table
+```sql
+CREATE TABLE public.adventure_plans (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    description TEXT,
+    route_data JSONB NOT NULL,
+    stops JSONB NOT NULL,
+    status adventure_status NOT NULL DEFAULT 'draft',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Fields:**
+- `id`: UUID primary key
+- `user_id`: User who created the adventure
+- `title`: Adventure title
+- `description`: Adventure description
+- `route_data`: JSON containing route information
+- `stops`: JSON array of adventure stops
+- `status`: Enum (draft, active, completed, cancelled)
+- `created_at`: Creation timestamp
+- `updated_at`: Last update timestamp
+
+**RLS Policies:**
+- Users can view their own adventure plans
+- Users can create/update/delete their own adventure plans
+
+#### 6. `safety_reports` Table
+```sql
+CREATE TABLE public.safety_reports (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    latitude DOUBLE PRECISION NOT NULL,
+    longitude DOUBLE PRECISION NOT NULL,
+    report_type TEXT NOT NULL,
+    description TEXT,
+    severity INTEGER DEFAULT 1,
+    is_resolved BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Fields:**
+- `id`: UUID primary key
+- `user_id`: User who reported the incident
+- `latitude`: GPS latitude of incident
+- `longitude`: GPS longitude of incident
+- `report_type`: Type of safety incident
+- `description`: Detailed description
+- `severity`: Severity level (1-5)
+- `is_resolved`: Whether the incident is resolved
+- `created_at`: Report timestamp
+- `updated_at`: Last update timestamp
+
+**RLS Policies:**
+- Users can view all safety reports (public safety)
+- Users can create safety reports
+- Users can update their own safety reports
+
+## 🔄 RPC Functions
+
+### 1. `get_user_profile(user_id UUID)`
+**Purpose:** Get user profile information
+**Parameters:**
+- `user_id`: UUID of the user
+
+**Returns:**
 ```json
 {
-  "user": {
-    "id": "uuid",
-    "email": "user@example.com",
-    "created_at": "2024-12-01T00:00:00Z"
-  },
-  "session": {
-    "access_token": "jwt_token",
-    "refresh_token": "refresh_token",
-    "expires_at": 1234567890
-  }
+  "id": "uuid",
+  "email": "string",
+  "display_name": "string",
+  "avatar_url": "string",
+  "created_at": "timestamp",
+  "updated_at": "timestamp"
 }
 ```
 
-### User Login
-```http
-POST /auth/v1/token?grant_type=password
-Content-Type: application/json
+**Error Handling:**
+- `404`: User not found
+- `403`: Access denied
 
-{
-  "email": "user@example.com",
-  "password": "securePassword123"
-}
-```
+### 2. `search_places(query TEXT, user_id UUID)`
+**Purpose:** Search for places with autocomplete
+**Parameters:**
+- `query`: Search query string
+- `user_id`: Current user ID for personalization
 
-### Apple Sign-in (Feature Flag: APPLE_SIGNIN_ENABLED)
-```http
-POST /auth/v1/authorize
-Content-Type: application/json
-
-{
-  "provider": "apple",
-  "id_token": "apple_id_token",
-  "nonce": "random_nonce"
-}
-```
-
-### Magic Link Authentication
-```http
-POST /auth/v1/magiclink
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "options": {
-    "redirect_to": "shvil://auth/callback"
-  }
-}
-```
-
-## 📍 Location & Places Endpoints
-
-### Save Place
-```http
-POST /rest/v1/saved_places
-Authorization: Bearer {access_token}
-Content-Type: application/json
-
-{
-  "name": "Home",
-  "address": "123 Main St, City, State",
-  "latitude": 40.7128,
-  "longitude": -74.0060,
-  "type": "home"
-}
-```
-
-### Get Saved Places
-```http
-GET /rest/v1/saved_places?select=*
-Authorization: Bearer {access_token}
-```
-
-**Response:**
+**Returns:**
 ```json
 [
   {
     "id": "uuid",
-    "name": "Home",
-    "address": "123 Main St, City, State",
-    "latitude": 40.7128,
-    "longitude": -74.0060,
-    "type": "home",
-    "created_at": "2024-12-01T00:00:00Z"
+    "name": "string",
+    "address": "string",
+    "latitude": "number",
+    "longitude": "number",
+    "place_type": "string",
+    "distance": "number"
   }
 ]
 ```
 
-### Delete Saved Place
-```http
-DELETE /rest/v1/saved_places?id=eq.{place_id}
-Authorization: Bearer {access_token}
+**Error Handling:**
+- `400`: Invalid query
+- `500`: Search service error
+
+### 3. `get_active_eta_shares(user_id UUID)`
+**Purpose:** Get active ETA shares for a user
+**Parameters:**
+- `user_id`: User ID to get shares for
+
+**Returns:**
+```json
+[
+  {
+    "id": "uuid",
+    "user_id": "uuid",
+    "route_data": "object",
+    "recipients": "array",
+    "is_active": "boolean",
+    "expires_at": "timestamp",
+    "created_at": "timestamp"
+  }
+]
 ```
 
-## 🗺️ Adventure & Route Endpoints
+**Error Handling:**
+- `403`: Access denied
+- `500`: Database error
 
-### Create Adventure Plan
-```http
-POST /rest/v1/adventure_plans
-Authorization: Bearer {access_token}
-Content-Type: application/json
+## 📡 Real-time Subscriptions
 
-{
-  "title": "Downtown Food Tour",
-  "description": "Explore the best restaurants in downtown",
-  "city": "New York",
-  "duration_hours": 4,
-  "mood": "foodie",
-  "is_group": false
-}
-```
+### 1. `eta_shares` Table Changes
+**Purpose:** Real-time updates for ETA shares
+**Filter:** `user_id = auth.uid() OR recipients @> [auth.uid()]`
+**Events:** INSERT, UPDATE, DELETE
 
-### Get Adventure Plans
-```http
-GET /rest/v1/adventure_plans?select=*,adventure_stops(*)
-Authorization: Bearer {access_token}
-```
+### 2. `friends` Table Changes
+**Purpose:** Real-time updates for friend requests
+**Filter:** `user_id = auth.uid() OR friend_id = auth.uid()`
+**Events:** INSERT, UPDATE, DELETE
 
-### Create Adventure Stop
-```http
-POST /rest/v1/adventure_stops
-Authorization: Bearer {access_token}
-Content-Type: application/json
+### 3. `safety_reports` Table Changes
+**Purpose:** Real-time safety updates
+**Filter:** `is_resolved = false`
+**Events:** INSERT, UPDATE
 
+## 🗂️ Storage Buckets
+
+### 1. `avatars` Bucket
+**Purpose:** User profile pictures
+**Access:** Public read, authenticated write
+**File Types:** JPEG, PNG, WebP
+**Size Limit:** 5MB
+**Dimensions:** 200x200px recommended
+
+### 2. `adventure_photos` Bucket
+**Purpose:** Adventure photos and proofs
+**Access:** Private (user-specific)
+**File Types:** JPEG, PNG, WebP
+**Size Limit:** 10MB
+**Dimensions:** Max 2048x2048px
+
+### 3. `safety_reports` Bucket
+**Purpose:** Safety incident photos
+**Access:** Public read, authenticated write
+**File Types:** JPEG, PNG, WebP
+**Size Limit:** 5MB
+**Dimensions:** Max 1024x1024px
+
+## 🔧 Edge Functions
+
+### 1. `process-adventure` Function
+**Purpose:** Process AI-generated adventure data
+**Trigger:** After adventure plan creation
+**Input:**
+```json
 {
   "adventure_id": "uuid",
-  "name": "Joe's Pizza",
-  "description": "Best pizza in the city",
-  "latitude": 40.7589,
-  "longitude": -73.9851,
-  "category": "food",
-  "order_index": 1,
-  "estimated_duration": 60
+  "user_id": "uuid",
+  "route_data": "object"
 }
 ```
 
-## 👥 Social Features Endpoints
-
-### Share ETA
-```http
-POST /rest/v1/eta_shares
-Authorization: Bearer {access_token}
-Content-Type: application/json
-
-{
-  "route_data": {
-    "duration": "25 minutes",
-    "distance": "5.2 miles",
-    "type": "driving",
-    "is_fastest": true,
-    "is_safest": false
-  },
-  "recipients": ["friend1@example.com", "friend2@example.com"],
-  "expires_at": "2024-12-01T01:00:00Z"
-}
-```
-
-### Get Active ETA Shares
-```http
-GET /rest/v1/eta_shares?is_active=eq.true&select=*
-Authorization: Bearer {access_token}
-```
-
-### Update Friend Location
-```http
-POST /rest/v1/friend_locations
-Authorization: Bearer {access_token}
-Content-Type: application/json
-
-{
-  "latitude": 40.7128,
-  "longitude": -74.0060,
-  "accuracy": 10.0
-}
-```
-
-### Get Friend Locations
-```http
-GET /rest/v1/friend_locations?select=*
-Authorization: Bearer {access_token}
-```
-
-## 🚨 Safety & Emergency Endpoints
-
-### Create Safety Report
-```http
-POST /rest/v1/safety_reports
-Authorization: Bearer {access_token}
-Content-Type: application/json
-
-{
-  "latitude": 40.7128,
-  "longitude": -74.0060,
-  "report_type": "incident",
-  "description": "Construction blocking sidewalk",
-  "severity": 3
-}
-```
-
-### Get Safety Reports
-```http
-GET /rest/v1/safety_reports?select=*&created_at=gte.{timestamp}
-Authorization: Bearer {access_token}
-```
-
-## 🔍 Search & Discovery Endpoints
-
-### Search Places
-```http
-GET /rest/v1/places?select=*&name=ilike.*{query}*
-Authorization: Bearer {access_token}
-```
-
-### Get Nearby Places
-```http
-GET /rest/v1/places?select=*&location=within.{radius}of.{lat},{lng}
-Authorization: Bearer {access_token}
-```
-
-## 📊 Analytics & Health Check Endpoints
-
-### Health Check
-```http
-GET /rest/v1/rpc/health_check
-```
-
-**Response:**
+**Output:**
 ```json
 {
-  "status": "healthy",
-  "timestamp": "2024-12-01T00:00:00Z",
-  "version": "1.0.0"
+  "success": "boolean",
+  "processed_stops": "array",
+  "estimated_duration": "number"
 }
 ```
 
-### Detailed Health Check
-```http
-GET /rest/v1/rpc/health_check_detailed
-```
-
-**Response:**
+### 2. `send-eta-notification` Function
+**Purpose:** Send ETA notifications to recipients
+**Trigger:** After ETA share creation
+**Input:**
 ```json
 {
-  "status": "healthy",
-  "database": "connected",
-  "auth": "operational",
-  "storage": "operational",
-  "realtime": "operational",
-  "timestamp": "2024-12-01T00:00:00Z"
+  "eta_share_id": "uuid",
+  "recipients": "array",
+  "message": "string"
 }
 ```
 
-### System Metrics
-```http
-GET /rest/v1/rpc/get_system_metrics
-Authorization: Bearer {access_token}
-```
-
-## 🔄 Real-time Subscriptions
-
-### Friend Locations
-```javascript
-const subscription = supabase
-  .channel('friend_locations')
-  .on('postgres_changes', {
-    event: 'INSERT',
-    schema: 'public',
-    table: 'friend_locations'
-  }, (payload) => {
-    console.log('New friend location:', payload.new)
-  })
-  .subscribe()
-```
-
-### ETA Shares
-```javascript
-const subscription = supabase
-  .channel('eta_shares')
-  .on('postgres_changes', {
-    event: '*',
-    schema: 'public',
-    table: 'eta_shares',
-    filter: 'user_id=eq.' + userId
-  }, (payload) => {
-    console.log('ETA share update:', payload)
-  })
-  .subscribe()
-```
-
-## 🚫 Error Responses
-
-### Authentication Errors
+**Output:**
 ```json
 {
-  "error": "invalid_grant",
-  "error_description": "Invalid login credentials"
+  "success": "boolean",
+  "notifications_sent": "number"
 }
 ```
 
-### Validation Errors
+## 🚨 Error Handling
+
+### Standard Error Responses
 ```json
 {
-  "code": "23505",
-  "details": "Key (email)=(user@example.com) already exists",
-  "hint": null,
-  "message": "duplicate key value violates unique constraint"
+  "error": {
+    "code": "string",
+    "message": "string",
+    "details": "object"
+  }
 }
 ```
 
-### Permission Errors
-```json
-{
-  "code": "42501",
-  "details": "new row violates row-level security policy",
-  "hint": null,
-  "message": "permission denied for table saved_places"
+### Common Error Codes
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `AUTH_REQUIRED` | 401 | Authentication required |
+| `AUTH_INVALID` | 401 | Invalid authentication |
+| `ACCESS_DENIED` | 403 | Access denied |
+| `NOT_FOUND` | 404 | Resource not found |
+| `VALIDATION_ERROR` | 400 | Input validation failed |
+| `RATE_LIMITED` | 429 | Rate limit exceeded |
+| `SERVER_ERROR` | 500 | Internal server error |
+
+## 🔄 Retry Strategies
+
+### Network Requests
+- **Max Retries:** 3
+- **Backoff:** Exponential (1s, 2s, 4s)
+- **Retry Conditions:** Network errors, 5xx status codes
+- **No Retry:** 4xx status codes (except 429)
+
+### Real-time Connections
+- **Reconnect:** Automatic on disconnect
+- **Max Reconnect Attempts:** 10
+- **Reconnect Delay:** 1s, 2s, 4s, 8s, 16s, 30s, 60s, 120s, 300s, 600s
+
+## 📊 Performance Considerations
+
+### Database Indexes
+- `users.email` - Unique index for login
+- `saved_places.user_id` - Index for user's places
+- `eta_shares.created_at` - Index for time-based queries
+- `adventure_plans.status` - Index for status filtering
+- `safety_reports.latitude, longitude` - Spatial index for location queries
+
+### Query Optimization
+- Use prepared statements for repeated queries
+- Implement pagination for large result sets
+- Use materialized views for complex aggregations
+- Cache frequently accessed data
+
+### Rate Limiting
+- **API Calls:** 1000 requests/hour per user
+- **File Uploads:** 10 uploads/hour per user
+- **Real-time:** 100 messages/minute per user
+
+## 🔐 Security Considerations
+
+### Row Level Security (RLS)
+- All tables have RLS enabled
+- Policies enforce user-specific access
+- No cross-user data leakage
+
+### Data Validation
+- Input validation on all endpoints
+- SQL injection prevention
+- XSS protection for text fields
+
+### Privacy
+- User data is encrypted at rest
+- Sensitive data is not logged
+- GDPR compliance for data deletion
+
+## 📱 Client Integration
+
+### Swift/SwiftUI Integration
+```swift
+// Example: Get user profile
+let profile = try await supabase
+    .from("users")
+    .select()
+    .eq("id", userId)
+    .single()
+    .execute()
+    .value
+```
+
+### Error Handling
+```swift
+// Example: Handle API errors
+do {
+    let result = try await apiCall()
+} catch let error as SupabaseError {
+    ErrorHandlingService.shared.handleError(error)
+} catch {
+    ErrorHandlingService.shared.handleError(AppError.unknown(error))
 }
 ```
 
-## 🔒 Security Headers
-
-### Required Headers
-```http
-Authorization: Bearer {access_token}
-Content-Type: application/json
-apikey: {supabase_anon_key}
+### Real-time Subscriptions
+```swift
+// Example: Subscribe to ETA shares
+let subscription = supabase
+    .from("eta_shares")
+    .on(.all) { change in
+        // Handle real-time updates
+    }
+    .subscribe()
 ```
 
-### Optional Headers
-```http
-Prefer: return=minimal
-Prefer: resolution=merge-duplicates
-```
+## 📋 Testing Strategy
 
-## 📈 Rate Limiting
+### Unit Tests
+- Test all API calls with mock data
+- Test error handling scenarios
+- Test data validation
 
-### Limits
-- **Authentication**: 5 requests per minute per IP
-- **API Calls**: 1000 requests per hour per user
-- **File Uploads**: 10MB per request, 100MB per hour
-- **Real-time**: 10 concurrent connections per user
+### Integration Tests
+- Test complete user flows
+- Test real-time subscriptions
+- Test file uploads
 
-### Rate Limit Headers
-```http
-X-RateLimit-Limit: 1000
-X-RateLimit-Remaining: 999
-X-RateLimit-Reset: 1640995200
-```
+### Contract Tests
+- Validate API responses match schema
+- Test error response formats
+- Test rate limiting behavior
 
-## 🔄 Pagination
+## 🔄 Versioning
 
-### Query Parameters
-```http
-GET /rest/v1/saved_places?limit=20&offset=0&order=created_at.desc
-```
+### API Versioning
+- Current version: v1
+- Version header: `X-API-Version: 1.0`
+- Backward compatibility maintained for 6 months
 
-### Response Headers
-```http
-Content-Range: 0-19/100
-X-Total-Count: 100
-```
+### Schema Evolution
+- Additive changes only
+- No breaking changes without major version bump
+- Migration scripts for database changes
 
-## 🧪 Testing Endpoints
+## 📈 Monitoring & Analytics
 
-### Test Data Creation
-```http
-POST /rest/v1/rpc/create_test_data
-Authorization: Bearer {access_token}
-Content-Type: application/json
+### Metrics Tracked
+- API response times
+- Error rates by endpoint
+- Real-time connection stability
+- Database query performance
 
-{
-  "user_count": 10,
-  "places_count": 50,
-  "adventures_count": 20
-}
-```
+### Alerts
+- High error rates (>5%)
+- Slow response times (>2s)
+- Database connection issues
+- Real-time connection failures
 
-### Test Data Cleanup
-```http
-POST /rest/v1/rpc/cleanup_test_data
-Authorization: Bearer {access_token}
-```
+## 🚀 Future Enhancements
 
-## 📱 Mobile-Specific Considerations
+### Planned Features
+- GraphQL API layer
+- Advanced caching strategies
+- Real-time collaboration
+- Advanced analytics
 
-### Deep Links
-- **Authentication Callback**: `shvil://auth/callback?token={access_token}`
-- **Adventure Share**: `shvil://adventure/{adventure_id}`
-- **Location Share**: `shvil://location/{lat},{lng}`
-
-### Push Notifications
-- **ETA Updates**: Real-time ETA changes
-- **Safety Alerts**: Nearby safety incidents
-- **Friend Requests**: Social notifications
-
-### Offline Support
-- **Cached Data**: Local storage for offline access
-- **Sync Queue**: Background sync when online
-- **Conflict Resolution**: Last-write-wins strategy
-
----
-
-## 🔧 Development & Testing
-
-### Local Development
-```bash
-# Start Supabase locally
-supabase start
-
-# Run migrations
-supabase db reset
-
-# Generate types
-supabase gen types typescript --local > types/supabase.ts
-```
-
-### Environment Variables
-```bash
-SUPABASE_URL=http://localhost:54321
-SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-```
-
-### API Testing
-```bash
-# Test health check
-curl -X GET "http://localhost:54321/rest/v1/rpc/health_check"
-
-# Test authentication
-curl -X POST "http://localhost:54321/auth/v1/signup" \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"password123"}'
-```
-
----
-
-*This API contract will be updated as new endpoints are added and existing ones are modified.*
+### Performance Improvements
+- Database query optimization
+- CDN integration for assets
+- Edge function optimization
+- Real-time connection pooling

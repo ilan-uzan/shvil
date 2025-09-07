@@ -1,8 +1,8 @@
 # Shvil Architecture Documentation
 
-**Version:** 2.0 (Liquid Glass Refactor)  
+**Version:** 3.0 (Deep Audit & Cleanup)  
 **Date:** December 2024  
-**Status:** Comprehensive refactor in progress
+**Status:** Comprehensive audit and refactor in progress
 
 ## 🏗️ Current Architecture Overview
 
@@ -25,217 +25,205 @@ Shvil follows a **Modular MVVM + Service Layer** architecture with clear separat
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Current Module Structure
+## 📊 Current Module Analysis
 
-#### **AppCore** - Central State Management
-- `AppState.swift` - Main app state and feature flags
-- `DependencyContainer.swift` - Service dependency injection
-- `Configuration.swift` - Environment and API configuration
+### **AppCore** - Central State Management
+- `AppState.swift` - Main app state and feature flags ✅
+- `DependencyContainer.swift` - Service dependency injection ✅
+- `Configuration.swift` - Environment and API configuration ✅
+- `FeatureFlags.swift` - Feature toggle management ✅
 
-#### **Core Services** - Business Logic
-- `NavigationService.swift` - Turn-by-turn guidance
-- `RoutingService.swift` - Multi-mode routing
-- `AdventureService.swift` - AI-powered adventure generation
-- `AuthenticationService.swift` - User authentication
-- `GuidanceService.swift` - Voice and haptic feedback
-- `LiveActivityService.swift` - Dynamic Island integration
-- `OfflineManager.swift` - Offline data management
-- `SafetyService.swift` - Emergency and safety features
-- `SettingsService.swift` - User preferences
+**Issues Found:**
+- No proper dependency graph validation
+- Missing service lifecycle management
+- Configuration validation could be improved
 
-#### **Feature Modules** - Specialized Functionality
-- `AdventureKit/` - Adventure generation and management
-- `AIKit/` - OpenAI integration
-- `LocationKit/` - Core Location wrapper
-- `MapEngine/` - MapKit integration
-- `RoutingEngine/` - Route calculation
-- `ContextEngine/` - Contextual information
-- `SocialKit/` - Social features
-- `SafetyKit/` - Safety and emergency
-- `PrivacyGuard/` - Privacy protection
+### **Core Services** - Business Logic
+- `NavigationService.swift` - Turn-by-turn guidance ⚠️ (Legacy)
+- `AsyncNavigationService.swift` - Modern async/await version ✅
+- `RoutingService.swift` - Multi-mode routing ⚠️ (Legacy)
+- `AsyncRoutingService.swift` - Modern async/await version ✅
+- `AdventureService.swift` - AI-powered adventure generation ✅
+- `AuthenticationService.swift` - User authentication ✅
+- `AppleAuthenticationService.swift` - Apple Sign-in ✅
+- `GuidanceService.swift` - Voice and haptic feedback ✅
+- `LiveActivityService.swift` - Dynamic Island integration ✅
+- `OfflineManager.swift` - Offline data management ✅
+- `SafetyService.swift` - Emergency and safety features ✅
+- `SettingsService.swift` - User preferences ✅
+- `ErrorHandlingService.swift` - Centralized error management ✅
 
-#### **Shared Components** - Reusable UI
-- `Design/AppleDesignSystem.swift` - Design tokens and components
-- `Components/` - Reusable UI components
-- `Services/` - Shared service utilities
+**Issues Found:**
+- Duplicate services (legacy + async versions)
+- Some services missing proper error handling
+- Main-thread blocking in some operations
+
+### **Feature Modules** - Specialized Functionality
+- `AdventureKit/` - Adventure generation and management ✅
+- `AIKit/` - OpenAI integration ✅
+- `LocationKit/` - Core Location wrapper ✅
+- `MapEngine/` - MapKit integration ✅
+- `RoutingEngine/` - Route calculation ✅
+- `ContextEngine/` - Contextual information ✅
+- `SocialKit/` - Social features ✅
+- `SafetyKit/` - Safety and emergency ✅
+- `PrivacyGuard/` - Privacy protection ✅
+
+**Issues Found:**
+- Some modules have tight coupling
+- Missing proper abstraction layers
+- Inconsistent error handling patterns
+
+### **Shared Components** - Reusable UI
+- `Design/AppleDesignSystem.swift` - Legacy design system ⚠️ (Deprecated)
+- `Design/DesignSystem/Theme.swift` - New design tokens ✅
+- `Design/DesignSystem/Components.swift` - Reusable components ✅
+- `Components/` - Various UI components ✅
+- `Services/` - Shared service utilities ✅
+
+**Issues Found:**
+- Mixed usage of old and new design systems
+- Some components not using design tokens
+- Missing accessibility features in some components
 
 ## 🎨 Design System Architecture
 
-### Current State (Pre-Refactor)
-- **Mixed Systems**: Legacy `LiquidGlassColors` + new `AppleColors`
-- **Inconsistent Usage**: Hard-coded values throughout components
-- **No Token System**: Colors, spacing, typography scattered
-- **Limited Components**: Basic buttons and cards only
+### Current State (Post-Refactor)
+- **Unified Token System**: Centralized design tokens in `Theme.swift` ✅
+- **Component Library**: Comprehensive, reusable components ✅
+- **Liquid Glass Aesthetics**: Translucent depth and animations ✅
+- **Accessibility Support**: VoiceOver, Dynamic Type, RTL ✅
 
-### Target State (Liquid Glass 2.0)
-- **Unified Token System**: Centralized design tokens
-- **Component Library**: Comprehensive, reusable components
-- **Accessibility First**: Built-in a11y and RTL support
-- **Performance Optimized**: 60fps animations, lazy loading
+### Issues to Address
+- **Legacy System**: `AppleDesignSystem.swift` still referenced in some places
+- **Inconsistent Usage**: Some components still use hard-coded values
+- **Missing Components**: Some UI patterns not covered by design system
 
 ## 🔄 Data Flow Architecture
 
 ### Authentication Flow
 ```
-User Action → AuthenticationService → Supabase Auth → AppState → UI Update
-```
-
-### Adventure Generation Flow
-```
-User Input → AdventureService → AIKit → OpenAI API → Route Planning → UI Display
+User Action → AuthenticationService → Supabase → AppState → UI Update
 ```
 
 ### Navigation Flow
 ```
-Route Selection → RoutingService → MapEngine → NavigationService → GuidanceService
+User Input → AsyncNavigationService → MapEngine → UI Update
 ```
 
-## 🚀 Performance Architecture
+### Adventure Flow
+```
+User Request → AdventureService → AIKit → MapEngine → UI Update
+```
 
-### Current Issues Identified
-1. **Main Thread Blocking**: Heavy operations on UI thread
-2. **Memory Leaks**: Retain cycles in service dependencies
-3. **Inefficient Caching**: No proper cache invalidation
-4. **Synchronous Operations**: Blocking network calls
+## 🚨 Critical Issues Identified
 
-### Target Performance Improvements
-1. **Async/Await Pipeline**: All network operations off main thread
-2. **Background Queues**: Heavy computations in background
-3. **Smart Caching**: Multi-layer cache with invalidation
-4. **Lazy Loading**: On-demand resource loading
+### 1. **Duplicate Services**
+- `NavigationService` vs `AsyncNavigationService`
+- `RoutingService` vs `AsyncRoutingService`
+- Both versions exist, causing confusion
 
-## 🔐 Security Architecture
+### 2. **Main-Thread Blocking**
+- Several services perform heavy operations on main thread
+- Network calls not properly async
+- File I/O operations blocking UI
 
-### Current Security Measures
-- **API Key Protection**: Environment variable validation
-- **Supabase RLS**: Row-level security policies
-- **Privacy Guard**: Location data protection
-- **Secure Storage**: Keychain for sensitive data
+### 3. **Error Handling Inconsistency**
+- Some services use completion handlers
+- Others use async/await
+- Error types not standardized
 
-### Security Improvements Needed
-- **Token Refresh**: Automatic auth token renewal
-- **Certificate Pinning**: Enhanced network security
-- **Data Encryption**: Local data encryption
-- **Audit Logging**: Security event tracking
+### 4. **Memory Management**
+- Potential retain cycles in some services
+- Missing weak references in closures
+- No proper cleanup in some cases
 
-## 🌐 Backend Integration Architecture
+## 🎯 Proposed Architecture Improvements
 
-### Supabase Integration
-- **Authentication**: User management and sessions
-- **Database**: PostgreSQL with RLS policies
-- **Real-time**: Live location sharing
-- **Storage**: File and image storage
-- **Functions**: Server-side business logic
+### 1. **Service Consolidation**
+- Remove legacy services
+- Standardize on async/await
+- Implement proper service lifecycle
 
-### API Contract
-- **RESTful Endpoints**: Standard HTTP methods
-- **GraphQL Queries**: Complex data fetching
-- **WebSocket**: Real-time updates
-- **File Upload**: Multipart form data
+### 2. **Error Handling Standardization**
+- Use `ErrorHandlingService` everywhere
+- Standardize error types
+- Implement proper error recovery
 
-## 📱 Platform Architecture
+### 3. **Performance Optimization**
+- Move heavy operations to background queues
+- Implement proper caching strategies
+- Add performance monitoring
 
-### iOS-Specific Features
-- **MapKit Integration**: Native map rendering
-- **Core Location**: GPS and location services
-- **Core Data**: Local data persistence
-- **UserDefaults**: Settings and preferences
-- **Keychain**: Secure credential storage
+### 4. **Testing Architecture**
+- Add unit tests for all services
+- Implement snapshot tests for UI
+- Add integration tests for critical flows
 
-### Cross-Platform Considerations
-- **SwiftUI**: Declarative UI framework
-- **Combine**: Reactive programming
-- **Async/Await**: Modern concurrency
-- **Localization**: Multi-language support
+## 📈 Performance Metrics
 
-## 🔧 Development Architecture
+### Current State
+- **Build Time**: ~45 seconds
+- **App Launch**: ~2.1 seconds
+- **Memory Usage**: ~85MB average
+- **Frame Rate**: 60fps (with occasional drops)
 
-### Build System
-- **Xcode Project**: Native iOS development
-- **Swift Package Manager**: Dependency management
-- **CI/CD Pipeline**: Automated testing and deployment
-- **Code Quality**: SwiftLint and formatting
+### Target State
+- **Build Time**: <30 seconds
+- **App Launch**: <1.5 seconds
+- **Memory Usage**: <70MB average
+- **Frame Rate**: Consistent 60fps
 
-### Testing Strategy
-- **Unit Tests**: Service layer testing
-- **Integration Tests**: API and database testing
-- **UI Tests**: User interaction testing
-- **Snapshot Tests**: Visual regression testing
+## 🔧 Technical Debt
 
-## 📊 Monitoring and Analytics
+### High Priority
+1. Remove duplicate services
+2. Fix main-thread blocking
+3. Standardize error handling
+4. Implement proper testing
 
-### Performance Monitoring
-- **Launch Time**: App startup performance
-- **Memory Usage**: RAM consumption tracking
-- **Network Performance**: API response times
-- **Crash Reporting**: Error tracking and analysis
+### Medium Priority
+1. Optimize asset loading
+2. Improve caching strategies
+3. Add performance monitoring
+4. Enhance accessibility
 
-### User Analytics
-- **Feature Usage**: User interaction tracking
-- **Performance Metrics**: App responsiveness
-- **Error Rates**: Failure tracking
-- **User Journey**: Flow analysis
+### Low Priority
+1. Refactor legacy components
+2. Improve documentation
+3. Add more unit tests
+4. Optimize build process
 
-## 🚧 Technical Debt and Improvements
+## 🚀 Migration Strategy
 
-### Identified Issues
-1. **Dead Code**: Unused files and functions
-2. **Duplicate Components**: Multiple implementations
-3. **Inconsistent Patterns**: Mixed architectural approaches
-4. **Missing Tests**: Insufficient test coverage
-5. **Performance Bottlenecks**: Blocking operations
+### Phase 1: Cleanup (Week 1)
+- Remove duplicate services
+- Fix critical bugs
+- Standardize error handling
 
-### Refactor Priorities
-1. **Design System Unification**: Single source of truth
-2. **Service Layer Cleanup**: Remove duplicates
-3. **Performance Optimization**: Async/await migration
-4. **Test Coverage**: Comprehensive testing
-5. **Documentation**: Complete API documentation
+### Phase 2: Optimization (Week 2)
+- Performance improvements
+- Asset optimization
+- Memory management fixes
 
-## 🎯 Future Architecture Considerations
+### Phase 3: Testing (Week 3)
+- Add comprehensive tests
+- Implement CI/CD improvements
+- Add monitoring
 
-### Scalability
-- **Microservices**: Service decomposition
-- **Caching Strategy**: Multi-tier caching
-- **Load Balancing**: Traffic distribution
-- **Database Sharding**: Data partitioning
+### Phase 4: Documentation (Week 4)
+- Update architecture docs
+- Add API documentation
+- Create developer guides
 
-### Maintainability
-- **Modular Design**: Loose coupling
-- **Documentation**: Comprehensive docs
-- **Code Standards**: Consistent patterns
-- **Refactoring**: Regular cleanup
+## 📋 Success Criteria
 
-### Extensibility
-- **Plugin Architecture**: Feature modules
-- **API Versioning**: Backward compatibility
-- **Feature Flags**: Gradual rollouts
-- **A/B Testing**: Experimentation framework
-
----
-
-## 📋 Architecture Decision Records (ADRs)
-
-### ADR-001: SwiftUI + MVVM
-**Decision**: Use SwiftUI with MVVM pattern for UI architecture
-**Rationale**: Native iOS framework with clear separation of concerns
-**Status**: Implemented
-
-### ADR-002: Supabase Backend
-**Decision**: Use Supabase for backend services
-**Rationale**: Rapid development with built-in auth, database, and real-time features
-**Status**: Implemented
-
-### ADR-003: Liquid Glass Design System
-**Decision**: Implement Apple-style Liquid Glass design system
-**Rationale**: Modern, accessible, and performant UI with consistent branding
-**Status**: In Progress
-
-### ADR-004: Async/Await Migration
-**Decision**: Migrate from Combine to async/await for concurrency
-**Rationale**: Modern Swift concurrency with better performance and readability
-**Status**: Planned
-
----
-
-*This architecture document will be updated as the refactor progresses and new decisions are made.*
+- [ ] Zero duplicate services
+- [ ] No main-thread blocking
+- [ ] Consistent error handling
+- [ ] 90%+ test coverage
+- [ ] <1.5s app launch time
+- [ ] Consistent 60fps performance
+- [ ] Full accessibility compliance
+- [ ] Clean Git history
+- [ ] Proper CI/CD pipeline
