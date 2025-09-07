@@ -105,20 +105,23 @@ struct GlassTabBar: View {
                         }
                         
                         // Calculate which tab the finger is over
-                        let totalPadding = 32.0
+                        // The gesture location is relative to the HStack, not the screen
+                        let totalPadding = 32.0 // 16pt padding on each side
                         let availableWidth = UIScreen.main.bounds.width - totalPadding
                         let tabWidth = availableWidth / CGFloat(tabs.count)
-                        let touchX = value.location.x - 16 // Account for padding
+                        
+                        // Use the gesture location directly (it's already relative to the HStack)
+                        let touchX = value.location.x
                         let tabIndex = Int(touchX / tabWidth)
                         
-                        print("🎯 Touch X: \(touchX), Tab Index: \(tabIndex)")
+                        print("🎯 Touch X: \(touchX), Tab Width: \(tabWidth), Tab Index: \(tabIndex)")
                         
                         if tabIndex >= 0 && tabIndex < tabs.count {
                             // Update capsule position to follow finger
                             let tabCenter = CGFloat(tabIndex) * tabWidth + tabWidth / 2
                             let containerCenter = availableWidth / 2
                             dragOffset = tabCenter - containerCenter
-                            print("🎯 Updated drag offset: \(dragOffset)")
+                            print("🎯 Tab Center: \(tabCenter), Container Center: \(containerCenter), Drag Offset: \(dragOffset)")
                         }
                     }
                     .onEnded { value in
@@ -129,8 +132,10 @@ struct GlassTabBar: View {
                         let totalPadding = 32.0
                         let availableWidth = UIScreen.main.bounds.width - totalPadding
                         let tabWidth = availableWidth / CGFloat(tabs.count)
-                        let touchX = value.location.x - 16
+                        let touchX = value.location.x
                         let tabIndex = Int(touchX / tabWidth)
+                        
+                        print("🎯 Drag ended at X: \(touchX), Tab Index: \(tabIndex)")
                         
                         if tabIndex >= 0 && tabIndex < tabs.count && tabIndex != selectedTab {
                             selectTab(tabIndex)
