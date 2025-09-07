@@ -17,6 +17,7 @@ struct SettingsView: View {
     @State private var showingNotificationSettings = false
     @State private var showingAbout = false
     @State private var showingSignIn = false
+    @State private var showingContractTests = false
 
     var body: some View {
         NavigationView {
@@ -58,6 +59,9 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showingAbout) {
             AboutView()
+        }
+        .sheet(isPresented: $showingContractTests) {
+            ContractTestView()
         }
     }
 
@@ -355,6 +359,19 @@ struct SettingsView: View {
                         subtitle: "Tell your friends about Shvil",
                         action: {
                             // TODO: Open share sheet
+                            HapticFeedback.shared.impact(style: .light)
+                        }
+                    )
+
+                    Divider()
+                        .background(AppleColors.glassLight)
+
+                    AppleGlassListRow(
+                        icon: "checkmark.shield.fill",
+                        title: "Contract Tests",
+                        subtitle: "Verify API compatibility",
+                        action: {
+                            showingContractTests = true
                             HapticFeedback.shared.impact(style: .light)
                         }
                     )

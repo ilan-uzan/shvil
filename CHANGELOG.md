@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] - 2024-12-01 - Liquid Glass UI Refactor
 
+### 🔗 Frontend-Backend Contract Hardening (PR 4)
+- **NEW**: Comprehensive API contract testing system
+- **NEW**: Typed models for all Supabase endpoints (`APIModels.swift`)
+- **NEW**: Contract testing service with automated validation
+- **NEW**: Mock API service for isolated testing
+- **NEW**: Contract test UI in Settings for real-time monitoring
+- **NEW**: Performance metrics tracking and validation
+- **NEW**: Error handling contract validation
+- **NEW**: Comprehensive unit tests for all API models
+- **IMPROVED**: Type safety across all API interactions
+- **IMPROVED**: API compatibility verification
+- **IMPROVED**: Development and testing workflow
+
 ### 🎨 Design System Overhaul
 - **BREAKING**: Unified design system with centralized tokens
 - **NEW**: Liquid Glass 2.0 design system implementation

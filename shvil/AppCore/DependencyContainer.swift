@@ -61,6 +61,8 @@ class DependencyContainer {
     lazy var analytics: Analytics = .shared
     lazy var hapticFeedback: HapticFeedback = .shared
     lazy var performanceMonitor: PerformanceMonitor = .shared
+    lazy var contractTestingService: ContractTestingService = .shared
+    lazy var mockAPIService: MockAPIService = .shared
 
     // MARK: - Reset for Testing
 
