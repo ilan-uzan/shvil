@@ -108,6 +108,22 @@ struct MapView: View {
             return .standard(elevation: .flat)
         }
     }
+    
+    // MARK: - Dynamic Colors for Map Layers
+    
+    private func getDynamicColors(for layer: MapLayer) -> (iconColor: Color, textColor: Color) {
+        switch layer {
+        case .satellite:
+            // For satellite view, use white/light colors for better contrast against dark imagery
+            return (iconColor: .white.opacity(0.9), textColor: .white.opacity(0.9))
+        case .hybrid:
+            // For hybrid view, use slightly darker colors for better readability
+            return (iconColor: .white.opacity(0.8), textColor: .white.opacity(0.8))
+        case .standard, .threeD, .twoD:
+            // For standard views, use the default light grey
+            return (iconColor: Color.gray.opacity(0.6), textColor: Color.gray.opacity(0.6))
+        }
+    }
 
     private func annotationView(for result: SearchResult) -> some View {
         VStack(spacing: AppleSpacing.xs) {
@@ -208,9 +224,13 @@ struct MapView: View {
             .padding(.top, DesignTokens.Spacing.sm)
             
             // Popular destinations pills
-            PopularDestinationsPills { destination in
-                handlePopularDestinationSelection(destination)
-            }
+            PopularDestinationsPills(
+                onDestinationSelected: { destination in
+                    handlePopularDestinationSelection(destination)
+                },
+                dynamicIconColor: getDynamicColors(for: selectedMapLayer).iconColor,
+                dynamicTextColor: getDynamicColors(for: selectedMapLayer).textColor
+            )
             .padding(.top, DesignTokens.Spacing.sm)
         }
     }

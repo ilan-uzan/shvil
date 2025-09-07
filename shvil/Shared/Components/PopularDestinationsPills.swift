@@ -13,6 +13,16 @@ struct PopularDestinationsPills: View {
     @State private var scrollOffset: CGFloat = 0
     
     let onDestinationSelected: (PopularDestination) -> Void
+    let dynamicIconColor: Color
+    let dynamicTextColor: Color
+    
+    init(onDestinationSelected: @escaping (PopularDestination) -> Void, 
+         dynamicIconColor: Color = Color.gray.opacity(0.6),
+         dynamicTextColor: Color = Color.gray.opacity(0.6)) {
+        self.onDestinationSelected = onDestinationSelected
+        self.dynamicIconColor = dynamicIconColor
+        self.dynamicTextColor = dynamicTextColor
+    }
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -21,6 +31,8 @@ struct PopularDestinationsPills: View {
                     PopularDestinationPill(
                         destination: destination,
                         isSelected: selectedDestination == destination,
+                        dynamicIconColor: dynamicIconColor,
+                        dynamicTextColor: dynamicTextColor,
                         onTap: {
                             selectedDestination = destination
                             onDestinationSelected(destination)
@@ -47,6 +59,8 @@ struct PopularDestinationsPills: View {
 struct PopularDestinationPill: View {
     let destination: PopularDestination
     let isSelected: Bool
+    let dynamicIconColor: Color
+    let dynamicTextColor: Color
     let onTap: () -> Void
     
     @State private var isPressed: Bool = false
@@ -57,13 +71,13 @@ struct PopularDestinationPill: View {
                 // Minimalistic icon
                 Image(systemName: destination.icon)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(isSelected ? .white : Color.gray.opacity(0.6))
+                    .foregroundColor(isSelected ? .white : dynamicIconColor)
                 
                 // Destination name
                 Text(destination.title)
                     .font(DesignTokens.Typography.caption1)
                     .fontWeight(.medium)
-                    .foregroundColor(isSelected ? .white : Color.gray.opacity(0.6))
+                    .foregroundColor(isSelected ? .white : dynamicTextColor)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
@@ -71,23 +85,35 @@ struct PopularDestinationPill: View {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(
                         isSelected ? 
-                        DesignTokens.Brand.primary :
-                        DesignTokens.Surface.secondary
+                        AnyShapeStyle(DesignTokens.Brand.primary) :
+                        AnyShapeStyle(.ultraThinMaterial)
                     )
+                    .saturation(isSelected ? 1.0 : 1.1)
                     .overlay(
                         RoundedRectangle(cornerRadius: 20)
                             .stroke(
                                 LinearGradient(
-                                    colors: [
+                                    colors: isSelected ? [
+                                        Color.white.opacity(0.4),
+                                        Color.white.opacity(0.2)
+                                    ] : [
                                         Color.white.opacity(0.3),
                                         Color.white.opacity(0.1)
                                     ],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ),
-                                lineWidth: 0.5
+                                lineWidth: isSelected ? 1.0 : 0.5
                             )
                     )
+            )
+            .shadow(
+                color: isSelected ? 
+                DesignTokens.Brand.primary.opacity(0.2) : 
+                Color.black.opacity(0.1),
+                radius: isSelected ? 8 : 4,
+                x: 0,
+                y: isSelected ? 4 : 2
             )
             .scaleEffect(isPressed ? 0.95 : 1.0)
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)

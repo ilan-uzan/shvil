@@ -91,7 +91,7 @@ struct MapLayersSelector: View {
                     
                     Image(systemName: selectedLayer.icon)
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(DesignTokens.Brand.primary)
+                        .foregroundColor(Color.gray.opacity(0.6))
                 }
             }
             .scaleEffect(isExpanded ? 1.1 : 1.0)
