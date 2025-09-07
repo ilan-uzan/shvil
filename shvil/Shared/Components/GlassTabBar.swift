@@ -46,6 +46,58 @@ struct GlassTabBar: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        print("🎯 Drag gesture detected! Location: \(value.location)")
+                        if !isDragging {
+                            isDragging = true
+                            dragScale = 1.1 // Zoom in when dragging starts
+                            print("🎯 Started dragging, scale: \(dragScale)")
+                        }
+                        
+                        // Calculate tab width based on HStack content area (without padding)
+                        let screenWidth = UIScreen.main.bounds.width
+                        let hStackPadding = 32.0 // 16pt padding on each side
+                        let availableWidth = screenWidth - hStackPadding
+                        let tabWidth = availableWidth / CGFloat(tabs.count)
+                        
+                        // Calculate which tab the finger is over
+                        let touchX = value.location.x
+                        let tabIndex = Int(touchX / tabWidth)
+                        
+                        print("🎯 Touch X: \(touchX), Tab Width: \(tabWidth), Tab Index: \(tabIndex)")
+                        
+                        if tabIndex >= 0 && tabIndex < tabs.count {
+                            // Update capsule position to follow finger
+                            let tabCenter = CGFloat(tabIndex) * tabWidth + tabWidth / 2
+                            let containerCenter = availableWidth / 2
+                            dragOffset = tabCenter - containerCenter
+                            print("🎯 Tab Center: \(tabCenter), Container Center: \(containerCenter), Drag Offset: \(dragOffset)")
+                        }
+                    }
+                    .onEnded { value in
+                        isDragging = false
+                        dragScale = 1.0 // Zoom out when released
+                        
+                        // Calculate which tab to select
+                        let screenWidth = UIScreen.main.bounds.width
+                        let hStackPadding = 32.0
+                        let availableWidth = screenWidth - hStackPadding
+                        let tabWidth = availableWidth / CGFloat(tabs.count)
+                        let touchX = value.location.x
+                        let tabIndex = Int(touchX / tabWidth)
+                        
+                        print("🎯 Drag ended at X: \(touchX), Tab Index: \(tabIndex)")
+                        
+                        if tabIndex >= 0 && tabIndex < tabs.count && tabIndex != selectedTab {
+                            selectTab(tabIndex)
+                        } else {
+                            // Reset to current tab position
+                            updateCapsulePosition()
+                        }
+                    }
+            )
             .background(
                 ZStack {
                     // Apple Music-style frosted glass background - more rounded
@@ -94,58 +146,6 @@ struct GlassTabBar: View {
                     }
                 }
             )
-            .gesture(
-                DragGesture()
-                    .onChanged { value in
-                        print("🎯 Drag gesture detected! Location: \(value.location)")
-                        if !isDragging {
-                            isDragging = true
-                            dragScale = 1.1 // Zoom in when dragging starts
-                            print("🎯 Started dragging, scale: \(dragScale)")
-                        }
-                        
-                        // Use screen width for consistent calculation
-                        let screenWidth = UIScreen.main.bounds.width
-                        let totalPadding = 32.0 // 16pt padding on each side
-                        let availableWidth = screenWidth - totalPadding
-                        let tabWidth = availableWidth / CGFloat(tabs.count)
-                        
-                        // Calculate which tab the finger is over
-                        let touchX = value.location.x
-                        let tabIndex = Int(touchX / tabWidth)
-                        
-                        print("🎯 Touch X: \(touchX), Tab Width: \(tabWidth), Tab Index: \(tabIndex)")
-                        
-                        if tabIndex >= 0 && tabIndex < tabs.count {
-                            // Update capsule position to follow finger
-                            let tabCenter = CGFloat(tabIndex) * tabWidth + tabWidth / 2
-                            let containerCenter = availableWidth / 2
-                            dragOffset = tabCenter - containerCenter
-                            print("🎯 Tab Center: \(tabCenter), Container Center: \(containerCenter), Drag Offset: \(dragOffset)")
-                        }
-                    }
-                    .onEnded { value in
-                        isDragging = false
-                        dragScale = 1.0 // Zoom out when released
-                        
-                        // Calculate which tab to select
-                        let screenWidth = UIScreen.main.bounds.width
-                        let totalPadding = 32.0
-                        let availableWidth = screenWidth - totalPadding
-                        let tabWidth = availableWidth / CGFloat(tabs.count)
-                        let touchX = value.location.x
-                        let tabIndex = Int(touchX / tabWidth)
-                        
-                        print("🎯 Drag ended at X: \(touchX), Tab Index: \(tabIndex)")
-                        
-                        if tabIndex >= 0 && tabIndex < tabs.count && tabIndex != selectedTab {
-                            selectTab(tabIndex)
-                        } else {
-                            // Reset to current tab position
-                            updateCapsulePosition()
-                        }
-                    }
-            )
             .shadow(
                 color: Color.black.opacity(0.2),
                 radius: 15,
@@ -187,9 +187,10 @@ struct GlassTabBar: View {
     }
     
     private func updateCapsulePosition() {
-        // Calculate the actual tab width accounting for padding
-        let totalPadding = 32.0 // 16pt padding on each side
-        let availableWidth = UIScreen.main.bounds.width - totalPadding
+        // Calculate the actual tab width accounting for HStack padding
+        let screenWidth = UIScreen.main.bounds.width
+        let hStackPadding = 32.0 // 16pt padding on each side
+        let availableWidth = screenWidth - hStackPadding
         let tabWidth = availableWidth / CGFloat(tabs.count)
         let newWidth = tabWidth * 0.9 // 90% of tab width for bigger pill
         
