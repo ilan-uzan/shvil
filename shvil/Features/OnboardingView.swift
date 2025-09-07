@@ -11,7 +11,7 @@ import CoreLocation
 /// Onboarding flow for first-time users
 struct OnboardingView: View {
     @StateObject private var localizationManager = LocalizationManager.shared
-    @StateObject private var locationService = LocationService()
+    @StateObject private var locationManager = LocationManager()
     @State private var currentStep = 0
     @State private var selectedLanguage: Language = .english
     @State private var selectedTheme: Theme = .system
@@ -22,7 +22,7 @@ struct OnboardingView: View {
     var body: some View {
         ZStack {
             // Background
-            AppleColors.background
+            DesignTokens.Surface.background
                 .ignoresSafeArea()
             
             if hasCompletedOnboarding {
@@ -40,22 +40,22 @@ struct OnboardingView: View {
     private var onboardingContent: some View {
         ZStack {
             // Background with wavy path motif
-            AppleColors.background
+            DesignTokens.Surface.background
                 .ignoresSafeArea()
             
             // Subtle wavy path decoration
             VStack {
                 Spacer()
                 // Simple wave illustration
-                RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                    .fill(AppleColors.brandPrimary.opacity(0.1))
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                    .fill(DesignTokens.Brand.primary.opacity(0.1))
                     .frame(width: 120, height: 80)
                     .overlay(
                         Path { path in
                             path.move(to: CGPoint(x: 0, y: 40))
                             path.addQuadCurve(to: CGPoint(x: 120, y: 40), control: CGPoint(x: 60, y: 20))
                         }
-                        .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 2)
+                        .stroke(DesignTokens.Brand.primary.opacity(0.3), lineWidth: 2)
                     )
                     .frame(height: 100)
                     .offset(y: 50)
@@ -90,17 +90,17 @@ struct OnboardingView: View {
     }
     
     private var progressIndicator: some View {
-        HStack(spacing: AppleSpacing.sm) {
+        HStack(spacing: DesignTokens.Spacing.sm) {
             ForEach(0..<totalSteps, id: \.self) { step in
                 Circle()
-                    .fill(step <= currentStep ? AppleColors.brandPrimary : AppleColors.strokeLight)
+                    .fill(step <= currentStep ? DesignTokens.Brand.primary : DesignTokens.Stroke.light)
                     .frame(width: 8, height: 8)
                     .scaleEffect(step == currentStep ? 1.2 : 1.0)
-                    .animation(AppleAnimations.spring, value: currentStep)
+                    .animation(DesignTokens.Animation.spring, value: currentStep)
             }
         }
-        .padding(.top, AppleSpacing.lg)
-        .padding(.bottom, AppleSpacing.xl)
+        .padding(.top, DesignTokens.Spacing.lg)
+        .padding(.bottom, DesignTokens.Spacing.xl)
     }
     
     private var welcomeStep: some View {
@@ -108,58 +108,58 @@ struct OnboardingView: View {
             Spacer()
             
             // App icon and title
-            VStack(spacing: AppleSpacing.lg) {
+            VStack(spacing: DesignTokens.Spacing.lg) {
                 // App icon
                 ZStack {
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                        .fill(AppleColors.brandPrimary)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                        .fill(DesignTokens.Brand.primary)
                         .frame(width: 120, height: 120)
-                        .appleShadow(AppleShadows.heavy)
+                        .appleShadow(DesignTokens.Shadow.heavy)
                     
                     Image(systemName: "map.fill")
                         .font(.system(size: 48, weight: .medium))
                         .foregroundColor(.white)
                 }
                 
-                VStack(spacing: AppleSpacing.md) {
+                VStack(spacing: DesignTokens.Spacing.md) {
                     Text("welcome".localized)
                         .font(AppleTypography.largeTitle)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .multilineTextAlignment(.center)
                     
                     Text("welcome_subtitle".localized)
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, AppleSpacing.xl)
+                        .padding(.horizontal, DesignTokens.Spacing.xl)
                 }
             }
             
             Spacer()
         }
-        .padding(.horizontal, AppleSpacing.xl)
+        .padding(.horizontal, DesignTokens.Spacing.xl)
     }
     
     private var languageStep: some View {
         VStack(spacing: AppleSpacing.xxl) {
             Spacer()
             
-            VStack(spacing: AppleSpacing.xl) {
-                VStack(spacing: AppleSpacing.md) {
+            VStack(spacing: DesignTokens.Spacing.xl) {
+                VStack(spacing: DesignTokens.Spacing.md) {
                     Text("onboarding_step_1_title".localized)
-                        .font(AppleTypography.title2)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title2)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .multilineTextAlignment(.center)
                     
                     Text("onboarding_step_1_description".localized)
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, AppleSpacing.xl)
+                        .padding(.horizontal, DesignTokens.Spacing.xl)
                 }
                 
                 // Language selection
-                VStack(spacing: AppleSpacing.md) {
+                VStack(spacing: DesignTokens.Spacing.md) {
                     ForEach(Language.allCases, id: \.self) { language in
                         languageOption(language)
                     }
@@ -168,29 +168,29 @@ struct OnboardingView: View {
             
             Spacer()
         }
-        .padding(.horizontal, AppleSpacing.xl)
+        .padding(.horizontal, DesignTokens.Spacing.xl)
     }
     
     private var themeStep: some View {
         VStack(spacing: AppleSpacing.xxl) {
             Spacer()
             
-            VStack(spacing: AppleSpacing.xl) {
-                VStack(spacing: AppleSpacing.md) {
+            VStack(spacing: DesignTokens.Spacing.xl) {
+                VStack(spacing: DesignTokens.Spacing.md) {
                     Text("onboarding_step_2_title".localized)
-                        .font(AppleTypography.title2)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title2)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .multilineTextAlignment(.center)
                     
                     Text("onboarding_step_2_description".localized)
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, AppleSpacing.xl)
+                        .padding(.horizontal, DesignTokens.Spacing.xl)
                 }
                 
                 // Theme selection
-                VStack(spacing: AppleSpacing.md) {
+                VStack(spacing: DesignTokens.Spacing.md) {
                     ForEach(Theme.allCases, id: \.self) { theme in
                         themeOption(theme)
                     }
@@ -199,29 +199,29 @@ struct OnboardingView: View {
             
             Spacer()
         }
-        .padding(.horizontal, AppleSpacing.xl)
+        .padding(.horizontal, DesignTokens.Spacing.xl)
     }
     
     private var permissionsStep: some View {
         VStack(spacing: AppleSpacing.xxl) {
             Spacer()
             
-            VStack(spacing: AppleSpacing.xl) {
-                VStack(spacing: AppleSpacing.md) {
+            VStack(spacing: DesignTokens.Spacing.xl) {
+                VStack(spacing: DesignTokens.Spacing.md) {
                     Text("onboarding_step_3_title".localized)
-                        .font(AppleTypography.title2)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title2)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .multilineTextAlignment(.center)
                     
                     Text("onboarding_step_3_description".localized)
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, AppleSpacing.xl)
+                        .padding(.horizontal, DesignTokens.Spacing.xl)
                 }
                 
                 // Permission cards
-                VStack(spacing: AppleSpacing.md) {
+                VStack(spacing: DesignTokens.Spacing.md) {
                     permissionCard(
                         icon: "location.fill",
                         title: "location_permission".localized,
@@ -247,15 +247,15 @@ struct OnboardingView: View {
             
             Spacer()
         }
-        .padding(.horizontal, AppleSpacing.xl)
+        .padding(.horizontal, DesignTokens.Spacing.xl)
     }
     
     private func languageOption(_ language: Language) -> some View {
         AppleGlassCard(style: .elevated) {
-            HStack(spacing: AppleSpacing.md) {
+            HStack(spacing: DesignTokens.Spacing.md) {
                 Text(language.displayName)
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(selectedLanguage == language ? .white : AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(selectedLanguage == language ? .white : DesignTokens.Text.primary)
                 
                 Spacer()
                 
@@ -270,12 +270,12 @@ struct OnboardingView: View {
             HapticFeedback.shared.impact(style: .light)
         }
         .overlay(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                .stroke(selectedLanguage == language ? AppleColors.brandPrimary : Color.clear, lineWidth: 2)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                .stroke(selectedLanguage == language ? DesignTokens.Brand.primary : Color.clear, lineWidth: 2)
         )
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                .fill(selectedLanguage == language ? AppleColors.brandPrimary : Color.clear)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                .fill(selectedLanguage == language ? DesignTokens.Brand.primary : Color.clear)
         )
         .accessibilityLabel("Language: \(language.displayName)")
         .accessibilityHint(selectedLanguage == language ? "Currently selected" : "Double tap to select this language")
@@ -284,20 +284,20 @@ struct OnboardingView: View {
     
     private func themeOption(_ theme: Theme) -> some View {
         AppleGlassCard(style: .elevated) {
-            HStack(spacing: AppleSpacing.md) {
+            HStack(spacing: DesignTokens.Spacing.md) {
                 Image(systemName: theme.icon)
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(selectedTheme == theme ? .white : AppleColors.accent)
+                    .foregroundColor(selectedTheme == theme ? .white : DesignTokens.Brand.primary)
                     .frame(width: 24)
                 
-                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                     Text(theme.displayName)
-                        .font(AppleTypography.bodyEmphasized)
-                        .foregroundColor(selectedTheme == theme ? .white : AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.bodyEmphasized)
+                        .foregroundColor(selectedTheme == theme ? .white : DesignTokens.Text.primary)
                     
                     Text(theme.description)
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(selectedTheme == theme ? .white.opacity(0.8) : AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(selectedTheme == theme ? .white.opacity(0.8) : DesignTokens.Text.secondary)
                 }
                 
                 Spacer()
@@ -312,12 +312,12 @@ struct OnboardingView: View {
             HapticFeedback.shared.impact(style: .light)
         }
         .overlay(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                .stroke(selectedTheme == theme ? AppleColors.brandPrimary : Color.clear, lineWidth: 2)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                .stroke(selectedTheme == theme ? DesignTokens.Brand.primary : Color.clear, lineWidth: 2)
         )
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                .fill(selectedTheme == theme ? AppleColors.brandPrimary : Color.clear)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                .fill(selectedTheme == theme ? DesignTokens.Brand.primary : Color.clear)
         )
         .accessibilityLabel("Theme: \(theme.displayName)")
         .accessibilityHint(selectedTheme == theme ? "Currently selected" : "Double tap to select this theme")
@@ -326,34 +326,34 @@ struct OnboardingView: View {
     
     private func permissionCard(icon: String, title: String, description: String, isRequired: Bool) -> some View {
         AppleGlassCard(style: .elevated) {
-            HStack(spacing: AppleSpacing.md) {
+            HStack(spacing: DesignTokens.Spacing.md) {
                 Image(systemName: icon)
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(AppleColors.accent)
+                    .foregroundColor(DesignTokens.Brand.primary)
                     .frame(width: 32)
                 
-                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                     HStack {
                         Text(title)
-                            .font(AppleTypography.bodyEmphasized)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .font(DesignTokens.Typography.bodyEmphasized)
+                            .foregroundColor(DesignTokens.Text.primary)
                         
                         if isRequired {
                             Text("Required")
                                 .font(AppleTypography.caption2)
-                                .foregroundColor(AppleColors.danger)
-                                .padding(.horizontal, AppleSpacing.sm)
-                                .padding(.vertical, AppleSpacing.xs)
+                                .foregroundColor(DesignTokens.Semantic.error)
+                                .padding(.horizontal, DesignTokens.Spacing.sm)
+                                .padding(.vertical, DesignTokens.Spacing.xs)
                                 .background(
                                     Capsule()
-                                        .fill(AppleColors.danger.opacity(0.2))
+                                        .fill(DesignTokens.Semantic.error.opacity(0.2))
                                 )
                         }
                     }
                     
                     Text(description)
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
                 
                 Spacer()
@@ -364,14 +364,14 @@ struct OnboardingView: View {
     }
     
     private var navigationButtons: some View {
-        HStack(spacing: AppleSpacing.md) {
+        HStack(spacing: DesignTokens.Spacing.md) {
             if currentStep > 0 {
                 AppleButton(
                     "back".localized,
                     style: .secondary,
                     size: .medium
                 ) {
-                    withAnimation(AppleAnimations.standard) {
+                    withAnimation(DesignTokens.Animation.standard) {
                         currentStep -= 1
                     }
                     HapticFeedback.shared.impact(style: .light)
@@ -384,7 +384,7 @@ struct OnboardingView: View {
                 size: .medium
             ) {
                 if currentStep < totalSteps - 1 {
-                    withAnimation(AppleAnimations.standard) {
+                    withAnimation(DesignTokens.Animation.standard) {
                         currentStep += 1
                     }
                 } else {
@@ -393,7 +393,7 @@ struct OnboardingView: View {
                 HapticFeedback.shared.impact(style: .light)
             }
         }
-        .padding(.horizontal, AppleSpacing.xl)
+        .padding(.horizontal, DesignTokens.Spacing.xl)
         .padding(.bottom, AppleSpacing.xxl)
     }
     
@@ -418,7 +418,7 @@ struct OnboardingView: View {
     
     private func requestPermissions() {
         // Request location permission
-        locationService.requestLocationPermission()
+        locationManager.requestLocationPermission()
         
         // Request other permissions as needed
     }

@@ -46,7 +46,7 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
-            .background(AppleColors.background.ignoresSafeArea())
+            .background(DesignTokens.Surface.background.ignoresSafeArea())
         }
         .sheet(isPresented: $showingPrivacySettings) {
             PrivacySettingsView()
@@ -69,27 +69,27 @@ struct SettingsView: View {
 
     private var profileHeader: some View {
         AppleGlassCard(style: .elevated) {
-            VStack(spacing: AppleSpacing.md) {
+            VStack(spacing: DesignTokens.Spacing.md) {
                 // Profile Picture
                 ZStack {
                     Circle()
-                        .fill(AppleColors.brandGradient)
+                        .fill(DesignTokens.Brand.gradient)
                         .frame(width: 80, height: 80)
-                        .appleShadow(AppleShadows.medium)
+                        .appleShadow(DesignTokens.Shadow.medium)
 
                     Image(systemName: authService.isAuthenticated ? "person.fill" : "person.circle")
                         .font(.system(size: 32))
                         .foregroundColor(.white)
                 }
 
-                VStack(spacing: AppleSpacing.xs) {
+                VStack(spacing: DesignTokens.Spacing.xs) {
                     Text(authService.isAuthenticated ? (authService.currentUser?.displayName ?? "User") : "Welcome to Shvil")
-                        .font(AppleTypography.title3)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title3)
+                        .foregroundColor(DesignTokens.Text.primary)
 
                     Text(authService.isAuthenticated ? authService.currentUser?.email ?? "" : "Your personal navigation assistant")
                         .font(AppleTypography.footnote)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
                 
                 // Sign In/Out Button
@@ -115,27 +115,27 @@ struct SettingsView: View {
 
     private var appSettingsSection: some View {
         AppleGlassCard(style: .elevated) {
-            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 Text("App Settings")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
 
-                VStack(spacing: AppleSpacing.sm) {
+                VStack(spacing: DesignTokens.Spacing.sm) {
                     // Language Selection
                     AppleListRow {
                         HStack {
                             Image(systemName: "globe")
-                                .foregroundColor(AppleColors.brandPrimary)
+                                .foregroundColor(DesignTokens.Brand.primary)
                                 .frame(width: 24)
                             
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Language")
-                                    .font(AppleTypography.body)
-                                    .foregroundColor(AppleColors.textPrimary)
+                                    .font(DesignTokens.Typography.body)
+                                    .foregroundColor(DesignTokens.Text.primary)
                                 
                                 Text(settingsService.selectedLanguage.displayName)
                                     .font(AppleTypography.footnote)
-                                    .foregroundColor(AppleColors.textSecondary)
+                                    .foregroundColor(DesignTokens.Text.secondary)
                             }
                             
                             Spacer()
@@ -153,17 +153,17 @@ struct SettingsView: View {
                     AppleListRow {
                         HStack {
                             Image(systemName: "moon.fill")
-                                .foregroundColor(AppleColors.brandPrimary)
+                                .foregroundColor(DesignTokens.Brand.primary)
                                 .frame(width: 24)
                             
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Appearance")
-                                    .font(AppleTypography.body)
-                                    .foregroundColor(AppleColors.textPrimary)
+                                    .font(DesignTokens.Typography.body)
+                                    .foregroundColor(DesignTokens.Text.primary)
                                 
                                 Text(settingsService.selectedTheme.displayName)
                                     .font(AppleTypography.footnote)
-                                    .foregroundColor(AppleColors.textSecondary)
+                                    .foregroundColor(DesignTokens.Text.secondary)
                             }
                             
                             Spacer()
@@ -185,12 +185,12 @@ struct SettingsView: View {
 
     private var featureSettingsSection: some View {
         AppleGlassCard(style: .elevated) {
-            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 Text("Features")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
 
-                VStack(spacing: AppleSpacing.sm) {
+                VStack(spacing: DesignTokens.Spacing.sm) {
                     ToggleRow(
                         icon: "person.2.fill",
                         title: "Friends on Map",
@@ -227,12 +227,12 @@ struct SettingsView: View {
 
     private var privacySection: some View {
         AppleGlassCard(style: .elevated) {
-            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 Text("Privacy & Security")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
 
-                VStack(spacing: AppleSpacing.sm) {
+                VStack(spacing: DesignTokens.Spacing.sm) {
                     AppleGlassListRow(
                         icon: "shield.checkered",
                         title: "Privacy Settings",
@@ -244,7 +244,7 @@ struct SettingsView: View {
                     )
 
                     Divider()
-                        .background(AppleColors.glassLight)
+                        .background(DesignTokens.Glass.light)
 
                     AppleGlassListRow(
                         icon: "location.fill",
@@ -257,7 +257,7 @@ struct SettingsView: View {
                     )
 
                     Divider()
-                        .background(AppleColors.glassLight)
+                        .background(DesignTokens.Glass.light)
 
                     AppleGlassListRow(
                         icon: "key.fill",
@@ -277,12 +277,12 @@ struct SettingsView: View {
 
     private var notificationsSection: some View {
         AppleGlassCard(style: .elevated) {
-            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 Text("Notifications")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
 
-                VStack(spacing: AppleSpacing.sm) {
+                VStack(spacing: DesignTokens.Spacing.sm) {
                     AppleGlassListRow(
                         icon: "bell.fill",
                         title: "Notification Settings",
@@ -294,7 +294,7 @@ struct SettingsView: View {
                     )
 
                     Divider()
-                        .background(AppleColors.glassLight)
+                        .background(DesignTokens.Glass.light)
 
                     ToggleRow(
                         icon: "location.circle.fill",
@@ -304,7 +304,7 @@ struct SettingsView: View {
                     )
 
                     Divider()
-                        .background(AppleColors.glassLight)
+                        .background(DesignTokens.Glass.light)
 
                     ToggleRow(
                         icon: "person.2.circle.fill",
@@ -321,12 +321,12 @@ struct SettingsView: View {
 
     private var supportSection: some View {
         AppleGlassCard(style: .elevated) {
-            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 Text("Support & Info")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
 
-                VStack(spacing: AppleSpacing.sm) {
+                VStack(spacing: DesignTokens.Spacing.sm) {
                     AppleGlassListRow(
                         icon: "questionmark.circle.fill",
                         title: "Help & Support",
@@ -338,7 +338,7 @@ struct SettingsView: View {
                     )
 
                     Divider()
-                        .background(AppleColors.glassLight)
+                        .background(DesignTokens.Glass.light)
 
                     AppleGlassListRow(
                         icon: "star.fill",
@@ -351,7 +351,7 @@ struct SettingsView: View {
                     )
 
                     Divider()
-                        .background(AppleColors.glassLight)
+                        .background(DesignTokens.Glass.light)
 
                     AppleGlassListRow(
                         icon: "square.and.arrow.up",
@@ -364,7 +364,7 @@ struct SettingsView: View {
                     )
 
                     Divider()
-                        .background(AppleColors.glassLight)
+                        .background(DesignTokens.Glass.light)
 
                     AppleGlassListRow(
                         icon: "checkmark.shield.fill",
@@ -377,7 +377,7 @@ struct SettingsView: View {
                     )
 
                     Divider()
-                        .background(AppleColors.glassLight)
+                        .background(DesignTokens.Glass.light)
 
                     AppleGlassListRow(
                         icon: "info.circle.fill",
@@ -432,26 +432,26 @@ struct ToggleRow: View {
         HStack {
             Image(systemName: icon)
                 .font(.system(size: 20, weight: .medium))
-                .foregroundColor(AppleColors.accent)
+                .foregroundColor(DesignTokens.Brand.primary)
                 .frame(width: 24)
 
-            VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                 Text(title)
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Text(subtitle)
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
 
             Spacer()
 
             Toggle("", isOn: $isOn)
-                .toggleStyle(SwitchToggleStyle(tint: AppleColors.brandPrimary))
+                .toggleStyle(SwitchToggleStyle(tint: DesignTokens.Brand.primary))
         }
-        .padding(.vertical, AppleSpacing.sm)
-        .padding(.horizontal, AppleSpacing.md)
+        .padding(.vertical, DesignTokens.Spacing.sm)
+        .padding(.horizontal, DesignTokens.Spacing.md)
         .accessibilityLabel("\(title): \(subtitle)")
         .accessibilityHint("Double tap to toggle \(isOn ? "off" : "on")")
         .accessibilityAddTraits(.isButton)
@@ -470,11 +470,11 @@ struct LocationSettingsView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Location Services")
                             .font(AppleTypography.largeTitle)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .foregroundColor(DesignTokens.Text.primary)
 
                         Text("Shvil needs access to your location to provide navigation and location-based features.")
-                            .font(AppleTypography.body)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.secondary)
 
                         HStack {
                             Image(systemName: locationStatusIcon)
@@ -482,8 +482,8 @@ struct LocationSettingsView: View {
                                 .foregroundColor(locationStatusColor)
 
                             Text(locationStatusText)
-                                .font(AppleTypography.bodySemibold)
-                                .foregroundColor(AppleColors.textPrimary)
+                                .font(DesignTokens.Typography.bodySemibold)
+                                .foregroundColor(DesignTokens.Text.primary)
                         }
                         .padding(16)
                         .background(
@@ -496,8 +496,8 @@ struct LocationSettingsView: View {
                     // Location Features
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Location Features")
-                            .font(AppleTypography.title3)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .font(DesignTokens.Typography.title3)
+                            .foregroundColor(DesignTokens.Text.primary)
 
                         VStack(spacing: 12) {
                             LocationFeatureRow(
@@ -527,13 +527,13 @@ struct LocationSettingsView: View {
                             HapticFeedback.shared.impact(style: .medium)
                         }) {
                             Text("Open Settings")
-                                .font(AppleTypography.bodySemibold)
+                                .font(DesignTokens.Typography.bodySemibold)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(16)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(AppleColors.brandGradient)
+                                        .fill(DesignTokens.Brand.gradient)
                                 )
                         }
                     }
@@ -547,7 +547,7 @@ struct LocationSettingsView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(AppleColors.brandPrimary)
+                    .foregroundColor(DesignTokens.Brand.primary)
                 }
             }
         }
@@ -600,12 +600,12 @@ struct LocationFeatureRow: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(AppleTypography.bodySemibold)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodySemibold)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Text(description)
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
 
             Spacer()
@@ -617,7 +617,7 @@ struct LocationFeatureRow: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(AppleColors.surfaceTertiary)
+                .fill(DesignTokens.Surface.tertiary)
                 .glassmorphism(intensity: .light, cornerRadius: 12)
         )
     }
@@ -635,11 +635,11 @@ struct NotificationSettingsView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Notifications")
                             .font(AppleTypography.largeTitle)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .foregroundColor(DesignTokens.Text.primary)
 
                         Text("Stay updated with important information about your navigation and social features.")
-                            .font(AppleTypography.body)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.secondary)
 
                         HStack {
                             Image(systemName: notificationStatusIcon)
@@ -647,8 +647,8 @@ struct NotificationSettingsView: View {
                                 .foregroundColor(notificationStatusColor)
 
                             Text(notificationStatusText)
-                                .font(AppleTypography.bodySemibold)
-                                .foregroundColor(AppleColors.textPrimary)
+                                .font(DesignTokens.Typography.bodySemibold)
+                                .foregroundColor(DesignTokens.Text.primary)
                         }
                         .padding(16)
                         .background(
@@ -661,8 +661,8 @@ struct NotificationSettingsView: View {
                     // Notification Types
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Notification Types")
-                            .font(AppleTypography.title3)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .font(DesignTokens.Typography.title3)
+                            .foregroundColor(DesignTokens.Text.primary)
 
                         VStack(spacing: 12) {
                             NotificationTypeRow(
@@ -692,13 +692,13 @@ struct NotificationSettingsView: View {
                             HapticFeedback.shared.impact(style: .medium)
                         }) {
                             Text("Open Settings")
-                                .font(AppleTypography.bodySemibold)
+                                .font(DesignTokens.Typography.bodySemibold)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(16)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(AppleColors.brandGradient)
+                                        .fill(DesignTokens.Brand.gradient)
                                 )
                         }
                     }
@@ -712,7 +712,7 @@ struct NotificationSettingsView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(AppleColors.brandPrimary)
+                    .foregroundColor(DesignTokens.Brand.primary)
                 }
             }
         }
@@ -761,12 +761,12 @@ struct NotificationTypeRow: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(AppleTypography.bodySemibold)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodySemibold)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Text(description)
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
 
             Spacer()
@@ -778,7 +778,7 @@ struct NotificationTypeRow: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(AppleColors.surfaceTertiary)
+                .fill(DesignTokens.Surface.tertiary)
                 .glassmorphism(intensity: .light, cornerRadius: 12)
         )
     }
@@ -795,7 +795,7 @@ struct AboutView: View {
                     VStack(spacing: 16) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(AppleColors.brandGradient)
+                                .fill(DesignTokens.Brand.gradient)
                                 .frame(width: 100, height: 100)
                                 .glassmorphism(intensity: .heavy, cornerRadius: 12)
 
@@ -807,30 +807,30 @@ struct AboutView: View {
                         VStack(spacing: 8) {
                             Text("Shvil")
                                 .font(AppleTypography.largeTitle)
-                                .foregroundColor(AppleColors.textPrimary)
+                                .foregroundColor(DesignTokens.Text.primary)
 
                             Text("Version 1.0.0")
-                                .font(AppleTypography.caption1)
-                                .foregroundColor(AppleColors.textSecondary)
+                                .font(DesignTokens.Typography.caption1)
+                                .foregroundColor(DesignTokens.Text.secondary)
                         }
                     }
 
                     // App Description
                     VStack(alignment: .leading, spacing: 16) {
                         Text("About Shvil")
-                            .font(AppleTypography.title3)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .font(DesignTokens.Typography.title3)
+                            .foregroundColor(DesignTokens.Text.primary)
 
                         Text("Shvil is your personal navigation assistant that helps you discover new places, plan adventures, and stay connected with friends. Built with privacy and safety in mind.")
-                            .font(AppleTypography.body)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.secondary)
                     }
 
                     // Features
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Features")
-                            .font(AppleTypography.title3)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .font(DesignTokens.Typography.title3)
+                            .foregroundColor(DesignTokens.Text.primary)
 
                         VStack(alignment: .leading, spacing: 12) {
                             FeatureItem(title: "Smart Navigation", description: "AI-powered route planning")
@@ -845,12 +845,12 @@ struct AboutView: View {
                         Button("Privacy Policy") {
                             // TODO: Open privacy policy
                         }
-                        .foregroundColor(AppleColors.brandPrimary)
+                        .foregroundColor(DesignTokens.Brand.primary)
 
                         Button("Terms of Service") {
                             // TODO: Open terms of service
                         }
-                        .foregroundColor(AppleColors.brandPrimary)
+                        .foregroundColor(DesignTokens.Brand.primary)
                     }
                 }
                 .padding(20)
@@ -862,7 +862,7 @@ struct AboutView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(AppleColors.brandPrimary)
+                    .foregroundColor(DesignTokens.Brand.primary)
                 }
             }
         }
@@ -877,17 +877,17 @@ struct FeatureItem: View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 16))
-                .foregroundColor(AppleColors.brandPrimary)
+                .foregroundColor(DesignTokens.Brand.primary)
                 .padding(.top, 2)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(AppleTypography.bodySemibold)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodySemibold)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Text(description)
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
         }
     }

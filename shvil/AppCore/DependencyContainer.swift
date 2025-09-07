@@ -33,12 +33,12 @@ class DependencyContainer {
 
     // MARK: - Feature Services
 
-    lazy var locationService: LocationService = .init()
+    lazy var locationManager: LocationManager = .init()
     lazy var searchService: SearchService = .init()
     lazy var navigationService: AsyncNavigationService = .init()
     lazy var offlineManager: OfflineManager = .init()
     lazy var routingService: AsyncRoutingService = .init(
-        locationService: locationService,
+        locationService: locationManager,
         offlineManager: offlineManager
     )
     lazy var aiKit: AIKit = {
@@ -75,7 +75,7 @@ class DependencyContainer {
     func reset() {
         // Reset all services for testing
         appState = AppState()
-        locationKit = LocationKit()
+        locationManager = LocationManager()
         mapEngine = MapEngine()
         routingEngine = RoutingEngine()
         contextEngine = ContextEngine()

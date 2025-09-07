@@ -24,18 +24,18 @@ struct RouteCard: View {
                     // Route details
                     VStack(alignment: .leading, spacing: 4) {
                         Text(route.type)
-                            .font(AppleTypography.body)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.primary)
                             .lineLimit(1)
                         
                         HStack(spacing: 16) {
                             Text(route.duration)
-                                .font(AppleTypography.caption1)
-                                .foregroundColor(AppleColors.textSecondary)
+                                .font(DesignTokens.Typography.caption1)
+                                .foregroundColor(DesignTokens.Text.secondary)
                             
                             Text(route.distance)
-                                .font(AppleTypography.caption1)
-                                .foregroundColor(AppleColors.textSecondary)
+                                .font(DesignTokens.Typography.caption1)
+                                .foregroundColor(DesignTokens.Text.secondary)
                         }
                     }
                     
@@ -45,7 +45,7 @@ struct RouteCard: View {
                     if isSelected {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.title2)
-                            .foregroundColor(AppleColors.brandPrimary)
+                            .foregroundColor(DesignTokens.Brand.primary)
                     }
                 }
                 
@@ -58,12 +58,12 @@ struct RouteCard: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(isSelected ? 
-                          AnyShapeStyle(AppleColors.surfaceSecondary) : 
-                          AnyShapeStyle(AppleColors.surfaceTertiary))
+                          AnyShapeStyle(DesignTokens.Surface.secondary) : 
+                          AnyShapeStyle(DesignTokens.Surface.tertiary))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(isSelected ? 
-                                   AppleColors.brandPrimary.opacity(0.3) : 
+                                   DesignTokens.Brand.primary.opacity(0.3) : 
                                    Color.white.opacity(0.1), lineWidth: isSelected ? 2 : 1)
                     )
                     .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
@@ -77,23 +77,23 @@ struct RouteCard: View {
     private var routeIcon: some View {
         ZStack {
             Circle()
-                .fill(AppleColors.surfaceSecondary)
+                .fill(DesignTokens.Surface.secondary)
                 .frame(width: 40, height: 40)
             
             Image(systemName: "car.fill")
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(AppleColors.brandPrimary)
+                .foregroundColor(DesignTokens.Brand.primary)
         }
     }
     
     private var routeBadges: some View {
         HStack(spacing: 8) {
             if route.isFastest {
-                badge("bolt.fill", "fastest".localized, AppleColors.brandPrimary)
+                badge("bolt.fill", "fastest".localized, DesignTokens.Brand.primary)
             }
             
             if route.isSafest {
-                badge("shield.fill", "safest".localized, AppleColors.brandPrimary)
+                badge("shield.fill", "safest".localized, DesignTokens.Brand.primary)
             }
         }
     }
@@ -133,8 +133,8 @@ struct DetailedRouteCard: View {
                     // Route details
                     VStack(alignment: .leading, spacing: 8) {
                         Text(route.name)
-                            .font(AppleTypography.body)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.primary)
                             .lineLimit(1)
                         
                         // Time and distance
@@ -159,7 +159,7 @@ struct DetailedRouteCard: View {
                     if isSelected {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.title2)
-                            .foregroundColor(AppleColors.brandPrimary)
+                            .foregroundColor(DesignTokens.Brand.primary)
                     }
                 }
                 .padding(16)
@@ -167,7 +167,7 @@ struct DetailedRouteCard: View {
                 // Route steps preview
                 if !route.steps.isEmpty {
                     Divider()
-                        .background(AppleColors.surfacePrimary)
+                        .background(DesignTokens.Surface.primary)
                     
                     routeStepsPreview
                 }
@@ -175,12 +175,12 @@ struct DetailedRouteCard: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(isSelected ? 
-                          AnyShapeStyle(AppleColors.surfaceSecondary) : 
-                          AnyShapeStyle(AppleColors.surfaceTertiary))
+                          AnyShapeStyle(DesignTokens.Surface.secondary) : 
+                          AnyShapeStyle(DesignTokens.Surface.tertiary))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(isSelected ? 
-                                   AppleColors.brandPrimary.opacity(0.3) : 
+                                   DesignTokens.Brand.primary.opacity(0.3) : 
                                    Color.white.opacity(0.1), lineWidth: isSelected ? 2 : 1)
                     )
                     .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
@@ -194,12 +194,12 @@ struct DetailedRouteCard: View {
     private var routeIcon: some View {
         ZStack {
             Circle()
-                .fill(AppleColors.surfaceSecondary)
+                .fill(DesignTokens.Surface.secondary)
                 .frame(width: 48, height: 48)
             
             Image(systemName: route.options.transportationMode.icon)
                 .font(.system(size: 20, weight: .medium))
-                .foregroundColor(AppleColors.brandPrimary)
+                .foregroundColor(DesignTokens.Brand.primary)
         }
     }
     
@@ -207,11 +207,11 @@ struct DetailedRouteCard: View {
         HStack(spacing: 4) {
             Image(systemName: "clock")
                 .font(.system(size: 12, weight: .medium))
-                .foregroundColor(AppleColors.textSecondary)
+                .foregroundColor(DesignTokens.Text.secondary)
             
             Text(formatTime(route.expectedTravelTime))
-                .font(AppleTypography.caption1)
-                .foregroundColor(AppleColors.textSecondary)
+                .font(DesignTokens.Typography.caption1)
+                .foregroundColor(DesignTokens.Text.secondary)
         }
     }
     
@@ -219,11 +219,11 @@ struct DetailedRouteCard: View {
         HStack(spacing: 4) {
             Image(systemName: "location")
                 .font(.system(size: 12, weight: .medium))
-                .foregroundColor(AppleColors.textSecondary)
+                .foregroundColor(DesignTokens.Text.secondary)
             
             Text(formatDistance(route.distance))
-                .font(AppleTypography.caption1)
-                .foregroundColor(AppleColors.textSecondary)
+                .font(DesignTokens.Typography.caption1)
+                .foregroundColor(DesignTokens.Text.secondary)
         }
     }
     
@@ -231,11 +231,11 @@ struct DetailedRouteCard: View {
         HStack(spacing: 4) {
             Image(systemName: "creditcard")
                 .font(.system(size: 10, weight: .medium))
-                .foregroundColor(AppleColors.textSecondary)
+                .foregroundColor(DesignTokens.Text.secondary)
             
             Text("₪\(String(format: "%.0f", cost))")
                 .font(AppleTypography.caption2)
-                .foregroundColor(AppleColors.textSecondary)
+                .foregroundColor(DesignTokens.Text.secondary)
         }
     }
     
@@ -243,11 +243,11 @@ struct DetailedRouteCard: View {
         HStack(spacing: 4) {
             Image(systemName: "fuelpump")
                 .font(.system(size: 10, weight: .medium))
-                .foregroundColor(AppleColors.textSecondary)
+                .foregroundColor(DesignTokens.Text.secondary)
             
             Text("₪\(String(format: "%.0f", cost))")
                 .font(AppleTypography.caption2)
-                .foregroundColor(AppleColors.textSecondary)
+                .foregroundColor(DesignTokens.Text.secondary)
         }
     }
     
@@ -257,19 +257,19 @@ struct DetailedRouteCard: View {
                 HStack(spacing: 12) {
                     Image(systemName: step.maneuverType.icon)
                         .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(AppleColors.brandPrimary)
+                        .foregroundColor(DesignTokens.Brand.primary)
                         .frame(width: 16)
                     
                     Text(step.instruction)
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .lineLimit(1)
                     
                     Spacer()
                     
                     Text(formatDistance(step.distance))
                         .font(AppleTypography.caption2)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 4)
@@ -278,7 +278,7 @@ struct DetailedRouteCard: View {
             if route.steps.count > 3 {
                 Text("+ \(route.steps.count - 3) more steps")
                     .font(AppleTypography.caption2)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 8)
             }
@@ -317,24 +317,24 @@ struct CompactRouteCard: View {
                 // Route icon
                 Image(systemName: "car.fill")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(AppleColors.brandPrimary)
+                    .foregroundColor(DesignTokens.Brand.primary)
                     .frame(width: 24)
                 
                 // Route details
                 VStack(alignment: .leading, spacing: 2) {
                     Text(route.type)
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .lineLimit(1)
                     
                     HStack(spacing: 12) {
                         Text(route.duration)
-                            .font(AppleTypography.caption1)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.caption1)
+                            .foregroundColor(DesignTokens.Text.secondary)
                         
                         Text(route.distance)
-                            .font(AppleTypography.caption1)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.caption1)
+                            .foregroundColor(DesignTokens.Text.secondary)
                     }
                 }
                 
@@ -344,7 +344,7 @@ struct CompactRouteCard: View {
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.title3)
-                        .foregroundColor(AppleColors.brandPrimary)
+                        .foregroundColor(DesignTokens.Brand.primary)
                 }
             }
             .padding(.horizontal, 16)
@@ -352,12 +352,12 @@ struct CompactRouteCard: View {
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(isSelected ? 
-                          AnyShapeStyle(AppleColors.surfaceSecondary) : 
-                          AnyShapeStyle(AppleColors.surfaceTertiary))
+                          AnyShapeStyle(DesignTokens.Surface.secondary) : 
+                          AnyShapeStyle(DesignTokens.Surface.tertiary))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(isSelected ? 
-                                   AppleColors.brandPrimary.opacity(0.3) : 
+                                   DesignTokens.Brand.primary.opacity(0.3) : 
                                    Color.white.opacity(0.1), lineWidth: isSelected ? 2 : 1)
                     )
             )
@@ -413,5 +413,5 @@ struct CompactRouteCard: View {
         }
     }
     .padding()
-    .background(AppleColors.background)
+    .background(DesignTokens.Surface.background)
 }

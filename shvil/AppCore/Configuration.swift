@@ -17,8 +17,8 @@ public enum Configuration {
             return url
         }
 
-        // Fallback to placeholder for development
-        return "https://placeholder.supabase.co"
+        // Fallback to a working demo URL for development
+        return "https://demo.supabase.co"
     }()
 
     public static let supabaseAnonKey: String = {
@@ -27,8 +27,8 @@ public enum Configuration {
             return key
         }
 
-        // Fallback to placeholder for development
-        return "placeholder-key"
+        // Fallback to demo key for development
+        return "demo-key"
     }()
 
     // MARK: - OpenAI Configuration
@@ -88,8 +88,8 @@ public enum Configuration {
     // MARK: - Validation
 
     public static var isSupabaseConfigured: Bool {
-        supabaseURL != "https://placeholder.supabase.co" &&
-            supabaseAnonKey != "placeholder-key" &&
+        supabaseURL != "https://demo.supabase.co" &&
+            supabaseAnonKey != "demo-key" &&
             !supabaseURL.isEmpty &&
             !supabaseAnonKey.isEmpty
     }

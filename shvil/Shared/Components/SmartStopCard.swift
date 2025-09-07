@@ -40,28 +40,28 @@ struct SmartStopCard: View {
                 // Content
                 VStack(alignment: .leading, spacing: 4) {
                     Text(suggestion.title)
-                        .font(AppleTypography.title3)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title3)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .lineLimit(1)
                     
                     Text(suggestion.subtitle)
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .lineLimit(2)
                     
                     // Distance and Time
                     HStack(spacing: 8) {
                         Label(distanceText, systemImage: "location")
                             .font(AppleTypography.caption2)
-                            .foregroundColor(AppleColors.brandPrimary)
+                            .foregroundColor(DesignTokens.Brand.primary)
                         
                         Text("•")
                             .font(AppleTypography.caption2)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .foregroundColor(DesignTokens.Text.secondary)
                         
                         Label(timeText, systemImage: "clock")
                             .font(AppleTypography.caption2)
-                            .foregroundColor(AppleColors.brandPrimary)
+                            .foregroundColor(DesignTokens.Brand.primary)
                     }
                 }
                 
@@ -77,14 +77,14 @@ struct SmartStopCard: View {
                     }) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(AppleColors.brandPrimary)
+                            .foregroundColor(DesignTokens.Brand.primary)
                             .frame(width: 32, height: 32)
                             .background(
                                 Circle()
-                                    .fill(AppleColors.surfaceSecondary)
+                                    .fill(DesignTokens.Surface.secondary)
                                     .overlay(
                                         Circle()
-                                            .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 1)
+                                            .stroke(DesignTokens.Brand.primary.opacity(0.3), lineWidth: 1)
                                     )
                             )
                     }
@@ -101,7 +101,7 @@ struct SmartStopCard: View {
                     }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(AppleColors.textSecondary)
+                            .foregroundColor(DesignTokens.Text.secondary)
                             .frame(width: 24, height: 24)
                     }
                     .buttonAccessibility(
@@ -117,7 +117,7 @@ struct SmartStopCard: View {
             if showDetails {
                 VStack(spacing: 12) {
                     Divider()
-                        .background(AppleColors.textSecondary.opacity(0.3))
+                        .background(DesignTokens.Text.secondary.opacity(0.3))
                     
                     // Additional Actions
                     HStack(spacing: 16) {
@@ -131,17 +131,17 @@ struct SmartStopCard: View {
                                 Image(systemName: "clock.arrow.circlepath")
                                     .font(.system(size: 14, weight: .medium))
                                 Text("Snooze")
-                                    .font(AppleTypography.caption1Medium)
+                                    .font(DesignTokens.Typography.caption1Medium)
                             }
-                            .foregroundColor(AppleColors.brandPrimary)
+                            .foregroundColor(DesignTokens.Brand.primary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(AppleColors.surfaceSecondary)
+                                    .fill(DesignTokens.Surface.secondary)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 12)
-                                            .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 1)
+                                            .stroke(DesignTokens.Brand.primary.opacity(0.3), lineWidth: 1)
                                     )
                             )
                         }
@@ -156,7 +156,7 @@ struct SmartStopCard: View {
                         HStack(spacing: 4) {
                             Text("Relevance")
                                 .font(AppleTypography.caption2)
-                                .foregroundColor(AppleColors.textSecondary)
+                                .foregroundColor(DesignTokens.Text.secondary)
                             
                             RelevanceIndicator(score: suggestion.relevanceScore)
                         }
@@ -168,7 +168,7 @@ struct SmartStopCard: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(AppleColors.surfaceTertiary)
+                .fill(DesignTokens.Surface.tertiary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(suggestion.color.color.opacity(0.3), lineWidth: 1)
@@ -178,7 +178,7 @@ struct SmartStopCard: View {
         .scaleEffect(isPressed ? 0.98 : 1.0)
         .animation(AppleAnimations.microInteraction, value: isPressed)
         .onTapGesture {
-            withAnimation(AppleAnimations.standard) {
+            withAnimation(DesignTokens.Animation.standard) {
                 showDetails.toggle()
             }
         }
@@ -186,7 +186,7 @@ struct SmartStopCard: View {
             isPressed = pressing
         } perform: {
             // Long press action - could show more details
-            withAnimation(AppleAnimations.standard) {
+            withAnimation(DesignTokens.Animation.standard) {
                 showDetails.toggle()
             }
         }
@@ -231,7 +231,7 @@ struct RelevanceIndicator: View {
         HStack(spacing: 2) {
             ForEach(0..<5) { index in
                 Circle()
-                    .fill(index < Int(score * 5) ? AppleColors.brandPrimary : AppleColors.textSecondary.opacity(0.3))
+                    .fill(index < Int(score * 5) ? DesignTokens.Brand.primary : DesignTokens.Text.secondary.opacity(0.3))
                     .frame(width: 4, height: 4)
             }
         }

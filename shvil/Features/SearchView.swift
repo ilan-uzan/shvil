@@ -11,7 +11,7 @@ import SwiftUI
 struct SearchView: View {
     @StateObject private var searchService = DependencyContainer.shared.searchService
     @StateObject private var mapEngine = DependencyContainer.shared.mapEngine
-    @StateObject private var locationService = DependencyContainer.shared.locationService
+    @StateObject private var locationManager = DependencyContainer.shared.locationManager
 
     @State private var searchText = ""
     @State private var selectedCategory: SearchCategory = .all
@@ -25,7 +25,7 @@ struct SearchView: View {
         NavigationView {
             ZStack {
                 // Background
-                AppleColors.background
+                DesignTokens.Surface.background
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
@@ -64,16 +64,16 @@ struct SearchView: View {
     // MARK: - Search Header
 
     private var searchHeader: some View {
-        VStack(spacing: AppleSpacing.md) {
+        VStack(spacing: DesignTokens.Spacing.md) {
             // Search Bar
             HStack {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(AppleColors.textSecondary)
-                    .padding(.leading, AppleSpacing.sm)
+                    .foregroundColor(DesignTokens.Text.secondary)
+                    .padding(.leading, DesignTokens.Spacing.sm)
                 
                 TextField("Search places, activities, or locations", text: $searchText)
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.primary)
                     .onSubmit {
                         if !searchText.isEmpty {
                             searchService.search(for: searchText)
@@ -88,64 +88,64 @@ struct SearchView: View {
                         searchService.searchResults = []
                     }) {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(AppleColors.textTertiary)
+                            .foregroundColor(DesignTokens.Text.tertiary)
                     }
                     .accessibilityLabel("Clear search")
                 }
             }
-            .padding(.horizontal, AppleSpacing.md)
-            .padding(.vertical, AppleSpacing.sm)
+            .padding(.horizontal, DesignTokens.Spacing.md)
+            .padding(.vertical, DesignTokens.Spacing.sm)
             .background(
-                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                    .fill(AppleColors.glassMedium)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                    .fill(DesignTokens.Glass.medium)
                     .overlay(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                            .stroke(AppleColors.glassLight, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                            .stroke(DesignTokens.Glass.light, lineWidth: 1)
                     )
             )
-            .appleShadow(AppleShadows.light)
+            .appleShadow(DesignTokens.Shadow.light)
 
             // Category Filters
             categoryFilters
         }
-        .padding(.horizontal, AppleSpacing.md)
-        .padding(.top, AppleSpacing.sm)
+        .padding(.horizontal, DesignTokens.Spacing.md)
+        .padding(.top, DesignTokens.Spacing.sm)
     }
 
     private var categoryFilters: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: AppleSpacing.sm) {
+            HStack(spacing: DesignTokens.Spacing.sm) {
                 ForEach(SearchCategory.allCases, id: \.self) { category in
                     categoryChip(for: category)
                 }
             }
-            .padding(.horizontal, AppleSpacing.xs)
+            .padding(.horizontal, DesignTokens.Spacing.xs)
         }
     }
 
     private func categoryChip(for category: SearchCategory) -> some View {
-        HStack(spacing: AppleSpacing.xs) {
+        HStack(spacing: DesignTokens.Spacing.xs) {
             Image(systemName: category.icon)
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(selectedCategory == category ? .white : AppleColors.accent)
+                .foregroundColor(selectedCategory == category ? .white : DesignTokens.Brand.primary)
             
             Text(category.displayName)
-                .font(AppleTypography.caption1)
-                .foregroundColor(selectedCategory == category ? .white : AppleColors.textPrimary)
+                .font(DesignTokens.Typography.caption1)
+                .foregroundColor(selectedCategory == category ? .white : DesignTokens.Text.primary)
         }
-        .padding(.horizontal, AppleSpacing.md)
-        .padding(.vertical, AppleSpacing.sm)
+        .padding(.horizontal, DesignTokens.Spacing.md)
+        .padding(.vertical, DesignTokens.Spacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                .fill(selectedCategory == category ? AppleColors.brandPrimary : AppleColors.glassMedium)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                .fill(selectedCategory == category ? DesignTokens.Brand.primary : DesignTokens.Glass.medium)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                        .stroke(selectedCategory == category ? Color.clear : AppleColors.glassLight, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                        .stroke(selectedCategory == category ? Color.clear : DesignTokens.Glass.light, lineWidth: 1)
                 )
         )
-        .appleShadow(AppleShadows.light)
+        .appleShadow(DesignTokens.Shadow.light)
         .onTapGesture {
-            withAnimation(AppleAnimations.spring) {
+            withAnimation(DesignTokens.Animation.spring) {
                 selectedCategory = category
             }
             HapticFeedback.shared.impact(style: .light)
@@ -175,14 +175,14 @@ struct SearchView: View {
 
     private var suggestionsView: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: AppleSpacing.xl) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xl) {
                 // Recent Searches
                 if !recentSearches.isEmpty {
-                    VStack(alignment: .leading, spacing: AppleSpacing.md) {
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                         HStack {
                             Text("Recent Searches")
-                                .font(AppleTypography.title3)
-                                .foregroundColor(AppleColors.textPrimary)
+                                .font(DesignTokens.Typography.title3)
+                                .foregroundColor(DesignTokens.Text.primary)
                             
                             Spacer()
                             
@@ -190,37 +190,37 @@ struct SearchView: View {
                                 recentSearches.removeAll()
                                 UserDefaults.standard.set([], forKey: "recent_searches")
                             }
-                            .font(AppleTypography.caption1)
-                            .foregroundColor(AppleColors.brandPrimary)
+                            .font(DesignTokens.Typography.caption1)
+                            .foregroundColor(DesignTokens.Brand.primary)
                         }
-                        .padding(.horizontal, AppleSpacing.md)
+                        .padding(.horizontal, DesignTokens.Spacing.md)
                         
-                        LazyVStack(spacing: AppleSpacing.sm) {
+                        LazyVStack(spacing: DesignTokens.Spacing.sm) {
                             ForEach(Array(recentSearches.enumerated()), id: \.offset) { index, search in
                                 recentSearchRow(for: search)
                                     .id("recent-\(index)")
                             }
                         }
-                        .padding(.horizontal, AppleSpacing.md)
+                        .padding(.horizontal, DesignTokens.Spacing.md)
                     }
                 }
                 
                 // Popular Searches
-                VStack(alignment: .leading, spacing: AppleSpacing.md) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                     Text("Popular Searches")
-                        .font(AppleTypography.title3)
-                        .foregroundColor(AppleColors.textPrimary)
-                        .padding(.horizontal, AppleSpacing.md)
+                        .font(DesignTokens.Typography.title3)
+                        .foregroundColor(DesignTokens.Text.primary)
+                        .padding(.horizontal, DesignTokens.Spacing.md)
 
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: AppleSpacing.sm), count: 2), spacing: AppleSpacing.sm) {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: DesignTokens.Spacing.sm), count: 2), spacing: DesignTokens.Spacing.sm) {
                         ForEach(popularSearches, id: \.self) { search in
                             suggestionCard(for: search)
                         }
                     }
-                    .padding(.horizontal, AppleSpacing.md)
+                    .padding(.horizontal, DesignTokens.Spacing.md)
                 }
             }
-            .padding(.top, AppleSpacing.lg)
+            .padding(.top, DesignTokens.Spacing.lg)
         }
     }
 
@@ -238,35 +238,35 @@ struct SearchView: View {
     }
 
     private func suggestionCard(for search: String) -> some View {
-        HStack(spacing: AppleSpacing.sm) {
+        HStack(spacing: DesignTokens.Spacing.sm) {
             Image(systemName: searchIcon(for: search))
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(AppleColors.accent)
+                .foregroundColor(DesignTokens.Brand.primary)
                 .frame(width: 24)
 
             Text(search)
-                .font(AppleTypography.body)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.body)
+                .foregroundColor(DesignTokens.Text.primary)
                 .lineLimit(1)
 
             Spacer()
         }
-        .padding(.horizontal, AppleSpacing.md)
-        .padding(.vertical, AppleSpacing.md)
+        .padding(.horizontal, DesignTokens.Spacing.md)
+        .padding(.vertical, DesignTokens.Spacing.md)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                 .fill(.ultraThinMaterial)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                        .fill(AppleColors.glassMedium)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                        .fill(DesignTokens.Glass.medium)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                                .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                                .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                 .blendMode(.overlay)
                         )
                 )
         )
-        .appleShadow(AppleShadows.light)
+        .appleShadow(DesignTokens.Shadow.light)
         .onTapGesture {
             searchText = search
             performSearch()
@@ -278,15 +278,15 @@ struct SearchView: View {
     }
     
     private func recentSearchRow(for search: String) -> some View {
-        HStack(spacing: AppleSpacing.md) {
+        HStack(spacing: DesignTokens.Spacing.md) {
             Image(systemName: "clock")
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(AppleColors.textSecondary)
+                .foregroundColor(DesignTokens.Text.secondary)
                 .frame(width: 20)
             
             Text(search)
-                .font(AppleTypography.body)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.body)
+                .foregroundColor(DesignTokens.Text.primary)
                 .lineLimit(1)
             
             Spacer()
@@ -296,26 +296,26 @@ struct SearchView: View {
             }) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 16))
-                    .foregroundColor(AppleColors.textTertiary)
+                    .foregroundColor(DesignTokens.Text.tertiary)
             }
             .accessibilityLabel("Remove from recent searches")
         }
-        .padding(.horizontal, AppleSpacing.md)
-        .padding(.vertical, AppleSpacing.sm)
+        .padding(.horizontal, DesignTokens.Spacing.md)
+        .padding(.vertical, DesignTokens.Spacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                 .fill(.ultraThinMaterial)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                        .fill(AppleColors.glassMedium)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                        .fill(DesignTokens.Glass.medium)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                                .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                                .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                 .blendMode(.overlay)
                         )
                 )
         )
-        .appleShadow(AppleShadows.light)
+        .appleShadow(DesignTokens.Shadow.light)
         .onTapGesture {
             searchText = search
             performSearch()
@@ -343,11 +343,11 @@ struct SearchView: View {
     // MARK: - Results List
 
     private var resultsList: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.md) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             HStack {
                 Text("\(searchService.searchResults.count) Results")
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(DesignTokens.Text.secondary)
 
                 Spacer()
 
@@ -360,60 +360,60 @@ struct SearchView: View {
                     showFilters = true
                 }
             }
-            .padding(.horizontal, AppleSpacing.md)
+            .padding(.horizontal, DesignTokens.Spacing.md)
 
             ScrollView {
-                LazyVStack(spacing: AppleSpacing.sm) {
+                LazyVStack(spacing: DesignTokens.Spacing.sm) {
                     ForEach(Array(searchService.searchResults.enumerated()), id: \.offset) { index, result in
                         searchResultCard(for: result)
                             .id("result-\(index)")
                     }
                 }
-                .padding(.horizontal, AppleSpacing.md)
+                .padding(.horizontal, DesignTokens.Spacing.md)
             }
         }
     }
 
     private func searchResultCard(for result: SearchResult) -> some View {
         AppleGlassCard(style: .elevated) {
-            HStack(spacing: AppleSpacing.md) {
+            HStack(spacing: DesignTokens.Spacing.md) {
                 // Place Image/Icon
                 ZStack {
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                        .fill(AppleColors.surfaceSecondary)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                        .fill(DesignTokens.Surface.secondary)
                         .frame(width: 60, height: 60)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                                .stroke(AppleColors.glassLight, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                                .stroke(DesignTokens.Glass.light, lineWidth: 1)
                         )
-                        .appleShadow(AppleShadows.light)
+                        .appleShadow(DesignTokens.Shadow.light)
 
                     Image(systemName: placeIcon(for: result))
                         .font(.system(size: 24, weight: .medium))
-                        .foregroundColor(AppleColors.accent)
+                        .foregroundColor(DesignTokens.Brand.primary)
                 }
 
-                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                     Text(result.name)
-                        .font(AppleTypography.bodyEmphasized)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.bodyEmphasized)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .lineLimit(1)
 
-                    Text(result.address ?? "Address not available")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                    Text(result.address)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .lineLimit(2)
 
                     Text("Tap to view details")
                         .font(AppleTypography.caption2)
-                        .foregroundColor(AppleColors.accent)
+                        .foregroundColor(DesignTokens.Brand.primary)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(AppleColors.textTertiary)
+                    .foregroundColor(DesignTokens.Text.tertiary)
             }
         }
         .onTapGesture {

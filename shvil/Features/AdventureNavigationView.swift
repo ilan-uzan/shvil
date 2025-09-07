@@ -12,7 +12,7 @@ struct AdventureNavigationView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var adventureKit = DependencyContainer.shared.adventureKit
     @StateObject private var mapEngine = DependencyContainer.shared.mapEngine
-    @StateObject private var locationService = DependencyContainer.shared.locationService
+    @StateObject private var locationManager = DependencyContainer.shared.locationManager
 
     let adventure: AdventurePlan
     @State private var currentStopIndex = 0
@@ -33,7 +33,7 @@ struct AdventureNavigationView: View {
     var body: some View {
         ZStack {
             // Background
-            AppleColors.background
+            DesignTokens.Surface.background
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -70,8 +70,8 @@ struct AdventureNavigationView: View {
             // Status Bar
             HStack {
                 Text("Adventure Active")
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
 
                 Spacer()
 
@@ -85,8 +85,8 @@ struct AdventureNavigationView: View {
                 }
                 .frame(width: 32, height: 32)
             }
-            .padding(.horizontal, AppleSpacing.lg)
-            .padding(.top, AppleSpacing.sm)
+            .padding(.horizontal, DesignTokens.Spacing.lg)
+            .padding(.top, DesignTokens.Spacing.sm)
 
             // Progress Bar
             progressBar
@@ -98,47 +98,47 @@ struct AdventureNavigationView: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(AppleColors.surfaceTertiary)
+                .fill(DesignTokens.Surface.tertiary)
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
         )
     }
 
     private var progressBar: some View {
-        HStack(spacing: AppleSpacing.sm) {
+        HStack(spacing: DesignTokens.Spacing.sm) {
             ForEach(0 ..< adventure.stops.count, id: \.self) { index in
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(index <= currentStopIndex ? AppleColors.brandPrimary : AppleColors.surfaceTertiary)
+                    .fill(index <= currentStopIndex ? DesignTokens.Brand.primary : DesignTokens.Surface.tertiary)
                     .frame(height: 4)
             }
         }
-        .padding(.horizontal, AppleSpacing.lg)
-        .padding(.vertical, AppleSpacing.sm)
+        .padding(.horizontal, DesignTokens.Spacing.lg)
+        .padding(.vertical, DesignTokens.Spacing.sm)
     }
 
     private func currentStopInfo(for stop: AdventureStop) -> some View {
-        HStack(spacing: AppleSpacing.md) {
+        HStack(spacing: DesignTokens.Spacing.md) {
             // Stop Number
             ZStack {
                 Circle()
-                    .fill(AppleColors.brandGradient)
+                    .fill(DesignTokens.Brand.gradient)
                     .frame(width: 40, height: 40)
-                    .appleShadow(AppleShadows.light)
+                    .appleShadow(DesignTokens.Shadow.light)
 
                 Text("\(currentStopIndex + 1)")
-                    .font(AppleTypography.title3)
+                    .font(DesignTokens.Typography.title3)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
             }
 
-            VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                 Text(stop.name)
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
                     .lineLimit(1)
 
                 Text(stop.description ?? "No description available")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .lineLimit(1)
             }
 
@@ -147,10 +147,10 @@ struct AdventureNavigationView: View {
             // Category Icon
             Image(systemName: stopIcon(for: stop.category))
                 .font(.system(size: 20, weight: .medium))
-                .foregroundColor(AppleColors.brandPrimary)
+                .foregroundColor(DesignTokens.Brand.primary)
         }
-        .padding(.horizontal, AppleSpacing.lg)
-        .padding(.bottom, AppleSpacing.md)
+        .padding(.horizontal, DesignTokens.Spacing.lg)
+        .padding(.bottom, DesignTokens.Spacing.md)
     }
 
     private func stopIcon(for category: StopCategory) -> String {
@@ -187,7 +187,7 @@ struct AdventureNavigationView: View {
     private var mapRegion: MKCoordinateRegion {
         guard let currentStop = currentStop else {
             return MKCoordinateRegion(
-                center: locationService.currentLocation?.coordinate ?? CLLocationCoordinate2D(),
+                center: locationManager.currentLocation?.coordinate ?? CLLocationCoordinate2D(),
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             )
         }
@@ -204,8 +204,8 @@ struct AdventureNavigationView: View {
 
         return ZStack {
             Circle()
-                .fill(isCurrentStop ? AnyShapeStyle(AppleColors.brandGradient) :
-                    isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(AppleColors.surfaceSecondary))
+                .fill(isCurrentStop ? AnyShapeStyle(DesignTokens.Brand.gradient) :
+                    isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(DesignTokens.Surface.secondary))
                 .frame(width: isCurrentStop ? 40 : 32, height: isCurrentStop ? 40 : 32)
 
             Image(systemName: isCompleted ? "checkmark" : stopIcon(for: stop.category))
@@ -225,7 +225,7 @@ struct AdventureNavigationView: View {
         VStack(spacing: 0) {
             // Drag Handle
             RoundedRectangle(cornerRadius: 2)
-                .fill(AppleColors.textSecondary)
+                .fill(DesignTokens.Text.secondary)
                 .frame(width: 36, height: 4)
                 .padding(.top, 12)
 
@@ -246,7 +246,7 @@ struct AdventureNavigationView: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(AppleColors.surfaceTertiary)
+                .fill(DesignTokens.Surface.tertiary)
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
         )
     }
@@ -256,12 +256,12 @@ struct AdventureNavigationView: View {
             // Distance
             VStack(alignment: .leading, spacing: 4) {
                 Text("Distance")
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
 
                 Text("0.5 mi")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
             }
 
             Divider()
@@ -270,12 +270,12 @@ struct AdventureNavigationView: View {
             // ETA
             VStack(alignment: .leading, spacing: 4) {
                 Text("ETA")
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
 
                 Text("8 min")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
             }
 
             Divider()
@@ -284,19 +284,19 @@ struct AdventureNavigationView: View {
             // Duration
             VStack(alignment: .leading, spacing: 4) {
                 Text("Stay")
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
 
                 Text("\(currentStop?.estimatedDuration ?? 0) min")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
             }
         }
         .padding(.vertical, 16)
         .padding(.horizontal, 20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(AppleColors.surfaceSecondary)
+                .fill(DesignTokens.Surface.secondary)
         )
     }
 
@@ -309,15 +309,15 @@ struct AdventureNavigationView: View {
                         .font(.system(size: 16, weight: .medium))
 
                     Text("Details")
-                        .font(AppleTypography.body)
+                        .font(DesignTokens.Typography.body)
                         .fontWeight(.medium)
                 }
-                .foregroundColor(AppleColors.textPrimary)
+                .foregroundColor(DesignTokens.Text.primary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(AppleColors.surfaceSecondary)
+                        .fill(DesignTokens.Surface.secondary)
                 )
             }
 
@@ -328,7 +328,7 @@ struct AdventureNavigationView: View {
                         .font(.system(size: 16, weight: .medium))
 
                     Text("I'm Here")
-                        .font(AppleTypography.body)
+                        .font(DesignTokens.Typography.body)
                         .fontWeight(.semibold)
                 }
                 .foregroundColor(.white)
@@ -336,7 +336,7 @@ struct AdventureNavigationView: View {
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(AppleColors.brandGradient)
+                        .fill(DesignTokens.Brand.gradient)
                 )
             }
         }
@@ -348,23 +348,23 @@ struct AdventureNavigationView: View {
                 // Next Stop Icon
                 ZStack {
                     Circle()
-                        .fill(AppleColors.surfaceSecondary)
+                        .fill(DesignTokens.Surface.secondary)
                         .frame(width: 32, height: 32)
 
                     Image(systemName: stopIcon(for: nextStop.category))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(AppleColors.brandPrimary)
+                        .foregroundColor(DesignTokens.Brand.primary)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Next: \(nextStop.name)")
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .lineLimit(1)
 
                     Text(nextStop.description ?? "No description available")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .lineLimit(1)
                 }
 
@@ -372,12 +372,12 @@ struct AdventureNavigationView: View {
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(AppleColors.textSecondary)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(AppleColors.surfaceSecondary)
+                    .fill(DesignTokens.Surface.secondary)
             )
         }
         .buttonStyle(PlainButtonStyle())

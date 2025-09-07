@@ -13,7 +13,7 @@ import Foundation
 class AppState: ObservableObject {
     // MARK: - Core Services
 
-    let locationKit = LocationKit()
+    let locationManager = LocationManager()
     let mapEngine = MapEngine()
     let routingEngine = RoutingEngine()
     let contextEngine = ContextEngine()
@@ -21,6 +21,12 @@ class AppState: ObservableObject {
     let safetyKit = SafetyKit()
     let persistence = Persistence()
     let privacyGuard = PrivacyGuard()
+    
+    // MARK: - Performance & Accessibility Services
+    
+    let performanceOptimizer = PerformanceOptimizer.shared
+    let accessibilityManager = AccessibilityManager.shared
+    let cacheManager = CacheManager.shared
 
     // MARK: - App State
 
@@ -45,6 +51,7 @@ class AppState: ObservableObject {
 
     init() {
         setupObservers()
+        setupPerformanceMonitoring()
     }
 
     private func setupObservers() {
@@ -62,6 +69,20 @@ class AppState: ObservableObject {
         // Implementation for offline mode detection
         isOfflineMode = !NetworkMonitor.shared.isConnected
     }
+    
+    private func setupPerformanceMonitoring() {
+        // Start performance monitoring
+        performanceOptimizer.startMonitoring()
+        
+        // Monitor memory usage and clear caches if needed
+        performanceOptimizer.$memoryUsage
+            .sink { [weak self] usage in
+                if usage > 150 * 1024 * 1024 { // 150MB threshold
+                    self?.cacheManager.clearExpiredCaches()
+                }
+            }
+            .store(in: &cancellables)
+    }
 }
 
 // MARK: - App Screens
@@ -76,13 +97,6 @@ enum AppScreen: String, CaseIterable {
 }
 
 // MARK: - Permission Types
-
-enum LocationPermission {
-    case notDetermined
-    case denied
-    case whenInUse
-    case always
-}
 
 enum MicrophonePermission {
     case notDetermined

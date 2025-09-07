@@ -21,11 +21,11 @@ struct AdventureRecapView: View {
         NavigationView {
             ZStack {
                 // Background
-                AppleColors.background
+                DesignTokens.Surface.background
                     .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: AppleSpacing.lg) {
+                    VStack(spacing: DesignTokens.Spacing.lg) {
                         // Header
                         headerSection
 
@@ -44,8 +44,8 @@ struct AdventureRecapView: View {
                         // Action Buttons
                         actionButtonsSection
                     }
-                    .padding(.horizontal, AppleSpacing.lg)
-                    .padding(.bottom, AppleSpacing.lg)
+                    .padding(.horizontal, DesignTokens.Spacing.lg)
+                    .padding(.bottom, DesignTokens.Spacing.lg)
                 }
             }
             .navigationTitle("Adventure Complete")
@@ -66,57 +66,57 @@ struct AdventureRecapView: View {
     // MARK: - Header Section
 
     private var headerSection: some View {
-        VStack(spacing: AppleSpacing.lg) {
+        VStack(spacing: DesignTokens.Spacing.lg) {
             // Success Icon
             ZStack {
                 Circle()
-                    .fill(AppleColors.brandGradient)
+                    .fill(DesignTokens.Brand.gradient)
                     .frame(width: 80, height: 80)
-                    .appleShadow(AppleShadows.medium)
+                    .appleShadow(DesignTokens.Shadow.medium)
 
                 Image(systemName: "checkmark")
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.white)
             }
 
-            VStack(spacing: AppleSpacing.sm) {
+            VStack(spacing: DesignTokens.Spacing.sm) {
                 Text("Adventure Complete!")
                     .font(AppleTypography.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .foregroundColor(DesignTokens.Text.primary)
                     .multilineTextAlignment(.center)
 
                 Text(adventure.title)
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.brandPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Brand.primary)
                     .multilineTextAlignment(.center)
 
                 Text("You've successfully completed your \(adventure.theme.displayName.lowercased()) adventure!")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .multilineTextAlignment(.center)
             }
         }
-        .padding(.vertical, AppleSpacing.lg)
+        .padding(.vertical, DesignTokens.Spacing.lg)
     }
 
     // MARK: - Stats Section
 
     private var statsSection: some View {
         AppleGlassCard(style: .elevated) {
-            VStack(spacing: AppleSpacing.md) {
+            VStack(spacing: DesignTokens.Spacing.md) {
                 Text("Your Adventure Stats")
-                    .font(AppleTypography.title3)
+                    .font(DesignTokens.Typography.title3)
                     .fontWeight(.semibold)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .foregroundColor(DesignTokens.Text.primary)
 
-                HStack(spacing: AppleSpacing.lg) {
+                HStack(spacing: DesignTokens.Spacing.lg) {
                     // Duration
                     statCard(
                         icon: "clock.fill",
                         title: "Duration",
                         value: "\(adventure.totalDuration / 60)h",
-                        color: AppleColors.brandPrimary
+                        color: DesignTokens.Brand.primary
                     )
 
                     // Stops
@@ -124,7 +124,7 @@ struct AdventureRecapView: View {
                         icon: "location.fill",
                         title: "Stops",
                         value: "\(adventure.stops.count)",
-                        color: AppleColors.success
+                        color: DesignTokens.Semantic.success
                     )
 
                     // Distance
@@ -132,7 +132,7 @@ struct AdventureRecapView: View {
                         icon: "figure.walk",
                         title: "Distance",
                         value: "2.3 mi",
-                        color: AppleColors.warning
+                        color: DesignTokens.Semantic.warning
                     )
                 }
             }
@@ -140,7 +140,7 @@ struct AdventureRecapView: View {
     }
 
     private func statCard(icon: String, title: String, value: String, color: Color) -> some View {
-        VStack(spacing: AppleSpacing.sm) {
+        VStack(spacing: DesignTokens.Spacing.sm) {
             Image(systemName: icon)
                 .font(.system(size: 24, weight: .medium))
                 .foregroundColor(color)
@@ -148,11 +148,11 @@ struct AdventureRecapView: View {
             Text(value)
                 .font(AppleTypography.largeTitle)
                 .fontWeight(.bold)
-                .foregroundColor(AppleColors.textPrimary)
+                .foregroundColor(DesignTokens.Text.primary)
 
             Text(title)
-                .font(AppleTypography.caption1)
-                .foregroundColor(AppleColors.textSecondary)
+                .font(DesignTokens.Typography.caption1)
+                .foregroundColor(DesignTokens.Text.secondary)
         }
         .frame(maxWidth: .infinity)
     }
@@ -162,8 +162,8 @@ struct AdventureRecapView: View {
     private var mapSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Your Journey")
-                .font(AppleTypography.title3)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
 
             Map(coordinateRegion: .constant(mapRegion), annotationItems: adventure.stops) { stop in
                 MapAnnotation(coordinate: stop.location.coordinate) {
@@ -207,8 +207,8 @@ struct AdventureRecapView: View {
     private var stopsSummarySection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Stops Visited")
-                .font(AppleTypography.title3)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
 
             VStack(spacing: 12) {
                 ForEach(Array(adventure.stops.enumerated()), id: \.element.id) { index, stop in
@@ -219,7 +219,7 @@ struct AdventureRecapView: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(AppleColors.surfaceTertiary)
+                .fill(DesignTokens.Surface.tertiary)
         )
     }
 
@@ -232,19 +232,19 @@ struct AdventureRecapView: View {
                     .frame(width: 32, height: 32)
 
                 Text("\(index + 1)")
-                    .font(AppleTypography.body)
+                    .font(DesignTokens.Typography.body)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
             }
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(stop.name)
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Text(stop.description ?? "No description available")
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
 
             Spacer()
@@ -252,7 +252,7 @@ struct AdventureRecapView: View {
             // Category Icon
             Image(systemName: stopIcon(for: stop.category))
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(AppleColors.brandPrimary)
+                .foregroundColor(DesignTokens.Brand.primary)
         }
         .padding(.vertical, 8)
     }
@@ -279,8 +279,8 @@ struct AdventureRecapView: View {
     private var ratingSection: some View {
         VStack(spacing: 16) {
             Text("How was your adventure?")
-                .font(AppleTypography.title3)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
 
             HStack(spacing: 8) {
                 ForEach(1 ... 5, id: \.self) { rating in
@@ -292,7 +292,7 @@ struct AdventureRecapView: View {
                     }) {
                         Image(systemName: rating <= userRating ? "star.fill" : "star")
                             .font(.system(size: 24, weight: .medium))
-                            .foregroundColor(rating <= userRating ? .yellow : AppleColors.textSecondary)
+                            .foregroundColor(rating <= userRating ? .yellow : DesignTokens.Text.secondary)
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
@@ -300,15 +300,15 @@ struct AdventureRecapView: View {
 
             if userRating > 0 {
                 Text(ratingText)
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .multilineTextAlignment(.center)
             }
         }
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(AppleColors.surfaceTertiary)
+                .fill(DesignTokens.Surface.tertiary)
         )
     }
 
@@ -334,7 +334,7 @@ struct AdventureRecapView: View {
                         .font(.system(size: 16, weight: .medium))
 
                     Text("Share Adventure")
-                        .font(AppleTypography.body)
+                        .font(DesignTokens.Typography.body)
                         .fontWeight(.semibold)
                 }
                 .foregroundColor(.white)
@@ -342,7 +342,7 @@ struct AdventureRecapView: View {
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(AppleColors.brandGradient)
+                        .fill(DesignTokens.Brand.gradient)
                 )
             }
 
@@ -353,15 +353,15 @@ struct AdventureRecapView: View {
                         .font(.system(size: 16, weight: .medium))
 
                     Text("Create Another Adventure")
-                        .font(AppleTypography.body)
+                        .font(DesignTokens.Typography.body)
                         .fontWeight(.medium)
                 }
-                .foregroundColor(AppleColors.textPrimary)
+                .foregroundColor(DesignTokens.Text.primary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(AppleColors.surfaceSecondary)
+                        .fill(DesignTokens.Surface.secondary)
                 )
             }
         }

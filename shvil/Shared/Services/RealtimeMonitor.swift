@@ -282,8 +282,8 @@ struct RealtimeMonitorView: View {
             // Header
             HStack {
                 Text("Realtime Monitor")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
                 
                 Spacer()
                 
@@ -314,12 +314,12 @@ struct RealtimeMonitorView: View {
                     HStack(spacing: 8) {
                         ForEach(Array(monitor.activeChannels).sorted(), id: \.self) { channel in
                             Text(channel)
-                                .font(AppleTypography.caption1)
+                                .font(DesignTokens.Typography.caption1)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(
                                     RoundedRectangle(cornerRadius: 8)
-                                        .fill(AppleColors.surfaceSecondary)
+                                        .fill(DesignTokens.Surface.secondary)
                                 )
                         }
                     }
@@ -334,7 +334,7 @@ struct RealtimeMonitorView: View {
             }
             .listStyle(.plain)
         }
-        .background(AppleColors.background)
+        .background(DesignTokens.Surface.background)
         .onAppear {
             if !monitor.isMonitoring {
                 monitor.startMonitoring()
@@ -350,20 +350,20 @@ struct RealtimeEventRow: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("\(event.channel).\(event.event)")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.primary)
                 
                 Spacer()
                 
                 Text(event.timestamp, formatter: timeFormatter)
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
             
             if !event.payload.isEmpty {
                 Text(prettyPrint(event.payload))
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .padding(.top, 4)
             }
         }

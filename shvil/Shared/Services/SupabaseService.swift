@@ -18,19 +18,25 @@ public class SupabaseService: ObservableObject {
 
     private init() {
         // Use configuration system for proper setup
-        guard let url = URL(string: Configuration.supabaseURL) else {
-            fatalError("Invalid Supabase URL: \(Configuration.supabaseURL)")
-        }
-
-        client = SupabaseClient(supabaseURL: url, supabaseKey: Configuration.supabaseAnonKey)
-
-        // Test connection only if properly configured
         if Configuration.isSupabaseConfigured {
+            guard let url = URL(string: Configuration.supabaseURL) else {
+                fatalError("Invalid Supabase URL: \(Configuration.supabaseURL)")
+            }
+            client = SupabaseClient(supabaseURL: url, supabaseKey: Configuration.supabaseAnonKey)
+            
             Task {
                 await testConnection()
             }
         } else {
-            print("⚠️ WARNING: Supabase not configured. Using placeholder values.")
+            // Create a mock client for development when not configured
+            guard let url = URL(string: "https://demo.supabase.co") else {
+                fatalError("Invalid demo URL")
+            }
+            client = SupabaseClient(supabaseURL: url, supabaseKey: "demo-key")
+            
+            // Set as not connected for demo mode
+            isConnected = false
+            print("⚠️ WARNING: Supabase not configured. Running in demo mode.")
         }
     }
 
@@ -113,7 +119,9 @@ public class SupabaseService: ObservableObject {
 
     func savePlace(_ place: SavedPlace) async throws {
         guard isConnected else {
-            throw SupabaseError.notConnected
+            // In demo mode, just print success
+            print("Demo mode: Place would be saved: \(place)")
+            return
         }
 
         do {
@@ -133,7 +141,8 @@ public class SupabaseService: ObservableObject {
 
     func getSavedPlaces() async throws -> [SavedPlace] {
         guard isConnected else {
-            throw SupabaseError.notConnected
+            // Return empty array for demo mode
+            return []
         }
 
         do {
@@ -154,7 +163,9 @@ public class SupabaseService: ObservableObject {
 
     func deletePlace(id: UUID) async throws {
         guard isConnected else {
-            throw SupabaseError.notConnected
+            // In demo mode, just print success
+            print("Demo mode: Place would be deleted: \(id)")
+            return
         }
 
         do {

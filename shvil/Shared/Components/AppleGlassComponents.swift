@@ -56,7 +56,7 @@ struct AppleGlassButton: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: AppleSpacing.sm) {
+            HStack(spacing: DesignTokens.Spacing.sm) {
                 if isLoading {
                     ProgressView()
                         .scaleEffect(0.8)
@@ -94,8 +94,8 @@ struct AppleGlassButton: View {
     private var textFont: Font {
         switch size {
         case .small: AppleTypography.footnoteEmphasized
-        case .medium: AppleTypography.bodyEmphasized
-        case .large: AppleTypography.headline
+        case .medium: DesignTokens.Typography.bodyEmphasized
+        case .large: DesignTokens.Typography.headline
         }
     }
     
@@ -110,25 +110,25 @@ struct AppleGlassButton: View {
     private var textColor: Color {
         switch style {
         case .primary: .white
-        case .secondary: AppleColors.textPrimary
+        case .secondary: DesignTokens.Text.primary
         case .destructive: .white
-        case .ghost: AppleColors.brandPrimary
+        case .ghost: DesignTokens.Brand.primary
         }
     }
     
     private var horizontalPadding: CGFloat {
         switch size {
-        case .small: AppleSpacing.md
-        case .medium: AppleSpacing.lg
-        case .large: AppleSpacing.xl
+        case .small: DesignTokens.Spacing.md
+        case .medium: DesignTokens.Spacing.lg
+        case .large: DesignTokens.Spacing.xl
         }
     }
     
     private var verticalPadding: CGFloat {
         switch size {
-        case .small: AppleSpacing.sm
-        case .medium: AppleSpacing.md
-        case .large: AppleSpacing.lg
+        case .small: DesignTokens.Spacing.sm
+        case .medium: DesignTokens.Spacing.md
+        case .large: DesignTokens.Spacing.lg
         }
     }
     
@@ -141,7 +141,7 @@ struct AppleGlassButton: View {
     }
     
     private var backgroundView: some View {
-        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
             .fill(backgroundColor)
             .overlay(overlayView)
             .appleShadow(shadow)
@@ -149,9 +149,9 @@ struct AppleGlassButton: View {
     
     private var backgroundColor: Color {
         switch style {
-        case .primary: AppleColors.brandPrimary
-        case .secondary: AppleColors.surfaceSecondary
-        case .destructive: AppleColors.danger
+        case .primary: DesignTokens.Brand.primary
+        case .secondary: DesignTokens.Surface.secondary
+        case .destructive: DesignTokens.Semantic.error
         case .ghost: Color.clear
         }
     }
@@ -159,21 +159,21 @@ struct AppleGlassButton: View {
     private var overlayView: some View {
         Group {
             if style == .ghost {
-                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                    .stroke(AppleColors.brandPrimary, lineWidth: 1)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                    .stroke(DesignTokens.Brand.primary, lineWidth: 1)
             } else if style == .secondary {
-                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                    .stroke(AppleColors.strokeLight, lineWidth: 1)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                    .stroke(DesignTokens.Stroke.light, lineWidth: 1)
             }
         }
     }
     
-    private var shadow: Shadow {
+    private var shadow: ShadowValue {
         switch style {
-        case .primary: AppleShadows.medium
-        case .secondary: AppleShadows.light
-        case .destructive: AppleShadows.medium
-        case .ghost: AppleShadows.none
+        case .primary: DesignTokens.Shadow.medium
+        case .secondary: DesignTokens.Shadow.light
+        case .destructive: DesignTokens.Shadow.medium
+        case .ghost: DesignTokens.Shadow.none
         }
     }
 }
@@ -200,38 +200,38 @@ struct AppleGlassCard<Content: View>: View {
     
     var body: some View {
         content
-            .padding(AppleSpacing.md)
+            .padding(DesignTokens.Spacing.md)
             .background(backgroundView)
             .appleShadow(shadow)
             .applePerformanceOptimized() // Add performance optimization
     }
     
     private var backgroundView: some View {
-        RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
             .fill(backgroundColor)
             .overlay(overlayView)
     }
     
     private var backgroundColor: Color {
         switch style {
-        case .elevated: AppleColors.surfaceSecondary
-        case .filled: AppleColors.surfaceTertiary
+        case .elevated: DesignTokens.Surface.secondary
+        case .filled: DesignTokens.Surface.tertiary
         case .outlined: Color.clear
-        case .floating: AppleColors.surface
+        case .floating: DesignTokens.Surface.primary
         }
     }
     
     private var overlayView: some View {
-        RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
             .stroke(strokeColor, lineWidth: strokeWidth)
     }
     
     private var strokeColor: Color {
         switch style {
-        case .elevated: AppleColors.glassLight
-        case .filled: AppleColors.strokeLight
-        case .outlined: AppleColors.brandPrimary
-        case .floating: AppleColors.strokeHairline
+        case .elevated: DesignTokens.Glass.light
+        case .filled: DesignTokens.Stroke.light
+        case .outlined: DesignTokens.Brand.primary
+        case .floating: DesignTokens.Stroke.hairline
         }
     }
     
@@ -244,12 +244,12 @@ struct AppleGlassCard<Content: View>: View {
         }
     }
     
-    private var shadow: Shadow {
+    private var shadow: ShadowValue {
         switch style {
-        case .elevated: AppleShadows.medium
-        case .filled: AppleShadows.light
-        case .outlined: AppleShadows.light
-        case .floating: AppleShadows.glass
+        case .elevated: DesignTokens.Shadow.medium
+        case .filled: DesignTokens.Shadow.light
+        case .outlined: DesignTokens.Shadow.light
+        case .floating: DesignTokens.Shadow.glass
         }
     }
 }
@@ -278,7 +278,7 @@ struct AppleGlassChip: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: AppleSpacing.xs) {
+            HStack(spacing: DesignTokens.Spacing.xs) {
                 if let icon {
                     Image(systemName: icon)
                         .font(.system(size: 14, weight: .medium))
@@ -288,8 +288,8 @@ struct AppleGlassChip: View {
                     .font(AppleTypography.footnoteEmphasized)
             }
             .foregroundColor(textColor)
-            .padding(.horizontal, AppleSpacing.md)
-            .padding(.vertical, AppleSpacing.sm)
+            .padding(.horizontal, DesignTokens.Spacing.md)
+            .padding(.vertical, DesignTokens.Spacing.sm)
             .background(backgroundView)
             .scaleEffect(isPressed ? 0.95 : 1.0)
         }
@@ -306,7 +306,7 @@ struct AppleGlassChip: View {
     }
     
     private var textColor: Color {
-        isSelected ? .white : AppleColors.textPrimary
+        isSelected ? .white : DesignTokens.Text.primary
     }
     
     private var backgroundView: some View {
@@ -316,12 +316,12 @@ struct AppleGlassChip: View {
     }
     
     private var backgroundColor: Color {
-        isSelected ? AppleColors.brandPrimary : AppleColors.surfaceSecondary
+        isSelected ? DesignTokens.Brand.primary : DesignTokens.Surface.secondary
     }
     
     private var overlayView: some View {
         Capsule()
-            .stroke(AppleColors.brandPrimary, lineWidth: isSelected ? 0 : 1)
+            .stroke(DesignTokens.Brand.primary, lineWidth: isSelected ? 0 : 1)
     }
 }
 
@@ -359,7 +359,7 @@ struct AppleGlassSheet<Content: View>: View {
                 Color.black.opacity(0.3)
                     .ignoresSafeArea()
                     .onTapGesture {
-                        withAnimation(AppleAnimations.standard) {
+                        withAnimation(DesignTokens.Animation.standard) {
                             isPresented.wrappedValue = false
                         }
                     }
@@ -368,36 +368,36 @@ struct AppleGlassSheet<Content: View>: View {
                 VStack(spacing: 0) {
                     // Handle
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(AppleColors.textTertiary)
+                        .fill(DesignTokens.Text.tertiary)
                         .frame(width: 36, height: 4)
-                        .padding(.top, AppleSpacing.sm)
+                        .padding(.top, DesignTokens.Spacing.sm)
                     
                     // Title
                     if let title {
                         Text(title)
-                            .font(AppleTypography.title3)
-                            .foregroundColor(AppleColors.textPrimary)
-                            .padding(.top, AppleSpacing.md)
+                            .font(DesignTokens.Typography.title3)
+                            .foregroundColor(DesignTokens.Text.primary)
+                            .padding(.top, DesignTokens.Spacing.md)
                     }
                     
                     // Content
                     content
-                        .padding(.horizontal, AppleSpacing.md)
-                        .padding(.bottom, AppleSpacing.lg)
+                        .padding(.horizontal, DesignTokens.Spacing.md)
+                        .padding(.bottom, DesignTokens.Spacing.lg)
                 }
                 .frame(maxHeight: sheetHeight)
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: AppleCornerRadius.xxl, style: .continuous)
-                        .fill(AppleColors.surface)
+                        .fill(DesignTokens.Surface.primary)
                         .overlay(
                             RoundedRectangle(cornerRadius: AppleCornerRadius.xxl, style: .continuous)
-                                .stroke(AppleColors.strokeHairline, lineWidth: 0.5)
+                                .stroke(DesignTokens.Stroke.hairline, lineWidth: 0.5)
                         )
                 )
-                .appleShadow(AppleShadows.glass)
+                .appleShadow(DesignTokens.Shadow.glass)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
-                .animation(AppleAnimations.spring, value: isPresented.wrappedValue)
+                .animation(DesignTokens.Animation.spring, value: isPresented.wrappedValue)
             }
         }
     }
@@ -441,7 +441,7 @@ struct AppleGlassNavBar: View {
                 Button(action: leadingButton.action) {
                     Image(systemName: leadingButton.icon)
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(AppleColors.textPrimary)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .frame(width: 44, height: 44)
                 }
             } else {
@@ -451,8 +451,8 @@ struct AppleGlassNavBar: View {
             
             // Title
             Text(title)
-                .font(AppleTypography.title3)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
                 .frame(maxWidth: .infinity)
             
             // Trailing Button
@@ -460,7 +460,7 @@ struct AppleGlassNavBar: View {
                 Button(action: trailingButton.action) {
                     Image(systemName: trailingButton.icon)
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(AppleColors.textPrimary)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .frame(width: 44, height: 44)
                 }
             } else {
@@ -468,19 +468,19 @@ struct AppleGlassNavBar: View {
                     .frame(width: 44)
             }
         }
-        .padding(.horizontal, AppleSpacing.md)
-        .padding(.vertical, AppleSpacing.sm)
+        .padding(.horizontal, DesignTokens.Spacing.md)
+        .padding(.vertical, DesignTokens.Spacing.sm)
         .background(
             Rectangle()
-                .fill(AppleColors.surface)
+                .fill(DesignTokens.Surface.primary)
                 .overlay(
                     Rectangle()
-                        .fill(AppleColors.strokeHairline)
+                        .fill(DesignTokens.Stroke.hairline)
                         .frame(height: 0.5),
                     alignment: .bottom
                 )
         )
-        .appleShadow(AppleShadows.light)
+        .appleShadow(DesignTokens.Shadow.light)
     }
 }
 
@@ -504,7 +504,7 @@ struct AppleGlassStatusIndicator: View {
     }
     
     var body: some View {
-        HStack(spacing: AppleSpacing.sm) {
+        HStack(spacing: DesignTokens.Spacing.sm) {
             // Status Icon
             Group {
                 if status == .loading {
@@ -522,20 +522,20 @@ struct AppleGlassStatusIndicator: View {
             if let message {
                 Text(message)
                     .font(AppleTypography.footnote)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .foregroundColor(DesignTokens.Text.primary)
             }
         }
-        .padding(.horizontal, AppleSpacing.md)
-        .padding(.vertical, AppleSpacing.sm)
+        .padding(.horizontal, DesignTokens.Spacing.md)
+        .padding(.vertical, DesignTokens.Spacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
                 .fill(backgroundColor)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                        .stroke(AppleColors.strokeLight, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                        .stroke(DesignTokens.Stroke.light, lineWidth: 1)
                 )
         )
-        .appleShadow(AppleShadows.light)
+        .appleShadow(DesignTokens.Shadow.light)
     }
     
     private var iconName: String {
@@ -550,21 +550,21 @@ struct AppleGlassStatusIndicator: View {
     
     private var iconColor: Color {
         switch status {
-        case .success: AppleColors.success
-        case .warning: AppleColors.warning
-        case .error: AppleColors.danger
-        case .info: AppleColors.info
-        case .loading: AppleColors.brandPrimary
+        case .success: DesignTokens.Semantic.success
+        case .warning: DesignTokens.Semantic.warning
+        case .error: DesignTokens.Semantic.error
+        case .info: DesignTokens.Semantic.info
+        case .loading: DesignTokens.Brand.primary
         }
     }
     
     private var backgroundColor: Color {
         switch status {
-        case .success: AppleColors.success.opacity(0.1)
-        case .warning: AppleColors.warning.opacity(0.1)
-        case .error: AppleColors.danger.opacity(0.1)
-        case .info: AppleColors.info.opacity(0.1)
-        case .loading: AppleColors.brandPrimary.opacity(0.1)
+        case .success: DesignTokens.Semantic.success.opacity(0.1)
+        case .warning: DesignTokens.Semantic.warning.opacity(0.1)
+        case .error: DesignTokens.Semantic.error.opacity(0.1)
+        case .info: DesignTokens.Semantic.info.opacity(0.1)
+        case .loading: DesignTokens.Brand.primary.opacity(0.1)
         }
     }
 }
@@ -587,22 +587,22 @@ struct AppleGlassLoadingIndicator: View {
     }
     
     var body: some View {
-        VStack(spacing: AppleSpacing.md) {
+        VStack(spacing: DesignTokens.Spacing.md) {
             // Loading Indicator
             Group {
                 switch style {
                 case .circular:
                     ProgressView()
                         .scaleEffect(1.2)
-                        .progressViewStyle(CircularProgressViewStyle(tint: AppleColors.brandPrimary))
+                        .progressViewStyle(CircularProgressViewStyle(tint: DesignTokens.Brand.primary))
                 case .linear:
                     ProgressView()
-                        .progressViewStyle(LinearProgressViewStyle(tint: AppleColors.brandPrimary))
+                        .progressViewStyle(LinearProgressViewStyle(tint: DesignTokens.Brand.primary))
                 case .dots:
                     HStack(spacing: 4) {
                         ForEach(0..<3) { index in
                             Circle()
-                                .fill(AppleColors.brandPrimary)
+                                .fill(DesignTokens.Brand.primary)
                                 .frame(width: 8, height: 8)
                                 .scaleEffect(animationScale(for: index))
                                 .animation(
@@ -620,20 +620,20 @@ struct AppleGlassLoadingIndicator: View {
             if let message {
                 Text(message)
                     .font(AppleTypography.footnote)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .multilineTextAlignment(.center)
             }
         }
-        .padding(AppleSpacing.lg)
+        .padding(DesignTokens.Spacing.lg)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                .fill(AppleColors.surface)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                .fill(DesignTokens.Surface.primary)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                        .stroke(AppleColors.strokeHairline, lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                        .stroke(DesignTokens.Stroke.hairline, lineWidth: 0.5)
                 )
         )
-        .appleShadow(AppleShadows.light)
+        .appleShadow(DesignTokens.Shadow.light)
     }
     
     private func animationScale(for index: Int) -> CGFloat {
@@ -675,14 +675,14 @@ struct AppleGlassProgressBar: View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 // Background
-                RoundedRectangle(cornerRadius: AppleCornerRadius.sm)
-                    .fill(AppleColors.surfaceSecondary)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
+                    .fill(DesignTokens.Surface.secondary)
                 
                 // Progress
-                RoundedRectangle(cornerRadius: AppleCornerRadius.sm)
-                    .fill(AppleColors.brandPrimary)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
+                    .fill(DesignTokens.Brand.primary)
                     .frame(width: geometry.size.width * progressRatio)
-                    .animation(AppleAnimations.standard, value: progressRatio)
+                    .animation(DesignTokens.Animation.standard, value: progressRatio)
             }
         }
         .frame(height: 8)
@@ -692,17 +692,17 @@ struct AppleGlassProgressBar: View {
         ZStack {
             // Background Circle
             Circle()
-                .stroke(AppleColors.surfaceSecondary, lineWidth: 4)
+                .stroke(DesignTokens.Surface.secondary, lineWidth: 4)
             
             // Progress Circle
             Circle()
                 .trim(from: 0, to: progressRatio)
                 .stroke(
-                    AppleColors.brandPrimary,
+                    DesignTokens.Brand.primary,
                     style: StrokeStyle(lineWidth: 4, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(AppleAnimations.standard, value: progressRatio)
+                .animation(DesignTokens.Animation.standard, value: progressRatio)
         }
         .frame(width: 40, height: 40)
     }
@@ -736,24 +736,24 @@ struct AppleGlassEmptyState: View {
     }
     
     var body: some View {
-        VStack(spacing: AppleSpacing.lg) {
+        VStack(spacing: DesignTokens.Spacing.lg) {
             // Icon
             if let icon {
                 Image(systemName: icon)
                     .font(.system(size: 48, weight: .light))
-                    .foregroundColor(AppleColors.textTertiary)
+                    .foregroundColor(DesignTokens.Text.tertiary)
             }
             
             // Content
-            VStack(spacing: AppleSpacing.sm) {
+            VStack(spacing: DesignTokens.Spacing.sm) {
                 Text(title)
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
                     .multilineTextAlignment(.center)
                 
                 Text(description)
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .multilineTextAlignment(.center)
             }
             
@@ -767,17 +767,17 @@ struct AppleGlassEmptyState: View {
                 )
             }
         }
-        .padding(AppleSpacing.xl)
+        .padding(DesignTokens.Spacing.xl)
         .frame(maxWidth: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                .fill(AppleColors.surface)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                .fill(DesignTokens.Surface.primary)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                        .stroke(AppleColors.strokeHairline, lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                        .stroke(DesignTokens.Stroke.hairline, lineWidth: 0.5)
                 )
         )
-        .appleShadow(AppleShadows.light)
+        .appleShadow(DesignTokens.Shadow.light)
     }
 }
 
@@ -850,7 +850,7 @@ struct AppleGlassFAB: View {
     private var textColor: Color {
         switch style {
         case .primary: .white
-        case .secondary: AppleColors.textPrimary
+        case .secondary: DesignTokens.Text.primary
         case .destructive: .white
         }
     }
@@ -872,25 +872,25 @@ struct AppleGlassFAB: View {
     
     private var backgroundColor: Color {
         switch style {
-        case .primary: AppleColors.brandPrimary
-        case .secondary: AppleColors.surfaceSecondary
-        case .destructive: AppleColors.danger
+        case .primary: DesignTokens.Brand.primary
+        case .secondary: DesignTokens.Surface.secondary
+        case .destructive: DesignTokens.Semantic.error
         }
     }
     
     private var strokeColor: Color {
         switch style {
         case .primary: .clear
-        case .secondary: AppleColors.strokeLight
+        case .secondary: DesignTokens.Stroke.light
         case .destructive: .clear
         }
     }
     
     private var shadowColor: Color {
         switch style {
-        case .primary: AppleColors.brandPrimary.opacity(0.3)
-        case .secondary: AppleShadows.light.color
-        case .destructive: AppleColors.danger.opacity(0.3)
+        case .primary: DesignTokens.Brand.primary.opacity(0.3)
+        case .secondary: DesignTokens.Shadow.light.color
+        case .destructive: DesignTokens.Semantic.error.opacity(0.3)
         }
     }
     
@@ -942,19 +942,19 @@ struct AppleGlassListRow: View {
                 if let icon = icon {
                     Image(systemName: icon)
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(AppleColors.brandPrimary)
+                        .foregroundColor(DesignTokens.Brand.primary)
                         .frame(width: 24, height: 24)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.primary)
                     
                     if let subtitle = subtitle {
                         Text(subtitle)
-                            .font(AppleTypography.caption1)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.caption1)
+                            .foregroundColor(DesignTokens.Text.secondary)
                     }
                 }
                 
@@ -965,17 +965,17 @@ struct AppleGlassListRow: View {
                 } else {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(AppleColors.textSecondary)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(
-                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                    .fill(AppleColors.surfaceSecondary)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                    .fill(DesignTokens.Surface.secondary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                            .stroke(AppleColors.strokeLight, lineWidth: 0.5)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                            .stroke(DesignTokens.Stroke.light, lineWidth: 0.5)
                     )
             )
             .scaleEffect(isPressed ? 0.98 : 1.0)

@@ -155,8 +155,8 @@ struct ServiceStatusRow: View {
     var body: some View {
         HStack {
             Text(service.capitalized)
-                .font(AppleTypography.body)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.body)
+                .foregroundColor(DesignTokens.Text.primary)
             
             Spacer()
             
@@ -173,8 +173,8 @@ struct HealthStatusView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("System Health")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
                 
                 Spacer()
                 
@@ -185,8 +185,8 @@ struct HealthStatusView: View {
             
             if let lastCheck = healthService.lastCheckTime {
                 Text("Last checked: \(lastCheck, formatter: timeFormatter)")
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
             
             // Services status
@@ -200,23 +200,23 @@ struct HealthStatusView: View {
             if let metrics = healthService.systemMetrics {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("System Metrics")
-                        .font(AppleTypography.bodySemibold)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.bodySemibold)
+                        .foregroundColor(DesignTokens.Text.primary)
                     
                     Text("Database: \(metrics.databaseSize)")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                     
                     Text("Connections: \(metrics.activeConnections)/\(metrics.maxConnections)")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
             }
             
             // Error display
             if let error = healthService.lastError {
                 Text("Error: \(error.localizedDescription)")
-                    .font(AppleTypography.caption1)
+                    .font(DesignTokens.Typography.caption1)
                     .foregroundColor(.red)
             }
             
@@ -232,7 +232,7 @@ struct HealthStatusView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(AppleColors.surfaceTertiary)
+                .fill(DesignTokens.Surface.tertiary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(Color.white.opacity(0.2), lineWidth: 1)

@@ -25,14 +25,14 @@ struct NavigationButton: View {
                 Text(title)
                     .font(AppleTypography.caption2)
             }
-            .foregroundColor(isActive ? AppleColors.brandPrimary : AppleColors.textSecondary)
+            .foregroundColor(isActive ? DesignTokens.Brand.primary : DesignTokens.Text.secondary)
             .frame(width: 48, height: 48)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isActive ? AppleColors.surfaceSecondary : AppleColors.surfaceTertiary)
+                    .fill(isActive ? DesignTokens.Surface.secondary : DesignTokens.Surface.tertiary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(isActive ? AppleColors.brandPrimary.opacity(0.3) : Color.clear, lineWidth: 1)
+                            .stroke(isActive ? DesignTokens.Brand.primary.opacity(0.3) : Color.clear, lineWidth: 1)
                     )
             )
         }
@@ -54,27 +54,27 @@ struct TurnInstructionCard: View {
             // Turn Icon
             Image(systemName: turnIcon(for: step))
                 .font(.system(size: 24, weight: .medium))
-                .foregroundColor(AppleColors.brandPrimary)
+                .foregroundColor(DesignTokens.Brand.primary)
                 .frame(width: 32, height: 32)
                 .background(
                     Circle()
-                        .fill(AppleColors.surfaceSecondary)
+                        .fill(DesignTokens.Surface.secondary)
                         .overlay(
                             Circle()
-                                .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 1)
+                                .stroke(DesignTokens.Brand.primary.opacity(0.3), lineWidth: 1)
                         )
                 )
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(step.instructions)
                     .font(AppleTypography.largeTitle)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .foregroundColor(DesignTokens.Text.primary)
                     .lineLimit(2)
                 
                 if let nextStep = nextStep {
                     Text("Then \(nextStep.instructions)")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .lineLimit(1)
                 }
             }
@@ -83,8 +83,8 @@ struct TurnInstructionCard: View {
             
             // Distance to Turn
             Text(MKDistanceFormatter().string(fromDistance: distance))
-                .font(AppleTypography.caption1Medium)
-                .foregroundColor(AppleColors.brandPrimary)
+                .font(DesignTokens.Typography.caption1Medium)
+                .foregroundColor(DesignTokens.Brand.primary)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
@@ -123,21 +123,21 @@ struct RouteOptionSelector: View {
                 Button(action: { onSelectionChanged(option) }) {
                     VStack(spacing: 4) {
                         Text(option.name)
-                            .font(AppleTypography.caption1Medium)
-                            .foregroundColor(option.id == selectedOption.id ? AppleColors.brandPrimary : AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.caption1Medium)
+                            .foregroundColor(option.id == selectedOption.id ? DesignTokens.Brand.primary : DesignTokens.Text.secondary)
                         
                         Text(option.formattedTime)
                             .font(AppleTypography.caption2)
-                            .foregroundColor(option.id == selectedOption.id ? AppleColors.brandPrimary : AppleColors.textSecondary)
+                            .foregroundColor(option.id == selectedOption.id ? DesignTokens.Brand.primary : DesignTokens.Text.secondary)
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(option.id == selectedOption.id ? AppleColors.surfaceSecondary : AppleColors.surfaceTertiary)
+                            .fill(option.id == selectedOption.id ? DesignTokens.Surface.secondary : DesignTokens.Surface.tertiary)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 16)
-                                    .stroke(option.id == selectedOption.id ? AppleColors.brandPrimary.opacity(0.3) : Color.clear, lineWidth: 1)
+                                    .stroke(option.id == selectedOption.id ? DesignTokens.Brand.primary.opacity(0.3) : Color.clear, lineWidth: 1)
                             )
                     )
                 }
@@ -160,23 +160,23 @@ struct NavigationStatusIndicator: View {
         HStack(spacing: 8) {
             // Status Dot
             Circle()
-                .fill(isActive ? AppleColors.brandPrimary : AppleColors.textSecondary)
+                .fill(isActive ? DesignTokens.Brand.primary : DesignTokens.Text.secondary)
                 .frame(width: 8, height: 8)
                 .scaleEffect(isActive ? 1.2 : 1.0)
                 .animation(AppleAnimations.microInteraction, value: isActive)
             
             if isActive {
                 Text(formattedTime)
-                    .font(AppleTypography.caption1Medium)
-                    .foregroundColor(AppleColors.brandPrimary)
+                    .font(DesignTokens.Typography.caption1Medium)
+                    .foregroundColor(DesignTokens.Brand.primary)
                 
                 Text("•")
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
                 
                 Text(formattedDistance)
-                    .font(AppleTypography.caption1Medium)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1Medium)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
         }
     }
@@ -211,14 +211,14 @@ struct EmergencyButton: View {
                 Text("Help")
                     .font(AppleTypography.caption2)
             }
-            .foregroundColor(AppleColors.error)
+            .foregroundColor(DesignTokens.Semantic.error)
             .frame(width: 48, height: 48)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(AppleColors.surfaceSecondary)
+                    .fill(DesignTokens.Surface.secondary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(AppleColors.error.opacity(0.3), lineWidth: 1)
+                            .stroke(DesignTokens.Semantic.error.opacity(0.3), lineWidth: 1)
                     )
             )
         }
@@ -255,13 +255,13 @@ struct NavigationGlassSurface: View {
     private var glassColor: Color {
         switch elevation {
         case .light:
-            return AppleColors.surfaceTertiary
+            return DesignTokens.Surface.tertiary
         case .low:
-            return AppleColors.surfaceTertiary
+            return DesignTokens.Surface.tertiary
         case .medium:
-            return AppleColors.surfaceSecondary
+            return DesignTokens.Surface.secondary
         case .high:
-            return AppleColors.surfacePrimary
+            return DesignTokens.Surface.primary
         }
     }
     

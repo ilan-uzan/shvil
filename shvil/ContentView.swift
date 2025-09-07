@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var localizationManager = LocalizationManager.shared
+    @EnvironmentObject private var accessibilityManager: AccessibilityManager
+    @EnvironmentObject private var performanceOptimizer: PerformanceOptimizer
     @State private var selectedTab = 0
     @State private var showAdventureSetup = false
     @State private var hasCompletedOnboarding = false
@@ -46,8 +48,9 @@ struct ContentView: View {
                     MapView()
                 }
             }
-            .animation(.easeInOut(duration: 0.3), value: selectedTab)
+            .animation(accessibilityManager.getAccessibleAnimation(), value: selectedTab)
             .ignoresSafeArea(.all, edges: .bottom) // Allow content to go behind navigation
+            .performanceOptimizedView()
             
             // Floating Liquid Glass Navigation - No Background Container
             VStack {
@@ -288,6 +291,13 @@ struct AdventuresView: View {
                     RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
                         .fill(DesignTokens.Surface.secondary)
                 )
+                .accessibleButton(
+                    label: "View adventure details",
+                    hint: "Double tap to view \(adventure.theme.displayName) adventure details",
+                    action: {
+                        selectedAdventure = adventure
+                    }
+                )
                 
                 if adventure.status == .draft {
                     Button("Start") {
@@ -302,6 +312,13 @@ struct AdventuresView: View {
                         RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
                             .fill(DesignTokens.Brand.primary)
                     )
+                    .accessibleButton(
+                        label: "Start adventure",
+                        hint: "Double tap to start \(adventure.theme.displayName) adventure",
+                        action: {
+                            startAdventure(adventure)
+                        }
+                    )
                 } else if adventure.status == .completed {
                     Button("Share") {
                         shareAdventure(adventure)
@@ -314,6 +331,13 @@ struct AdventuresView: View {
                     .background(
                         RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
                             .fill(DesignTokens.Surface.secondary)
+                    )
+                    .accessibleButton(
+                        label: "Share adventure",
+                        hint: "Double tap to share \(adventure.theme.displayName) adventure",
+                        action: {
+                            shareAdventure(adventure)
+                        }
                     )
                 }
             }
@@ -342,8 +366,14 @@ struct AdventuresView: View {
         .onTapGesture {
             selectedAdventure = adventure
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(adventure.theme.displayName) adventure, \(adventure.totalDuration) hours, \(adventure.stops.count) stops")
+        .accessibleButton(
+            label: "\(adventure.theme.displayName) adventure",
+            hint: "\(adventure.totalDuration) hours, \(adventure.stops.count) stops. Double tap to view details.",
+            action: {
+                selectedAdventure = adventure
+            }
+        )
+        .accessibleHitTarget()
     }
     
     private func startAdventure(_ adventure: AdventurePlan) {

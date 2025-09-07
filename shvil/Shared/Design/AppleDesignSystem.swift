@@ -162,11 +162,11 @@ enum AppleShadows {
     static let light = Shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
     static let medium = Shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
     static let heavy = Shadow(color: Color.black.opacity(0.12), radius: 18, x: 0, y: 8)
-    static let glass = Shadow(color: AppleColors.brandPrimary.opacity(0.08), radius: 24, x: 0, y: 12)
+    static let glass = Shadow(color: DesignTokens.Brand.primary.opacity(0.08), radius: 24, x: 0, y: 12)
     
     // Inner shadows for depth
-    static let innerLight = Shadow(color: AppleColors.glassInnerHighlight, radius: 2, x: 0, y: 1)
-    static let innerMedium = Shadow(color: AppleColors.glassInnerHighlight, radius: 4, x: 0, y: 2)
+    static let innerLight = Shadow(color: DesignTokens.Glass.innerHighlight, radius: 2, x: 0, y: 1)
+    static let innerMedium = Shadow(color: DesignTokens.Glass.innerHighlight, radius: 4, x: 0, y: 2)
 }
 
 struct Shadow {
@@ -225,7 +225,7 @@ struct GlassmorphismModifier: ViewModifier {
         case modal
     }
     
-    init(intensity: GlassIntensity = .medium, cornerRadius: CGFloat = AppleCornerRadius.xl, isInteractive: Bool = false, elevation: GlassElevation = .raised) {
+    init(intensity: GlassIntensity = .medium, cornerRadius: CGFloat = DesignTokens.CornerRadius.xl, isInteractive: Bool = false, elevation: GlassElevation = .raised) {
         self.intensity = intensity
         self.cornerRadius = cornerRadius
         self.isInteractive = isInteractive
@@ -247,19 +247,19 @@ struct GlassmorphismModifier: ViewModifier {
                         .overlay(
                             // Inner highlight for depth - Apple's specular highlight
                             RoundedRectangle(cornerRadius: cornerRadius)
-                                .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                 .blendMode(.overlay)
                         )
                         .overlay(
                             // Specular highlight for glass reflection
                             RoundedRectangle(cornerRadius: cornerRadius)
-                                .stroke(AppleColors.glassSpecular, lineWidth: 0.5)
+                                .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 0.5)
                                 .blendMode(.overlay)
                         )
                         .overlay(
                             // Outer stroke for definition
                             RoundedRectangle(cornerRadius: cornerRadius)
-                                .stroke(AppleColors.strokeHairline, lineWidth: 0.5)
+                                .stroke(DesignTokens.Stroke.hairline, lineWidth: 0.5)
                         )
                         .overlay(
                             // Interactive state overlay
@@ -270,16 +270,16 @@ struct GlassmorphismModifier: ViewModifier {
                 }
             )
             .shadow(color: AppleShadows.glass.color, radius: AppleShadows.glass.radius, x: AppleShadows.glass.x, y: AppleShadows.glass.y)
-            .shadow(color: AppleShadows.medium.color, radius: AppleShadows.medium.radius, x: AppleShadows.medium.x, y: AppleShadows.medium.y)
+            .shadow(color: DesignTokens.Shadow.medium.color, radius: DesignTokens.Shadow.medium.radius, x: DesignTokens.Shadow.medium.x, y: DesignTokens.Shadow.medium.y)
             .shadow(color: elevationShadow.color, radius: elevationShadow.radius, x: elevationShadow.x, y: elevationShadow.y)
-            .shadow(color: AppleColors.glassOuterGlow, radius: 8, x: 0, y: 0) // Liquid Glass outer glow
+            .shadow(color: DesignTokens.Brand.primary.opacity(0.1), radius: 8, x: 0, y: 0) // Liquid Glass outer glow
     }
     
     private var glassColor: Color {
         switch intensity {
-        case .light: AppleColors.glassLight
-        case .medium: AppleColors.glassMedium
-        case .heavy: AppleColors.glassHeavy
+        case .light: DesignTokens.Glass.light
+        case .medium: DesignTokens.Glass.medium
+        case .heavy: DesignTokens.Glass.heavy
         }
     }
     
@@ -291,12 +291,12 @@ struct GlassmorphismModifier: ViewModifier {
         }
     }
     
-    private var elevationShadow: Shadow {
+    private var elevationShadow: ShadowValue {
         switch elevation {
-        case .flat: AppleShadows.none
-        case .raised: AppleShadows.light
-        case .floating: AppleShadows.medium
-        case .modal: AppleShadows.heavy
+        case .flat: DesignTokens.Shadow.none
+        case .raised: DesignTokens.Shadow.light
+        case .floating: DesignTokens.Shadow.medium
+        case .modal: DesignTokens.Shadow.heavy
         }
     }
 }
@@ -304,19 +304,19 @@ struct GlassmorphismModifier: ViewModifier {
 // MARK: - View Extensions
 
 extension View {
-    func glassmorphism(intensity: GlassmorphismModifier.GlassIntensity = .medium, cornerRadius: CGFloat = AppleCornerRadius.xl, isInteractive: Bool = false, elevation: GlassmorphismModifier.GlassElevation = .raised) -> some View {
+    func glassmorphism(intensity: GlassmorphismModifier.GlassIntensity = .medium, cornerRadius: CGFloat = DesignTokens.CornerRadius.xl, isInteractive: Bool = false, elevation: GlassmorphismModifier.GlassElevation = .raised) -> some View {
         modifier(GlassmorphismModifier(intensity: intensity, cornerRadius: cornerRadius, isInteractive: isInteractive, elevation: elevation))
     }
     
-    func appleShadow(_ shadow: Shadow = AppleShadows.medium) -> some View {
+    func appleShadow(_ shadow: ShadowValue = DesignTokens.Shadow.medium) -> some View {
         self.shadow(color: shadow.color, radius: shadow.radius, x: shadow.x, y: shadow.y)
     }
     
-    func applePadding(_ spacing: CGFloat = AppleSpacing.md) -> some View {
+    func applePadding(_ spacing: CGFloat = DesignTokens.Spacing.md) -> some View {
         padding(spacing)
     }
     
-    func appleCornerRadius(_ radius: CGFloat = AppleCornerRadius.md) -> some View {
+    func appleCornerRadius(_ radius: CGFloat = DesignTokens.CornerRadius.md) -> some View {
         cornerRadius(radius)
     }
 }
@@ -365,7 +365,7 @@ struct AppleButton: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: AppleSpacing.sm) {
+            HStack(spacing: DesignTokens.Spacing.sm) {
                 if isLoading {
                     ProgressView()
                         .scaleEffect(0.8)
@@ -408,50 +408,50 @@ struct AppleButton: View {
     private var buttonFont: Font {
         switch size {
         case .small: AppleTypography.footnoteEmphasized
-        case .medium: AppleTypography.bodyEmphasized
-        case .large: AppleTypography.headline
+        case .medium: DesignTokens.Typography.bodyEmphasized
+        case .large: DesignTokens.Typography.headline
         }
     }
     
     private var iconFont: Font {
         switch size {
         case .small: AppleTypography.footnote
-        case .medium: AppleTypography.body
-        case .large: AppleTypography.title3
+        case .medium: DesignTokens.Typography.body
+        case .large: DesignTokens.Typography.title3
         }
     }
     
     private var textColor: Color {
         switch style {
         case .primary: .white
-        case .secondary: AppleColors.textPrimary
+        case .secondary: DesignTokens.Text.primary
         case .destructive: .white
-        case .ghost: AppleColors.brandPrimary
+        case .ghost: DesignTokens.Brand.primary
         }
     }
     
     private var pressedTextColor: Color {
         switch style {
         case .primary: .white.opacity(0.8)
-        case .secondary: AppleColors.textSecondary
+        case .secondary: DesignTokens.Text.secondary
         case .destructive: .white.opacity(0.8)
-        case .ghost: AppleColors.brandPrimary.opacity(0.8)
+        case .ghost: DesignTokens.Brand.primary.opacity(0.8)
         }
     }
     
     private var horizontalPadding: CGFloat {
         switch size {
-        case .small: AppleSpacing.md
-        case .medium: AppleSpacing.lg
-        case .large: AppleSpacing.xl
+        case .small: DesignTokens.Spacing.md
+        case .medium: DesignTokens.Spacing.lg
+        case .large: DesignTokens.Spacing.xl
         }
     }
     
     private var verticalPadding: CGFloat {
         switch size {
-        case .small: AppleSpacing.sm
-        case .medium: AppleSpacing.md
-        case .large: AppleSpacing.lg
+        case .small: DesignTokens.Spacing.sm
+        case .medium: DesignTokens.Spacing.md
+        case .large: DesignTokens.Spacing.lg
         }
     }
     
@@ -464,65 +464,65 @@ struct AppleButton: View {
     
     private var cornerRadius: CGFloat {
         switch size {
-        case .small: AppleCornerRadius.sm
-        case .medium: AppleCornerRadius.md
-        case .large: AppleCornerRadius.lg
+        case .small: DesignTokens.CornerRadius.sm
+        case .medium: DesignTokens.CornerRadius.md
+        case .large: DesignTokens.CornerRadius.lg
         }
     }
     
     private var backgroundColor: Color {
         switch style {
-        case .primary: AppleColors.brandPrimary
-        case .secondary: AppleColors.surfaceSecondary
-        case .destructive: AppleColors.danger
+        case .primary: DesignTokens.Brand.primary
+        case .secondary: DesignTokens.Surface.secondary
+        case .destructive: DesignTokens.Semantic.error
         case .ghost: Color.clear
         }
     }
     
     private var pressedBackgroundColor: Color {
         switch style {
-        case .primary: AppleColors.brandPrimary.opacity(0.8)
-        case .secondary: AppleColors.surfaceTertiary
-        case .destructive: AppleColors.danger.opacity(0.8)
-        case .ghost: AppleColors.brandPrimary.opacity(0.1)
+        case .primary: DesignTokens.Brand.primary.opacity(0.8)
+        case .secondary: DesignTokens.Surface.tertiary
+        case .destructive: DesignTokens.Semantic.error.opacity(0.8)
+        case .ghost: DesignTokens.Brand.primary.opacity(0.1)
         }
     }
     
     private var overlayView: some View {
         Group {
             if style == .ghost {
-                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                    .stroke(AppleColors.brandPrimary, lineWidth: 1)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                    .stroke(DesignTokens.Brand.primary, lineWidth: 1)
             } else if style == .secondary {
-                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                    .stroke(AppleColors.strokeLight, lineWidth: 1)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                    .stroke(DesignTokens.Stroke.light, lineWidth: 1)
             }
         }
     }
     
-    private var shadow: Shadow {
+    private var shadow: ShadowValue {
         switch style {
-        case .primary: AppleShadows.medium
-        case .secondary: AppleShadows.light
-        case .destructive: AppleShadows.medium
-        case .ghost: AppleShadows.none
+        case .primary: DesignTokens.Shadow.medium
+        case .secondary: DesignTokens.Shadow.light
+        case .destructive: DesignTokens.Shadow.medium
+        case .ghost: DesignTokens.Shadow.none
         }
     }
     
-    private var pressedShadow: Shadow {
+    private var pressedShadow: ShadowValue {
         switch style {
-        case .primary: AppleShadows.light
-        case .secondary: AppleShadows.none
-        case .destructive: AppleShadows.light
-        case .ghost: AppleShadows.none
+        case .primary: DesignTokens.Shadow.light
+        case .secondary: DesignTokens.Shadow.none
+        case .destructive: DesignTokens.Shadow.light
+        case .ghost: DesignTokens.Shadow.none
         }
     }
     
     private func paddingForSize(_ size: ButtonSize) -> (horizontal: CGFloat, vertical: CGFloat) {
         switch size {
-        case .small: return (AppleSpacing.md, AppleSpacing.sm)
-        case .medium: return (AppleSpacing.lg, AppleSpacing.md)
-        case .large: return (AppleSpacing.xl, AppleSpacing.lg)
+        case .small: return (DesignTokens.Spacing.md, DesignTokens.Spacing.sm)
+        case .medium: return (DesignTokens.Spacing.lg, DesignTokens.Spacing.md)
+        case .large: return (DesignTokens.Spacing.xl, DesignTokens.Spacing.lg)
         }
     }
 }
@@ -547,12 +547,12 @@ struct AppleCard<Content: View>: View {
     
     var body: some View {
         content
-            .padding(AppleSpacing.md)
+            .padding(DesignTokens.Spacing.md)
             .background(backgroundView)
     }
     
     private var backgroundView: some View {
-        RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
             .fill(backgroundColor)
             .overlay(overlayView)
             .appleShadow(shadow)
@@ -560,22 +560,22 @@ struct AppleCard<Content: View>: View {
     
     private var backgroundColor: Color {
         switch style {
-        case .elevated: AppleColors.surfaceSecondary
-        case .filled: AppleColors.surfaceTertiary
+        case .elevated: DesignTokens.Surface.secondary
+        case .filled: DesignTokens.Surface.tertiary
         case .outlined: Color.clear
         }
     }
     
     private var overlayView: some View {
-        RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-            .stroke(AppleColors.glassLight, lineWidth: 1)
+        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+            .stroke(DesignTokens.Glass.light, lineWidth: 1)
     }
     
-    private var shadow: Shadow {
+    private var shadow: ShadowValue {
         switch style {
-        case .elevated: AppleShadows.medium
-        case .filled: AppleShadows.light
-        case .outlined: AppleShadows.light
+        case .elevated: DesignTokens.Shadow.medium
+        case .filled: DesignTokens.Shadow.light
+        case .outlined: DesignTokens.Shadow.light
         }
     }
 }
@@ -593,21 +593,21 @@ struct AppleListRow<Content: View>: View {
     
     var body: some View {
         Button(action: action ?? {}) {
-            HStack(spacing: AppleSpacing.md) {
+            HStack(spacing: DesignTokens.Spacing.md) {
                 content
                 
                 if action != nil {
                     Spacer()
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(AppleColors.textTertiary)
+                        .foregroundColor(DesignTokens.Text.tertiary)
                 }
             }
-            .padding(.horizontal, AppleSpacing.md)
-            .padding(.vertical, AppleSpacing.sm)
+            .padding(.horizontal, DesignTokens.Spacing.md)
+            .padding(.vertical, DesignTokens.Spacing.sm)
         }
         .buttonStyle(PlainButtonStyle())
-        .foregroundColor(AppleColors.textPrimary)
+        .foregroundColor(DesignTokens.Text.primary)
     }
 }
 
@@ -617,7 +617,7 @@ struct AppleNavigationBarStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .navigationBarTitleDisplayMode(.large)
-            .toolbarBackground(AppleColors.surface, for: .navigationBar)
+            .toolbarBackground(DesignTokens.Surface.primary, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
     }
 }
@@ -633,7 +633,7 @@ extension View {
 struct AppleTabBarStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .toolbarBackground(AppleColors.surface, for: .tabBar)
+            .toolbarBackground(DesignTokens.Surface.primary, for: .tabBar)
             .toolbarColorScheme(.dark, for: .tabBar)
     }
 }

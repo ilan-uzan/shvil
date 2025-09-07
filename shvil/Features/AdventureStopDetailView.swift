@@ -11,7 +11,7 @@ import SwiftUI
 struct AdventureStopDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var mapEngine = DependencyContainer.shared.mapEngine
-    @StateObject private var locationService = DependencyContainer.shared.locationService
+    @StateObject private var locationManager = DependencyContainer.shared.locationManager
 
     let stop: AdventureStop
     let adventure: AdventurePlan
@@ -23,11 +23,11 @@ struct AdventureStopDetailView: View {
         NavigationView {
             ZStack {
                 // Background
-                AppleColors.background
+                DesignTokens.Surface.background
                     .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: AppleSpacing.lg) {
+                    VStack(spacing: DesignTokens.Spacing.lg) {
                         // Header
                         headerSection
 
@@ -46,8 +46,8 @@ struct AdventureStopDetailView: View {
                         // Action Buttons
                         actionButtonsSection
                     }
-                    .padding(.horizontal, AppleSpacing.lg)
-                    .padding(.bottom, AppleSpacing.lg)
+                    .padding(.horizontal, DesignTokens.Spacing.lg)
+                    .padding(.bottom, DesignTokens.Spacing.lg)
                 }
             }
             .navigationTitle("Stop Details")
@@ -68,15 +68,15 @@ struct AdventureStopDetailView: View {
     // MARK: - Header Section
 
     private var headerSection: some View {
-        VStack(spacing: AppleSpacing.md) {
+        VStack(spacing: DesignTokens.Spacing.md) {
             // Stop Number and Category
             HStack {
                 // Stop Number
                 ZStack {
                     Circle()
-                        .fill(AppleColors.brandGradient)
+                        .fill(DesignTokens.Brand.gradient)
                         .frame(width: 48, height: 48)
-                        .appleShadow(AppleShadows.medium)
+                        .appleShadow(DesignTokens.Shadow.medium)
 
                     Text("\(stopIndex + 1)")
                         .font(AppleTypography.largeTitle)
@@ -84,14 +84,14 @@ struct AdventureStopDetailView: View {
                         .foregroundColor(.white)
                 }
 
-                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                     Text(stop.name)
                         .font(AppleTypography.largeTitle)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .foregroundColor(DesignTokens.Text.primary)
 
                     Text(stop.category.displayName)
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
 
                 Spacer()
@@ -99,33 +99,33 @@ struct AdventureStopDetailView: View {
                 // Category Icon
                 Image(systemName: stopIcon(for: stop.category))
                     .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(AppleColors.brandPrimary)
+                    .foregroundColor(DesignTokens.Brand.primary)
             }
 
             // Duration
             HStack {
                 Image(systemName: "clock")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(AppleColors.textSecondary)
+                    .foregroundColor(DesignTokens.Text.secondary)
 
                 Text("\(stop.estimatedDuration) minutes")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
 
                 Spacer()
 
                 Text("Stay: \(stop.estimatedDuration) min")
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.brandPrimary)
-                    .padding(.horizontal, AppleSpacing.sm)
-                    .padding(.vertical, AppleSpacing.xs)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Brand.primary)
+                    .padding(.horizontal, DesignTokens.Spacing.sm)
+                    .padding(.vertical, DesignTokens.Spacing.xs)
                     .background(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                            .fill(AppleColors.surfaceSecondary)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                            .fill(DesignTokens.Surface.secondary)
                     )
             }
         }
-        .padding(.vertical, AppleSpacing.lg)
+        .padding(.vertical, DesignTokens.Spacing.lg)
     }
 
     private var stopIndex: Int {
@@ -152,11 +152,11 @@ struct AdventureStopDetailView: View {
     // MARK: - Map Section
 
     private var mapSection: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.md) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             Text("Location")
-                .font(AppleTypography.title3)
+                .font(DesignTokens.Typography.title3)
                 .fontWeight(.semibold)
-                .foregroundColor(AppleColors.textPrimary)
+                .foregroundColor(DesignTokens.Text.primary)
 
             Map(coordinateRegion: .constant(MKCoordinateRegion(
                 center: stop.location.coordinate,
@@ -165,9 +165,9 @@ struct AdventureStopDetailView: View {
                 MapAnnotation(coordinate: stop.location.coordinate) {
                         ZStack {
                             Circle()
-                                .fill(AppleColors.brandGradient)
+                                .fill(DesignTokens.Brand.gradient)
                                 .frame(width: 32, height: 32)
-                                .appleShadow(AppleShadows.light)
+                                .appleShadow(DesignTokens.Shadow.light)
 
                             Image(systemName: stopIcon(for: stop.category))
                                 .font(.system(size: 14, weight: .medium))
@@ -180,12 +180,12 @@ struct AdventureStopDetailView: View {
                     }
                 }
                 .frame(height: 200)
-                .cornerRadius(AppleCornerRadius.lg)
+                .cornerRadius(DesignTokens.CornerRadius.lg)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                        .stroke(AppleColors.glassLight, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                        .stroke(DesignTokens.Glass.light, lineWidth: 1)
                 )
-                .appleShadow(AppleShadows.light)
+                .appleShadow(DesignTokens.Shadow.light)
         }
     }
 
@@ -193,49 +193,49 @@ struct AdventureStopDetailView: View {
 
     private var stopInfoSection: some View {
         AppleGlassCard(style: .elevated) {
-            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 Text("Place Information")
-                    .font(AppleTypography.title3)
+                    .font(DesignTokens.Typography.title3)
                     .fontWeight(.semibold)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .foregroundColor(DesignTokens.Text.primary)
 
-                VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                     Text("Place Name")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
 
                     Text(stop.name)
-                        .font(AppleTypography.title3)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title3)
+                        .foregroundColor(DesignTokens.Text.primary)
                 }
 
                 if false { // openingHours not available
-                    VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                         Text("Opening Hours")
-                            .font(AppleTypography.caption1)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.caption1)
+                            .foregroundColor(DesignTokens.Text.secondary)
 
                         Text("Not available")
-                            .font(AppleTypography.body)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.primary)
                     }
                 }
 
                 if false { // rating not available
-                    VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                         Text("Rating")
-                            .font(AppleTypography.caption1)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.caption1)
+                            .foregroundColor(DesignTokens.Text.secondary)
 
-                        HStack(spacing: AppleSpacing.xs) {
+                        HStack(spacing: DesignTokens.Spacing.xs) {
                             ForEach(0..<5) { index in
                                 Image(systemName: index < 3 ? "star.fill" : "star") // Default rating
                                     .foregroundColor(.yellow)
                                     .font(.system(size: 12))
                             }
                             Text("3.0") // Default rating
-                                .font(AppleTypography.body)
-                                .foregroundColor(AppleColors.textPrimary)
+                                .font(DesignTokens.Typography.body)
+                                .foregroundColor(DesignTokens.Text.primary)
                         }
                     }
                 }
@@ -247,15 +247,15 @@ struct AdventureStopDetailView: View {
 
     private var narrativeSection: some View {
         AppleGlassCard(style: .elevated) {
-            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 Text("What to Expect")
-                    .font(AppleTypography.title3)
+                    .font(DesignTokens.Typography.title3)
                     .fontWeight(.semibold)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Text(stop.description ?? "No description available")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.primary)
                     .lineSpacing(4)
             }
         }
@@ -265,13 +265,13 @@ struct AdventureStopDetailView: View {
 
     private var constraintsSection: some View {
         AppleGlassCard(style: .elevated) {
-            VStack(alignment: .leading, spacing: AppleSpacing.md) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 Text("Details")
-                    .font(AppleTypography.title3)
+                    .font(DesignTokens.Typography.title3)
                     .fontWeight(.semibold)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .foregroundColor(DesignTokens.Text.primary)
 
-                VStack(spacing: AppleSpacing.md) {
+                VStack(spacing: DesignTokens.Spacing.md) {
                     // Budget
                     constraintRow(
                         icon: "dollarsign.circle",
@@ -300,28 +300,28 @@ struct AdventureStopDetailView: View {
     }
 
     private func constraintRow(icon: String, title: String, value: String) -> some View {
-        HStack(spacing: AppleSpacing.md) {
+        HStack(spacing: DesignTokens.Spacing.md) {
             Image(systemName: icon)
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(AppleColors.brandPrimary)
+                .foregroundColor(DesignTokens.Brand.primary)
                 .frame(width: 20)
 
             Text(title)
-                .font(AppleTypography.body)
-                .foregroundColor(AppleColors.textSecondary)
+                .font(DesignTokens.Typography.body)
+                .foregroundColor(DesignTokens.Text.secondary)
 
             Spacer()
 
             Text(value)
-                .font(AppleTypography.body)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.body)
+                .foregroundColor(DesignTokens.Text.primary)
         }
     }
 
     // MARK: - Action Buttons Section
 
     private var actionButtonsSection: some View {
-        VStack(spacing: AppleSpacing.md) {
+        VStack(spacing: DesignTokens.Spacing.md) {
             // Navigate Button
             AppleButton(
                 "Navigate Here",
@@ -363,15 +363,15 @@ struct DirectionsView: View {
         NavigationView {
             VStack {
                 Text("Directions to \(stop.name)")
-                    .font(AppleTypography.title2)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title2)
+                    .foregroundColor(DesignTokens.Text.primary)
                     .padding()
 
                 Spacer()
 
                 Text("Directions functionality would be implemented here")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
 
                 Spacer()
             }
@@ -382,7 +382,7 @@ struct DirectionsView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(AppleColors.textPrimary)
+                    .foregroundColor(DesignTokens.Text.primary)
                 }
             }
         }

@@ -37,20 +37,31 @@ class AuthenticationService: ObservableObject {
     
     init() {
         // Initialize Supabase client
-        guard let url = URL(string: Configuration.supabaseURL) else {
-            fatalError("Invalid Supabase URL: \(Configuration.supabaseURL)")
-        }
-        
-        self.supabaseClient = SupabaseClient(supabaseURL: url, supabaseKey: Configuration.supabaseAnonKey)
-        
-        // Setup auth state listener
-        Task {
-            await setupAuthStateListener()
-        }
-        
-        // Restore session on init
-        Task {
-            await restoreSession()
+        if Configuration.isSupabaseConfigured {
+            guard let url = URL(string: Configuration.supabaseURL) else {
+                fatalError("Invalid Supabase URL: \(Configuration.supabaseURL)")
+            }
+            self.supabaseClient = SupabaseClient(supabaseURL: url, supabaseKey: Configuration.supabaseAnonKey)
+            
+            // Setup auth state listener
+            Task {
+                await setupAuthStateListener()
+            }
+            
+            // Restore session on init
+            Task {
+                await restoreSession()
+            }
+        } else {
+            // Create a mock client for demo mode
+            guard let url = URL(string: "https://demo.supabase.co") else {
+                fatalError("Invalid demo URL")
+            }
+            self.supabaseClient = SupabaseClient(supabaseURL: url, supabaseKey: "demo-key")
+            
+            // Set as not authenticated in demo mode
+            isAuthenticated = false
+            print("⚠️ WARNING: Supabase not configured. Running in demo mode.")
         }
     }
     
@@ -60,6 +71,14 @@ class AuthenticationService: ObservableObject {
     func signIn(email: String, password: String) async {
         isLoading = true
         errorMessage = nil
+        
+        if !Configuration.isSupabaseConfigured {
+            // Demo mode - simulate successful sign in
+            print("Demo mode: Simulating sign in for \(email)")
+            isAuthenticated = true
+            isLoading = false
+            return
+        }
         
         do {
             let response = try await supabaseClient.auth.signIn(email: email, password: password)

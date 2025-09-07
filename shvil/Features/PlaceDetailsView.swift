@@ -49,13 +49,13 @@ struct PlaceDetailsView: View {
                     contentSections
                 }
                 .background(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                        .fill(AppleColors.glassMedium)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                        .fill(DesignTokens.Glass.medium)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                                .stroke(AppleColors.glassLight, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                .stroke(DesignTokens.Glass.light, lineWidth: 1)
                         )
-                        .appleShadow(AppleShadows.heavy)
+                        .appleShadow(DesignTokens.Shadow.heavy)
                 )
                 .padding(.horizontal, 16) // 16pt from edges
                 .padding(.bottom, 16) // 16pt from edges
@@ -70,23 +70,23 @@ struct PlaceDetailsView: View {
         VStack(spacing: 16) {
             // Drag handle
             RoundedRectangle(cornerRadius: 2)
-                .fill(AppleColors.textTertiary)
+                .fill(DesignTokens.Text.tertiary)
                 .frame(width: 36, height: 4)
-                .padding(.top, AppleSpacing.sm)
-                .padding(.bottom, AppleSpacing.sm)
+                .padding(.top, DesignTokens.Spacing.sm)
+                .padding(.bottom, DesignTokens.Spacing.sm)
 
             HStack(spacing: 16) {
                 // Place info
-                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                     Text(place.name)
-                        .font(AppleTypography.title2)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title2)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .lineLimit(2)
 
                     if false { // subtitle not available
                         Text("Not available")
-                            .font(AppleTypography.caption1)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.caption1)
+                            .foregroundColor(DesignTokens.Text.secondary)
                             .lineLimit(1)
                     }
                 }
@@ -99,7 +99,7 @@ struct PlaceDetailsView: View {
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(AppleColors.textSecondary)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .frame(width: 32, height: 32)
                 }
                 .accessibilityLabel("Close")
@@ -149,14 +149,14 @@ struct PlaceDetailsView: View {
             }) {
                 Image(systemName: "square.and.arrow.up")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(AppleColors.accent)
+                    .foregroundColor(DesignTokens.Brand.primary)
                     .frame(width: 48, height: 48)
                     .background(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                            .fill(AppleColors.accent.opacity(0.1))
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                            .fill(DesignTokens.Brand.primary.opacity(0.1))
                             .overlay(
-                                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                                    .stroke(AppleColors.accent, lineWidth: 1)
+                                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                                    .stroke(DesignTokens.Brand.primary, lineWidth: 1)
                             )
                     )
             }
@@ -190,64 +190,64 @@ struct PlaceDetailsView: View {
     }
 
     private var addressSection: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
             HStack {
                 Image(systemName: "location")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(AppleColors.accent)
+                    .foregroundColor(DesignTokens.Brand.primary)
                     .frame(width: 20)
 
                 Text("Address")
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Spacer()
             }
 
             Text(place.address ?? "Address not available")
-                .font(AppleTypography.body)
-                .foregroundColor(AppleColors.textSecondary)
+                .font(DesignTokens.Typography.body)
+                .foregroundColor(DesignTokens.Text.secondary)
                 .multilineTextAlignment(.leading)
         }
-        .padding(.vertical, AppleSpacing.md)
-        .padding(.horizontal, AppleSpacing.md)
+        .padding(.vertical, DesignTokens.Spacing.md)
+        .padding(.horizontal, DesignTokens.Spacing.md)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                .fill(AppleColors.glassLight)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                .fill(DesignTokens.Glass.light)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                        .stroke(AppleColors.glassLight, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                        .stroke(DesignTokens.Glass.light, lineWidth: 1)
                 )
         )
         .accessibilityLabel("Address: \(place.address ?? "Address not available")")
     }
 
     private var contactSection: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
             HStack {
                 Image(systemName: "phone")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(AppleColors.accent)
+                    .foregroundColor(DesignTokens.Brand.primary)
                     .frame(width: 20)
 
                 Text("Contact")
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Spacer()
             }
 
-            VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                 // Phone number (placeholder)
                 HStack {
                     Image(systemName: "phone.fill")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(AppleColors.textSecondary)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .frame(width: 16)
 
                     Text("(555) 123-4567")
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.secondary)
 
                     Spacer()
                 }
@@ -256,102 +256,102 @@ struct PlaceDetailsView: View {
                 HStack {
                     Image(systemName: "globe")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(AppleColors.textSecondary)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .frame(width: 16)
 
                     Text("www.example.com")
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.accent)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Brand.primary)
 
                     Spacer()
                 }
             }
         }
-        .padding(.vertical, AppleSpacing.md)
-        .padding(.horizontal, AppleSpacing.md)
+        .padding(.vertical, DesignTokens.Spacing.md)
+        .padding(.horizontal, DesignTokens.Spacing.md)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                .fill(AppleColors.glassLight)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                .fill(DesignTokens.Glass.light)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                        .stroke(AppleColors.glassLight, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                        .stroke(DesignTokens.Glass.light, lineWidth: 1)
                 )
         )
         .accessibilityLabel("Contact information")
     }
 
     private var hoursSection: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
             HStack {
                 Image(systemName: "clock")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(AppleColors.accent)
+                    .foregroundColor(DesignTokens.Brand.primary)
                     .frame(width: 20)
 
                 Text("Hours")
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Spacer()
             }
 
-            VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                 Text("Monday - Friday: 9:00 AM - 6:00 PM")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
 
                 Text("Saturday: 10:00 AM - 4:00 PM")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
 
                 Text("Sunday: Closed")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
         }
-        .padding(.vertical, AppleSpacing.md)
-        .padding(.horizontal, AppleSpacing.md)
+        .padding(.vertical, DesignTokens.Spacing.md)
+        .padding(.horizontal, DesignTokens.Spacing.md)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                .fill(AppleColors.glassLight)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                .fill(DesignTokens.Glass.light)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                        .stroke(AppleColors.glassLight, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                        .stroke(DesignTokens.Glass.light, lineWidth: 1)
                 )
         )
         .accessibilityLabel("Business hours")
     }
 
     private var additionalDetailsSection: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
             HStack {
                 Image(systemName: "info.circle")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(AppleColors.accent)
+                    .foregroundColor(DesignTokens.Brand.primary)
                     .frame(width: 20)
 
                 Text("Details")
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Spacer()
             }
 
-            VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                 Text("Additional details about this place including amenities, reviews, and other relevant information.")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .multilineTextAlignment(.leading)
             }
         }
-        .padding(.vertical, AppleSpacing.md)
-        .padding(.horizontal, AppleSpacing.md)
+        .padding(.vertical, DesignTokens.Spacing.md)
+        .padding(.horizontal, DesignTokens.Spacing.md)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                .fill(AppleColors.glassLight)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                .fill(DesignTokens.Glass.light)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                        .stroke(AppleColors.glassLight, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                        .stroke(DesignTokens.Glass.light, lineWidth: 1)
                 )
         )
         .accessibilityLabel("Additional details")
@@ -360,7 +360,7 @@ struct PlaceDetailsView: View {
     // MARK: - Helper Functions
 
     private func dismissModal() {
-        withAnimation(reduceMotion ? .none : AppleAnimations.standard) {
+        withAnimation(reduceMotion ? .none : DesignTokens.Animation.standard) {
             isPresented = false
         }
     }
@@ -374,7 +374,7 @@ struct PlaceDetailsView: View {
         Task {
             do {
                 // Get current location
-                guard let currentLocation = DependencyContainer.shared.locationService.currentLocation else {
+                guard let currentLocation = DependencyContainer.shared.locationManager.currentLocation else {
                     await MainActor.run {
                         errorMessage = "Location not available"
                         showError = true

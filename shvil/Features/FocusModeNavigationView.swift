@@ -13,11 +13,11 @@ import CoreLocation
 struct FocusModeNavigationView: View {
     // MARK: - Dependencies
     @StateObject private var routingEngine = DependencyContainer.shared.routingEngine
-    @StateObject private var locationService = DependencyContainer.shared.locationService
+    @StateObject private var locationManager = DependencyContainer.shared.locationManager
     @StateObject private var hapticFeedback = DependencyContainer.shared.hapticFeedback
     @StateObject private var smartStopsService = SmartStopsService(
         contextEngine: ContextEngine(),
-        locationService: LocationService()
+        locationService: locationManager
     )
     
     // MARK: - State
@@ -67,9 +67,9 @@ struct FocusModeNavigationView: View {
                 Text("Voice")
                     .font(AppleTypography.caption2)
             }
-            .foregroundColor(isVoiceGuidanceEnabled ? AppleColors.brandPrimary : AppleColors.textSecondary)
+            .foregroundColor(isVoiceGuidanceEnabled ? DesignTokens.Brand.primary : DesignTokens.Text.secondary)
             .frame(width: 48, height: 48)
-            .background(buttonBackground(isEnabled: isVoiceGuidanceEnabled, color: AppleColors.brandPrimary))
+            .background(buttonBackground(isEnabled: isVoiceGuidanceEnabled, color: DesignTokens.Brand.primary))
         }
         .buttonAccessibility(
             label: isVoiceGuidanceEnabled ? "Voice guidance on" : "Voice guidance off",
@@ -85,9 +85,9 @@ struct FocusModeNavigationView: View {
                 Text("Route")
                     .font(AppleTypography.caption2)
             }
-            .foregroundColor(AppleColors.brandPrimary)
+            .foregroundColor(DesignTokens.Brand.primary)
             .frame(width: 48, height: 48)
-            .background(buttonBackground(isEnabled: true, color: AppleColors.brandPrimary))
+            .background(buttonBackground(isEnabled: true, color: DesignTokens.Brand.primary))
         }
         .buttonAccessibility(
             label: "Route overview",
@@ -103,9 +103,9 @@ struct FocusModeNavigationView: View {
                 Text("Help")
                     .font(AppleTypography.caption2)
             }
-            .foregroundColor(AppleColors.error)
+            .foregroundColor(DesignTokens.Semantic.error)
             .frame(width: 48, height: 48)
-            .background(buttonBackground(isEnabled: true, color: AppleColors.error))
+            .background(buttonBackground(isEnabled: true, color: DesignTokens.Semantic.error))
         }
         .buttonAccessibility(
             label: "Emergency options",
@@ -115,7 +115,7 @@ struct FocusModeNavigationView: View {
     
     private func buttonBackground(isEnabled: Bool, color: Color) -> some View {
         RoundedRectangle(cornerRadius: 12)
-            .fill(isEnabled ? AppleColors.surfaceSecondary : AppleColors.surfaceTertiary)
+            .fill(isEnabled ? DesignTokens.Surface.secondary : DesignTokens.Surface.tertiary)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(isEnabled ? color.opacity(0.3) : Color.clear, lineWidth: 1)
@@ -199,23 +199,23 @@ struct FocusModeNavigationView: View {
                 // Destination Info
                 VStack(alignment: .leading, spacing: 4) {
                     Text(destination.isEmpty ? "Navigation" : destination)
-                        .font(AppleTypography.title3)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title3)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .lineLimit(1)
                     
                     if routingEngine.isNavigating {
                         HStack(spacing: 8) {
                             Text(formattedRemainingTime)
-                                .font(AppleTypography.caption1)
-                                .foregroundColor(AppleColors.brandPrimary)
+                                .font(DesignTokens.Typography.caption1)
+                                .foregroundColor(DesignTokens.Brand.primary)
                             
                             Text("•")
-                                .font(AppleTypography.caption1)
-                                .foregroundColor(AppleColors.textSecondary)
+                                .font(DesignTokens.Typography.caption1)
+                                .foregroundColor(DesignTokens.Text.secondary)
                             
                             Text(formattedRemainingDistance)
-                                .font(AppleTypography.caption1)
-                                .foregroundColor(AppleColors.textSecondary)
+                                .font(DesignTokens.Typography.caption1)
+                                .foregroundColor(DesignTokens.Text.secondary)
                         }
                     }
                 }
@@ -230,17 +230,17 @@ struct FocusModeNavigationView: View {
                                 .font(.system(size: 16, weight: .medium))
                             
                             Text(routingEngine.selectedRouteOption.name)
-                                .font(AppleTypography.caption1)
+                                .font(DesignTokens.Typography.caption1)
                         }
-                        .foregroundColor(AppleColors.brandPrimary)
+                        .foregroundColor(DesignTokens.Brand.primary)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 16)
-                                .fill(AppleColors.surfaceSecondary)
+                                .fill(DesignTokens.Surface.secondary)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 16)
-                                        .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 1)
+                                        .stroke(DesignTokens.Brand.primary.opacity(0.3), lineWidth: 1)
                                 )
                         )
                     }
@@ -254,11 +254,11 @@ struct FocusModeNavigationView: View {
                 Button(action: endNavigation) {
                     Image(systemName: "xmark")
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(AppleColors.textPrimary)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .frame(width: 44, height: 44)
                         .background(
                             Circle()
-                                .fill(AppleColors.surfaceSecondary)
+                                .fill(DesignTokens.Surface.secondary)
                                 .overlay(
                                     Circle()
                                         .stroke(Color.white.opacity(0.2), lineWidth: 1)
@@ -275,7 +275,7 @@ struct FocusModeNavigationView: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 24)
-                .fill(AppleColors.surfaceTertiary)
+                .fill(DesignTokens.Surface.tertiary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 24)
                         .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -297,27 +297,27 @@ struct FocusModeNavigationView: View {
                         // Turn Icon
                         Image(systemName: turnIcon(for: currentStep))
                             .font(.system(size: 24, weight: .medium))
-                            .foregroundColor(AppleColors.brandPrimary)
+                            .foregroundColor(DesignTokens.Brand.primary)
                             .frame(width: 32, height: 32)
                             .background(
                                 Circle()
-                                    .fill(AppleColors.surfaceSecondary)
+                                    .fill(DesignTokens.Surface.secondary)
                                     .overlay(
                                         Circle()
-                                            .stroke(AppleColors.brandPrimary.opacity(0.3), lineWidth: 1)
+                                            .stroke(DesignTokens.Brand.primary.opacity(0.3), lineWidth: 1)
                                     )
                             )
                         
                         VStack(alignment: .leading, spacing: 2) {
                             Text(currentStep.instructions)
                                 .font(AppleTypography.largeTitle)
-                                .foregroundColor(AppleColors.textPrimary)
+                                .foregroundColor(DesignTokens.Text.primary)
                                 .lineLimit(2)
                             
                             if let nextStep = nextStep {
                                 Text("Then \(nextStep.instructions)")
-                                    .font(AppleTypography.caption1)
-                                    .foregroundColor(AppleColors.textSecondary)
+                                    .font(DesignTokens.Typography.caption1)
+                                    .foregroundColor(DesignTokens.Text.secondary)
                                     .lineLimit(1)
                             }
                         }
@@ -326,8 +326,8 @@ struct FocusModeNavigationView: View {
                         
                         // Distance to Turn
                         Text(MKDistanceFormatter().string(fromDistance: currentStep.distance))
-                            .font(AppleTypography.caption1)
-                            .foregroundColor(AppleColors.brandPrimary)
+                            .font(DesignTokens.Typography.caption1)
+                            .foregroundColor(DesignTokens.Brand.primary)
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
@@ -347,7 +347,7 @@ struct FocusModeNavigationView: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 24)
-                .fill(AppleColors.surfaceTertiary)
+                .fill(DesignTokens.Surface.tertiary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 24)
                         .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -440,35 +440,35 @@ struct RouteOverviewSheet: View {
                     .overlay(
                         // Route polyline would be rendered here
                         Rectangle()
-                            .fill(AppleColors.brandPrimary.opacity(0.3))
+                            .fill(DesignTokens.Brand.primary.opacity(0.3))
                             .frame(height: 4)
                     )
                     
                     // Route Details
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Route Details")
-                            .font(AppleTypography.title3)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .font(DesignTokens.Typography.title3)
+                            .foregroundColor(DesignTokens.Text.primary)
                         
                         HStack {
                             VStack(alignment: .leading) {
                                 Text("Distance")
-                                    .font(AppleTypography.caption1)
-                                    .foregroundColor(AppleColors.textSecondary)
+                                    .font(DesignTokens.Typography.caption1)
+                                    .foregroundColor(DesignTokens.Text.secondary)
                                 Text(selectedOption.formattedDistance)
-                                    .font(AppleTypography.body)
-                                    .foregroundColor(AppleColors.textPrimary)
+                                    .font(DesignTokens.Typography.body)
+                                    .foregroundColor(DesignTokens.Text.primary)
                             }
                             
                             Spacer()
                             
                             VStack(alignment: .trailing) {
                                 Text("Time")
-                                    .font(AppleTypography.caption1)
-                                    .foregroundColor(AppleColors.textSecondary)
+                                    .font(DesignTokens.Typography.caption1)
+                                    .foregroundColor(DesignTokens.Text.secondary)
                                 Text(selectedOption.formattedTime)
-                                    .font(AppleTypography.body)
-                                    .foregroundColor(AppleColors.textPrimary)
+                                    .font(DesignTokens.Typography.body)
+                                    .foregroundColor(DesignTokens.Text.primary)
                             }
                         }
                     }
@@ -484,7 +484,7 @@ struct RouteOverviewSheet: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(AppleColors.brandPrimary)
+                    .foregroundColor(DesignTokens.Brand.primary)
                 }
             }
         }

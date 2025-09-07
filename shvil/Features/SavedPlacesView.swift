@@ -90,7 +90,7 @@ struct SavedPlacesView: View {
 
                 Spacer()
             }
-            .background(AppleColors.background)
+            .background(DesignTokens.Surface.background)
             .navigationBarHidden(true)
         }
         .sheet(isPresented: $showAddCollection) {
@@ -135,8 +135,8 @@ struct QuickAccessSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Quick Access")
-                .font(AppleTypography.title3)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
 
             HStack(spacing: 12) {
                 if let home = homePlace {
@@ -144,7 +144,7 @@ struct QuickAccessSection: View {
                         title: "Home",
                         subtitle: home.name,
                         icon: "house.fill",
-                        color: AppleColors.brandPrimary
+                        color: DesignTokens.Brand.primary
                     ) {
                         onPlaceTap(home)
                     }
@@ -155,7 +155,7 @@ struct QuickAccessSection: View {
                         title: "Work",
                         subtitle: work.name,
                         icon: "building.2.fill",
-                        color: AppleColors.brandPrimary
+                        color: DesignTokens.Brand.primary
                     ) {
                         onPlaceTap(work)
                     }
@@ -165,8 +165,8 @@ struct QuickAccessSection: View {
             if !favoritePlaces.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Favorites")
-                        .font(AppleTypography.bodySemibold)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.bodySemibold)
+                        .foregroundColor(DesignTokens.Text.primary)
 
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 8) {
                         ForEach(favoritePlaces.prefix(4)) { place in
@@ -203,24 +203,24 @@ struct QuickAccessCard: View {
 
                     Image(systemName: "arrow.up.right")
                         .font(.system(size: 12))
-                        .foregroundColor(AppleColors.textSecondary)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
 
                     Text(subtitle)
-                        .font(AppleTypography.bodySemibold)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.bodySemibold)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .lineLimit(1)
                 }
             }
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(AppleColors.surfaceTertiary)
+                    .fill(DesignTokens.Surface.tertiary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -251,8 +251,8 @@ struct FavoriteCard: View {
                     .foregroundColor(.pink)
 
                 Text(place.name)
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.primary)
                     .lineLimit(1)
 
                 Spacer()
@@ -261,7 +261,7 @@ struct FavoriteCard: View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(AppleColors.surfaceSecondary)
+                    .fill(DesignTokens.Surface.secondary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.white.opacity(0.2), lineWidth: 1)
@@ -287,15 +287,15 @@ struct CollectionsSection: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("Collections")
-                    .font(AppleTypography.title3)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title3)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Spacer()
 
                 Button(action: onAddCollection) {
                     Image(systemName: "plus.circle.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(AppleColors.brandPrimary)
+                        .foregroundColor(DesignTokens.Brand.primary)
                 }
                 .accessibilityLabel("Add Collection")
             }
@@ -335,8 +335,8 @@ struct CollectionCard: View {
                     Spacer()
 
                     Text("\(collection.places.count)")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(
@@ -347,19 +347,19 @@ struct CollectionCard: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(collection.name)
-                        .font(AppleTypography.bodySemibold)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.bodySemibold)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .lineLimit(1)
 
                     Text("\(collection.places.count) places")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
             }
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(AppleColors.surfaceTertiary)
+                    .fill(DesignTokens.Surface.tertiary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -384,16 +384,16 @@ struct EmptyCollectionView: View {
         VStack(spacing: 16) {
             Image(systemName: "folder")
                 .font(.system(size: 40))
-                .foregroundColor(AppleColors.textSecondary.opacity(0.6))
+                .foregroundColor(DesignTokens.Text.secondary.opacity(0.6))
 
             VStack(spacing: 8) {
                 Text("No Collections Yet")
-                    .font(AppleTypography.bodySemibold)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodySemibold)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Text("Create collections to organize your places")
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .multilineTextAlignment(.center)
             }
 
@@ -402,18 +402,18 @@ struct EmptyCollectionView: View {
                     Image(systemName: "plus")
                     Text("Create Collection")
                 }
-                .font(AppleTypography.bodySemibold)
+                .font(DesignTokens.Typography.bodySemibold)
                 .foregroundColor(.white)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)
-                .background(AppleColors.brandGradient)
+                .background(DesignTokens.Brand.gradient)
                 .cornerRadius(20)
             }
         }
         .padding(24)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(AppleColors.surfaceSecondary)
+                .fill(DesignTokens.Surface.secondary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(Color.white.opacity(0.2), lineWidth: 1)
@@ -431,8 +431,8 @@ struct AllPlacesSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("All Places")
-                .font(AppleTypography.title3)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
 
             LazyVStack(spacing: 12) {
                 ForEach(places) { place in
@@ -463,13 +463,13 @@ struct SavedPlaceRow: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(place.name)
-                        .font(AppleTypography.bodySemibold)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.bodySemibold)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .multilineTextAlignment(.leading)
 
                     Text(place.address)
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                         .multilineTextAlignment(.leading)
                         .lineLimit(2)
                 }
@@ -483,18 +483,18 @@ struct SavedPlaceRow: View {
                     }) {
                         Image(systemName: "arrow.turn.up.right")
                             .font(.system(size: 16))
-                            .foregroundColor(AppleColors.brandPrimary)
+                            .foregroundColor(DesignTokens.Brand.primary)
                             .frame(width: 32, height: 32)
                             .background(
                                 Circle()
-                                    .fill(AppleColors.brandPrimary.opacity(0.1))
+                                    .fill(DesignTokens.Brand.primary.opacity(0.1))
                             )
                     }
                     .accessibilityLabel("Route to \(place.name)")
 
                     // Type Badge
                     Text(placeTypeText)
-                        .font(AppleTypography.caption1)
+                        .font(DesignTokens.Typography.caption1)
                         .foregroundColor(placeColor)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
@@ -505,7 +505,7 @@ struct SavedPlaceRow: View {
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(AppleColors.surfaceTertiary)
+                    .fill(DesignTokens.Surface.tertiary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.white.opacity(0.2), lineWidth: 2)
@@ -531,10 +531,10 @@ struct SavedPlaceRow: View {
 
     private var placeColor: Color {
         switch place.placeType {
-        case .home: AppleColors.brandPrimary
-        case .work: AppleColors.brandPrimary
+        case .home: DesignTokens.Brand.primary
+        case .work: DesignTokens.Brand.primary
         case .favorite: Color.pink
-        case .other: AppleColors.textSecondary
+        case .other: DesignTokens.Text.secondary
         }
     }
 
@@ -580,18 +580,18 @@ struct AddCollectionView: View {
             VStack(spacing: 24) {
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Collection Name")
-                        .font(AppleTypography.bodySemibold)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.bodySemibold)
+                        .foregroundColor(DesignTokens.Text.primary)
 
                     TextField("Enter collection name", text: $collectionName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .font(AppleTypography.body)
+                        .font(DesignTokens.Typography.body)
                 }
 
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Color")
-                        .font(AppleTypography.bodySemibold)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.bodySemibold)
+                        .foregroundColor(DesignTokens.Text.primary)
 
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 12) {
                         ForEach(colors, id: \.self) { color in

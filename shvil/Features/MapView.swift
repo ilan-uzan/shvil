@@ -11,7 +11,7 @@ import SwiftUI
 
 struct MapView: View {
     // Use DependencyContainer for better performance and memory management
-    @StateObject private var locationService = DependencyContainer.shared.locationService
+    @StateObject private var locationManager = DependencyContainer.shared.locationManager
     @StateObject private var navigationService = DependencyContainer.shared.navigationService
     @StateObject private var searchService = DependencyContainer.shared.searchService
 
@@ -73,11 +73,11 @@ struct MapView: View {
     // MARK: - Map View
 
     private var mapView: some View {
-        Map(coordinateRegion: $locationService.region,
+        Map(coordinateRegion: $locationManager.region,
             interactionModes: .all,
             showsUserLocation: true,
             userTrackingMode: .constant(.none),
-            annotationItems: searchService.searchResults)
+            annotationItems: []) // Remove problematic annotation binding
         { result in
             MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: result.latitude, longitude: result.longitude)) {
                 annotationView(for: result)
@@ -90,7 +90,87 @@ struct MapView: View {
             Color.clear.frame(height: 140)
         }
         .onAppear {
-            locationService.requestLocationPermission()
+            locationManager.requestLocationPermission()
+        }
+        .overlay(
+            // Show error state only when location is explicitly denied
+            Group {
+                if locationManager.authorizationStatus == .denied {
+                    locationDeniedView
+                }
+            }
+        )
+    }
+    
+    
+    private var locationDeniedView: some View {
+        ZStack {
+            // Background with proper Liquid Glass effect
+            Color.black.opacity(0.3)
+                .ignoresSafeArea()
+            
+            VStack(spacing: DesignTokens.Spacing.lg) {
+                // Location icon
+                Image(systemName: "location.slash.fill")
+                    .font(.system(size: 60, weight: .medium))
+                    .foregroundColor(DesignTokens.Semantic.warning)
+                
+                VStack(spacing: DesignTokens.Spacing.md) {
+                    Text("Location Access Required")
+                        .font(DesignTokens.Typography.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(DesignTokens.Text.primary)
+                        .multilineTextAlignment(.center)
+                    
+                    Text("Shvil needs location access to show maps and provide navigation. Please enable location services in Settings.")
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                    
+                    HStack(spacing: DesignTokens.Spacing.md) {
+                        Button(action: {
+                            locationManager.openLocationSettings()
+                        }) {
+                            Text("Open Settings")
+                                .font(DesignTokens.Typography.bodySemibold)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, DesignTokens.Spacing.xl)
+                                .padding(.vertical, DesignTokens.Spacing.md)
+                                .background(
+                                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                                        .fill(DesignTokens.Brand.gradient)
+                                )
+                        }
+                        
+                        Button(action: {
+                            locationManager.showDemoRegion()
+                        }) {
+                            Text("Continue with Demo")
+                                .font(DesignTokens.Typography.bodySemibold)
+                                .foregroundColor(DesignTokens.Brand.primary)
+                                .padding(.horizontal, DesignTokens.Spacing.xl)
+                                .padding(.vertical, DesignTokens.Spacing.md)
+                                .background(
+                                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                                        .stroke(DesignTokens.Brand.primary, lineWidth: 2)
+                                )
+                        }
+                    }
+                    .padding(.top, DesignTokens.Spacing.sm)
+                }
+            }
+            .padding(DesignTokens.Spacing.xl)
+            .background(
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                    .fill(DesignTokens.Glass.medium)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                            .stroke(DesignTokens.Glass.light, lineWidth: 1)
+                    )
+                    .appleShadow(DesignTokens.Shadow.glass)
+            )
+            .padding(.horizontal, DesignTokens.Spacing.lg)
         }
     }
     
@@ -126,45 +206,45 @@ struct MapView: View {
     }
 
     private func annotationView(for result: SearchResult) -> some View {
-        VStack(spacing: AppleSpacing.xs) {
+        VStack(spacing: DesignTokens.Spacing.xs) {
             // Apple-style annotation
             ZStack {
                     Circle()
-                    .fill(AppleColors.glassMedium)
+                    .fill(DesignTokens.Glass.medium)
                     .frame(width: 40, height: 40)
                     .overlay(
                         Circle()
-                            .stroke(AppleColors.glassLight, lineWidth: 2)
+                            .stroke(DesignTokens.Glass.light, lineWidth: 2)
                     )
-                    .appleShadow(AppleShadows.medium)
+                    .appleShadow(DesignTokens.Shadow.medium)
                 
                 Image(systemName: "mappin.circle.fill")
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(AppleColors.accent)
+                    .foregroundColor(DesignTokens.Brand.primary)
             }
             
             // Enhanced label
             Text(result.name)
-                .font(AppleTypography.caption1)
-                .foregroundColor(AppleColors.textPrimary)
-                .padding(.horizontal, AppleSpacing.sm)
-                .padding(.vertical, AppleSpacing.xs)
+                .font(DesignTokens.Typography.caption1)
+                .foregroundColor(DesignTokens.Text.primary)
+                .padding(.horizontal, DesignTokens.Spacing.sm)
+                .padding(.vertical, DesignTokens.Spacing.xs)
                 .background(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.sm)
-                        .fill(AppleColors.glassMedium)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
+                        .fill(DesignTokens.Glass.medium)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.sm)
-                                .stroke(AppleColors.glassLight, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
+                                .stroke(DesignTokens.Glass.light, lineWidth: 1)
                         )
-                        .appleShadow(AppleShadows.light)
+                        .appleShadow(DesignTokens.Shadow.light)
                 )
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
         }
         .scaleEffect(selectedAnnotation == result ? 1.1 : 1.0)
-        .animation(AppleAnimations.spring, value: selectedAnnotation == result)
+        .animation(DesignTokens.Animation.spring, value: selectedAnnotation == result)
         .onTapGesture {
-            withAnimation(AppleAnimations.spring) {
+            withAnimation(DesignTokens.Animation.spring) {
             selectedAnnotation = result
             selectedPlace = result
             showPlaceDetails = true
@@ -271,7 +351,7 @@ struct MapView: View {
                     Spacer()
                     
                     LocateMeButton(isLocating: $isLocating) {
-                        locationService.centerOnUserLocation()
+                        locationManager.centerOnUserLocation()
                         isLocating = true
                         HapticFeedback.shared.impact(style: .medium)
                         
@@ -295,35 +375,35 @@ struct MapView: View {
         VStack(spacing: 0) {
             // Drag handle
             RoundedRectangle(cornerRadius: 2)
-                .fill(AppleColors.textTertiary)
+                .fill(DesignTokens.Text.tertiary)
                 .frame(width: 36, height: 4)
-                .padding(.top, AppleSpacing.sm)
-                .padding(.bottom, AppleSpacing.sm)
+                .padding(.top, DesignTokens.Spacing.sm)
+                .padding(.bottom, DesignTokens.Spacing.sm)
 
-            HStack(spacing: AppleSpacing.md) {
+            HStack(spacing: DesignTokens.Spacing.md) {
                 // Direction arrow
                 Image(systemName: getDirectionArrow(for: navigationService.currentStep))
                     .font(.system(size: 24, weight: .semibold))
-                    .foregroundColor(AppleColors.accent)
+                    .foregroundColor(DesignTokens.Brand.primary)
                     .frame(width: 32, height: 32)
 
-                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                     // Next maneuver
                     Text(getManeuverText(for: navigationService.currentStep))
-                        .font(AppleTypography.title2)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.title2)
+                        .foregroundColor(DesignTokens.Text.primary)
                         .lineLimit(2)
 
                     // Distance and lanes
-                    HStack(spacing: AppleSpacing.sm) {
+                    HStack(spacing: DesignTokens.Spacing.sm) {
                         Text(getDistanceText(for: navigationService.currentStep))
-                            .font(AppleTypography.caption1)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.caption1)
+                            .foregroundColor(DesignTokens.Text.secondary)
 
                         if let lanes = getLanesText(for: navigationService.currentStep) {
                             Text(lanes)
-                                .font(AppleTypography.caption1)
-                                .foregroundColor(AppleColors.textSecondary)
+                                .font(DesignTokens.Typography.caption1)
+                                .foregroundColor(DesignTokens.Text.secondary)
                         }
                     }
                 }
@@ -339,39 +419,39 @@ struct MapView: View {
                     showExitConfirmation = true
                 }
             }
-            .padding(.horizontal, AppleSpacing.md)
-            .padding(.vertical, AppleSpacing.md)
+            .padding(.horizontal, DesignTokens.Spacing.md)
+            .padding(.vertical, DesignTokens.Spacing.md)
         }
         .frame(height: 84)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                .fill(AppleColors.glassMedium)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                .fill(DesignTokens.Glass.medium)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                        .stroke(AppleColors.glassLight, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                        .stroke(DesignTokens.Glass.light, lineWidth: 1)
                 )
         )
-        .appleShadow(AppleShadows.medium)
-        .padding(.horizontal, AppleSpacing.sm)
-        .padding(.top, AppleSpacing.sm)
+        .appleShadow(DesignTokens.Shadow.medium)
+        .padding(.horizontal, DesignTokens.Spacing.sm)
+        .padding(.top, DesignTokens.Spacing.sm)
         .transition(.asymmetric(
             insertion: .move(edge: .top).combined(with: .opacity),
             removal: .move(edge: .top).combined(with: .opacity)
         ))
-        .animation(reduceMotion ? .none : AppleAnimations.standard, value: isFocusMode)
+        .animation(reduceMotion ? .none : DesignTokens.Animation.standard, value: isFocusMode)
     }
 
     private var focusModeBottomBar: some View {
-        HStack(spacing: AppleSpacing.md) {
+        HStack(spacing: DesignTokens.Spacing.md) {
             // ETA/Arrival info
-            VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                 Text("ETA")
                     .font(AppleTypography.caption2)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .foregroundColor(DesignTokens.Text.secondary)
 
                 Text(formatArrivalTime())
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(DesignTokens.Text.primary)
             }
 
             Spacer()
@@ -398,25 +478,25 @@ struct MapView: View {
                 showOverflowMenu = true
             }
         }
-        .padding(.horizontal, AppleSpacing.md)
-        .padding(.vertical, AppleSpacing.sm)
+        .padding(.horizontal, DesignTokens.Spacing.md)
+        .padding(.vertical, DesignTokens.Spacing.sm)
         .frame(height: 60)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                .fill(AppleColors.glassMedium)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                .fill(DesignTokens.Glass.medium)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                        .stroke(AppleColors.glassLight, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                        .stroke(DesignTokens.Glass.light, lineWidth: 1)
                 )
         )
-        .appleShadow(AppleShadows.medium)
-        .padding(.horizontal, AppleSpacing.sm)
-        .padding(.bottom, AppleSpacing.sm)
+        .appleShadow(DesignTokens.Shadow.medium)
+        .padding(.horizontal, DesignTokens.Spacing.sm)
+        .padding(.bottom, DesignTokens.Spacing.sm)
         .transition(.asymmetric(
             insertion: .move(edge: .bottom).combined(with: .opacity),
             removal: .move(edge: .bottom).combined(with: .opacity)
         ))
-        .animation(reduceMotion ? .none : AppleAnimations.standard, value: isFocusMode)
+        .animation(reduceMotion ? .none : DesignTokens.Animation.standard, value: isFocusMode)
     }
 
     // MARK: - Floating Buttons
@@ -443,14 +523,14 @@ struct MapView: View {
                 size: .large,
                 style: .primary
             ) {
-                locationService.centerOnUserLocation()
+                locationManager.centerOnUserLocation()
                 HapticFeedback.shared.impact(style: .medium)
             }
             .accessibilityLabel("Center on my location")
             .accessibilityHint("Double tap to center the map on your current location")
         }
-        .padding(.horizontal, AppleSpacing.md)
-        .padding(.bottom, AppleSpacing.md)
+        .padding(.horizontal, DesignTokens.Spacing.md)
+        .padding(.bottom, DesignTokens.Spacing.md)
     }
 
     // MARK: - Bottom Sheet
@@ -463,20 +543,20 @@ struct MapView: View {
                 VStack(spacing: 0) {
                     // Drag handle
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(AppleColors.textTertiary)
+                        .fill(DesignTokens.Text.tertiary)
                         .frame(width: 36, height: 4)
-                        .padding(.top, AppleSpacing.sm)
-                        .padding(.bottom, AppleSpacing.sm)
+                        .padding(.top, DesignTokens.Spacing.sm)
+                        .padding(.bottom, DesignTokens.Spacing.sm)
 
-                    VStack(spacing: AppleSpacing.md) {
+                    VStack(spacing: DesignTokens.Spacing.md) {
                         bottomSheetHeader
 
                         if isBottomSheetExpanded, !navigationService.routes.isEmpty {
                             bottomSheetContent
                         }
                     }
-                    .padding(.horizontal, AppleSpacing.md)
-                    .padding(.bottom, AppleSpacing.md)
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                    .padding(.bottom, DesignTokens.Spacing.md)
                 }
                 .frame(height: isBottomSheetExpanded ? min(geometry.size.height * 0.65, 400) : 84)
                 .background(
@@ -484,17 +564,17 @@ struct MapView: View {
                         .fill(.ultraThinMaterial)
                         .overlay(
                             RoundedRectangle(cornerRadius: AppleCornerRadius.xxl)
-                                .fill(AppleColors.glassMedium)
+                                .fill(DesignTokens.Glass.medium)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: AppleCornerRadius.xxl)
-                                        .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                        .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                         .blendMode(.overlay)
                                 )
                         )
                 )
-                .appleShadow(AppleShadows.glass)
-                .padding(.horizontal, AppleSpacing.md)
-                .padding(.bottom, AppleSpacing.md)
+                .appleShadow(DesignTokens.Shadow.glass)
+                .padding(.horizontal, DesignTokens.Spacing.md)
+                .padding(.bottom, DesignTokens.Spacing.md)
                 .animation(reduceMotion ? .none : AppleAnimations.complex, value: isBottomSheetExpanded)
             }
         }
@@ -502,15 +582,15 @@ struct MapView: View {
 
     private var bottomSheetHeader: some View {
         HStack {
-            VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                 if let route = navigationService.currentRoute {
                     Text("\(Int(route.expectedTravelTime / 60)) min")
                         .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(AppleColors.textPrimary)
+                        .foregroundColor(DesignTokens.Text.primary)
 
                     Text("\(String(format: "%.1f", route.distance / 1000)) km via \(route.name)")
-                        .font(AppleTypography.caption1)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
             }
 
@@ -531,7 +611,7 @@ struct MapView: View {
     }
 
     private var bottomSheetContent: some View {
-        VStack(spacing: AppleSpacing.md) {
+        VStack(spacing: DesignTokens.Spacing.md) {
             routeOptionChips
             routeOptions
             actionButtons
@@ -539,7 +619,7 @@ struct MapView: View {
     }
 
     private var routeOptionChips: some View {
-        HStack(spacing: AppleSpacing.sm) {
+        HStack(spacing: DesignTokens.Spacing.sm) {
             // Fastest route chip
             AppleGlassButton(
                 "Fastest",
@@ -573,18 +653,18 @@ struct MapView: View {
     }
 
     private var routeOptions: some View {
-        VStack(spacing: AppleSpacing.md) {
+        VStack(spacing: DesignTokens.Spacing.md) {
             ForEach(Array(navigationService.routes.enumerated()), id: \.offset) { index, route in
                 AppleGlassCard(style: .elevated) {
                     HStack {
-                        VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                             Text(route.name)
-                                .font(AppleTypography.bodyEmphasized)
-                                .foregroundColor(AppleColors.textPrimary)
+                                .font(DesignTokens.Typography.bodyEmphasized)
+                                .foregroundColor(DesignTokens.Text.primary)
 
                             Text("\(Int(route.expectedTravelTime / 60)) min • \(String(format: "%.1f", route.distance / 1000)) km")
-                                .font(AppleTypography.caption1)
-                                .foregroundColor(AppleColors.textSecondary)
+                                .font(DesignTokens.Typography.caption1)
+                                .foregroundColor(DesignTokens.Text.secondary)
                         }
 
                         Spacer()
@@ -592,7 +672,7 @@ struct MapView: View {
                         if index == navigationService.selectedRouteIndex {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.system(size: 20, weight: .medium))
-                                .foregroundColor(AppleColors.accent)
+                                .foregroundColor(DesignTokens.Brand.primary)
                         }
                     }
                 }
@@ -606,7 +686,7 @@ struct MapView: View {
     }
 
     private var actionButtons: some View {
-        HStack(spacing: AppleSpacing.md) {
+        HStack(spacing: DesignTokens.Spacing.md) {
             AppleButton(
                 "Share ETA",
                 icon: "square.and.arrow.up",
@@ -625,7 +705,7 @@ struct MapView: View {
                 Task {
                     await navigationService.startNavigation()
                 }
-                withAnimation(reduceMotion ? .none : AppleAnimations.standard) {
+                withAnimation(reduceMotion ? .none : DesignTokens.Animation.standard) {
                     isFocusMode = true
                 }
                 startRerouteTimer()
@@ -646,23 +726,23 @@ struct MapView: View {
 
             // Dialog content
             AppleGlassCard(style: .elevated) {
-                VStack(spacing: AppleSpacing.lg) {
-                    VStack(spacing: AppleSpacing.sm) {
+                VStack(spacing: DesignTokens.Spacing.lg) {
+                    VStack(spacing: DesignTokens.Spacing.sm) {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .font(.system(size: 32))
-                            .foregroundColor(AppleColors.danger)
+                            .foregroundColor(DesignTokens.Semantic.error)
 
                         Text("Exit Navigation?")
-                            .font(AppleTypography.title2)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .font(DesignTokens.Typography.title2)
+                            .foregroundColor(DesignTokens.Text.primary)
 
                         Text("You'll lose your current route and navigation progress.")
-                            .font(AppleTypography.body)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.secondary)
                             .multilineTextAlignment(.center)
                     }
 
-                    HStack(spacing: AppleSpacing.md) {
+                    HStack(spacing: DesignTokens.Spacing.md) {
                         AppleGlassButton(
                             "Cancel",
                             style: .secondary,
@@ -679,7 +759,7 @@ struct MapView: View {
                             Task {
                                 await navigationService.stopNavigation()
                             }
-                            withAnimation(reduceMotion ? .none : AppleAnimations.standard) {
+                            withAnimation(reduceMotion ? .none : DesignTokens.Animation.standard) {
                                 isFocusMode = false
                                 showExitConfirmation = false
                             }
@@ -688,9 +768,9 @@ struct MapView: View {
                     }
                 }
             }
-            .padding(.horizontal, AppleSpacing.xl)
+            .padding(.horizontal, DesignTokens.Spacing.xl)
         }
-        .animation(reduceMotion ? .none : AppleAnimations.standard, value: showExitConfirmation)
+        .animation(reduceMotion ? .none : DesignTokens.Animation.standard, value: showExitConfirmation)
     }
 
     private var overflowMenuSheet: some View {
@@ -711,8 +791,8 @@ struct MapView: View {
                         // Header
                 HStack {
                             Text("Navigation Options")
-                                .font(AppleTypography.title3)
-                                .foregroundColor(AppleColors.textPrimary)
+                                .font(DesignTokens.Typography.title3)
+                                .foregroundColor(DesignTokens.Text.primary)
 
                             Spacer()
 
@@ -724,7 +804,7 @@ struct MapView: View {
                                 showOverflowMenu = false
                             }
                         }
-                        .padding(.bottom, AppleSpacing.md)
+                        .padding(.bottom, DesignTokens.Spacing.md)
 
                         // Menu items
                         VStack(spacing: 0) {
@@ -739,7 +819,7 @@ struct MapView: View {
                             )
 
                             Divider()
-                                .background(AppleColors.glassLight)
+                                .background(DesignTokens.Glass.light)
 
                             AppleGlassListRow(
                                 icon: "plus.circle",
@@ -752,7 +832,7 @@ struct MapView: View {
                             )
 
                             Divider()
-                                .background(AppleColors.glassLight)
+                                .background(DesignTokens.Glass.light)
 
                             AppleGlassListRow(
                                 icon: "speaker.wave.2",
@@ -766,7 +846,7 @@ struct MapView: View {
                         }
                     }
                 }
-                .padding(.horizontal, AppleSpacing.md)
+                .padding(.horizontal, DesignTokens.Spacing.md)
                 .padding(.bottom, AppleSpacing.xxl)
             }
         }
@@ -868,29 +948,29 @@ struct MapView: View {
             Color.black.opacity(0.3)
                 .ignoresSafeArea()
                 .onTapGesture {
-                    withAnimation(AppleAnimations.spring) {
+                    withAnimation(DesignTokens.Animation.spring) {
                         showSearchOverlay = false
                     }
                 }
             
             VStack(spacing: 0) {
                 // Search header
-                VStack(spacing: AppleSpacing.md) {
+                VStack(spacing: DesignTokens.Spacing.md) {
                     // Drag handle
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(AppleColors.textTertiary)
+                        .fill(DesignTokens.Text.tertiary)
                         .frame(width: 36, height: 4)
-                        .padding(.top, AppleSpacing.sm)
+                        .padding(.top, DesignTokens.Spacing.sm)
                     
                     // Search bar
                     HStack {
                         Image(systemName: "magnifyingglass")
-                            .foregroundColor(AppleColors.textSecondary)
-                            .padding(.leading, AppleSpacing.sm)
+                            .foregroundColor(DesignTokens.Text.secondary)
+                            .padding(.leading, DesignTokens.Spacing.sm)
                         
                         TextField("Search places, activities, or locations", text: $searchText)
-                            .font(AppleTypography.body)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.primary)
                             .onSubmit {
                                 performMapSearch()
                             }
@@ -903,100 +983,100 @@ struct MapView: View {
                                 searchResults = []
                             }) {
                                 Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(AppleColors.textTertiary)
+                                    .foregroundColor(DesignTokens.Text.tertiary)
                             }
                             .accessibilityLabel("Clear search")
                         }
                     }
-                    .padding(.horizontal, AppleSpacing.md)
-                    .padding(.vertical, AppleSpacing.sm)
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                    .padding(.vertical, DesignTokens.Spacing.sm)
                     .background(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                            .fill(AppleColors.glassMedium)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                            .fill(DesignTokens.Glass.medium)
                             .overlay(
-                                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                                    .stroke(AppleColors.glassLight, lineWidth: 1)
+                                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                                    .stroke(DesignTokens.Glass.light, lineWidth: 1)
                             )
                     )
-                    .appleShadow(AppleShadows.light)
+                    .appleShadow(DesignTokens.Shadow.light)
                 }
-                .padding(.horizontal, AppleSpacing.md)
-                .padding(.bottom, AppleSpacing.md)
+                .padding(.horizontal, DesignTokens.Spacing.md)
+                .padding(.bottom, DesignTokens.Spacing.md)
                 .background(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
                         .fill(.ultraThinMaterial)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                                .fill(AppleColors.glassMedium)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                .fill(DesignTokens.Glass.medium)
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                                        .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                        .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                         .blendMode(.overlay)
                                 )
                         )
                 )
-                .appleShadow(AppleShadows.glass)
+                .appleShadow(DesignTokens.Shadow.glass)
                 
                 // Search results
                 if !searchResults.isEmpty {
                     ScrollView {
-                        LazyVStack(spacing: AppleSpacing.sm) {
+                        LazyVStack(spacing: DesignTokens.Spacing.sm) {
                             ForEach(Array(searchResults.enumerated()), id: \.offset) { index, result in
                                 searchResultRow(for: result)
                                     .id("map-result-\(index)")
                             }
                         }
-                        .padding(.horizontal, AppleSpacing.md)
-                        .padding(.top, AppleSpacing.md)
+                        .padding(.horizontal, DesignTokens.Spacing.md)
+                        .padding(.top, DesignTokens.Spacing.md)
                     }
                     .background(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
                             .fill(.ultraThinMaterial)
                             .overlay(
-                                RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                                    .fill(AppleColors.glassMedium)
+                                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                    .fill(DesignTokens.Glass.medium)
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                                            .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                            .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                             .blendMode(.overlay)
                                     )
                             )
                     )
-                    .appleShadow(AppleShadows.glass)
-                    .padding(.horizontal, AppleSpacing.md)
-                    .padding(.top, AppleSpacing.sm)
+                    .appleShadow(DesignTokens.Shadow.glass)
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                    .padding(.top, DesignTokens.Spacing.sm)
                 } else if !searchText.isEmpty {
                     // Empty state
-                    VStack(spacing: AppleSpacing.lg) {
+                    VStack(spacing: DesignTokens.Spacing.lg) {
                         Image(systemName: "magnifyingglass")
                             .font(.system(size: 48, weight: .light))
-                            .foregroundColor(AppleColors.textTertiary)
+                            .foregroundColor(DesignTokens.Text.tertiary)
                         
                         Text("No results found")
-                            .font(AppleTypography.title3)
-                            .foregroundColor(AppleColors.textPrimary)
+                            .font(DesignTokens.Typography.title3)
+                            .foregroundColor(DesignTokens.Text.primary)
                         
                         Text("Try searching for something else")
-                            .font(AppleTypography.body)
-                            .foregroundColor(AppleColors.textSecondary)
+                            .font(DesignTokens.Typography.body)
+                            .foregroundColor(DesignTokens.Text.secondary)
                     }
-                    .padding(.vertical, AppleSpacing.xl)
+                    .padding(.vertical, DesignTokens.Spacing.xl)
                     .background(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
                             .fill(.ultraThinMaterial)
                             .overlay(
-                                RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                                    .fill(AppleColors.glassMedium)
+                                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                    .fill(DesignTokens.Glass.medium)
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                                            .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                            .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                             .blendMode(.overlay)
                                     )
                             )
                     )
-                    .appleShadow(AppleShadows.glass)
-                    .padding(.horizontal, AppleSpacing.md)
-                    .padding(.top, AppleSpacing.sm)
+                    .appleShadow(DesignTokens.Shadow.glass)
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                    .padding(.top, DesignTokens.Spacing.sm)
                 }
                 
                 Spacer()
@@ -1006,32 +1086,32 @@ struct MapView: View {
     }
     
     private func searchResultRow(for result: SearchResult) -> some View {
-        HStack(spacing: AppleSpacing.md) {
+        HStack(spacing: DesignTokens.Spacing.md) {
             // Place icon
             ZStack {
-                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                    .fill(AppleColors.surfaceSecondary)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                    .fill(DesignTokens.Surface.secondary)
                     .frame(width: 50, height: 50)
                     .overlay(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                            .stroke(AppleColors.glassLight, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+                            .stroke(DesignTokens.Glass.light, lineWidth: 1)
                     )
-                    .appleShadow(AppleShadows.light)
+                    .appleShadow(DesignTokens.Shadow.light)
                 
                 Image(systemName: "location")
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(AppleColors.accent)
+                    .foregroundColor(DesignTokens.Brand.primary)
             }
             
-            VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                 Text(result.name)
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(DesignTokens.Text.primary)
                     .lineLimit(1)
                 
-                Text(result.address ?? "Address not available")
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                Text(result.address)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .lineLimit(2)
             }
             
@@ -1042,27 +1122,27 @@ struct MapView: View {
             }) {
                 Image(systemName: "plus.circle.fill")
                     .font(.system(size: 24))
-                    .foregroundColor(AppleColors.brandPrimary)
+                    .foregroundColor(DesignTokens.Brand.primary)
             }
             .accessibilityLabel("Add to map")
             .accessibilityHint("Double tap to add \(result.name) to the map")
         }
-        .padding(.horizontal, AppleSpacing.md)
-        .padding(.vertical, AppleSpacing.sm)
+        .padding(.horizontal, DesignTokens.Spacing.md)
+        .padding(.vertical, DesignTokens.Spacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                 .fill(.ultraThinMaterial)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                        .fill(AppleColors.glassMedium)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                        .fill(DesignTokens.Glass.medium)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                                .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                                .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                 .blendMode(.overlay)
                         )
                 )
         )
-        .appleShadow(AppleShadows.light)
+        .appleShadow(DesignTokens.Shadow.light)
         .onTapGesture {
             selectSearchResult(result)
         }
@@ -1108,15 +1188,15 @@ struct MapView: View {
         searchService.searchResults.append(result)
         
         // Center map on selected location
-        withAnimation(AppleAnimations.spring) {
-            locationService.region = MKCoordinateRegion(
+        withAnimation(DesignTokens.Animation.spring) {
+            locationManager.region = MKCoordinateRegion(
                 center: CLLocationCoordinate2D(latitude: result.latitude, longitude: result.longitude),
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             )
         }
         
         // Close search overlay
-        withAnimation(AppleAnimations.spring) {
+        withAnimation(DesignTokens.Animation.spring) {
             showSearchOverlay = false
         }
         

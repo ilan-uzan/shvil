@@ -11,7 +11,7 @@ import SwiftUI
 struct AdventureSetupView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var adventureKit = DependencyContainer.shared.adventureKit
-    @StateObject private var locationService = DependencyContainer.shared.locationService
+    @StateObject private var locationManager = DependencyContainer.shared.locationManager
 
     @State private var selectedMood: AdventureMood = .fun
     @State private var selectedDuration: Int = 2
@@ -34,11 +34,11 @@ struct AdventureSetupView: View {
         NavigationView {
             ZStack {
                 // Background
-                AppleColors.background
+                DesignTokens.Surface.background
                     .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: AppleSpacing.xl) {
+                    VStack(spacing: DesignTokens.Spacing.xl) {
                         // Header
                         headerSection
 
@@ -65,8 +65,8 @@ struct AdventureSetupView: View {
                         // Generate Button
                         generateButton
                     }
-                    .padding(.horizontal, AppleSpacing.md)
-                    .padding(.top, AppleSpacing.md)
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                    .padding(.top, DesignTokens.Spacing.md)
                 }
             }
             .navigationTitle("Create Adventure")
@@ -87,16 +87,16 @@ struct AdventureSetupView: View {
                 errorMessage = ""
             }
         } message: {
-            VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                 HStack {
                     AppleGlassStatusIndicator(status: .error)
                     Text("Something went wrong")
-                        .font(AppleTypography.bodyEmphasized)
-                        .foregroundColor(AppleColors.textPrimary)
+                        .font(DesignTokens.Typography.bodyEmphasized)
+                        .foregroundColor(DesignTokens.Text.primary)
                 }
                 Text(errorMessage)
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
         }
         .alert("Success!", isPresented: $showSuccess) {
@@ -123,43 +123,48 @@ struct AdventureSetupView: View {
     // MARK: - Header Section
 
     private var headerSection: some View {
-        VStack(spacing: AppleSpacing.md) {
+        VStack(spacing: DesignTokens.Spacing.md) {
             // Icon
             ZStack {
                 Circle()
-                    .fill(AppleColors.brandPrimary)
+                    .fill(DesignTokens.Brand.primary)
                     .frame(width: 80, height: 80)
-                    .appleShadow(AppleShadows.medium)
+                    .shadow(
+                        color: DesignTokens.Shadow.medium.color,
+                        radius: DesignTokens.Shadow.medium.radius,
+                        x: DesignTokens.Shadow.medium.x,
+                        y: DesignTokens.Shadow.medium.y
+                    )
 
                 Image(systemName: "sparkles")
                     .font(.system(size: 32, weight: .medium))
                     .foregroundColor(.white)
             }
 
-            VStack(spacing: AppleSpacing.sm) {
+            VStack(spacing: DesignTokens.Spacing.sm) {
                 Text("Let's Create Your Adventure")
-                    .font(AppleTypography.title1)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title)
+                    .foregroundColor(DesignTokens.Text.primary)
                     .multilineTextAlignment(.center)
 
                 Text("Tell us what kind of experience you're looking for and we'll craft the perfect adventure for you.")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .multilineTextAlignment(.center)
             }
         }
-        .padding(.vertical, AppleSpacing.xl)
+        .padding(.vertical, DesignTokens.Spacing.xl)
     }
 
     // MARK: - Mood Section
 
     private var moodSection: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.md) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             Text("What's your mood?")
-                .font(AppleTypography.title3)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
 
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: AppleSpacing.sm) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: DesignTokens.Spacing.sm) {
                 ForEach(AdventureMood.allCases, id: \.self) { mood in
                     moodCard(for: mood)
                 }
@@ -169,17 +174,17 @@ struct AdventureSetupView: View {
 
     private func moodCard(for mood: AdventureMood) -> some View {
         Button(action: {
-            withAnimation(AppleAnimations.spring) {
+            withAnimation(DesignTokens.Animation.spring) {
                 selectedMood = mood
             }
             HapticFeedback.shared.impact(style: .light)
         }) {
-            VStack(spacing: AppleSpacing.sm) {
+            VStack(spacing: DesignTokens.Spacing.sm) {
                 moodIconView(for: mood)
                 moodTitleView(for: mood)
             }
-            .padding(.vertical, AppleSpacing.md)
-            .padding(.horizontal, AppleSpacing.sm)
+            .padding(.vertical, DesignTokens.Spacing.md)
+            .padding(.horizontal, DesignTokens.Spacing.sm)
             .background(moodCardBackground(for: mood))
         }
         .buttonStyle(PlainButtonStyle())
@@ -191,40 +196,50 @@ struct AdventureSetupView: View {
     private func moodIconView(for mood: AdventureMood) -> some View {
         ZStack {
             Circle()
-                .fill(selectedMood == mood ? AppleColors.brandPrimary : AppleColors.surfaceSecondary)
+                .fill(selectedMood == mood ? DesignTokens.Brand.primary : DesignTokens.Surface.secondary)
                 .frame(width: 48, height: 48)
                 .overlay(
                     Circle()
-                        .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                        .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                         .blendMode(.overlay)
                 )
-                .appleShadow(selectedMood == mood ? AppleShadows.medium : AppleShadows.light)
+                .shadow(
+                    color: selectedMood == mood ? DesignTokens.Shadow.medium.color : DesignTokens.Shadow.light.color,
+                    radius: selectedMood == mood ? DesignTokens.Shadow.medium.radius : DesignTokens.Shadow.light.radius,
+                    x: selectedMood == mood ? DesignTokens.Shadow.medium.x : DesignTokens.Shadow.light.x,
+                    y: selectedMood == mood ? DesignTokens.Shadow.medium.y : DesignTokens.Shadow.light.y
+                )
 
             Image(systemName: moodIcon(for: mood))
                 .font(.system(size: 20, weight: .medium))
-                .foregroundColor(selectedMood == mood ? .white : AppleColors.textSecondary)
+                .foregroundColor(selectedMood == mood ? .white : DesignTokens.Text.secondary)
         }
     }
     
     private func moodTitleView(for mood: AdventureMood) -> some View {
         Text(mood.displayName)
-            .font(AppleTypography.caption1)
-            .foregroundColor(selectedMood == mood ? AppleColors.textPrimary : AppleColors.textSecondary)
+            .font(DesignTokens.Typography.caption1)
+            .foregroundColor(selectedMood == mood ? DesignTokens.Text.primary : DesignTokens.Text.secondary)
             .multilineTextAlignment(.center)
     }
     
     private func moodCardBackground(for mood: AdventureMood) -> some View {
-        RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-            .fill(.ultraThinMaterial)
+        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+            .fill(DesignTokens.Blur.light)
             .overlay(
-                RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                    .fill(selectedMood == mood ? AppleColors.glassMedium : AppleColors.surfaceSecondary)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                    .fill(selectedMood == mood ? DesignTokens.Glass.medium : DesignTokens.Surface.secondary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                            .stroke(selectedMood == mood ? AppleColors.brandPrimary : AppleColors.glassLight, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                            .stroke(selectedMood == mood ? DesignTokens.Brand.primary : DesignTokens.Glass.light, lineWidth: 1)
                     )
             )
-            .appleShadow(AppleShadows.light)
+            .shadow(
+                color: DesignTokens.Shadow.light.color,
+                radius: DesignTokens.Shadow.light.radius,
+                x: DesignTokens.Shadow.light.x,
+                y: DesignTokens.Shadow.light.y
+            )
     }
 
     private func moodIcon(for mood: AdventureMood) -> String {
@@ -240,12 +255,12 @@ struct AdventureSetupView: View {
     // MARK: - Duration Section
 
     private var durationSection: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.md) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             Text("How long?")
-                .font(AppleTypography.title3)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
 
-            HStack(spacing: AppleSpacing.sm) {
+            HStack(spacing: DesignTokens.Spacing.sm) {
                 ForEach(durationOptions, id: \.self) { duration in
                     durationChip(for: duration)
                 }
@@ -255,24 +270,24 @@ struct AdventureSetupView: View {
 
     private func durationChip(for duration: Int) -> some View {
         Button(action: {
-            withAnimation(AppleAnimations.spring) {
+            withAnimation(DesignTokens.Animation.spring) {
                 selectedDuration = duration
             }
             HapticFeedback.shared.impact(style: .light)
         }) {
             Text("\(duration)h")
-                .font(AppleTypography.bodyEmphasized)
-                .foregroundColor(selectedDuration == duration ? .white : AppleColors.textPrimary)
-                .padding(.horizontal, AppleSpacing.lg)
-                .padding(.vertical, AppleSpacing.md)
+                .font(DesignTokens.Typography.bodyEmphasized)
+                .foregroundColor(selectedDuration == duration ? .white : DesignTokens.Text.primary)
+                .padding(.horizontal, DesignTokens.Spacing.lg)
+                .padding(.vertical, DesignTokens.Spacing.md)
                 .background(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                        .fill(selectedDuration == duration ? AppleColors.brandPrimary : AppleColors.surfaceSecondary)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                        .fill(selectedDuration == duration ? DesignTokens.Brand.primary : DesignTokens.Surface.secondary)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                                .stroke(selectedDuration == duration ? Color.clear : AppleColors.glassLight, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                                .stroke(selectedDuration == duration ? Color.clear : DesignTokens.Glass.light, lineWidth: 1)
                         )
-                        .appleShadow(selectedDuration == duration ? AppleShadows.medium : AppleShadows.light)
+                        .appleShadow(selectedDuration == duration ? DesignTokens.Shadow.medium : DesignTokens.Shadow.light)
                 )
         }
         .buttonStyle(PlainButtonStyle())
@@ -284,12 +299,12 @@ struct AdventureSetupView: View {
     // MARK: - Transportation Section
 
     private var transportationSection: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.md) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             Text("How will you get around?")
-                .font(AppleTypography.title3)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
 
-            HStack(spacing: AppleSpacing.sm) {
+            HStack(spacing: DesignTokens.Spacing.sm) {
                 ForEach(TransportationMode.allCases, id: \.self) { transport in
                     transportChip(for: transport)
                 }
@@ -299,30 +314,30 @@ struct AdventureSetupView: View {
 
     private func transportChip(for transport: TransportationMode) -> some View {
         Button(action: {
-            withAnimation(AppleAnimations.spring) {
+            withAnimation(DesignTokens.Animation.spring) {
                 selectedTransport = transport
             }
             HapticFeedback.shared.impact(style: .light)
         }) {
-            VStack(spacing: AppleSpacing.xs) {
+            VStack(spacing: DesignTokens.Spacing.xs) {
                 Image(systemName: transportIcon(for: transport))
                     .font(.system(size: 20, weight: .medium))
 
                 Text(transport.displayName)
-                    .font(AppleTypography.caption1)
+                    .font(DesignTokens.Typography.caption1)
                     .multilineTextAlignment(.center)
             }
-            .foregroundColor(selectedTransport == transport ? .white : AppleColors.textPrimary)
-            .padding(.horizontal, AppleSpacing.md)
-            .padding(.vertical, AppleSpacing.md)
+            .foregroundColor(selectedTransport == transport ? .white : DesignTokens.Text.primary)
+            .padding(.horizontal, DesignTokens.Spacing.md)
+            .padding(.vertical, DesignTokens.Spacing.md)
             .background(
-                RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                    .fill(selectedTransport == transport ? AppleColors.brandPrimary : AppleColors.surfaceSecondary)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                    .fill(selectedTransport == transport ? DesignTokens.Brand.primary : DesignTokens.Surface.secondary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                            .stroke(selectedTransport == transport ? Color.clear : AppleColors.glassLight, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                            .stroke(selectedTransport == transport ? Color.clear : DesignTokens.Glass.light, lineWidth: 1)
                     )
-                    .appleShadow(selectedTransport == transport ? AppleShadows.medium : AppleShadows.light)
+                    .appleShadow(selectedTransport == transport ? DesignTokens.Shadow.medium : DesignTokens.Shadow.light)
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -345,37 +360,37 @@ struct AdventureSetupView: View {
 
     private var groupSection: some View {
         HStack {
-            VStack(alignment: .leading, spacing: AppleSpacing.xs) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                 Text("Group Adventure")
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(DesignTokens.Text.primary)
 
                 Text("Include friends in your adventure")
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
 
             Spacer()
 
             Toggle("", isOn: $isGroupAdventure)
-                .toggleStyle(SwitchToggleStyle(tint: AppleColors.brandPrimary))
+                .toggleStyle(SwitchToggleStyle(tint: DesignTokens.Brand.primary))
         }
-        .padding(.horizontal, AppleSpacing.lg)
-        .padding(.vertical, AppleSpacing.lg)
+        .padding(.horizontal, DesignTokens.Spacing.lg)
+        .padding(.vertical, DesignTokens.Spacing.lg)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
                 .fill(.ultraThinMaterial)
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                        .fill(AppleColors.glassMedium)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                        .fill(DesignTokens.Glass.medium)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
-                                .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                                .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                 .blendMode(.overlay)
                         )
                 )
         )
-        .appleShadow(AppleShadows.medium)
+        .appleShadow(DesignTokens.Shadow.medium)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Group Adventure toggle")
         .accessibilityHint(isGroupAdventure ? "Group adventure is enabled" : "Group adventure is disabled")
@@ -384,35 +399,35 @@ struct AdventureSetupView: View {
     // MARK: - Custom Prompt Section
 
     private var customPromptSection: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.md) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             Text("Anything specific? (Optional)")
-                .font(AppleTypography.title3)
-                .foregroundColor(AppleColors.textPrimary)
+                .font(DesignTokens.Typography.title3)
+                .foregroundColor(DesignTokens.Text.primary)
 
-            VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                 TextEditor(text: $customPrompt)
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textPrimary)
-                    .padding(AppleSpacing.lg)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.primary)
+                    .padding(DesignTokens.Spacing.lg)
                     .background(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                             .fill(.ultraThinMaterial)
                             .overlay(
-                                RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                                    .fill(AppleColors.glassMedium)
+                                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                                    .fill(DesignTokens.Glass.medium)
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                                            .stroke(AppleColors.glassInnerHighlight, lineWidth: 1)
+                                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                                            .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                             .blendMode(.overlay)
                                     )
                             )
-                            .appleShadow(AppleShadows.light)
+                            .appleShadow(DesignTokens.Shadow.light)
                     )
                     .frame(minHeight: 120)
 
                 Text("Tell us about specific places, activities, or experiences you'd like to include.")
-                    .font(AppleTypography.caption1)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.caption1)
+                    .foregroundColor(DesignTokens.Text.secondary)
             }
         }
         .accessibilityElement(children: .combine)
@@ -423,37 +438,37 @@ struct AdventureSetupView: View {
     // MARK: - Validation Errors View
     
     private var validationErrorsView: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
             HStack {
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundColor(AppleColors.warning)
+                    .foregroundColor(DesignTokens.Semantic.warning)
                 Text("Please fix the following issues:")
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(DesignTokens.Text.primary)
             }
             
             ForEach(validationErrors, id: \.self) { error in
-                HStack(alignment: .top, spacing: AppleSpacing.sm) {
+                HStack(alignment: .top, spacing: DesignTokens.Spacing.sm) {
                     Text("•")
-                        .foregroundColor(AppleColors.warning)
+                        .foregroundColor(DesignTokens.Semantic.warning)
                     Text(error)
-                        .font(AppleTypography.body)
-                        .foregroundColor(AppleColors.textSecondary)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
             }
         }
-        .padding(.horizontal, AppleSpacing.lg)
-        .padding(.vertical, AppleSpacing.md)
+        .padding(.horizontal, DesignTokens.Spacing.lg)
+        .padding(.vertical, DesignTokens.Spacing.md)
         .background(
-            RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                .fill(AppleColors.warning.opacity(0.1))
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                .fill(DesignTokens.Semantic.warning.opacity(0.1))
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                        .stroke(AppleColors.warning.opacity(0.3), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                        .stroke(DesignTokens.Semantic.warning.opacity(0.3), lineWidth: 1)
                 )
         )
-        .appleShadow(AppleShadows.light)
-        .padding(.horizontal, AppleSpacing.md)
+        .appleShadow(DesignTokens.Shadow.light)
+        .padding(.horizontal, DesignTokens.Spacing.md)
     }
 
     // MARK: - Generate Button
@@ -478,7 +493,7 @@ struct AdventureSetupView: View {
         )
         .scaleEffect(isGenerating ? 0.98 : 1.0)
         .animation(AppleAnimations.micro, value: isGenerating)
-        .padding(.bottom, AppleSpacing.xl)
+        .padding(.bottom, DesignTokens.Spacing.xl)
     }
 
     // MARK: - Actions
@@ -494,7 +509,7 @@ struct AdventureSetupView: View {
         validationErrors.removeAll()
         
         // Check if location is available
-        if locationService.currentLocation == nil {
+        if locationManager.currentLocation == nil {
             validationErrors.append("Location access is required to create an adventure")
         }
         
@@ -515,7 +530,7 @@ struct AdventureSetupView: View {
     }
 
     private func generateAdventure() {
-        guard locationService.currentLocation != nil else {
+        guard locationManager.currentLocation != nil else {
             errorMessage = "Location access is required to create adventures."
             showError = true
             return
@@ -533,7 +548,7 @@ struct AdventureSetupView: View {
             budget: budget,
             companions: companions,
             transportationMode: selectedTransport,
-            origin: locationService.currentLocation!.coordinate,
+            origin: locationManager.currentLocation!.coordinate,
             preferences: UserPreferences(
                 language: "en",
                 theme: "light",

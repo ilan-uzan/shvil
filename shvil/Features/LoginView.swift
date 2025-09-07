@@ -21,11 +21,11 @@ struct LoginView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                AppleColors.background
+                DesignTokens.Surface.background
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: AppleSpacing.xl) {
+                    VStack(spacing: DesignTokens.Spacing.xl) {
                         // Header
                         headerSection
                         
@@ -38,8 +38,8 @@ struct LoginView: View {
                         // Toggle Sign Up/Sign In
                         toggleSection
                     }
-                    .padding(.horizontal, AppleSpacing.lg)
-                    .padding(.top, AppleSpacing.xl)
+                    .padding(.horizontal, DesignTokens.Spacing.lg)
+                    .padding(.top, DesignTokens.Spacing.xl)
                 }
             }
             .appleNavigationBar()
@@ -50,7 +50,7 @@ struct LoginView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundColor(AppleColors.brandPrimary)
+                    .foregroundColor(DesignTokens.Brand.primary)
                 }
             }
         }
@@ -62,46 +62,46 @@ struct LoginView: View {
     }
     
     private var headerSection: some View {
-        VStack(spacing: AppleSpacing.lg) {
+        VStack(spacing: DesignTokens.Spacing.lg) {
             // App Icon
             ZStack {
                 Circle()
-                    .fill(AppleColors.brandGradient)
+                    .fill(DesignTokens.Brand.gradient)
                     .frame(width: 80, height: 80)
                     .overlay(
                         Circle()
-                            .stroke(AppleColors.glassInnerHighlight, lineWidth: 2)
+                            .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 2)
                             .blendMode(.overlay)
                     )
-                    .appleShadow(AppleShadows.glass)
+                    .appleShadow(DesignTokens.Shadow.glass)
                 
                 Image(systemName: "sparkles")
                     .font(.system(size: 32, weight: .medium))
                     .foregroundColor(.white)
             }
             
-            VStack(spacing: AppleSpacing.sm) {
+            VStack(spacing: DesignTokens.Spacing.sm) {
                 Text(isSignUp ? "Join Shvil" : "Welcome Back")
-                    .font(AppleTypography.title1)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.title)
+                    .foregroundColor(DesignTokens.Text.primary)
                     .multilineTextAlignment(.center)
                 
                 Text(isSignUp ? "Create your account to start exploring" : "Sign in to continue your adventures")
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textSecondary)
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
                     .multilineTextAlignment(.center)
             }
         }
-        .padding(.vertical, AppleSpacing.lg)
+        .padding(.vertical, DesignTokens.Spacing.lg)
     }
     
     private var formSection: some View {
-        VStack(spacing: AppleSpacing.lg) {
+        VStack(spacing: DesignTokens.Spacing.lg) {
             // Email Field
-            VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                 Text("Email")
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(DesignTokens.Text.primary)
                 
                 TextField("Enter your email", text: $email)
                     .textFieldStyle(AppleTextFieldStyle())
@@ -111,10 +111,10 @@ struct LoginView: View {
             }
             
             // Password Field
-            VStack(alignment: .leading, spacing: AppleSpacing.sm) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                 Text("Password")
-                    .font(AppleTypography.bodyEmphasized)
-                    .foregroundColor(AppleColors.textPrimary)
+                    .font(DesignTokens.Typography.bodyEmphasized)
+                    .foregroundColor(DesignTokens.Text.primary)
                 
                 SecureField("Enter your password", text: $password)
                     .textFieldStyle(AppleTextFieldStyle())
@@ -123,7 +123,7 @@ struct LoginView: View {
     }
     
     private var actionButtons: some View {
-        VStack(spacing: AppleSpacing.md) {
+        VStack(spacing: DesignTokens.Spacing.md) {
             AppleButton(
                 isSignUp ? "Create Account" : "Sign In",
                 icon: isSignUp ? "person.badge.plus" : "person.circle",
@@ -141,26 +141,26 @@ struct LoginView: View {
                 Button("Forgot Password?") {
                     // Handle forgot password
                 }
-                .font(AppleTypography.body)
-                .foregroundColor(AppleColors.brandPrimary)
+                .font(DesignTokens.Typography.body)
+                .foregroundColor(DesignTokens.Brand.primary)
             }
         }
     }
     
     private var toggleSection: some View {
-        HStack(spacing: AppleSpacing.xs) {
+        HStack(spacing: DesignTokens.Spacing.xs) {
             Text(isSignUp ? "Already have an account?" : "Don't have an account?")
-                .font(AppleTypography.body)
-                .foregroundColor(AppleColors.textSecondary)
+                .font(DesignTokens.Typography.body)
+                .foregroundColor(DesignTokens.Text.secondary)
             
             Button(isSignUp ? "Sign In" : "Sign Up") {
-                withAnimation(AppleAnimations.spring) {
+                withAnimation(DesignTokens.Animation.spring) {
                     isSignUp.toggle()
                     errorMessage = ""
                 }
             }
-            .font(AppleTypography.bodyEmphasized)
-            .foregroundColor(AppleColors.brandPrimary)
+            .font(DesignTokens.Typography.bodyEmphasized)
+            .foregroundColor(DesignTokens.Brand.primary)
         }
     }
     
@@ -197,21 +197,21 @@ struct LoginView: View {
 struct AppleTextFieldStyle: TextFieldStyle {
     func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
-            .padding(.horizontal, AppleSpacing.md)
-            .padding(.vertical, AppleSpacing.md)
+            .padding(.horizontal, DesignTokens.Spacing.md)
+            .padding(.vertical, DesignTokens.Spacing.md)
             .background(
-                RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                     .fill(.ultraThinMaterial)
                     .overlay(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                            .fill(AppleColors.glassMedium)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                            .fill(DesignTokens.Glass.medium)
                             .overlay(
-                                RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
-                                    .stroke(AppleColors.glassLight, lineWidth: 1)
+                                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                                    .stroke(DesignTokens.Glass.light, lineWidth: 1)
                             )
                     )
             )
-            .appleShadow(AppleShadows.light)
+            .appleShadow(DesignTokens.Shadow.light)
     }
 }
 

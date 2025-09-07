@@ -1,215 +1,228 @@
-# Shvil Minimal
+# Shvil - Adventure Companion
 
-A distraction-free navigation app with a signature Liquid Glass interface, built for iOS 17+ with SwiftUI and MapKit.
+A modern iOS app built with SwiftUI and Supabase, designed to help users discover and plan amazing adventures.
 
-## 🌿 Product Vision
+## 🚀 Features
 
-Shvil Minimal is a privacy-first navigation app that combines powerful A→B navigation with subtle social features. The app features a distinctive Liquid Glass aesthetic with translucent depth, animated micro-ripples, and a calming turquoise-to-aqua color palette.
+### Core Features
+- **Interactive Maps**: Explore locations with multiple map styles (2D, 3D, Satellite, Hybrid)
+- **Adventure Planning**: Create and manage personalized adventure plans
+- **Social Features**: Connect with friends and share adventures
+- **Scavenger Hunts**: Participate in location-based scavenger hunts
+- **Smart Navigation**: AI-powered route optimization and suggestions
 
-### Key Features (MVP)
-
-- **Fast, Clear Navigation**: Driving, walking, and cycling modes with fastest/safest route options
-- **Powerful Search**: Location search with recent searches and distance-based ranking
-- **Saved Places**: Collections for Home/Work/Favorites with quick access
-- **Light Social**: Share ETA, optional Friends on Map, quick reactions
-- **Offline Ready**: Tile/route caching for weak signal areas
-- **Privacy First**: All social features opt-in & temporary
-
-## 🎨 Liquid Glass Design
-
-Every container is designed as living glass with:
-- **Accents**: Icy turquoise → deep aqua gradient
-- **Panels/Buttons**: Translucent depth with subtle specular highlights
-- **Animations**: Micro-ripples on tap, subtle parallax on scroll
-- **Route Lines**: Radiant gradient with soft glow
-- **Motion**: 120fps-friendly, battery-safe animations
-
-## 🛠️ Tech Stack
-
-- **Language**: Swift 5.10+
-- **UI Framework**: SwiftUI
-- **Maps**: MapKit
-- **Location**: Core Location
-- **Reactive**: Combine
-- **Backend**: Supabase (Auth, DB, Realtime)
-- **Target**: iOS 17+, iPhone first
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Xcode 15.0+
-- iOS 17.0+ Simulator or Device
-- Supabase account (for social features)
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/ilan-uzan/shvil.git
-cd shvil
-```
-
-2. Open in Xcode:
-```bash
-open shvil.xcodeproj
-```
-
-3. Configure Supabase (optional for core features):
-   - Create a new project at [supabase.com](https://supabase.com)
-   - Copy your project URL and anon key
-   - Update `Config.swift` with your credentials
-
-4. Build and run:
-   - Select your target device/simulator
-   - Press `Cmd+R` to build and run
-
-## 📱 Screenshots
-
-*Screenshots will be added as features are implemented*
+### Design System
+- **Liquid Glass UI**: Modern, translucent design with blur effects
+- **Accessibility First**: Full VoiceOver, Dynamic Type, and RTL support
+- **Performance Optimized**: Lazy loading, caching, and smooth animations
+- **Dark Mode**: Complete dark mode support with adaptive colors
 
 ## 🏗️ Architecture
 
-The app follows a modular architecture with clear separation of concerns:
+### Tech Stack
+- **Frontend**: SwiftUI, Combine, CoreLocation, MapKit
+- **Backend**: Supabase (Auth, Database, Storage, Functions)
+- **Design**: Custom Liquid Glass design system
+- **Testing**: XCTest, SwiftLint, Performance monitoring
 
-- **AppCore**: App state, dependency injection, feature flags
-- **LocationKit**: GPS permissions, location updates, background handling
-- **MapKit+**: Search, geocoding, directions, annotations/overlays
-- **RoutingEngine**: Mode selection, route options, ETA formatting, rerouting
-- **Persistence**: Cached tiles, route summaries, saved places (local + cloud sync)
-- **SocialKit**: Supabase Auth/Realtime for ETA sharing and friends presence
-- **PrivacyGuard**: Share toggles, session timeouts, kill-switch
-- **DesignSystem**: Liquid Glass components, tokens, motion
+### Project Structure
+```
+shvil/
+├── AppCore/                 # App configuration and state
+├── Core/                    # Core services and models
+├── Features/                # Feature-specific views
+├── Shared/                  # Shared components and utilities
+│   ├── Components/          # Reusable UI components
+│   ├── Design/              # Design system and tokens
+│   └── Services/            # Shared services
+└── Resources/               # Assets and localization
+```
+
+## 🎨 Design System
+
+### Liquid Glass Components
+- **GlassTabBar**: Floating navigation with glass effects
+- **LiquidGlassButton**: Interactive buttons with haptic feedback
+- **LiquidGlassCard**: Content cards with blur and shadows
+- **LiquidGlassTextField**: Input fields with glass styling
+
+### Design Tokens
+- **Colors**: Brand, Semantic, Surface, Text, Stroke
+- **Typography**: SF Pro with Dynamic Type support
+- **Spacing**: 8pt grid system
+- **Shadows**: Multiple elevation levels
+- **Animations**: Spring-based with accessibility support
+
+## ♿ Accessibility
+
+### VoiceOver Support
+- All interactive elements have proper labels
+- Logical navigation order
+- Custom actions for complex interactions
+- Helpful hints and descriptions
+
+### Dynamic Type
+- Text scales from XS to XXXL
+- Layout adapts to larger text sizes
+- Maintains readability at all sizes
+- 44pt minimum hit targets
+
+### RTL Support
+- Complete Hebrew language support
+- Proper text alignment and layout
+- Mirrored icons and navigation
+- Cultural considerations
+
+## 🚀 Performance
+
+### Optimization Features
+- **Lazy Loading**: Lists and images load on demand
+- **Caching**: Intelligent memory and disk caching
+- **Background Processing**: Main thread offloading
+- **Memory Management**: Automatic cache cleanup
+- **Frame Rate Monitoring**: Real-time performance tracking
+
+### Performance Targets
+- 60fps smooth scrolling
+- <2s app launch time
+- <100MB memory usage
+- <1s screen transitions
 
 ## 🧪 Testing
 
-Run the test suite:
-```bash
-xcodebuild test -scheme shvil -destination 'platform=iOS Simulator,name=iPhone 16'
+### Test Coverage
+- **Unit Tests**: Core services and utilities
+- **Performance Tests**: Memory and CPU monitoring
+- **Accessibility Tests**: VoiceOver and Dynamic Type
+- **Integration Tests**: API and database operations
+
+### Quality Gates
+- 0 force unwraps in production code
+- 0 main thread blocking operations
+- 100% DesignTokens usage
+- All accessibility requirements met
+
+## 🛠️ Development
+
+### Prerequisites
+- Xcode 15.0+
+- iOS 17.0+
+- Swift 5.9+
+
+### Setup
+1. Clone the repository
+2. Open `shvil.xcodeproj` in Xcode
+3. Configure Supabase credentials in `Configuration.swift`
+4. Build and run
+
+### Code Quality
+- **SwiftLint**: Automated code style checking
+- **Conventional Commits**: Standardized commit messages
+- **PR Templates**: Structured pull request process
+- **Code Reviews**: Required for all changes
+
+## 📱 Screenshots
+
+### Main Features
+- Interactive map with multiple layers
+- Adventure planning interface
+- Social features and friend connections
+- Scavenger hunt participation
+- Settings and preferences
+
+### Design System
+- Liquid Glass navigation
+- Accessible form controls
+- Dark mode support
+- RTL layout examples
+
+## 🔧 Configuration
+
+### Environment Variables
+```swift
+// Supabase Configuration
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+
+// Feature Flags
+SOCIALIZE_V1=true
+HUNT_V1=true
+LIQUID_GLASS_NAV_V1=true
 ```
 
-## 📚 Documentation
+### Build Configurations
+- **Debug**: Development with logging
+- **Release**: Production with optimizations
+- **Testing**: Test-specific configuration
 
-- [Design System](DESIGN.md) - Liquid Glass tokens, components, and motion rules
-- [Social Features](SOCIAL_SPEC.md) - ETA sharing, friends presence, reactions
-- [Architecture](ARCHITECTURE.md) - Module boundaries, data flow, error handling
-- [Test Plan](TEST_PLAN.md) - Manual QA scenarios and acceptance criteria
+## 📊 Analytics
+
+### Performance Metrics
+- App launch time
+- Screen load times
+- Memory usage
+- Frame rate stability
+- Cache hit rates
+
+### User Experience
+- Feature usage statistics
+- Accessibility feature adoption
+- Error rates and crash reports
+- User feedback and ratings
+
+## 🚀 Deployment
+
+### CI/CD Pipeline
+- **Automated Testing**: Unit, integration, and UI tests
+- **Code Quality**: SwiftLint and security scanning
+- **Performance**: Automated performance testing
+- **Accessibility**: Automated accessibility validation
+- **Deployment**: Automated TestFlight distribution
+
+### Release Process
+1. Feature development in feature branches
+2. Pull request with required checks
+3. Code review and approval
+4. Merge to main branch
+5. Automated deployment to TestFlight
+6. Manual App Store submission
 
 ## 🤝 Contributing
 
+### Development Workflow
 1. Fork the repository
-2. Create a feature branch: `git checkout -b feat/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feat/amazing-feature`
-5. Open a Pull Request
+2. Create a feature branch
+3. Make changes with tests
+4. Submit a pull request
+5. Address review feedback
+6. Merge after approval
+
+### Code Standards
+- Follow SwiftLint configuration
+- Write comprehensive tests
+- Document public APIs
+- Use conventional commits
+- Ensure accessibility compliance
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🔐 Privacy & Security
+## 🙏 Acknowledgments
 
-Shvil Minimal is built with privacy and security as core principles:
-
-### Privacy
-- All social features are opt-in and temporary
-- Location data stays on-device unless explicitly shared
-- No tracking or analytics without explicit consent
-- Clear privacy controls and kill-switches
-
-### Security
-- **API Key Protection**: All API keys are stored securely using environment variables
-- **No Hardcoded Secrets**: No sensitive information is committed to version control
-- **Secure Configuration**: Use `./setup_environment.sh` for secure key setup
-- **Validation**: API keys are validated for proper format and security
-- **Documentation**: See [SECURITY_GUIDE.md](SECURITY_GUIDE.md) for detailed security practices
-
-### Quick Security Setup
-```bash
-# Secure setup (recommended)
-./setup_environment.sh
-
-# Or manual setup
-cp environment.example .env
-# Edit .env with your actual keys
-chmod 600 .env
-```
-
-**⚠️ Important**: Never commit `.env` files or API keys to version control!
-
-## 🔧 Troubleshooting
-
-### Why Changes Don't Show Up
-
-If you've made changes but don't see them in the running app, check these common issues:
-
-#### 1. Repository & GitHub Status
-- **Check branch status**: Ensure work is on a feature branch, not main
-- **Verify PR status**: Check if PRs are failing CI or awaiting review
-- **Confirm main tip**: Compare latest main commit to local
-- **Check CI pipeline**: Ensure all CI checks are passing
-
-#### 2. Local Build Issues
-- **Clean build**: Run `xcodebuild clean` and rebuild
-- **Delete DerivedData**: Clear Xcode cache
-- **Check scheme/target**: Ensure building correct target (Debug/Release)
-- **Verify dependencies**: Check SPM packages are resolved
-- **Bump build number**: Force app reinstall
-
-#### 3. CI Pipeline Problems
-- **SwiftFormat issues**: Run `swiftformat .` to fix formatting
-- **Security scan failures**: Check for hardcoded secrets or blocking TODO comments
-- **Build failures**: Verify CI environment matches local
-- **Test failures**: Run tests locally before pushing
-
-#### 4. Runtime & Configuration
-- **Feature flags**: Check if features are enabled in configuration
-- **Environment variables**: Verify API keys are properly set
-- **App state**: Check if app is running from correct build
-- **Cache issues**: Clear app data and restart
-
-#### 5. Quick Fixes
-```bash
-# Fix SwiftFormat issues
-swiftformat .
-
-# Clean and rebuild
-xcodebuild clean
-xcodebuild -project shvil.xcodeproj -scheme shvil build
-
-# Check CI status
-gh pr checks
-
-# Verify local changes
-git status
-git log --oneline -5
-```
-
-### Common Issues
-- **CI failing**: Usually SwiftFormat or security scan issues
-- **Build errors**: Check for missing imports or syntax errors
-- **App not updating**: Delete app and reinstall from Xcode
-- **Changes not visible**: Ensure PRs are merged to main branch
-
-## 🎯 Roadmap
-
-- [x] Project setup and architecture
-- [ ] Liquid Glass design system
-- [ ] Core map and search functionality
-- [ ] Turn-by-turn navigation
-- [ ] Saved places management
-- [ ] Social ETA sharing
-- [ ] Friends on map (opt-in)
-- [ ] Quick reactions
-- [ ] Offline capabilities
-- [ ] Privacy controls
-- [ ] Analytics and telemetry
-- [ ] Accessibility compliance
+- **Supabase**: Backend infrastructure
+- **Apple**: SwiftUI and iOS frameworks
+- **Design System**: Custom Liquid Glass implementation
+- **Community**: Open source contributors and testers
 
 ## 📞 Support
 
-For support, email support@shvil.app or create an issue on GitHub.
+For support, feature requests, or bug reports:
+- Create an issue on GitHub
+- Contact the development team
+- Check the documentation wiki
+- Join the community discussions
 
 ---
 
-Built with ❤️ for iOS
+**Built with ❤️ using SwiftUI and Supabase**
