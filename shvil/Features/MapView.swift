@@ -162,61 +162,42 @@ struct MapView: View {
     // MARK: - Top Bar
 
     private var topBar: some View {
-        HStack(spacing: AppleSpacing.sm) {
-            // Search Bar
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(AppleColors.textSecondary)
-                    .padding(.leading, AppleSpacing.sm)
-                
-                TextField("Search places, activities, or locations", text: $searchText)
-                    .font(AppleTypography.body)
-                    .foregroundColor(AppleColors.textPrimary)
-                    .onSubmit {
-                        if !searchText.isEmpty {
-                            searchService.search(for: searchText)
-                        }
-                    }
-                    .accessibilityLabel("Search field")
-                    .accessibilityHint("Enter a place, activity, or location to search")
-                
-                if !searchText.isEmpty {
-                Button(action: {
-                        searchText = ""
-                        searchService.searchResults = []
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(AppleColors.textTertiary)
-                    }
-                    .accessibilityLabel("Clear search")
+        VStack(spacing: 0) {
+            // Enhanced Search Bar
+            MapSearchBar(
+                searchText: $searchText,
+                isSearching: $isSearchFocused,
+                onSearch: { searchQuery in
+                    searchService.search(for: searchQuery)
+                    isSearchFocused = false
+                },
+                onCancel: {
+                    searchText = ""
+                    searchService.searchResults = []
+                    isSearchFocused = false
                 }
-            }
-            .padding(.horizontal, AppleSpacing.md)
-            .padding(.vertical, AppleSpacing.sm)
-            .background(
-                RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                    .fill(AppleColors.glassMedium)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
-                            .stroke(AppleColors.glassLight, lineWidth: 1)
-                    )
             )
-            .appleShadow(AppleShadows.light)
-
-            // Voice Search Button
-            AppleGlassFAB(
-                icon: "mic.fill",
-                size: .small,
-                style: .secondary
-            ) {
-                print("Voice search tapped")
-                HapticFeedback.shared.impact(style: .light)
+            
+            // Voice Search Button (when not searching)
+            if !isSearchFocused {
+                HStack {
+                    Spacer()
+                    
+                    AppleGlassFAB(
+                        icon: "mic.fill",
+                        size: .small,
+                        style: .secondary
+                    ) {
+                        print("Voice search tapped")
+                        HapticFeedback.shared.impact(style: .light)
+                    }
+                    .accessibilityLabel("Voice search")
+                    .accessibilityHint("Double tap to search using your voice")
+                }
+                .padding(.horizontal, DesignTokens.Spacing.lg)
+                .padding(.top, DesignTokens.Spacing.sm)
             }
-            .accessibilityLabel("Voice search")
-            .accessibilityHint("Double tap to search using your voice")
         }
-        .padding(.horizontal, AppleSpacing.md)
-        .padding(.top, AppleSpacing.sm)
     }
 
     // MARK: - Focus Mode Components

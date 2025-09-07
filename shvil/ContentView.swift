@@ -28,57 +28,38 @@ struct ContentView: View {
     }
     
     private var mainContent: some View {
-        TabView(selection: $selectedTab) {
-            // Map Tab
-            MapView()
-                .tabItem {
-                    Image(systemName: "map.fill")
-                    Text("Map")
+        ZStack {
+            // Main Content
+            Group {
+                switch selectedTab {
+                case 0:
+                    MapView()
+                case 1:
+                    SocializeView()
+                case 2:
+                    HuntView()
+                case 3:
+                    AdventuresView()
+                case 4:
+                    SettingsView()
+                default:
+                    MapView()
                 }
-                .tag(0)
-
-            // Search Tab
-            SearchView()
-                .tabItem {
-                    Image(systemName: "magnifyingglass")
-                    Text("Search")
-                }
-                .tag(1)
-
-            // Socialize Tab
-            SocializeView()
-                .tabItem {
-                    Image(systemName: "person.3.fill")
-                    Text("Socialize")
-                }
-                .tag(2)
-
-            // Hunt Tab
-            HuntView()
-                .tabItem {
-                    Image(systemName: "flag.fill")
-                    Text("Hunt")
-                }
-                .tag(3)
-
-            // Adventures Tab
-            AdventuresView()
-                .tabItem {
-                    Image(systemName: "sparkles")
-                    Text("Adventures")
-                }
-                .tag(4)
-
-            // Profile Tab
-            ProfileView()
-                .tabItem {
-                    Image(systemName: "person.circle.fill")
-                    Text("Profile")
-                }
-                .tag(5)
+            }
+            .animation(.easeInOut(duration: 0.3), value: selectedTab)
+            
+            // Floating Navigation Pill
+            FloatingNavigationPill(
+                selectedTab: $selectedTab,
+                tabs: [
+                    TabItem(icon: "map.fill", title: "Map"),
+                    TabItem(icon: "person.3.fill", title: "Socialize"),
+                    TabItem(icon: "flag.fill", title: "Hunt"),
+                    TabItem(icon: "sparkles", title: "Adventure"),
+                    TabItem(icon: "gearshape.fill", title: "Settings")
+                ]
+            )
         }
-        .appleTabBar()
-        .accentColor(DesignTokens.Brand.primary)
         .sheet(isPresented: $showAdventureSetup) {
             AdventureSetupView()
         }
