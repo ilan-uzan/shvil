@@ -22,6 +22,7 @@ struct GlassTabBar: View {
     @State private var isDragging: Bool = false
     @State private var dragOffset: CGFloat = 0
     @State private var dragScale: CGFloat = 1.0
+    @State private var tabPositions: [Int: CGRect] = [:]
     
     // Feature flag
     private let liquidGlassEnabled = FeatureFlags.shared.isEnabled(.liquidGlassNavV1)
@@ -30,74 +31,79 @@ struct GlassTabBar: View {
         VStack(spacing: 0) {
             Spacer()
             
-            // Apple Music-style Navigation Bar
-            HStack(spacing: 0) {
-                ForEach(Array(tabs.enumerated()), id: \.offset) { index, tab in
-                    AppleMusicTabButton(
-                        tab: tab,
-                        isSelected: selectedTab == index,
-                        dynamicTint: dynamicTint,
-                        onTap: {
-                            selectTab(index)
-                        }
-                    )
-                    .frame(maxWidth: .infinity)
+            // Apple Music-style Navigation Bar with GeometryReader
+            GeometryReader { geometry in
+                HStack(spacing: 0) {
+                    ForEach(Array(tabs.enumerated()), id: \.offset) { index, tab in
+                        AppleMusicTabButton(
+                            tab: tab,
+                            isSelected: selectedTab == index,
+                            dynamicTint: dynamicTint,
+                            onTap: {
+                                selectTab(index)
+                            }
+                        )
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            // Invisible background to capture tab positions
+                            GeometryReader { tabGeometry in
+                                Color.clear
+                                    .onAppear {
+                                        // Store tab positions for accurate calculations
+                                        updateTabPosition(index: index, frame: tabGeometry.frame(in: .global))
+                                    }
+                                    .onChange(of: tabGeometry.frame(in: .global)) { newFrame in
+                                        updateTabPosition(index: index, frame: newFrame)
+                                    }
+                            }
+                        )
+                    }
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            print("🎯 Drag gesture detected! Location: \(value.location)")
+                            if !isDragging {
+                                isDragging = true
+                                dragScale = 1.1 // Zoom in when dragging starts
+                                print("🎯 Started dragging, scale: \(dragScale)")
+                            }
+                            
+                            // Use actual tab positions for accurate calculation
+                            let touchX = value.location.x
+                            let tabIndex = findTabIndexForTouch(touchX: touchX, geometry: geometry)
+                            
+                            print("🎯 Touch X: \(touchX), Tab Index: \(tabIndex)")
+                            
+                            if tabIndex >= 0 && tabIndex < tabs.count {
+                                // Update capsule position to follow finger
+                                let tabCenter = tabPositions[tabIndex]?.midX ?? 0
+                                let containerCenter = geometry.size.width / 2
+                                dragOffset = tabCenter - containerCenter
+                                print("🎯 Tab Center: \(tabCenter), Container Center: \(containerCenter), Drag Offset: \(dragOffset)")
+                            }
+                        }
+                        .onEnded { value in
+                            isDragging = false
+                            dragScale = 1.0 // Zoom out when released
+                            
+                            let touchX = value.location.x
+                            let tabIndex = findTabIndexForTouch(touchX: touchX, geometry: geometry)
+                            
+                            print("🎯 Drag ended at X: \(touchX), Tab Index: \(tabIndex)")
+                            
+                            if tabIndex >= 0 && tabIndex < tabs.count && tabIndex != selectedTab {
+                                selectTab(tabIndex)
+                            } else {
+                                // Reset to current tab position
+                                updateCapsulePosition()
+                            }
+                        }
+                )
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .gesture(
-                DragGesture()
-                    .onChanged { value in
-                        print("🎯 Drag gesture detected! Location: \(value.location)")
-                        if !isDragging {
-                            isDragging = true
-                            dragScale = 1.1 // Zoom in when dragging starts
-                            print("🎯 Started dragging, scale: \(dragScale)")
-                        }
-                        
-                        // Simplified calculation using screen width and tab count
-                        let screenWidth = UIScreen.main.bounds.width
-                        let hStackPadding = 32.0 // 16pt padding on each side
-                        let availableWidth = screenWidth - hStackPadding
-                        let tabWidth = availableWidth / CGFloat(tabs.count)
-                        
-                        // Calculate which tab the finger is over
-                        let touchX = value.location.x
-                        let tabIndex = Int(touchX / tabWidth)
-                        
-                        print("🎯 Touch X: \(touchX), Tab Width: \(tabWidth), Tab Index: \(tabIndex)")
-                        
-                        if tabIndex >= 0 && tabIndex < tabs.count {
-                            // Update capsule position to follow finger
-                            let tabCenter = CGFloat(tabIndex) * tabWidth + tabWidth / 2
-                            let containerCenter = availableWidth / 2
-                            dragOffset = tabCenter - containerCenter
-                            print("🎯 Tab Center: \(tabCenter), Container Center: \(containerCenter), Drag Offset: \(dragOffset)")
-                        }
-                    }
-                    .onEnded { value in
-                        isDragging = false
-                        dragScale = 1.0 // Zoom out when released
-                        
-                        // Simplified calculation using screen width and tab count
-                        let screenWidth = UIScreen.main.bounds.width
-                        let hStackPadding = 32.0
-                        let availableWidth = screenWidth - hStackPadding
-                        let tabWidth = availableWidth / CGFloat(tabs.count)
-                        let touchX = value.location.x
-                        let tabIndex = Int(touchX / tabWidth)
-                        
-                        print("🎯 Drag ended at X: \(touchX), Tab Index: \(tabIndex)")
-                        
-                        if tabIndex >= 0 && tabIndex < tabs.count && tabIndex != selectedTab {
-                            selectTab(tabIndex)
-                        } else {
-                            // Reset to current tab position
-                            updateCapsulePosition()
-                        }
-                    }
-            )
+            .frame(height: 60)
             .background(
                 ZStack {
                     // Apple Music-style frosted glass background - more rounded
@@ -186,24 +192,56 @@ struct GlassTabBar: View {
         updateDynamicTint(for: index)
     }
     
+    private func updateTabPosition(index: Int, frame: CGRect) {
+        tabPositions[index] = frame
+    }
+    
+    private func findTabIndexForTouch(touchX: CGFloat, geometry: GeometryProxy) -> Int {
+        // Convert touch position to global coordinates
+        let globalTouchX = touchX + geometry.frame(in: .global).minX
+        
+        // Find which tab the touch is over
+        for (index, frame) in tabPositions {
+            if globalTouchX >= frame.minX && globalTouchX <= frame.maxX {
+                return index
+            }
+        }
+        
+        // Fallback: calculate based on equal spacing
+        let tabWidth = geometry.size.width / CGFloat(tabs.count)
+        return Int(touchX / tabWidth)
+    }
+    
     private func updateCapsulePosition() {
-        // Simplified calculation using screen width and tab count
-        let screenWidth = UIScreen.main.bounds.width
-        let hStackPadding = 32.0 // 16pt padding on each side
-        let availableWidth = screenWidth - hStackPadding
-        let tabWidth = availableWidth / CGFloat(tabs.count)
-        let newWidth = tabWidth * 0.85 // 85% of tab width for proper fit
-        
-        // Calculate the center position of the selected tab
-        // Each tab takes up equal space, so center is: (selectedTab * tabWidth) + (tabWidth / 2)
-        let tabCenter = CGFloat(selectedTab) * tabWidth + tabWidth / 2
-        let containerCenter = availableWidth / 2
-        let newOffset = tabCenter - containerCenter
-        
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-            capsuleOffset = newOffset
-            capsuleWidth = newWidth
-            isAnimating = true
+        // Use actual tab positions if available, otherwise fallback to calculation
+        if let selectedTabFrame = tabPositions[selectedTab] {
+            let tabCenter = selectedTabFrame.midX
+            let containerCenter = UIScreen.main.bounds.width / 2
+            let newOffset = tabCenter - containerCenter
+            let newWidth = selectedTabFrame.width * 0.85
+            
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                capsuleOffset = newOffset
+                capsuleWidth = newWidth
+                isAnimating = true
+            }
+        } else {
+            // Fallback calculation
+            let screenWidth = UIScreen.main.bounds.width
+            let hStackPadding = 32.0
+            let availableWidth = screenWidth - hStackPadding
+            let tabWidth = availableWidth / CGFloat(tabs.count)
+            let newWidth = tabWidth * 0.85
+            
+            let tabCenter = CGFloat(selectedTab) * tabWidth + tabWidth / 2
+            let containerCenter = availableWidth / 2
+            let newOffset = tabCenter - containerCenter
+            
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                capsuleOffset = newOffset
+                capsuleWidth = newWidth
+                isAnimating = true
+            }
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
