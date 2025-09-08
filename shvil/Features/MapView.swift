@@ -73,99 +73,29 @@ struct MapView: View {
     // MARK: - Map View
 
     private var mapView: some View {
-        Group {
-            if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted {
-                // Show error state when location is denied or restricted
-                locationDeniedView
-            } else if locationManager.authorizationStatus == .notDetermined {
-                // Show loading state while requesting permission
-                loadingView
-            } else {
-                // Show map when location is available
-                mapContentView
-            }
+        Map(coordinateRegion: $locationManager.region,
+            interactionModes: .all,
+            showsUserLocation: true,
+            userTrackingMode: .constant(.none))
+        .mapStyle(mapStyleForLayer(selectedMapLayer))
+        .ignoresSafeArea()
+        .safeAreaInset(edge: .bottom) {
+            // Bottom content inset
+            Color.clear.frame(height: 140)
         }
         .onAppear {
-            print("🗺️ MapView appeared with authorization status: \(locationManager.authorizationStatus.rawValue)")
+            locationManager.requestLocationPermission()
         }
-        .onChange(of: locationManager.authorizationStatus) { _, newStatus in
-            print("🗺️ Authorization status changed to: \(newStatus.rawValue)")
-            if newStatus == .denied || newStatus == .restricted {
-                // Show demo region when location is denied
-                locationManager.showDemoRegion()
+        .overlay(
+            // Show error state only when location is explicitly denied
+            Group {
+                if locationManager.authorizationStatus == .denied {
+                    locationDeniedView
+                }
             }
-        }
+        )
     }
     
-    private var mapContentView: some View {
-        ZStack {
-            // Fallback background - temporarily disable Map component
-            Color.black.opacity(0.1)
-                .ignoresSafeArea()
-            
-            // Temporary placeholder instead of Map component
-            VStack(spacing: DesignTokens.Spacing.lg) {
-                Image(systemName: "map.fill")
-                    .font(.system(size: 60, weight: .medium))
-                    .foregroundColor(DesignTokens.Brand.primary)
-                
-                Text("Map View")
-                    .font(DesignTokens.Typography.title)
-                    .fontWeight(.bold)
-                    .foregroundColor(DesignTokens.Text.primary)
-                
-                Text("Map component temporarily disabled for debugging")
-                    .font(DesignTokens.Typography.body)
-                    .foregroundColor(DesignTokens.Text.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, DesignTokens.Spacing.lg)
-            }
-            .padding(DesignTokens.Spacing.xl)
-            .background(
-                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-                    .fill(DesignTokens.Glass.medium)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-                            .stroke(DesignTokens.Glass.light, lineWidth: 1)
-                    )
-                    .appleShadow(DesignTokens.Shadow.glass)
-            )
-            .padding(.horizontal, DesignTokens.Spacing.lg)
-            
-            .safeAreaInset(edge: .bottom) {
-                // Bottom content inset
-                Color.clear.frame(height: 140)
-            }
-            .onAppear {
-                print("🗺️ MapContentView appeared - Map component disabled for debugging")
-                locationManager.requestLocationPermission()
-            }
-        }
-    }
-    
-    
-    private var loadingView: some View {
-        ZStack {
-            // Background
-            Color.black.opacity(0.1)
-                .ignoresSafeArea()
-            
-            VStack(spacing: DesignTokens.Spacing.lg) {
-                // Loading indicator
-                ProgressView()
-                    .scaleEffect(1.5)
-                    .progressViewStyle(CircularProgressViewStyle(tint: DesignTokens.Brand.primary))
-                
-                Text("Loading Map...")
-                    .font(DesignTokens.Typography.title)
-                    .fontWeight(.medium)
-                    .foregroundColor(DesignTokens.Text.primary)
-            }
-        }
-        .onAppear {
-            print("🗺️ LoadingView appeared")
-        }
-    }
     
     private var locationDeniedView: some View {
         ZStack {
@@ -235,9 +165,6 @@ struct MapView: View {
                     .appleShadow(DesignTokens.Shadow.glass)
             )
             .padding(.horizontal, DesignTokens.Spacing.lg)
-        }
-        .onAppear {
-            print("🗺️ LocationDeniedView appeared")
         }
     }
     
