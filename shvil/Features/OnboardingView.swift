@@ -25,11 +25,7 @@ struct OnboardingView: View {
             DesignTokens.Surface.background
                 .ignoresSafeArea()
             
-            if hasCompletedOnboarding {
-                ContentView()
-            } else {
-                onboardingContent
-            }
+            onboardingContent
         }
         .onAppear {
             checkOnboardingStatus()
