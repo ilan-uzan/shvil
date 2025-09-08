@@ -85,7 +85,11 @@ struct MapView: View {
                 mapContentView
             }
         }
+        .onAppear {
+            print("🗺️ MapView appeared with authorization status: \(locationManager.authorizationStatus.rawValue)")
+        }
         .onChange(of: locationManager.authorizationStatus) { _, newStatus in
+            print("🗺️ Authorization status changed to: \(newStatus.rawValue)")
             if newStatus == .denied || newStatus == .restricted {
                 // Show demo region when location is denied
                 locationManager.showDemoRegion()
@@ -95,22 +99,45 @@ struct MapView: View {
     
     private var mapContentView: some View {
         ZStack {
-            // Fallback background in case Map fails to render
-            Color.black.opacity(0.05)
+            // Fallback background - temporarily disable Map component
+            Color.black.opacity(0.1)
                 .ignoresSafeArea()
             
-            // Try to render the Map component
-            Map(coordinateRegion: $locationManager.region,
-                interactionModes: .all,
-                showsUserLocation: true,
-                userTrackingMode: .constant(.none))
-            .mapStyle(mapStyleForLayer(selectedMapLayer))
-            .ignoresSafeArea()
+            // Temporary placeholder instead of Map component
+            VStack(spacing: DesignTokens.Spacing.lg) {
+                Image(systemName: "map.fill")
+                    .font(.system(size: 60, weight: .medium))
+                    .foregroundColor(DesignTokens.Brand.primary)
+                
+                Text("Map View")
+                    .font(DesignTokens.Typography.title)
+                    .fontWeight(.bold)
+                    .foregroundColor(DesignTokens.Text.primary)
+                
+                Text("Map component temporarily disabled for debugging")
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, DesignTokens.Spacing.lg)
+            }
+            .padding(DesignTokens.Spacing.xl)
+            .background(
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                    .fill(DesignTokens.Glass.medium)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                            .stroke(DesignTokens.Glass.light, lineWidth: 1)
+                    )
+                    .appleShadow(DesignTokens.Shadow.glass)
+            )
+            .padding(.horizontal, DesignTokens.Spacing.lg)
+            
             .safeAreaInset(edge: .bottom) {
                 // Bottom content inset
                 Color.clear.frame(height: 140)
             }
             .onAppear {
+                print("🗺️ MapContentView appeared - Map component disabled for debugging")
                 locationManager.requestLocationPermission()
             }
         }
@@ -134,6 +161,9 @@ struct MapView: View {
                     .fontWeight(.medium)
                     .foregroundColor(DesignTokens.Text.primary)
             }
+        }
+        .onAppear {
+            print("🗺️ LoadingView appeared")
         }
     }
     
@@ -205,6 +235,9 @@ struct MapView: View {
                     .appleShadow(DesignTokens.Shadow.glass)
             )
             .padding(.horizontal, DesignTokens.Spacing.lg)
+        }
+        .onAppear {
+            print("🗺️ LocationDeniedView appeared")
         }
     }
     
