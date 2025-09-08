@@ -74,34 +74,68 @@ struct MapView: View {
 
     private var mapView: some View {
         Group {
-            if locationManager.authorizationStatus == .denied {
-                // Show error state when location is denied
+            if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted {
+                // Show error state when location is denied or restricted
                 locationDeniedView
+            } else if locationManager.authorizationStatus == .notDetermined {
+                // Show loading state while requesting permission
+                loadingView
             } else {
-                // Show map when location is available or not determined
-                Map(coordinateRegion: $locationManager.region,
-                    interactionModes: .all,
-                    showsUserLocation: true,
-                    userTrackingMode: .constant(.none))
-                .mapStyle(mapStyleForLayer(selectedMapLayer))
-                .ignoresSafeArea()
-                .safeAreaInset(edge: .bottom) {
-                    // Bottom content inset
-                    Color.clear.frame(height: 140)
-                }
-                .onAppear {
-                    locationManager.requestLocationPermission()
-                }
+                // Show map when location is available
+                mapContentView
             }
         }
         .onChange(of: locationManager.authorizationStatus) { _, newStatus in
-            if newStatus == .denied {
+            if newStatus == .denied || newStatus == .restricted {
                 // Show demo region when location is denied
                 locationManager.showDemoRegion()
             }
         }
     }
     
+    private var mapContentView: some View {
+        ZStack {
+            // Fallback background in case Map fails to render
+            Color.black.opacity(0.05)
+                .ignoresSafeArea()
+            
+            // Try to render the Map component
+            Map(coordinateRegion: $locationManager.region,
+                interactionModes: .all,
+                showsUserLocation: true,
+                userTrackingMode: .constant(.none))
+            .mapStyle(mapStyleForLayer(selectedMapLayer))
+            .ignoresSafeArea()
+            .safeAreaInset(edge: .bottom) {
+                // Bottom content inset
+                Color.clear.frame(height: 140)
+            }
+            .onAppear {
+                locationManager.requestLocationPermission()
+            }
+        }
+    }
+    
+    
+    private var loadingView: some View {
+        ZStack {
+            // Background
+            Color.black.opacity(0.1)
+                .ignoresSafeArea()
+            
+            VStack(spacing: DesignTokens.Spacing.lg) {
+                // Loading indicator
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .progressViewStyle(CircularProgressViewStyle(tint: DesignTokens.Brand.primary))
+                
+                Text("Loading Map...")
+                    .font(DesignTokens.Typography.title)
+                    .fontWeight(.medium)
+                    .foregroundColor(DesignTokens.Text.primary)
+            }
+        }
+    }
     
     private var locationDeniedView: some View {
         ZStack {
