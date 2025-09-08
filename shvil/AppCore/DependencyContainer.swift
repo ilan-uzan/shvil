@@ -17,7 +17,6 @@ class DependencyContainer {
     // MARK: - Core Services
 
     lazy var appState: AppState = .init()
-    lazy var locationKit: LocationKit = .init()
     lazy var mapEngine: MapEngine = .init()
     lazy var routingEngine: RoutingEngine = .init()
     lazy var contextEngine: ContextEngine = .init()

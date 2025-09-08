@@ -26,14 +26,8 @@ public protocol LocationServiceProtocol: ObservableObject {
     func openLocationSettings()
 }
 
-// MARK: - LocationService Conformance
-
-extension LocationService: LocationServiceProtocol {
-    public var locationError: Error? { nil } // LocationService doesn't have error property
-}
-
 // MARK: - LocationManager Conformance
 
 extension LocationManager: LocationServiceProtocol {
-    // Already conforms to the protocol
+    // LocationManager already conforms to the protocol with all required properties and methods
 }

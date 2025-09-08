@@ -21,7 +21,7 @@ class SmartStopsService: ObservableObject {
     
     // MARK: - Private Properties
     private let contextEngine: ContextEngine
-    private let locationService: LocationService
+    private let locationManager: LocationManager
     private var cancellables = Set<AnyCancellable>()
     private var currentRoute: MKRoute?
     private var currentLocation: CLLocation?
@@ -33,9 +33,9 @@ class SmartStopsService: ObservableObject {
     private let analysisInterval: TimeInterval = 30.0 // 30 seconds
     
     // MARK: - Initialization
-    init(contextEngine: ContextEngine, locationService: LocationService, userPreferences: SmartStopsPreferences = SmartStopsPreferences()) {
+    init(contextEngine: ContextEngine, locationManager: LocationManager, userPreferences: SmartStopsPreferences = SmartStopsPreferences()) {
         self.contextEngine = contextEngine
-        self.locationService = locationService
+        self.locationManager = locationManager
         self.userPreferences = userPreferences
         
         setupObservers()
@@ -87,7 +87,7 @@ class SmartStopsService: ObservableObject {
     // MARK: - Private Methods
     private func setupObservers() {
         // Observe location updates
-        locationService.$currentLocation
+        locationManager.$currentLocation
             .sink { [weak self] location in
                 self?.currentLocation = location
                 if self?.isAnalyzing == true {

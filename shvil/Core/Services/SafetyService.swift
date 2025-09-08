@@ -25,7 +25,7 @@ public class SafetyService: NSObject, ObservableObject {
     
     // MARK: - Private Properties
     
-    private let locationManager = CLLocationManager()
+    private let sharedLocationManager: LocationManager
     private var cancellables = Set<AnyCancellable>()
     private var sosTimer: Timer?
     private var locationSharingTimer: Timer?
@@ -43,9 +43,10 @@ public class SafetyService: NSObject, ObservableObject {
     
     // MARK: - Initialization
     
-    public override init() {
+    public init(locationManager: LocationManager) {
+        self.sharedLocationManager = locationManager
         super.init()
-        setupLocationManager()
+        setupLocationObservers()
         loadEmergencyContacts()
         loadSafetyReports()
     }
@@ -168,10 +169,22 @@ public class SafetyService: NSObject, ObservableObject {
     
     // MARK: - Private Methods
     
-    private func setupLocationManager() {
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()
+    private func setupLocationObservers() {
+        // Observe location updates from shared location manager
+        sharedLocationManager.$currentLocation
+            .sink { [weak self] location in
+                self?.lastKnownLocation = location
+            }
+            .store(in: &cancellables)
+        
+        // Observe authorization status changes
+        sharedLocationManager.$authorizationStatus
+            .sink { [weak self] status in
+                if status == .denied || status == .restricted {
+                    self?.isSharingLocation = false
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func executeSOS() {
@@ -306,22 +319,6 @@ public class SafetyService: NSObject, ObservableObject {
     }
 }
 
-// MARK: - CLLocationManagerDelegate
-
-extension SafetyService: @preconcurrency CLLocationManagerDelegate {
-    nonisolated public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        Task { @MainActor in
-            lastKnownLocation = location
-        }
-    }
-    
-    nonisolated public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        Task { @MainActor in
-            self.error = error
-        }
-    }
-}
 
 // MARK: - MFMessageComposeViewControllerDelegate
 

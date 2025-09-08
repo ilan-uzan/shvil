@@ -27,7 +27,7 @@ public class AdventureService: ObservableObject {
     private let aiKit: AIKit
     private let mapEngine: MapEngine
     private let routingService: AsyncRoutingService
-    private let locationService: LocationService
+    private let locationManager: LocationManager
     private let offlineManager: OfflineManager
     private var cancellables = Set<AnyCancellable>()
     
@@ -42,13 +42,13 @@ public class AdventureService: ObservableObject {
         aiKit: AIKit,
         mapEngine: MapEngine,
         routingService: AsyncRoutingService,
-        locationService: LocationService,
+        locationManager: LocationManager,
         offlineManager: OfflineManager
     ) {
         self.aiKit = aiKit
         self.mapEngine = mapEngine
         self.routingService = routingService
-        self.locationService = locationService
+        self.locationManager = locationManager
         self.offlineManager = offlineManager
         
         loadAdventureHistory()
@@ -201,7 +201,7 @@ public class AdventureService: ObservableObject {
             budget: budget,
             companions: companions,
             transportationMode: .walking, // Default
-            origin: locationService.currentLocation?.coordinate ?? CLLocationCoordinate2D(),
+            origin: locationManager.currentLocation?.coordinate ?? CLLocationCoordinate2D(),
             preferences: UserPreferences(
                 language: "en",
                 theme: "light",
