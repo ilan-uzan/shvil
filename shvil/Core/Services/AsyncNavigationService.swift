@@ -222,6 +222,14 @@ public class AsyncNavigationService: NSObject, ObservableObject {
     }
     
     private func setupSpeechSynthesizer() {
+        // Check if voice services are available before initializing
+        guard !ProcessInfo.processInfo.isLowPowerModeEnabled else {
+            print("🔇 Voice services disabled: Low power mode enabled")
+            self.speechSynthesizer = nil
+            self.voiceServiceAvailable = false
+            return
+        }
+        
         // Try to initialize speech synthesizer safely
         let synthesizer = AVSpeechSynthesizer()
         synthesizer.delegate = self

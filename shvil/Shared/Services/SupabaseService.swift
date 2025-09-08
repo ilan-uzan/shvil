@@ -29,7 +29,8 @@ public class SupabaseService: ObservableObject {
             }
         } else {
             // Create a mock client for development when not configured
-            guard let url = URL(string: "https://demo.supabase.co") else {
+            // Use a local mock URL to prevent connection attempts
+            guard let url = URL(string: "https://localhost:3000") else {
                 fatalError("Invalid demo URL")
             }
             client = SupabaseClient(supabaseURL: url, supabaseKey: "demo-key")
@@ -43,6 +44,15 @@ public class SupabaseService: ObservableObject {
     // MARK: - Connection Management
 
     private func testConnection() async {
+        // Skip connection test in demo mode
+        guard Configuration.isSupabaseConfigured else {
+            await MainActor.run {
+                self.isConnected = false
+                self.lastError = nil
+            }
+            return
+        }
+        
         do {
             // Simple test query to verify connection
             let _: [String] = try await client

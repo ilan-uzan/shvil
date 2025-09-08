@@ -73,27 +73,27 @@ struct MapView: View {
     // MARK: - Map View
 
     private var mapView: some View {
-        Map(coordinateRegion: $locationManager.region,
-            interactionModes: .all,
-            showsUserLocation: true,
-            userTrackingMode: .constant(.none))
-        .mapStyle(mapStyleForLayer(selectedMapLayer))
-        .ignoresSafeArea()
-        .safeAreaInset(edge: .bottom) {
-            // Bottom content inset
-            Color.clear.frame(height: 140)
-        }
-        .onAppear {
-            locationManager.requestLocationPermission()
-        }
-        .overlay(
-            // Show error state only when location is explicitly denied
-            Group {
-                if locationManager.authorizationStatus == .denied {
-                    locationDeniedView
+        Group {
+            if locationManager.authorizationStatus == .denied {
+                // Show error state when location is denied
+                locationDeniedView
+            } else {
+                // Show map when location is available or not determined
+                Map(coordinateRegion: $locationManager.region,
+                    interactionModes: .all,
+                    showsUserLocation: true,
+                    userTrackingMode: .constant(.none))
+                .mapStyle(mapStyleForLayer(selectedMapLayer))
+                .ignoresSafeArea()
+                .safeAreaInset(edge: .bottom) {
+                    // Bottom content inset
+                    Color.clear.frame(height: 140)
+                }
+                .onAppear {
+                    locationManager.requestLocationPermission()
                 }
             }
-        )
+        }
         .onChange(of: locationManager.authorizationStatus) { _, newStatus in
             if newStatus == .denied {
                 // Show demo region when location is denied
