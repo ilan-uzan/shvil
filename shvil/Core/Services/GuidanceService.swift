@@ -30,7 +30,7 @@ public class GuidanceService: NSObject, ObservableObject {
     
     // MARK: - Private Properties
     
-    private let speechSynthesizer = AVSpeechSynthesizer()
+    private var speechSynthesizer: AVSpeechSynthesizer?
     private let locationManager = CLLocationManager()
     private var guidanceTimer: Timer?
     private var speedTimer: Timer?
@@ -48,6 +48,7 @@ public class GuidanceService: NSObject, ObservableObject {
     private var voiceSettings = VoiceSettings()
     private var pendingAnnouncements: [String] = []
     private var isSpeaking = false
+    private var voiceServiceAvailable = false
     
     // Haptic settings
     private let hapticSettings = HapticSettings()
@@ -66,6 +67,14 @@ public class GuidanceService: NSObject, ObservableObject {
         setupLocationManager()
         setupSpeechSynthesizer()
         setupHapticFeedback()
+    }
+    
+    private func setupSpeechSynthesizer() {
+        // Try to initialize speech synthesizer safely
+        let synthesizer = AVSpeechSynthesizer()
+        synthesizer.delegate = self
+        self.speechSynthesizer = synthesizer
+        self.voiceServiceAvailable = true
     }
     
     // MARK: - Public Methods
@@ -104,7 +113,7 @@ public class GuidanceService: NSObject, ObservableObject {
         stopSpeedTimer()
         
         // Stop any ongoing speech
-        speechSynthesizer.stopSpeaking(at: .immediate)
+        speechSynthesizer?.stopSpeaking(at: .immediate)
         
         // Provide stop haptic feedback
         if isHapticEnabled {
@@ -153,12 +162,17 @@ public class GuidanceService: NSObject, ObservableObject {
     
     /// Toggle voice guidance
     public func toggleVoiceGuidance() {
+        guard voiceServiceAvailable else {
+            print("⚠️ Voice guidance not available")
+            return
+        }
+        
         isVoiceEnabled.toggle()
         
         if isVoiceEnabled {
             announceMessage("voice_guidance_enabled".localized)
         } else {
-            speechSynthesizer.stopSpeaking(at: .immediate)
+            speechSynthesizer?.stopSpeaking(at: .immediate)
             announceMessage("voice_guidance_disabled".localized)
         }
     }
@@ -231,9 +245,6 @@ public class GuidanceService: NSObject, ObservableObject {
         locationManager.distanceFilter = 10
     }
     
-    private func setupSpeechSynthesizer() {
-        speechSynthesizer.delegate = self
-    }
     
     private func setupHapticFeedback() {
         // Haptic feedback is handled by the HapticFeedback service
@@ -242,7 +253,9 @@ public class GuidanceService: NSObject, ObservableObject {
     private func startGuidanceTimer() {
         stopGuidanceTimer()
         guidanceTimer = Timer.scheduledTimer(withTimeInterval: guidanceUpdateInterval, repeats: true) { [weak self] _ in
-            self?.updateGuidance()
+            Task { @MainActor in
+                self?.updateGuidance()
+            }
         }
     }
     
@@ -254,7 +267,9 @@ public class GuidanceService: NSObject, ObservableObject {
     private func startSpeedTimer() {
         stopSpeedTimer()
         speedTimer = Timer.scheduledTimer(withTimeInterval: speedUpdateInterval, repeats: true) { [weak self] _ in
-            self?.updateSpeed()
+            Task { @MainActor in
+                self?.updateSpeed()
+            }
         }
     }
     
@@ -323,10 +338,15 @@ public class GuidanceService: NSObject, ObservableObject {
     }
     
     private func announceMessage(_ message: String) {
-        guard isVoiceEnabled else { return }
+        guard isVoiceEnabled && voiceServiceAvailable else { 
+            print("🔇 Voice announcement skipped: \(message)")
+            return 
+        }
+        
+        guard let synthesizer = speechSynthesizer else { return }
         
         // Stop any ongoing speech
-        speechSynthesizer.stopSpeaking(at: .immediate)
+        synthesizer.stopSpeaking(at: .immediate)
         
         let utterance = AVSpeechUtterance(string: message)
         utterance.voice = voiceSettings.voice
@@ -334,7 +354,7 @@ public class GuidanceService: NSObject, ObservableObject {
         utterance.volume = voiceSettings.volume
         utterance.pitchMultiplier = voiceSettings.pitch
         
-        speechSynthesizer.speak(utterance)
+        synthesizer.speak(utterance)
     }
     
     private func formatStepInstruction(_ step: RouteStep) -> String {

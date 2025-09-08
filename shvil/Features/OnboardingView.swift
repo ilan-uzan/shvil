@@ -229,12 +229,6 @@ struct OnboardingView: View {
                         isRequired: true
                     )
                     
-                    permissionCard(
-                        icon: "mic.fill",
-                        title: "microphone_permission".localized,
-                        description: "microphone_permission_description".localized,
-                        isRequired: false
-                    )
                     
                     permissionCard(
                         icon: "bell.fill",

@@ -46,7 +46,7 @@ public class AsyncNavigationService: NSObject, ObservableObject {
     // MARK: - Private Properties
     
     private let locationManager = CLLocationManager()
-    private let speechSynthesizer = AVSpeechSynthesizer()
+    private var speechSynthesizer: AVSpeechSynthesizer?
     private var routeCalculationTask: Task<Void, Never>?
     private var rerouteTask: Task<Void, Never>?
     private var navigationTask: Task<Void, Never>?
@@ -58,6 +58,7 @@ public class AsyncNavigationService: NSObject, ObservableObject {
     private var currentStepIndex = 0
     private var isVoiceEnabled = true
     private var isHapticEnabled = true
+    private var voiceServiceAvailable = false
     
     // Performance optimization
     private let backgroundQueue = DispatchQueue(label: "navigation.background", qos: .userInitiated)
@@ -221,7 +222,11 @@ public class AsyncNavigationService: NSObject, ObservableObject {
     }
     
     private func setupSpeechSynthesizer() {
-        speechSynthesizer.delegate = self
+        // Try to initialize speech synthesizer safely
+        let synthesizer = AVSpeechSynthesizer()
+        synthesizer.delegate = self
+        self.speechSynthesizer = synthesizer
+        self.voiceServiceAvailable = true
     }
     
     private func setupCaches() {
@@ -410,7 +415,12 @@ public class AsyncNavigationService: NSObject, ObservableObject {
     }
     
     private func announceInstruction(_ instruction: String) async {
-        guard isVoiceEnabled else { return }
+        guard isVoiceEnabled && voiceServiceAvailable else { 
+            print("🔇 Voice instruction skipped: \(instruction)")
+            return 
+        }
+        
+        guard let synthesizer = speechSynthesizer else { return }
         
         await withCheckedContinuation { continuation in
             let utterance = AVSpeechUtterance(string: instruction)
@@ -418,7 +428,7 @@ public class AsyncNavigationService: NSObject, ObservableObject {
             utterance.rate = 0.5
             utterance.volume = 0.8
             
-            speechSynthesizer.speak(utterance)
+            synthesizer.speak(utterance)
             
             // Wait for speech to complete
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {

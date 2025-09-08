@@ -94,6 +94,12 @@ struct MapView: View {
                 }
             }
         )
+        .onChange(of: locationManager.authorizationStatus) { _, newStatus in
+            if newStatus == .denied {
+                // Show demo region when location is denied
+                locationManager.showDemoRegion()
+            }
+        }
     }
     
     
