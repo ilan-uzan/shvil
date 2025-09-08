@@ -73,27 +73,86 @@ struct MapView: View {
     // MARK: - Map View
 
     private var mapView: some View {
-        Map(coordinateRegion: $locationManager.region,
-            interactionModes: .all,
-            showsUserLocation: true,
-            userTrackingMode: .constant(.none))
-        .mapStyle(mapStyleForLayer(selectedMapLayer))
-        .ignoresSafeArea()
-        .safeAreaInset(edge: .bottom) {
-            // Bottom content inset
-            Color.clear.frame(height: 140)
+        ZStack {
+            // Background with gradient to simulate map
+            LinearGradient(
+                colors: [
+                    Color.blue.opacity(0.1),
+                    Color.green.opacity(0.1),
+                    Color.brown.opacity(0.1)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            
+            // Map placeholder content
+            VStack(spacing: DesignTokens.Spacing.lg) {
+                Image(systemName: "map.fill")
+                    .font(.system(size: 80, weight: .light))
+                    .foregroundColor(DesignTokens.Brand.primary.opacity(0.6))
+                
+                Text("Map View")
+                    .font(DesignTokens.Typography.title)
+                    .fontWeight(.medium)
+                    .foregroundColor(DesignTokens.Text.primary)
+                
+                Text("Interactive map will be available soon")
+                    .font(DesignTokens.Typography.body)
+                    .foregroundColor(DesignTokens.Text.secondary)
+                    .multilineTextAlignment(.center)
+                
+                // Location status indicator
+                HStack(spacing: DesignTokens.Spacing.sm) {
+                    Circle()
+                        .fill(locationManager.authorizationStatus == .authorizedWhenInUse ? 
+                              DesignTokens.Semantic.success : DesignTokens.Semantic.warning)
+                        .frame(width: 8, height: 8)
+                    
+                    Text(locationStatusText)
+                        .font(DesignTokens.Typography.caption2)
+                        .foregroundColor(DesignTokens.Text.secondary)
+                }
+                .padding(.top, DesignTokens.Spacing.sm)
+            }
+            .padding(.horizontal, DesignTokens.Spacing.xl)
+            .padding(.vertical, DesignTokens.Spacing.xxl)
+            .background(
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                    .fill(DesignTokens.Glass.medium)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                            .stroke(DesignTokens.Glass.light, lineWidth: 1)
+                    )
+                    .appleShadow(DesignTokens.Shadow.glass)
+            )
+            .padding(.horizontal, DesignTokens.Spacing.lg)
+            
+            // Overlay for location denied state
+            if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted {
+                locationDeniedView
+            }
         }
         .onAppear {
             locationManager.requestLocationPermission()
         }
-        .overlay(
-            // Show error state only when location is explicitly denied
-            Group {
-                if locationManager.authorizationStatus == .denied {
-                    locationDeniedView
-                }
-            }
-        )
+        .safeAreaInset(edge: .bottom) {
+            // Bottom content inset
+            Color.clear.frame(height: 140)
+        }
+    }
+    
+    private var locationStatusText: String {
+        switch locationManager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            return "Location services enabled"
+        case .denied, .restricted:
+            return "Location access denied"
+        case .notDetermined:
+            return "Requesting location access..."
+        @unknown default:
+            return "Location status unknown"
+        }
     }
     
     

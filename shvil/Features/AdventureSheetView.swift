@@ -127,9 +127,31 @@ struct AdventureSheetView: View {
 
     private var mapSection: some View {
         GeometryReader { geometry in
-            Map(coordinateRegion: .constant(mapRegion), annotationItems: adventure.stops) { stop in
-                MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: stop.location.latitude, longitude: stop.location.longitude)) {
-                    adventureStopAnnotation(for: stop)
+            // Map placeholder with gradient background
+            ZStack {
+                LinearGradient(
+                    colors: [
+                        Color.blue.opacity(0.1),
+                        Color.green.opacity(0.1),
+                        Color.brown.opacity(0.1)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                
+                VStack(spacing: DesignTokens.Spacing.md) {
+                    Image(systemName: "map.fill")
+                        .font(.system(size: 40, weight: .light))
+                        .foregroundColor(DesignTokens.Brand.primary.opacity(0.6))
+                    
+                    Text("Adventure Map")
+                        .font(DesignTokens.Typography.title3)
+                        .fontWeight(.medium)
+                        .foregroundColor(DesignTokens.Text.primary)
+                    
+                    Text("\(adventure.stops.count) stops planned")
+                        .font(DesignTokens.Typography.caption2)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
             }
             .frame(height: geometry.size.height)

@@ -165,22 +165,31 @@ struct AdventureRecapView: View {
                 .font(DesignTokens.Typography.title3)
                 .foregroundColor(DesignTokens.Text.primary)
 
-            Map(coordinateRegion: .constant(mapRegion), annotationItems: adventure.stops) { stop in
-                MapAnnotation(coordinate: stop.location.coordinate) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.green)
-                            .frame(width: 32, height: 32)
-
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.white)
-                    }
-                    .overlay(
-                        Circle()
-                            .stroke(Color.white, lineWidth: 3)
-                    )
-                    .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+            // Map placeholder with gradient background
+            ZStack {
+                LinearGradient(
+                    colors: [
+                        Color.blue.opacity(0.1),
+                        Color.green.opacity(0.1),
+                        Color.brown.opacity(0.1)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                
+                VStack(spacing: DesignTokens.Spacing.md) {
+                    Image(systemName: "map.fill")
+                        .font(.system(size: 40, weight: .light))
+                        .foregroundColor(DesignTokens.Brand.primary.opacity(0.6))
+                    
+                    Text("Journey Map")
+                        .font(DesignTokens.Typography.title3)
+                        .fontWeight(.medium)
+                        .foregroundColor(DesignTokens.Text.primary)
+                    
+                    Text("\(adventure.stops.count) stops completed")
+                        .font(DesignTokens.Typography.caption2)
+                        .foregroundColor(DesignTokens.Text.secondary)
                 }
             }
             .frame(height: 200)
