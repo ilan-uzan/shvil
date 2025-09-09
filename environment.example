@@ -1,25 +1,13 @@
 # Shvil Environment Configuration
 # Copy this file to .env and fill in your actual values
-# DO NOT COMMIT .env TO GIT - IT CONTAINS SENSITIVE INFORMATION
 
 # Supabase Configuration
-# Get these from your Supabase project dashboard > Settings > API
-SUPABASE_URL=https://your-project-id.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.your-anon-key-here
+SUPABASE_URL=https://your-project-ref.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key-here
 
-# OpenAI Configuration
-# Get this from https://platform.openai.com/api-keys
-# Keys should start with 'sk-' and be 51 characters long
-OPENAI_API_KEY=sk-your-openai-api-key-here
+# OpenAI Configuration (Optional)
+OPENAI_API_KEY=your-openai-api-key-here
 
 # Development Settings
 DEBUG=true
-LOG_LEVEL=debug
-
-# Database Settings
-DATABASE_URL=postgresql://postgres:password@localhost:54322/postgres
-
-# Feature Flags
-ENABLE_ANALYTICS=true
-ENABLE_CRASH_REPORTING=true
-ENABLE_OFFLINE_MODE=true
+DEMO_MODE=false
