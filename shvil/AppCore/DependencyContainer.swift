@@ -32,7 +32,7 @@ class DependencyContainer {
 
     // MARK: - Feature Services
 
-    lazy var locationManager: LocationManager = .init()
+    lazy var locationManager: UnifiedLocationManager = .shared
     lazy var searchService: SearchService = .init()
     lazy var navigationService: AsyncNavigationService = .init()
     lazy var offlineManager: OfflineManager = .init()
@@ -74,7 +74,7 @@ class DependencyContainer {
     func reset() {
         // Reset all services for testing
         appState = AppState()
-        locationManager = LocationManager()
+        locationManager = UnifiedLocationManager.shared
         mapEngine = MapEngine()
         routingEngine = RoutingEngine()
         contextEngine = ContextEngine()

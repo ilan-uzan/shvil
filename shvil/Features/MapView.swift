@@ -74,59 +74,14 @@ struct MapView: View {
 
     private var mapView: some View {
         ZStack {
-            // Background with gradient to simulate map
-            LinearGradient(
-                colors: [
-                    Color.blue.opacity(0.1),
-                    Color.green.opacity(0.1),
-                    Color.brown.opacity(0.1)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            
-            // Map placeholder content
-            VStack(spacing: DesignTokens.Spacing.lg) {
-                Image(systemName: "map.fill")
-                    .font(.system(size: 80, weight: .light))
-                    .foregroundColor(DesignTokens.Brand.primary.opacity(0.6))
-                
-                Text("Map View")
-                    .font(DesignTokens.Typography.title)
-                    .fontWeight(.medium)
-                    .foregroundColor(DesignTokens.Text.primary)
-                
-                Text("Interactive map will be available soon")
-                    .font(DesignTokens.Typography.body)
-                    .foregroundColor(DesignTokens.Text.secondary)
-                    .multilineTextAlignment(.center)
-                
-                // Location status indicator
-                HStack(spacing: DesignTokens.Spacing.sm) {
-                    Circle()
-                        .fill(locationManager.authorizationStatus == .authorizedWhenInUse ? 
-                              DesignTokens.Semantic.success : DesignTokens.Semantic.warning)
-                        .frame(width: 8, height: 8)
-                    
-                    Text(locationStatusText)
-                        .font(DesignTokens.Typography.caption2)
-                        .foregroundColor(DesignTokens.Text.secondary)
+            // Actual MapKit implementation
+            Map(coordinateRegion: $locationManager.region, annotationItems: searchService.searchResults) { result in
+                MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: result.latitude, longitude: result.longitude)) {
+                    annotationView(for: result)
                 }
-                .padding(.top, DesignTokens.Spacing.sm)
             }
-            .padding(.horizontal, DesignTokens.Spacing.xl)
-            .padding(.vertical, DesignTokens.Spacing.xxl)
-            .background(
-                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-                    .fill(DesignTokens.Glass.medium)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-                            .stroke(DesignTokens.Glass.light, lineWidth: 1)
-                    )
-                    .appleShadow(DesignTokens.Shadow.glass)
-            )
-            .padding(.horizontal, DesignTokens.Spacing.lg)
+            .mapStyle(mapStyleForLayer(selectedMapLayer))
+            .ignoresSafeArea()
             
             // Overlay for location denied state
             if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted {
@@ -182,32 +137,20 @@ struct MapView: View {
                         .padding(.horizontal, DesignTokens.Spacing.lg)
                     
                     HStack(spacing: DesignTokens.Spacing.md) {
-                        Button(action: {
+                        LiquidGlassButton(
+                            "Open Settings",
+                            style: .primary,
+                            size: .medium
+                        ) {
                             locationManager.openLocationSettings()
-                        }) {
-                            Text("Open Settings")
-                                .font(DesignTokens.Typography.bodySemibold)
-                                .foregroundColor(.white)
-                                .padding(.horizontal, DesignTokens.Spacing.xl)
-                                .padding(.vertical, DesignTokens.Spacing.md)
-                                .background(
-                                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
-                                        .fill(DesignTokens.Brand.gradient)
-                                )
                         }
                         
-                        Button(action: {
+                        LiquidGlassButton(
+                            "Continue with Demo",
+                            style: .secondary,
+                            size: .medium
+                        ) {
                             locationManager.showDemoRegion()
-                        }) {
-                            Text("Continue with Demo")
-                                .font(DesignTokens.Typography.bodySemibold)
-                                .foregroundColor(DesignTokens.Brand.primary)
-                                .padding(.horizontal, DesignTokens.Spacing.xl)
-                                .padding(.vertical, DesignTokens.Spacing.md)
-                                .background(
-                                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
-                                        .stroke(DesignTokens.Brand.primary, lineWidth: 2)
-                                )
                         }
                     }
                     .padding(.top, DesignTokens.Spacing.sm)

@@ -110,7 +110,7 @@ struct AdventureSheetView: View {
         Text(adventure.status.displayName)
             .font(AppleTypography.caption2)
             .fontWeight(.semibold)
-            .foregroundColor(.white)
+            .foregroundColor(DesignTokens.Text.primaryDark)
             .padding(.horizontal, DesignTokens.Spacing.sm)
             .padding(.vertical, DesignTokens.Spacing.xs)
             .background(
@@ -136,9 +136,9 @@ struct AdventureSheetView: View {
             ZStack {
                 LinearGradient(
                     colors: [
-                        Color.blue.opacity(0.1),
-                        Color.green.opacity(0.1),
-                        Color.brown.opacity(0.1)
+                        DesignTokens.Brand.primary.opacity(0.1),
+                        DesignTokens.Semantic.success.opacity(0.1),
+                        DesignTokens.Semantic.warning.opacity(0.1)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -191,13 +191,13 @@ struct AdventureSheetView: View {
 
                 Image(systemName: stopIcon(for: stop.category))
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.white)
+                    .foregroundColor(DesignTokens.Text.primaryDark)
             }
             .overlay(
                 Circle()
-                    .stroke(Color.white, lineWidth: 3)
+                    .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 3)
             )
-            .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+            .shadow(color: DesignTokens.Shadow.medium.color, radius: DesignTokens.Shadow.medium.radius, x: DesignTokens.Shadow.medium.x, y: DesignTokens.Shadow.medium.y)
         }
     }
 
@@ -245,7 +245,7 @@ struct AdventureSheetView: View {
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(DesignTokens.Surface.tertiary)
-                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
+                .shadow(color: DesignTokens.Shadow.light.color, radius: DesignTokens.Shadow.light.radius, x: DesignTokens.Shadow.light.x, y: DesignTokens.Shadow.light.y)
         )
     }
 
@@ -336,7 +336,7 @@ struct AdventureSheetView: View {
                 HStack {
                     Text("\(index + 1)")
                         .font(DesignTokens.Typography.caption1)
-                        .foregroundColor(.white)
+                        .foregroundColor(DesignTokens.Text.primaryDark)
                         .frame(width: 24, height: 24)
                         .background(
                             Circle()
@@ -388,7 +388,7 @@ struct AdventureSheetView: View {
                         .font(DesignTokens.Typography.body)
                         .fontWeight(.semibold)
                 }
-                .foregroundColor(.white)
+                .foregroundColor(DesignTokens.Text.primaryDark)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(
