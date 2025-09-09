@@ -147,16 +147,42 @@ public struct DesignTokens {
     
     // MARK: - Spacing Tokens
     
-    /// Spacing scale based on 8pt grid system
+    /// Spacing scale based on Apple's professional standards
     public struct Spacing {
         public static let xs: CGFloat = 4    // 4pt
         public static let sm: CGFloat = 8    // 8pt
-        public static let md: CGFloat = 16   // 16pt
-        public static let lg: CGFloat = 24   // 24pt
-        public static let xl: CGFloat = 32   // 32pt
-        public static let xxl: CGFloat = 40  // 40pt
-        public static let xxxl: CGFloat = 48 // 48pt
+        public static let md: CGFloat = 14   // 14pt - Apple standard
+        public static let lg: CGFloat = 20   // 20pt
+        public static let xl: CGFloat = 26   // 26pt - Apple standard leading content inset
+        public static let xxl: CGFloat = 30  // 30pt - Apple standard safe area padding
+        public static let xxxl: CGFloat = 40 // 40pt
         public static let xxxxl: CGFloat = 64 // 64pt
+    }
+    
+    /// Layout constants - Apple professional standards
+    public struct Layout {
+        public static let cornerRadius: CGFloat = 15.0 // Apple standard
+        public static let standardPadding: CGFloat = 14.0 // Apple standard
+        public static let safeAreaPadding: CGFloat = 30.0 // Apple standard
+        public static let leadingContentInset: CGFloat = 26.0 // Apple standard
+        
+        // Grid constants
+        public static let collectionGridSpacing: CGFloat = 14.0
+        public static let collectionGridItemCornerRadius: CGFloat = 8.0
+        
+        // Map constants
+        public static let mapAspectRatio: CGFloat = 1.2
+        
+        // Badge constants
+        public static let badgeSize: CGFloat = 52.0
+        public static let badgeCornerRadius: CGFloat = 24.0
+        public static let hexagonSize: CGFloat = 48.0
+        
+        // Adventure-specific constants
+        public static let adventureCardHeight: CGFloat = 200.0
+        public static let adventureCardCornerRadius: CGFloat = 16.0
+        public static let stopCardHeight: CGFloat = 120.0
+        public static let stopCardCornerRadius: CGFloat = 12.0
     }
     
     // MARK: - Corner Radius Tokens

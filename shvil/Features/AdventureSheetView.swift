@@ -28,16 +28,21 @@ struct AdventureSheetView: View {
                 DesignTokens.Surface.background
                     .ignoresSafeArea()
 
-                VStack(spacing: 0) {
-                    // Header
-                    headerSection
+                ScrollView {
+                    VStack(spacing: 0) {
+                        // Flexible Header with Map
+                        AdventureFlexibleHeader(
+                            adventure: adventure,
+                            onDismiss: { dismiss() },
+                            onStartNavigation: { startNavigation() }
+                        )
+                        .flexibleHeaderContent()
 
-                    // Map
-                    mapSection
-
-                    // Bottom Sheet
-                    bottomSheet
+                        // Bottom Sheet
+                        bottomSheet
+                    }
                 }
+                .flexibleHeaderScrollView()
             }
             .navigationBarHidden(true)
         }
@@ -412,6 +417,10 @@ struct AdventureSheetView: View {
         isNavigating = true
         // Start navigation to first stop
         HapticFeedback.shared.impact(style: .medium)
+    }
+    
+    private func startNavigation() {
+        startAdventure()
     }
 
     private func shareAdventure() {

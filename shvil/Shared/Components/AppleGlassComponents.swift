@@ -208,8 +208,24 @@ struct AppleGlassCard<Content: View>: View {
     
     private var backgroundView: some View {
         RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-            .fill(backgroundColor)
+            .fill(
+                LinearGradient(
+                    colors: [
+                        backgroundColor,
+                        backgroundColor.opacity(0.8),
+                        backgroundColor
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
             .overlay(overlayView)
+            .overlay(
+                // Inner highlight for depth
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+                    .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 0.5)
+                    .offset(x: 1, y: 1)
+            )
     }
     
     private var backgroundColor: Color {
