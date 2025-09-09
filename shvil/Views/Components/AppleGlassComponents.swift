@@ -10,6 +10,11 @@ import SwiftUI
 // MARK: - Apple Glass Components Library
 // Comprehensive glassmorphism components following Apple Design Guidelines
 
+// MARK: - Type Aliases
+
+typealias AppleButton = AppleGlassButton
+typealias AppleTypography = DesignTokens.Typography
+
 // MARK: - Glass Button Component
 
 struct AppleGlassButton: View {

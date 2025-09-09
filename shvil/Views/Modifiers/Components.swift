@@ -481,6 +481,27 @@ extension View {
     }
 }
 
+// MARK: - Apple Glass View Modifiers
+
+extension View {
+    /// Apple-style navigation bar with glass effect
+    public func appleNavigationBar() -> some View {
+        self
+            .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(DesignTokens.Glass.medium, for: .navigationBar)
+    }
+    
+    /// Apple-style shadow modifier
+    public func appleShadow(_ shadow: ShadowValue) -> some View {
+        self.shadow(
+            color: shadow.color,
+            radius: shadow.radius,
+            x: shadow.x,
+            y: shadow.y
+        )
+    }
+}
+
 // MARK: - Performance Optimizations
 
 extension View {

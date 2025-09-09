@@ -12,7 +12,7 @@ import MapKit
 
 /// Unified location management service
 @MainActor
-public class UnifiedLocationManager: NSObject, ObservableObject {
+public class UnifiedLocationManager: NSObject, ObservableObject, LocationServiceProtocol {
     public static let shared = UnifiedLocationManager()
     
     @Published public var authorizationStatus: CLAuthorizationStatus = .notDetermined
@@ -22,6 +22,7 @@ public class UnifiedLocationManager: NSObject, ObservableObject {
         span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
     )
     @Published public var isLocationEnabled: Bool = false
+    @Published public var locationError: Error?
     
     private let locationManager = CLLocationManager()
     private var cancellables = Set<AnyCancellable>()
