@@ -9,8 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var localizationManager = LocalizationManager.shared
-    @EnvironmentObject private var accessibilityManager: AccessibilityManager
-    @EnvironmentObject private var performanceOptimizer: PerformanceOptimizer
+    @StateObject private var appState = DependencyContainer.shared.appState
     @State private var selectedTab = 0
     @State private var showAdventureSetup = false
     @State private var hasCompletedOnboarding = false

@@ -11,7 +11,7 @@ import SwiftUI
 struct shvilApp: App {
     // MARK: - App State
     
-    @StateObject private var appState = AppState()
+    @StateObject private var appState = DependencyContainer.shared.appState
     
     var body: some Scene {
         WindowGroup {
