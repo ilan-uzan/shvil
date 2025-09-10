@@ -254,7 +254,24 @@ public struct DesignTokens {
         }
     }
     
-
+    // MARK: - Spacing System
+    
+    /// 8-point spacing system for consistent layouts
+    public struct Spacing {
+        public static let xs: CGFloat = 4    // 0.5x base unit
+        public static let sm: CGFloat = 8    // 1x base unit
+        public static let md: CGFloat = 16   // 2x base unit
+        public static let lg: CGFloat = 24   // 3x base unit
+        public static let xl: CGFloat = 32   // 4x base unit
+        public static let xxl: CGFloat = 40  // 5x base unit
+        public static let xxxl: CGFloat = 48 // 6x base unit
+        
+        // Semantic spacing
+        public static let sectionSpacing: CGFloat = 32
+        public static let cardSpacing: CGFloat = 16
+        public static let itemSpacing: CGFloat = 8
+        public static let textSpacing: CGFloat = 4
+    }
     
     // MARK: - Layout Constants
     

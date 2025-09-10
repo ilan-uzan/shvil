@@ -17,6 +17,8 @@ struct MapView: View {
     @State private var searchText = ""
     @State private var isSearchFocused = false
     @State private var selectedMapLayer: MapLayer = .standard
+    @State private var showingMapLayerOptions = false
+    @StateObject private var locationManager = DependencyContainer.shared.locationManager
     
     var body: some View {
         ZStack {
@@ -25,13 +27,13 @@ struct MapView: View {
                 .ignoresSafeArea()
             
             // Map
-            Map(coordinateRegion: $region, interactionModes: .all)
+            Map(coordinateRegion: $region)
                 .ignoresSafeArea()
             
             // Top Search Bar
             VStack {
                 HStack {
-                    // Search Pill
+                    // Search Pill with glass effect
                     HStack {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(DesignTokens.Text.secondary)
@@ -51,30 +53,43 @@ struct MapView: View {
                             }
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                    .padding(.vertical, DesignTokens.Spacing.sm)
                     .background(
-                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-                            .fill(DesignTokens.Surface.primary)
-                            .shadow(DesignTokens.Shadow.light)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl, style: .continuous)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl, style: .continuous)
+                                    .fill(DesignTokens.Glass.medium)
+                            )
                     )
+                    .appleShadow(DesignTokens.Shadow.light)
                     
                     // Map Layers Button
                     Button(action: {
-                        // Toggle map layers
+                        showingMapLayerOptions.toggle()
                     }) {
-                        Image(systemName: "layers.fill")
+                        Image(systemName: selectedMapLayer == .satellite ? "globe.americas.fill" : "layers.fill")
                             .foregroundColor(DesignTokens.Text.primary)
-                            .padding(12)
+                            .font(.system(size: 16, weight: .medium))
+                            .padding(DesignTokens.Spacing.sm)
                             .background(
                                 Circle()
                                     .fill(DesignTokens.Surface.primary)
-                                    .shadow(DesignTokens.Shadow.light)
                             )
                     }
+                    .appleShadow(DesignTokens.Shadow.light)
+                    .confirmationDialog("Map Style", isPresented: $showingMapLayerOptions) {
+                        ForEach(MapLayer.allCases, id: \.self) { layer in
+                            Button(layer.rawValue) {
+                                selectedMapLayer = layer
+                            }
+                        }
+                        Button("Cancel", role: .cancel) { }
+                    }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 10)
+                .padding(.horizontal, DesignTokens.Spacing.lg)
+                .padding(.top, DesignTokens.Spacing.sm)
                 
                 Spacer()
             }
@@ -86,48 +101,84 @@ struct MapView: View {
                 HStack {
                     // Locate Me Button
                     Button(action: {
-                        // Center on user location
+                        centerOnUserLocation()
                     }) {
-                        Image(systemName: "location.fill")
+                        Image(systemName: locationManager.isLocationEnabled ? "location.fill" : "location.slash.fill")
                             .foregroundColor(.white)
-                            .font(.system(size: 18))
-                            .padding(16)
+                            .font(.system(size: 18, weight: .medium))
+                            .padding(DesignTokens.Spacing.md)
                             .background(
                                 Circle()
                                     .fill(DesignTokens.Brand.gradient)
-                                    .shadow(DesignTokens.Shadow.medium)
                             )
                     }
+                    .appleShadow(DesignTokens.Shadow.medium)
+                    .accessibilityLabel("Center on my location")
+                    .accessibilityHint("Centers the map on your current location")
                     
                     Spacer()
                     
                     // Focus Mode Button
                     Button(action: {
-                        // Toggle focus mode
+                        toggleFocusMode()
                     }) {
                         Image(systemName: "target")
                             .foregroundColor(.white)
-                            .font(.system(size: 18))
-                            .padding(16)
+                            .font(.system(size: 18, weight: .medium))
+                            .padding(DesignTokens.Spacing.md)
                             .background(
                                 Circle()
                                     .fill(DesignTokens.Brand.gradient)
-                                    .shadow(DesignTokens.Shadow.medium)
                             )
                     }
+                    .appleShadow(DesignTokens.Shadow.medium)
+                    .accessibilityLabel("Focus mode")
+                    .accessibilityHint("Activates focus mode for better map navigation")
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 100) // Account for tab bar
+                .padding(.horizontal, DesignTokens.Spacing.lg)
+                .padding(.bottom, DesignTokens.Layout.tabBarHeight + DesignTokens.Spacing.md)
             }
+        }
+        .onAppear {
+            locationManager.requestLocationPermission()
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    private func centerOnUserLocation() {
+        guard locationManager.isLocationEnabled,
+              let currentLocation = locationManager.currentLocation else {
+            // Request location permission if not authorized
+            locationManager.requestLocationPermission()
+            return
+        }
+        
+        // Animate to user location
+        withAnimation(DesignTokens.Animation.standard) {
+            region = MKCoordinateRegion(
+                center: currentLocation.coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+            )
+        }
+    }
+    
+    private func toggleFocusMode() {
+        // Implement focus mode functionality
+        // This could zoom in, filter certain map features, etc.
+        withAnimation(DesignTokens.Animation.standard) {
+            region.span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
         }
     }
 }
 
+// MARK: - Map Layer Enum
 enum MapLayer: String, CaseIterable {
     case standard = "Standard"
-    case satellite = "Satellite"
+    case satellite = "Satellite" 
     case hybrid = "Hybrid"
 }
+
 
 #Preview {
     MapView()
