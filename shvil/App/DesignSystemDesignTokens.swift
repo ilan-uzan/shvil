@@ -171,6 +171,20 @@ public struct DesignTokens {
         public static let caption1 = Font.system(.caption, design: .default)
         public static let caption1Medium = Font.system(.caption, design: .default).weight(.medium)
         public static let caption2 = Font.system(.caption2, design: .default)
+        
+        // Accessibility-aware typography
+        public static func accessible(_ font: Font) -> Font {
+            return font.dynamicTypeSize(.accessibility1)
+        }
+        
+        /// Get font that scales with Dynamic Type
+        public static func dynamicFont(
+            style: Font.TextStyle,
+            design: Font.Design = .default,
+            weight: Font.Weight = .regular
+        ) -> Font {
+            return Font.system(style, design: design).weight(weight)
+        }
     }
     
     // MARK: - Spacing System
@@ -187,8 +201,14 @@ public struct DesignTokens {
         
         /// Dynamic spacing based on content size category
         public static func adaptive(_ base: CGFloat) -> CGFloat {
-            // TODO: Scale based on Dynamic Type
-            return base
+            let contentSize = UIApplication.shared.preferredContentSizeCategory
+            let scaleFactor = UIFontMetrics.default.scaledValue(for: 1.0, compatibleWith: contentSize)
+            return base * scaleFactor
+        }
+        
+        /// Accessibility-aware spacing that scales with Dynamic Type
+        public static func accessible(_ base: CGFloat) -> CGFloat {
+            return adaptive(base)
         }
     }
     

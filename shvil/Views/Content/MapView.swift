@@ -148,8 +148,12 @@ struct MapView: View {
                             )
                     }
                     .appleShadow(DesignTokens.Shadow.medium)
-                    .accessibilityLabel("Center on my location")
-                    .accessibilityHint("Centers the map on your current location")
+                    .minimumTouchTarget()
+                    .shvilAccessibility(
+                        label: "Center on my location",
+                        hint: "Centers the map on your current location",
+                        traits: .button
+                    )
                     
                     Spacer()
                     
@@ -167,8 +171,12 @@ struct MapView: View {
                             )
                     }
                     .appleShadow(DesignTokens.Shadow.medium)
-                    .accessibilityLabel("Focus mode")
-                    .accessibilityHint("Activates focus mode for better map navigation")
+                    .minimumTouchTarget()
+                    .shvilAccessibility(
+                        label: "Focus mode",
+                        hint: "Activates focus mode for better map navigation",
+                        traits: .button
+                    )
                 }
                 .padding(.horizontal, DesignTokens.Spacing.lg)
                 .padding(.bottom, DesignTokens.Layout.tabBarHeight + DesignTokens.Spacing.md)
@@ -190,7 +198,10 @@ struct MapView: View {
         }
         
         // Animate to user location
-        withAnimation(DesignTokens.Animation.standard) {
+        let animation = AccessibilitySystem.prefersReducedMotion ? 
+            Animation.linear(duration: 0.1) : DesignTokens.Animation.standard
+        
+        withAnimation(animation) {
             region = MKCoordinateRegion(
                 center: currentLocation.coordinate,
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
@@ -201,14 +212,20 @@ struct MapView: View {
     private func toggleFocusMode() {
         // Implement focus mode functionality
         // This could zoom in, filter certain map features, etc.
-        withAnimation(DesignTokens.Animation.standard) {
+        let animation = AccessibilitySystem.prefersReducedMotion ? 
+            Animation.linear(duration: 0.1) : DesignTokens.Animation.standard
+        
+        withAnimation(animation) {
             region.span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
         }
     }
     
     private func selectSearchResult(_ result: SearchResult) {
         // Center map on selected search result
-        withAnimation(DesignTokens.Animation.standard) {
+        let animation = AccessibilitySystem.prefersReducedMotion ? 
+            Animation.linear(duration: 0.1) : DesignTokens.Animation.standard
+        
+        withAnimation(animation) {
             region = MKCoordinateRegion(
                 center: result.coordinate,
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
