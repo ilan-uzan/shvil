@@ -13,9 +13,9 @@ struct SocializeView: View {
     
     private let filters = ["All", "Nearby", "Adventure", "Hiking", "City"]
     private let sampleGroups = [
-        SocialGroup(name: "Jerusalem Explorers", members: 24, activity: "City Walk", distance: "2.3 km"),
-        SocialGroup(name: "Tel Aviv Adventures", members: 18, activity: "Beach Run", distance: "5.1 km"),
-        SocialGroup(name: "Mountain Hikers", members: 32, activity: "Hiking", distance: "12.4 km")
+        SocialGroup(name: "Jerusalem Explorers", description: "City Walk", createdBy: UUID(), inviteCode: "JER001", qrCode: "qr_jer001", memberCount: 24),
+        SocialGroup(name: "Tel Aviv Adventures", description: "Beach Run", createdBy: UUID(), inviteCode: "TLV001", qrCode: "qr_tlv001", memberCount: 18),
+        SocialGroup(name: "Mountain Hikers", description: "Hiking", createdBy: UUID(), inviteCode: "MTN001", qrCode: "qr_mtn001", memberCount: 32)
     ]
     
     var body: some View {
@@ -88,13 +88,6 @@ struct SocializeView: View {
     }
 }
 
-struct SocialGroup: Identifiable {
-    let id = UUID()
-    let name: String
-    let members: Int
-    let activity: String
-    let distance: String
-}
 
 struct FilterPill: View {
     let title: String
@@ -128,7 +121,7 @@ struct SocialGroupCard: View {
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(DesignTokens.Text.primary)
                     
-                    Text("\(group.members) members")
+                    Text("\(group.memberCount) members")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(DesignTokens.Text.secondary)
                 }
@@ -136,11 +129,11 @@ struct SocialGroupCard: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text(group.activity)
+                    Text(group.description ?? "Adventure")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(DesignTokens.Brand.primary)
                     
-                    Text(group.distance)
+                    Text("Active")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(DesignTokens.Text.tertiary)
                 }
