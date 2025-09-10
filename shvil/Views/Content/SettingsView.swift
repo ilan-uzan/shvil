@@ -10,7 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     @StateObject private var settingsService = DependencyContainer.shared.settingsService
     @StateObject private var locationManager = DependencyContainer.shared.locationManager
-    @StateObject private var localizationManager = DependencyContainer.shared.localizationManager
+    @StateObject private var localizationManager = LocalizationManager.shared
     
     private let languages = ["English", "עברית"]
 
@@ -47,9 +47,6 @@ struct SettingsView: View {
                             ) {
                                 Toggle("", isOn: $settingsService.enablePushNotifications)
                                     .tint(DesignTokens.Brand.primary)
-                                    .onChange(of: settingsService.enablePushNotifications) { newValue in
-                                        settingsService.updateNotificationSettings()
-                                    }
                             }
                             
                             SettingsRow(
