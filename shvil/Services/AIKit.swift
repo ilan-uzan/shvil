@@ -133,7 +133,7 @@ public class AIKit: ObservableObject {
 
         Original: \(stop.name)
         Category: \(stop.category.displayName)
-        Current Description: \(stop.description)
+        Current Description: \(stop.description ?? "No description")
         Duration: \(stop.estimatedDuration) minutes
 
         Mood: \(input.mood.displayName)

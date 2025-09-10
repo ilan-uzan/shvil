@@ -69,7 +69,7 @@ public class LocalizationManager: ObservableObject {
             setLanguage(language)
         } else {
             // Use system language if supported
-            let systemLanguage = Locale.current.languageCode ?? "en"
+            let systemLanguage = Locale.current.language.languageCode?.identifier ?? "en"
             if let language = Language(rawValue: systemLanguage) {
                 setLanguage(language)
             } else {

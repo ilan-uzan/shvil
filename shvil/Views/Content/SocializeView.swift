@@ -104,7 +104,7 @@ struct FilterPill: View {
                 .background(
                     RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
                         .fill(isSelected ? DesignTokens.Brand.primary : DesignTokens.Surface.secondary)
-                        .shadow(DesignTokens.Shadow.light)
+                        .appleShadow(DesignTokens.Shadow.light)
                 )
         }
     }
