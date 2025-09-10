@@ -246,7 +246,7 @@ extension View {
     ) -> some View {
         self
             .overlay(
-                Group {
+                ZStack {
                     if let error = error {
                         VStack(spacing: DesignTokens.Spacing.lg) {
                             Image(systemName: "exclamationmark.triangle")
@@ -282,7 +282,7 @@ extension View {
                                 .fill(.regularMaterial)
                         )
                         .transition(.opacity.combined(with: .scale))
-                        .animation(DesignTokens.Animation.standard, value: error)
+                        .animation(DesignTokens.Animation.standard, value: error != nil)
                     }
                 }
             )
