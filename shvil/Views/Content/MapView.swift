@@ -305,7 +305,7 @@ struct MapView: View {
                 Spacer()
             }
             .padding(.horizontal, Constants.standardPadding)
-            .padding(.top, Constants.spacingSM)
+            .padding(.top, Constants.standardPadding)
             
             // Popular destinations pills
             PopularDestinationsPills(
