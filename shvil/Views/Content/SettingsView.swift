@@ -90,8 +90,9 @@ struct SettingsView: View {
                                     ForEach(languages, id: \.self) { language in
                                         Button(language) {
                                             let appLanguage: AppLanguage = language == "עברית" ? .hebrew : .english
+                                            let localizationLanguage: Language = language == "עברית" ? .hebrew : .english
                                             settingsService.selectedLanguage = appLanguage
-                                            localizationManager.setLanguage(appLanguage)
+                                            localizationManager.setLanguage(localizationLanguage)
                                         }
                                     }
                                 } label: {
