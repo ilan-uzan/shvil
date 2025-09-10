@@ -10,13 +10,9 @@ import SwiftUI
 struct SocializeView: View {
     @State private var selectedFilter = "All"
     @State private var showCreateGroup = false
+    @StateObject private var socialService = DependencyContainer.shared.socialService
     
     private let filters = ["All", "Nearby", "Adventure", "Hiking", "City"]
-    private let sampleGroups = [
-        SocialGroup(name: "Jerusalem Explorers", description: "City Walk", createdBy: UUID(), inviteCode: "JER001", qrCode: "qr_jer001", memberCount: 24),
-        SocialGroup(name: "Tel Aviv Adventures", description: "Beach Run", createdBy: UUID(), inviteCode: "TLV001", qrCode: "qr_tlv001", memberCount: 18),
-        SocialGroup(name: "Mountain Hikers", description: "Hiking", createdBy: UUID(), inviteCode: "MTN001", qrCode: "qr_mtn001", memberCount: 32)
-    ]
     
     var body: some View {
         ZStack {
@@ -54,12 +50,37 @@ struct SocializeView: View {
                     }
                     
                     // Groups List
-                    LazyVStack(spacing: 16) {
-                        ForEach(sampleGroups) { group in
-                            SocialGroupCard(group: group)
+                    if socialService.isLoading {
+                        VStack(spacing: 16) {
+                            ForEach(0..<3) { _ in
+                                SocialGroupCardSkeleton()
+                            }
                         }
+                        .padding(.horizontal, 20)
+                    } else if socialService.groups.isEmpty {
+                        VStack(spacing: 16) {
+                            Image(systemName: "person.3")
+                                .font(.system(size: 48))
+                                .foregroundColor(DesignTokens.Text.tertiary)
+                            
+                            Text("No Groups Available")
+                                .font(DesignTokens.Typography.title3)
+                                .foregroundColor(DesignTokens.Text.secondary)
+                            
+                            Text("Create a group or join an existing one to get started")
+                                .font(DesignTokens.Typography.body)
+                                .foregroundColor(DesignTokens.Text.tertiary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(.horizontal, 20)
+                    } else {
+                        LazyVStack(spacing: 16) {
+                            ForEach(socialService.groups) { group in
+                                SocialGroupCard(group: group)
+                            }
+                        }
+                        .padding(.horizontal, 20)
                     }
-                    .padding(.horizontal, 20)
                     
                     // Create Group Button
                     Button(action: {
@@ -167,6 +188,55 @@ struct SocialGroupCard: View {
                 .fill(DesignTokens.Surface.primary)
                 .appleShadow(DesignTokens.Shadow.light)
         )
+    }
+}
+
+struct SocialGroupCardSkeleton: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(DesignTokens.Text.tertiary)
+                        .frame(width: 140, height: 18)
+                    
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(DesignTokens.Text.quaternary)
+                        .frame(width: 80, height: 14)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 4) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(DesignTokens.Text.tertiary)
+                        .frame(width: 60, height: 14)
+                    
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(DesignTokens.Text.quaternary)
+                        .frame(width: 40, height: 12)
+                }
+            }
+            
+            HStack {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(DesignTokens.Text.quaternary)
+                    .frame(width: 100, height: 14)
+                
+                Spacer()
+                
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(DesignTokens.Brand.primary.opacity(0.3))
+                    .frame(width: 80, height: 32)
+            }
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                .fill(DesignTokens.Surface.primary)
+                .appleShadow(DesignTokens.Shadow.light)
+        )
+        .redacted(reason: .placeholder)
     }
 }
 

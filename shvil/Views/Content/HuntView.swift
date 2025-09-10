@@ -10,13 +10,9 @@ import SwiftUI
 struct HuntView: View {
     @State private var selectedCategory = "All"
     @State private var showFilters = false
+    @StateObject private var huntService = DependencyContainer.shared.huntService
     
     private let categories = ["All", "Landmarks", "Nature", "History", "Culture", "Food"]
-    private let sampleHunts = [
-        HuntItem(title: "Old City Treasures", category: "History", difficulty: "Easy", distance: "2.1 km", points: 150),
-        HuntItem(title: "Jerusalem Parks", category: "Nature", difficulty: "Medium", distance: "4.3 km", points: 280),
-        HuntItem(title: "Local Eateries", category: "Food", difficulty: "Easy", distance: "1.8 km", points: 120)
-    ]
     
     var body: some View {
         ZStack {
@@ -62,26 +58,93 @@ struct HuntView: View {
                     .padding(.horizontal, 20)
                     
                     // Hunts List
-                    LazyVStack(spacing: 16) {
-                        ForEach(sampleHunts) { hunt in
-                            HuntCard(hunt: hunt)
+                    if huntService.isLoading {
+                        VStack(spacing: 16) {
+                            ForEach(0..<3) { _ in
+                                HuntCardSkeleton()
+                            }
                         }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 100)
+                    } else if huntService.hunts.isEmpty {
+                        VStack(spacing: 16) {
+                            Image(systemName: "flag.circle")
+                                .font(.system(size: 48))
+                                .foregroundColor(DesignTokens.Text.tertiary)
+                            
+                            Text("No Hunts Available")
+                                .font(DesignTokens.Typography.title3)
+                                .foregroundColor(DesignTokens.Text.secondary)
+                            
+                            Text("Check back later for new scavenger hunts")
+                                .font(DesignTokens.Typography.body)
+                                .foregroundColor(DesignTokens.Text.tertiary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 100)
+                    } else {
+                        LazyVStack(spacing: 16) {
+                            ForEach(huntService.hunts) { hunt in
+                                HuntCard(hunt: hunt)
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 100)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 100)
                 }
             }
         }
     }
 }
 
-struct HuntItem: Identifiable {
-    let id = UUID()
-    let title: String
-    let category: String
-    let difficulty: String
-    let distance: String
-    let points: Int
+struct HuntCardSkeleton: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(DesignTokens.Text.tertiary)
+                        .frame(width: 120, height: 18)
+                    
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(DesignTokens.Text.quaternary)
+                        .frame(width: 60, height: 12)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 4) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(DesignTokens.Text.tertiary)
+                        .frame(width: 80, height: 16)
+                    
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(DesignTokens.Text.quaternary)
+                        .frame(width: 60, height: 12)
+                }
+            }
+            
+            HStack {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(DesignTokens.Text.quaternary)
+                    .frame(width: 100, height: 14)
+                
+                Spacer()
+                
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(DesignTokens.Brand.primary.opacity(0.3))
+                    .frame(width: 80, height: 32)
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
+                .fill(DesignTokens.Surface.primary)
+                .appleShadow(DesignTokens.Shadow.light)
+        )
+        .redacted(reason: .placeholder)
+    }
 }
 
 struct CategoryPill: View {
@@ -135,7 +198,7 @@ struct StatCard: View {
 }
 
 struct HuntCard: View {
-    let hunt: HuntItem
+    let hunt: ScavengerHunt
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -145,7 +208,7 @@ struct HuntCard: View {
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(DesignTokens.Text.primary)
                     
-                    Text(hunt.category)
+                    Text(hunt.status.rawValue.capitalized)
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(DesignTokens.Brand.primary)
                         .padding(.horizontal, 8)
@@ -159,18 +222,18 @@ struct HuntCard: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text("\(hunt.points) pts")
+                    Text("\(hunt.checkpointCount) checkpoints")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(DesignTokens.Brand.primary)
                     
-                    Text(hunt.difficulty)
+                    Text("\(hunt.participantCount) participants")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(DesignTokens.Text.tertiary)
                 }
             }
             
             HStack {
-                Label(hunt.distance, systemImage: "location")
+                Label("\(hunt.checkpointCount) checkpoints", systemImage: "flag")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(DesignTokens.Text.secondary)
                 

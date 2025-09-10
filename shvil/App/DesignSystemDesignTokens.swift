@@ -73,6 +73,18 @@ public struct DesignTokens {
         public static let secondaryDark = Color.black.opacity(0.45)
         public static let tertiaryDark = Color.black.opacity(0.35)
         
+        /// OS-aware glass surface with proper opacity
+        public static var adaptiveGlass: Color {
+            let style = OSVersionDetection.glassSurfaceStyle
+            return Color.white.opacity(style.backgroundOpacity)
+        }
+        
+        /// OS-aware glass surface for dark mode
+        public static var adaptiveGlassDark: Color {
+            let style = OSVersionDetection.glassSurfaceStyle
+            return Color.black.opacity(style.backgroundOpacity)
+        }
+        
         /// Context-aware surface color
         @MainActor
         public static func adaptive(light: Color, dark: Color) -> Color {
