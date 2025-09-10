@@ -18,11 +18,13 @@ private struct FlexibleHeaderContentModifier: ViewModifier {
     @Environment(FlexibleHeaderGeometry.self) private var geometry
     
     func body(content: Content) -> some View {
-        let height = (UIScreen.main.bounds.height / 2) - geometry.offset
-        content
-            .frame(height: height)
-            .padding(.bottom, geometry.offset)
-            .offset(y: geometry.offset)
+        GeometryReader { geometryReader in
+            let height = (geometryReader.size.height / 2) - geometry.offset
+            content
+                .frame(height: height)
+                .padding(.bottom, geometry.offset)
+                .offset(y: geometry.offset)
+        }
     }
 }
 

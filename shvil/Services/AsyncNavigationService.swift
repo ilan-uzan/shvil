@@ -154,7 +154,7 @@ public class AsyncNavigationService: NSObject, ObservableObject {
         
         // Provide haptic feedback
         if isHapticEnabled {
-            await HapticFeedback.shared.impact(style: .light)
+            HapticFeedback.shared.impact(style: .light)
         }
     }
     
@@ -286,8 +286,8 @@ public class AsyncNavigationService: NSObject, ObservableObject {
         options: RouteOptions
     ) async throws -> [Route] {
         let request = MKDirections.Request()
-        request.source = MKMapItem(placemark: MKPlacemark(coordinate: origin))
-        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination))
+        request.source = MKMapItem(location: CLLocation(latitude: origin.latitude, longitude: origin.longitude), address: nil)
+        request.destination = MKMapItem(location: CLLocation(latitude: destination.latitude, longitude: destination.longitude), address: nil)
         
         // Add waypoints
         if !waypoints.isEmpty {
@@ -515,7 +515,7 @@ public class AsyncNavigationService: NSObject, ObservableObject {
 
 // MARK: - CLLocationManagerDelegate
 
-extension AsyncNavigationService: @preconcurrency CLLocationManagerDelegate {
+extension AsyncNavigationService: CLLocationManagerDelegate {
     nonisolated public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         

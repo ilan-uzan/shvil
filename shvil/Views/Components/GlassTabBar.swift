@@ -112,7 +112,7 @@ struct GlassTabBar: View {
                                 selectTab(tabIndex)
                             } else {
                                 // Reset to current tab position
-                                updateCapsulePosition()
+                                updateCapsulePosition(geometry: geometry)
                             }
                         }
                 )
@@ -174,16 +174,16 @@ struct GlassTabBar: View {
             )
             .padding(.horizontal, 16)
             .padding(.bottom, 2) // Right above iPhone homescreen bar
-        }
-        .onAppear {
-            // Small delay to ensure view is fully rendered
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                updateCapsulePosition()
+            .onAppear {
+                // Small delay to ensure view is fully rendered
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    updateCapsulePosition(geometry: geometry)
+                }
             }
-        }
-        .onChange(of: selectedTab) { _ in
-            updateCapsulePosition()
-            HapticFeedback.shared.selection()
+            .onChange(of: selectedTab) { _ in
+                updateCapsulePosition(geometry: geometry)
+                HapticFeedback.shared.selection()
+            }
         }
         .onChange(of: scrollOffset) { _ in
             // Update blur intensity based on scroll
@@ -226,11 +226,11 @@ struct GlassTabBar: View {
         return Int(touchX / tabWidth)
     }
     
-    private func updateCapsulePosition() {
+    private func updateCapsulePosition(geometry: GeometryProxy) {
         // Use actual tab positions if available, otherwise fallback to calculation
         if let selectedTabFrame = tabPositions[selectedTab] {
             let tabCenter = selectedTabFrame.midX
-            let containerCenter = UIScreen.main.bounds.width / 2
+            let containerCenter = geometry.size.width / 2
             let newOffset = tabCenter - containerCenter
             let newWidth = selectedTabFrame.width * 1.1
             
@@ -241,7 +241,7 @@ struct GlassTabBar: View {
             }
         } else {
             // Fallback calculation
-            let screenWidth = UIScreen.main.bounds.width
+            let screenWidth = geometry.size.width
             let hStackPadding = 32.0
             let availableWidth = screenWidth - hStackPadding
             let tabWidth = availableWidth / CGFloat(tabs.count)

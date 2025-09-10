@@ -282,7 +282,7 @@ extension View {
                                 .fill(.regularMaterial)
                         )
                         .transition(.opacity.combined(with: .scale))
-                        .animation(AppleAnimations.standard, value: error != nil)
+                        .animation(AppleAnimations.standard, value: error)
                     }
                 }
             )
@@ -290,40 +290,6 @@ extension View {
 }
 
 // MARK: - Landmarks Liquid Glass Patterns
-
-/// A view that adds a gradient over content to improve text legibility (Landmarks pattern)
-struct ReadabilityOverlay: View {
-    let cornerRadius: CGFloat
-    let gradientColors: [Color]
-    let startPoint: UnitPoint
-    let endPoint: UnitPoint
-    
-    init(
-        cornerRadius: CGFloat = DesignTokens.CornerRadius.lg,
-        gradientColors: [Color] = [.black.opacity(0.8), .clear],
-        startPoint: UnitPoint = .bottom,
-        endPoint: UnitPoint = .center
-    ) {
-        self.cornerRadius = cornerRadius
-        self.gradientColors = gradientColors
-        self.startPoint = startPoint
-        self.endPoint = endPoint
-    }
-    
-    var body: some View {
-        RoundedRectangle(cornerRadius: cornerRadius)
-            .foregroundStyle(.clear)
-            .background(
-                LinearGradient(
-                    colors: gradientColors,
-                    startPoint: startPoint,
-                    endPoint: endPoint
-                )
-            )
-            .containerRelativeFrame(.vertical)
-            .clipped()
-    }
-}
 
 // MARK: - Flexible Header (Landmarks Pattern)
 
@@ -336,11 +302,13 @@ private struct FlexibleHeaderContentModifier: ViewModifier {
     @Environment(FlexibleHeaderGeometry.self) private var geometry
     
     func body(content: Content) -> some View {
-        let height = (UIScreen.main.bounds.height / 2) - geometry.offset
-        content
-            .frame(height: height)
-            .padding(.bottom, geometry.offset)
-            .offset(y: geometry.offset)
+        GeometryReader { geometryReader in
+            let height = (geometryReader.size.height / 2) - geometry.offset
+            content
+                .frame(height: height)
+                .padding(.bottom, geometry.offset)
+                .offset(y: geometry.offset)
+        }
     }
 }
 
@@ -376,16 +344,6 @@ struct BackgroundExtensionModifier: ViewModifier {
 // MARK: - Landmarks View Extensions
 
 extension View {
-    /// Apply flexible header content modifier (Landmarks pattern)
-    func flexibleHeaderContent() -> some View {
-        modifier(FlexibleHeaderContentModifier())
-    }
-    
-    /// Apply flexible header scroll view modifier (Landmarks pattern)
-    func flexibleHeaderScrollView() -> some View {
-        modifier(FlexibleHeaderScrollViewModifier())
-    }
-    
     /// Apply background extension effect (Landmarks pattern)
     func backgroundExtensionEffect() -> some View {
         modifier(BackgroundExtensionModifier())

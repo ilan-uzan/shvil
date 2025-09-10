@@ -15,10 +15,11 @@ struct FloatingNavigationPill: View {
     @State private var isDragging = false
     
     var body: some View {
-        VStack {
-            Spacer()
-            
-            HStack(spacing: 0) {
+        GeometryReader { geometry in
+            VStack {
+                Spacer()
+                
+                HStack(spacing: 0) {
                 ForEach(Array(tabs.enumerated()), id: \.offset) { index, tab in
                     TabButton(
                         tab: tab,
@@ -53,8 +54,8 @@ struct FloatingNavigationPill: View {
                     if selectedTab < tabs.count {
                         RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                             .fill(DesignTokens.Brand.primary)
-                            .frame(width: tabWidth, height: 40)
-                            .offset(x: tabOffset + dragOffset)
+                            .frame(width: tabWidth(for: geometry), height: 40)
+                            .offset(x: tabOffset(for: geometry) + dragOffset)
                             .animation(.spring(response: 0.4, dampingFraction: 0.8), value: selectedTab)
                             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: dragOffset)
                     }
@@ -92,16 +93,17 @@ struct FloatingNavigationPill: View {
             )
             .padding(.horizontal, DesignTokens.Spacing.lg)
             .padding(.bottom, DesignTokens.Spacing.lg)
+            }
         }
     }
     
-    private var tabWidth: CGFloat {
-        let totalWidth = UIScreen.main.bounds.width - (DesignTokens.Spacing.lg * 2) - (DesignTokens.Spacing.sm * 2)
+    private func tabWidth(for geometry: GeometryProxy) -> CGFloat {
+        let totalWidth = geometry.size.width - (DesignTokens.Spacing.lg * 2) - (DesignTokens.Spacing.sm * 2)
         return totalWidth / CGFloat(tabs.count)
     }
     
-    private var tabOffset: CGFloat {
-        CGFloat(selectedTab) * tabWidth
+    private func tabOffset(for geometry: GeometryProxy) -> CGFloat {
+        CGFloat(selectedTab) * tabWidth(for: geometry)
     }
 }
 

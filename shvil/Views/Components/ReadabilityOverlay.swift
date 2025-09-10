@@ -16,7 +16,7 @@ struct ReadabilityOverlay: View {
     let endPoint: UnitPoint
     
     init(
-        cornerRadius: CGFloat = Constants.cornerRadius,
+        cornerRadius: CGFloat = DesignTokens.CornerRadius.lg,
         gradientColors: [Color] = [.black.opacity(0.8), .clear],
         startPoint: UnitPoint = .bottom,
         endPoint: UnitPoint = .center
@@ -67,7 +67,7 @@ extension ReadabilityOverlay {
     /// Custom readability overlay with specific colors
     static func custom(
         colors: [Color],
-        cornerRadius: CGFloat = Constants.cornerRadius
+        cornerRadius: CGFloat = DesignTokens.CornerRadius.lg
     ) -> ReadabilityOverlay {
         ReadabilityOverlay(
             cornerRadius: cornerRadius,
@@ -96,5 +96,5 @@ extension ReadabilityOverlay {
                 .padding()
         }
     }
-    .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
+    .clipShape(RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg))
 }
