@@ -23,6 +23,24 @@ public class PerformanceOptimizer: ObservableObject {
     @Published public var cpuUsage: Double = 0.0
     @Published public var frameRate: Double = 60.0
     
+    // MARK: - Performance Properties
+    
+    /// Check if blur should be applied based on performance settings
+    public static var shouldApplyBlur: Bool {
+        // Only apply blur if device can handle it
+        return !UIAccessibility.isReduceTransparencyEnabled && 
+               ProcessInfo.processInfo.thermalState != .critical
+    }
+    
+    /// Get appropriate material based on performance
+    public static var optimizedMaterial: Material {
+        if shouldApplyBlur {
+            return .ultraThinMaterial
+        } else {
+            return .regularMaterial
+        }
+    }
+    
     // MARK: - Private Properties
     
     private var displayLink: CADisplayLink?
