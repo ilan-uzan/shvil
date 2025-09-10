@@ -71,7 +71,7 @@ struct SmartStopCard: View {
                 VStack(spacing: 8) {
                     // Add Stop Button
                     Button(action: {
-                        withAnimation(AppleAnimations.microInteraction) {
+                        withAnimation(DesignTokens.Animation.micro) {
                             onAddStop()
                         }
                     }) {
@@ -95,7 +95,7 @@ struct SmartStopCard: View {
                     
                     // Dismiss Button
                     Button(action: {
-                        withAnimation(AppleAnimations.microInteraction) {
+                        withAnimation(DesignTokens.Animation.micro) {
                             onDismiss()
                         }
                     }) {
@@ -123,7 +123,7 @@ struct SmartStopCard: View {
                     HStack(spacing: 16) {
                         // Snooze Button
                         Button(action: {
-                            withAnimation(AppleAnimations.microInteraction) {
+                            withAnimation(DesignTokens.Animation.micro) {
                                 onSnooze()
                             }
                         }) {
@@ -176,7 +176,7 @@ struct SmartStopCard: View {
                 .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
         )
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(AppleAnimations.microInteraction, value: isPressed)
+        .animation(DesignTokens.Animation.micro, value: isPressed)
         .onTapGesture {
             withAnimation(DesignTokens.Animation.standard) {
                 showDetails.toggle()

@@ -501,7 +501,7 @@ struct AdventureSetupView: View {
             }
         )
         .scaleEffect(isGenerating ? 0.98 : 1.0)
-        .animation(AppleAnimations.micro, value: isGenerating)
+        .animation(DesignTokens.Animation.micro, value: isGenerating)
         .padding(.bottom, DesignTokens.Spacing.xl)
     }
 

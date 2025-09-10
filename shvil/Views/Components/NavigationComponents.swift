@@ -163,7 +163,7 @@ struct NavigationStatusIndicator: View {
                 .fill(isActive ? DesignTokens.Brand.primary : DesignTokens.Text.secondary)
                 .frame(width: 8, height: 8)
                 .scaleEffect(isActive ? 1.2 : 1.0)
-                .animation(AppleAnimations.microInteraction, value: isActive)
+                .animation(DesignTokens.Animation.micro, value: isActive)
             
             if isActive {
                 Text(formattedTime)

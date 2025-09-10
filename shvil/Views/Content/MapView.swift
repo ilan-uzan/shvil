@@ -562,13 +562,13 @@ struct MapView: View {
                 }
                 .frame(height: isBottomSheetExpanded ? min(geometry.size.height * 0.65, 400) : 84)
                 .background(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.xxl)
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xxl)
                         .fill(.ultraThinMaterial)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.xxl)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xxl)
                                 .fill(DesignTokens.Glass.medium)
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: AppleCornerRadius.xxl)
+                                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xxl)
                                         .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 1)
                                         .blendMode(.overlay)
                                 )
