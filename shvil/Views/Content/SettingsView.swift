@@ -143,7 +143,7 @@ struct ProfileCard: View {
                         .font(.system(size: 24))
                         .foregroundColor(.white)
                 )
-                .shadow(DesignTokens.Shadow.light)
+                .appleShadow(DesignTokens.Shadow.light)
             
             VStack(alignment: .leading, spacing: 4) {
                 Text("Adventure Explorer")
@@ -173,7 +173,7 @@ struct ProfileCard: View {
         .background(
             RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                 .fill(DesignTokens.Surface.primary)
-                .shadow(DesignTokens.Shadow.light)
+                .appleShadow(DesignTokens.Shadow.light)
         )
     }
 }
@@ -200,7 +200,7 @@ struct SettingsSection<Content: View>: View {
             .background(
                 RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                     .fill(DesignTokens.Surface.primary)
-                    .shadow(DesignTokens.Shadow.light)
+                    .appleShadow(DesignTokens.Shadow.light)
             )
         }
     }
