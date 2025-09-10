@@ -47,10 +47,16 @@ struct MapView: View {
                                 showingSearchResults = true
                             }
                             .onChange(of: searchText) { newValue in
-                                if !newValue.isEmpty {
-                                    searchService.search(for: newValue)
-                                } else {
-                                    searchService.clearSearch()
+                                // Debounce search for better performance
+                                Task {
+                                    try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
+                                    if !Task.isCancelled {
+                                        if !newValue.isEmpty {
+                                            searchService.search(for: newValue)
+                                        } else {
+                                            searchService.clearSearch()
+                                        }
+                                    }
                                 }
                             }
                         

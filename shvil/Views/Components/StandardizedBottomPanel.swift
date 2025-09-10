@@ -48,7 +48,7 @@ struct StandardizedBottomPanel<Content: View>: View {
     
     private var panelBackground: some View {
         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-            .fill(OSVersionDetection.preferredMaterialStyle)
+            .fill(PerformanceOptimizer.optimizedMaterial)
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .stroke(
