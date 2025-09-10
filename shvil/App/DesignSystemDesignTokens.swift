@@ -174,7 +174,8 @@ public struct DesignTokens {
         
         // Accessibility-aware typography
         public static func accessible(_ font: Font) -> Font {
-            return font.dynamicTypeSize(.accessibility1)
+            // Font doesn't have dynamicTypeSize in SwiftUI, return font as is
+            return font
         }
         
         /// Get font that scales with Dynamic Type
@@ -202,7 +203,8 @@ public struct DesignTokens {
         /// Dynamic spacing based on content size category
         public static func adaptive(_ base: CGFloat) -> CGFloat {
             let contentSize = UIApplication.shared.preferredContentSizeCategory
-            let scaleFactor = UIFontMetrics.default.scaledValue(for: 1.0, compatibleWith: contentSize)
+            let traitCollection = UITraitCollection(preferredContentSizeCategory: contentSize)
+            let scaleFactor = UIFontMetrics.default.scaledValue(for: 1.0, compatibleWith: traitCollection)
             return base * scaleFactor
         }
         
