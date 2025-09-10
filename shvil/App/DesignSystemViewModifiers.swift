@@ -282,7 +282,7 @@ extension View {
                                 .fill(.regularMaterial)
                         )
                         .transition(.opacity.combined(with: .scale))
-                        .animation(DesignTokens.Animation.standard, value: error != nil)
+                        .animation(DesignTokens.Animation.standard, value: error.localizedDescription)
                     }
                 }
             )

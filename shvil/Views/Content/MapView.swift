@@ -81,7 +81,7 @@ struct MapView: View {
                     .appleShadow(DesignTokens.Shadow.light)
                     .confirmationDialog("Map Style", isPresented: $showingMapLayerOptions) {
                         ForEach(MapLayer.allCases, id: \.self) { layer in
-                            Button(layer.rawValue) {
+                            Button(layer.title) {
                                 selectedMapLayer = layer
                             }
                         }
@@ -172,12 +172,6 @@ struct MapView: View {
     }
 }
 
-// MARK: - Map Layer Enum
-enum MapLayer: String, CaseIterable {
-    case standard = "Standard"
-    case satellite = "Satellite" 
-    case hybrid = "Hybrid"
-}
 
 
 #Preview {
