@@ -6,342 +6,127 @@
 //
 
 import SwiftUI
-import CoreLocation
 
-/// Onboarding flow for first-time users
 struct OnboardingView: View {
-    @StateObject private var localizationManager = LocalizationManager.shared
-    @StateObject private var locationManager = LocationManager()
     @State private var currentStep = 0
-    @State private var selectedLanguage: Language = .english
     @State private var hasCompletedOnboarding = false
-    
     
     private let totalSteps = 3
     
     var body: some View {
         ZStack {
-            // Background
-            DesignTokens.Surface.background
+            Color.blue.opacity(0.1)
                 .ignoresSafeArea()
             
-            onboardingContent
-        }
-        .onAppear {
-            checkOnboardingStatus()
-        }
-        .environment(\.layoutDirection, localizationManager.isRTL ? .rightToLeft : .leftToRight)
-    }
-    
-    private var onboardingContent: some View {
-        ZStack {
-            // Background with wavy path motif
-            DesignTokens.Surface.background
-                .ignoresSafeArea()
-            
-            // Subtle wavy path decoration
             VStack {
                 Spacer()
-                // Simple wave illustration
-                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-                    .fill(DesignTokens.Brand.primary.opacity(0.1))
-                    .frame(width: 120, height: 80)
-                    .overlay(
-                        Path { path in
-                            path.move(to: CGPoint(x: 0, y: 40))
-                            path.addQuadCurve(to: CGPoint(x: 120, y: 40), control: CGPoint(x: 60, y: 20))
-                        }
-                        .stroke(DesignTokens.Brand.primary.opacity(0.3), lineWidth: 2)
-                    )
-                    .frame(height: 100)
-                    .offset(y: 50)
-            }
-            .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Progress indicator
-                progressIndicator
                 
-                // Content
-                TabView(selection: $currentStep) {
-                    welcomeStep
-                        .tag(0)
-                    
-                    languageStep
-                        .tag(1)
-                    
-                    permissionsStep
-                        .tag(2)
+                // Step content
+                Group {
+                    switch currentStep {
+                    case 0:
+                        welcomeStep
+                    case 1:
+                        languageStep
+                    case 2:
+                        permissionsStep
+                    default:
+                        welcomeStep
+                    }
                 }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                .animation(DesignTokens.Animation.complex, value: currentStep)
+                .animation(.easeInOut, value: currentStep)
+                
+                Spacer()
                 
                 // Navigation buttons
-                navigationButtons
+                HStack {
+                    if currentStep > 0 {
+                        Button("Back") {
+                            withAnimation {
+                                currentStep -= 1
+                            }
+                        }
+                        .foregroundColor(.blue)
+                    }
+                    
+                    Spacer()
+                    
+                    Button(currentStep == totalSteps - 1 ? "Get Started" : "Next") {
+                        if currentStep == totalSteps - 1 {
+                            completeOnboarding()
+                        } else {
+                            withAnimation {
+                                currentStep += 1
+                            }
+                        }
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Color.blue)
+                    .cornerRadius(8)
+                }
+                .padding()
             }
         }
-    }
-    
-    private var progressIndicator: some View {
-        HStack(spacing: DesignTokens.Spacing.sm) {
-            ForEach(0..<totalSteps, id: \.self) { step in
-                Circle()
-                    .fill(step <= currentStep ? DesignTokens.Brand.primary : DesignTokens.Stroke.light)
-                    .frame(width: 8, height: 8)
-                    .scaleEffect(step == currentStep ? 1.2 : 1.0)
-                    .animation(DesignTokens.Animation.spring, value: currentStep)
-            }
-        }
-        .padding(.top, DesignTokens.Spacing.lg)
-        .padding(.bottom, DesignTokens.Spacing.xl)
     }
     
     private var welcomeStep: some View {
-        VStack(spacing: DesignTokens.Spacing.xxl) {
-            Spacer()
+        VStack(spacing: 20) {
+            Text("Welcome to Shvil")
+                .font(.largeTitle)
+                .fontWeight(.bold)
             
-            // App icon and title
-            VStack(spacing: DesignTokens.Spacing.lg) {
-                // App icon
-                ZStack {
-                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                        .fill(DesignTokens.Brand.primary)
-                        .frame(width: 120, height: 120)
-                        .appleShadow(DesignTokens.Shadow.heavy)
-                    
-                    Image(systemName: "map.fill")
-                        .font(.system(size: 48, weight: .medium))
-                        .foregroundColor(.white)
-                }
-                
-                VStack(spacing: DesignTokens.Spacing.md) {
-                    Text("welcome".localized)
-                        .font(AppleTypography.largeTitle)
-                        .foregroundColor(DesignTokens.Text.primary)
-                        .multilineTextAlignment(.center)
-                    
-                    Text("welcome_subtitle".localized)
-                        .font(DesignTokens.Typography.body)
-                        .foregroundColor(DesignTokens.Text.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, DesignTokens.Spacing.xl)
-                }
-            }
-            
-            Spacer()
+            Text("Your adventure starts here")
+                .font(.title2)
+                .foregroundColor(.secondary)
         }
-        .padding(.horizontal, DesignTokens.Spacing.xl)
     }
     
     private var languageStep: some View {
-        VStack(spacing: DesignTokens.Spacing.xxl) {
-            Spacer()
+        VStack(spacing: 20) {
+            Text("Choose Language")
+                .font(.largeTitle)
+                .fontWeight(.bold)
             
-            VStack(spacing: DesignTokens.Spacing.xl) {
-                VStack(spacing: DesignTokens.Spacing.md) {
-                    Text("onboarding_step_1_title".localized)
-                        .font(DesignTokens.Typography.title2)
-                        .foregroundColor(DesignTokens.Text.primary)
-                        .multilineTextAlignment(.center)
-                    
-                    Text("onboarding_step_1_description".localized)
-                        .font(DesignTokens.Typography.body)
-                        .foregroundColor(DesignTokens.Text.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, DesignTokens.Spacing.xl)
+            VStack(spacing: 10) {
+                Button("English") {
+                    // Language selection
                 }
+                .foregroundColor(.white)
+                .padding()
+                .background(Color.blue)
+                .cornerRadius(8)
                 
-                // Language selection
-                VStack(spacing: DesignTokens.Spacing.md) {
-                    ForEach(Language.allCases, id: \.self) { language in
-                        languageOption(language)
-                    }
+                Button("עברית") {
+                    // Language selection
                 }
+                .foregroundColor(.white)
+                .padding()
+                .background(Color.blue)
+                .cornerRadius(8)
             }
-            
-            Spacer()
         }
-        .padding(.horizontal, DesignTokens.Spacing.xl)
     }
-    
     
     private var permissionsStep: some View {
-        VStack(spacing: DesignTokens.Spacing.xxl) {
-            Spacer()
+        VStack(spacing: 20) {
+            Text("Enable Location")
+                .font(.largeTitle)
+                .fontWeight(.bold)
             
-            VStack(spacing: DesignTokens.Spacing.xl) {
-                VStack(spacing: DesignTokens.Spacing.md) {
-                    Text("onboarding_step_3_title".localized)
-                        .font(DesignTokens.Typography.title2)
-                        .foregroundColor(DesignTokens.Text.primary)
-                        .multilineTextAlignment(.center)
-                    
-                    Text("onboarding_step_3_description".localized)
-                        .font(DesignTokens.Typography.body)
-                        .foregroundColor(DesignTokens.Text.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, DesignTokens.Spacing.xl)
-                }
-                
-                // Permission cards
-                VStack(spacing: DesignTokens.Spacing.md) {
-                    permissionCard(
-                        icon: "location.fill",
-                        title: "location_permission".localized,
-                        description: "location_permission_description".localized,
-                        isRequired: true
-                    )
-                    
-                    
-                    permissionCard(
-                        icon: "bell.fill",
-                        title: "notification_permission".localized,
-                        description: "notification_permission_description".localized,
-                        isRequired: false
-                    )
-                }
-            }
-            
-            Spacer()
+            Text("We need your location to provide the best experience")
+                .font(.body)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
         }
-        .padding(.horizontal, DesignTokens.Spacing.xl)
-    }
-    
-    private func languageOption(_ language: Language) -> some View {
-        AppleGlassCard(style: .elevated) {
-            HStack(spacing: DesignTokens.Spacing.md) {
-                Text(language.displayName)
-                    .font(DesignTokens.Typography.bodyEmphasized)
-                    .foregroundColor(selectedLanguage == language ? .white : DesignTokens.Text.primary)
-                
-                Spacer()
-                
-                if selectedLanguage == language {
-                    AppleGlassStatusIndicator(status: .success)
-                }
-            }
-        }
-        .onTapGesture {
-            selectedLanguage = language
-            localizationManager.setLanguage(language)
-            HapticFeedback.shared.impact(style: .light)
-        }
-        .overlay(
-            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                .stroke(selectedLanguage == language ? DesignTokens.Brand.primary : Color.clear, lineWidth: 2)
-        )
-        .background(
-            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                .fill(selectedLanguage == language ? DesignTokens.Brand.primary : Color.clear)
-        )
-        .accessibilityLabel("Language: \(language.displayName)")
-        .accessibilityHint(selectedLanguage == language ? "Currently selected" : "Double tap to select this language")
-        .accessibilityAddTraits(selectedLanguage == language ? .isSelected : [])
-    }
-    
-    
-    private func permissionCard(icon: String, title: String, description: String, isRequired: Bool) -> some View {
-        AppleGlassCard(style: .elevated) {
-            HStack(spacing: DesignTokens.Spacing.md) {
-                Image(systemName: icon)
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(DesignTokens.Brand.primary)
-                    .frame(width: 32)
-                
-                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                    HStack {
-                        Text(title)
-                            .font(DesignTokens.Typography.bodyEmphasized)
-                            .foregroundColor(DesignTokens.Text.primary)
-                        
-                        if isRequired {
-                            Text("Required")
-                                .font(AppleTypography.caption2)
-                                .foregroundColor(DesignTokens.Semantic.error)
-                                .padding(.horizontal, DesignTokens.Spacing.sm)
-                                .padding(.vertical, DesignTokens.Spacing.xs)
-                                .background(
-                                    Capsule()
-                                        .fill(DesignTokens.Semantic.error.opacity(0.2))
-                                )
-                        }
-                    }
-                    
-                    Text(description)
-                        .font(DesignTokens.Typography.caption1)
-                        .foregroundColor(DesignTokens.Text.secondary)
-                }
-                
-                Spacer()
-            }
-        }
-        .accessibilityLabel("\(title). \(isRequired ? "Required permission" : "Optional permission"). \(description)")
-        .accessibilityHint("This permission is \(isRequired ? "required" : "optional") for app functionality")
-    }
-    
-    private var navigationButtons: some View {
-        HStack(spacing: DesignTokens.Spacing.md) {
-            if currentStep > 0 {
-                AppleButton(
-                    "back".localized,
-                    style: .secondary,
-                    size: .medium
-                ) {
-                    withAnimation(DesignTokens.Animation.standard) {
-                        currentStep -= 1
-                    }
-                    HapticFeedback.shared.impact(style: .light)
-                }
-            }
-            
-            AppleButton(
-                currentStep < totalSteps - 1 ? "next".localized : "get_started".localized,
-                style: .primary,
-                size: .medium
-            ) {
-                if currentStep < totalSteps - 1 {
-                    withAnimation(DesignTokens.Animation.standard) {
-                        currentStep += 1
-                    }
-                } else {
-                    completeOnboarding()
-                }
-                HapticFeedback.shared.impact(style: .light)
-            }
-        }
-        .padding(.horizontal, DesignTokens.Spacing.xl)
-        .padding(.bottom, DesignTokens.Spacing.xxl)
-    }
-    
-    private func checkOnboardingStatus() {
-        hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "has_completed_onboarding")
     }
     
     private func completeOnboarding() {
-        // Save preferences
-        UserDefaults.standard.set(selectedLanguage.rawValue, forKey: "selected_language")
-        UserDefaults.standard.set(true, forKey: "has_completed_onboarding")
-        
-        // Request permissions
-        requestPermissions()
-        
-        // Complete onboarding
-        withAnimation(DesignTokens.Animation.complex) {
-            hasCompletedOnboarding = true
-        }
-        
-    }
-    
-    private func requestPermissions() {
-        // Request location permission
-        locationManager.requestLocationPermission()
-        
-        // Request other permissions as needed
+        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+        hasCompletedOnboarding = true
     }
 }
-
-// MARK: - Theme Enum
-
 
 #Preview {
     OnboardingView()
