@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State private var notificationsEnabled = true
-    @State private var locationEnabled = true
-    @State private var darkModeEnabled = false
-    @State private var selectedLanguage = "English"
+    @StateObject private var settingsService = DependencyContainer.shared.settingsService
+    @StateObject private var locationManager = DependencyContainer.shared.locationManager
+    @StateObject private var localizationManager = DependencyContainer.shared.localizationManager
     
     private let languages = ["English", "עברית"]
-    
+
     var body: some View {
         ZStack {
             // Background
@@ -27,11 +26,11 @@ struct SettingsView: View {
                     VStack(spacing: 16) {
                         Text("Settings")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
-                            .foregroundColor(DesignTokens.Text.primary)
-                        
+                        .foregroundColor(DesignTokens.Text.primary)
+
                         Text("Customize your Shvil experience")
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(DesignTokens.Text.secondary)
+                        .foregroundColor(DesignTokens.Text.secondary)
                     }
                     .padding(.top, 20)
                     
@@ -46,8 +45,11 @@ struct SettingsView: View {
                                 title: "Notifications",
                                 subtitle: "Get updates about your adventures"
                             ) {
-                                Toggle("", isOn: $notificationsEnabled)
+                                Toggle("", isOn: $settingsService.enablePushNotifications)
                                     .tint(DesignTokens.Brand.primary)
+                                    .onChange(of: settingsService.enablePushNotifications) { newValue in
+                                        settingsService.updateNotificationSettings()
+                                    }
                             }
                             
                             SettingsRow(
@@ -55,8 +57,15 @@ struct SettingsView: View {
                                 title: "Location Services",
                                 subtitle: "Required for adventure features"
                             ) {
-                                Toggle("", isOn: $locationEnabled)
-                                    .tint(DesignTokens.Brand.primary)
+                                Toggle("", isOn: Binding(
+                                    get: { locationManager.isLocationEnabled },
+                                    set: { _ in
+                                        if !locationManager.isLocationEnabled {
+                                            locationManager.requestLocationPermission()
+                                        }
+                                    }
+                                ))
+                                .tint(DesignTokens.Brand.primary)
                             }
                             
                             SettingsRow(
@@ -64,8 +73,13 @@ struct SettingsView: View {
                                 title: "Dark Mode",
                                 subtitle: "Switch between light and dark themes"
                             ) {
-                                Toggle("", isOn: $darkModeEnabled)
-                                    .tint(DesignTokens.Brand.primary)
+                                Toggle("", isOn: Binding(
+                                    get: { settingsService.selectedTheme == .dark },
+                                    set: { isDark in
+                                        settingsService.selectedTheme = isDark ? .dark : .light
+                                    }
+                                ))
+                                .tint(DesignTokens.Brand.primary)
                             }
                         }
                         
@@ -78,12 +92,14 @@ struct SettingsView: View {
                                 Menu {
                                     ForEach(languages, id: \.self) { language in
                                         Button(language) {
-                                            selectedLanguage = language
+                                            let appLanguage: AppLanguage = language == "עברית" ? .hebrew : .english
+                                            settingsService.selectedLanguage = appLanguage
+                                            localizationManager.setLanguage(appLanguage)
                                         }
                                     }
                                 } label: {
                                     HStack {
-                                        Text(selectedLanguage)
+                                        Text(settingsService.selectedLanguage == .hebrew ? "עברית" : "English")
                                             .foregroundColor(DesignTokens.Text.primary)
                                         Image(systemName: "chevron.down")
                                             .foregroundColor(DesignTokens.Text.tertiary)
@@ -103,8 +119,8 @@ struct SettingsView: View {
                             }
                             
                             SettingsRow(
-                                icon: "questionmark.circle.fill",
-                                title: "Help & Support",
+                        icon: "questionmark.circle.fill",
+                        title: "Help & Support",
                                 subtitle: "Get help with using Shvil"
                             ) {
                                 Image(systemName: "chevron.right")
@@ -149,14 +165,14 @@ struct ProfileCard: View {
                 Text("Adventure Explorer")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(DesignTokens.Text.primary)
-                
+
                 Text("Member since 2024")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(DesignTokens.Text.secondary)
             }
-            
+
             Spacer()
-            
+
             Button("Edit") {
                 // Edit profile action
             }
@@ -186,12 +202,12 @@ struct SettingsSection<Content: View>: View {
         self.title = title
         self.content = content()
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(DesignTokens.Text.primary)
+                            .foregroundColor(DesignTokens.Text.primary)
                 .padding(.horizontal, 4)
             
             VStack(spacing: 1) {
@@ -218,7 +234,7 @@ struct SettingsRow<Content: View>: View {
         self.subtitle = subtitle
         self.content = content()
     }
-    
+
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: icon)
@@ -230,14 +246,14 @@ struct SettingsRow<Content: View>: View {
                 Text(title)
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(DesignTokens.Text.primary)
-                
+
                 Text(subtitle)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(DesignTokens.Text.secondary)
             }
-            
+
             Spacer()
-            
+
             content
         }
         .padding(.horizontal, 20)
