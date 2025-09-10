@@ -95,7 +95,7 @@ extension View {
     /// Apply Liquid Glass effect with depth and translucency
     public func liquidGlassEffect(
         style: LiquidGlassStyle = .medium,
-        cornerRadius: CGFloat = AppleCornerRadius.xxl
+        cornerRadius: CGFloat = DesignTokens.CornerRadius.xxl
     ) -> some View {
         self
             .background(
@@ -225,12 +225,12 @@ extension View {
                             }
                             .padding(DesignTokens.Spacing.xl)
                             .background(
-                                RoundedRectangle(cornerRadius: AppleCornerRadius.lg)
+                                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                                     .fill(.regularMaterial)
                             )
                         }
                         .transition(.opacity.combined(with: .scale))
-                        .animation(AppleAnimations.standard, value: isLoading)
+                        .animation(DesignTokens.Animation.standard, value: isLoading)
                     }
                 }
             )
@@ -271,18 +271,18 @@ extension View {
                                     .padding(.horizontal, DesignTokens.Spacing.lg)
                                     .padding(.vertical, DesignTokens.Spacing.md)
                                     .background(
-                                        RoundedRectangle(cornerRadius: AppleCornerRadius.md)
+                                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
                                             .fill(DesignTokens.Brand.primary)
                                     )
                             }
                         }
                         .padding(DesignTokens.Spacing.xl)
                         .background(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.xl)
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
                                 .fill(.regularMaterial)
                         )
                         .transition(.opacity.combined(with: .scale))
-                        .animation(AppleAnimations.standard, value: error)
+                        .animation(DesignTokens.Animation.standard, value: error)
                     }
                 }
             )
@@ -318,11 +318,15 @@ private struct FlexibleHeaderScrollViewModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                min(geometry.contentOffset.y + geometry.contentInsets.top, 0)
-            } action: { _, offset in
-                geometry.offset = offset
-            }
+            .background(
+                GeometryReader { geometryReader in
+                    Color.clear
+                        .onAppear {
+                            // Initialize with current scroll position
+                            geometry.offset = 0
+                        }
+                }
+            )
             .environment(geometry)
     }
 }
