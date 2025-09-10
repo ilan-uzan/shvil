@@ -161,7 +161,7 @@ struct MapView: View {
                     .shvilAccessibility(
                         label: "Center on my location",
                         hint: "Centers the map on your current location",
-                        traits: .button
+                        traits: AccessibilityTraitsHelper.button
                     )
                     
                     Spacer()
@@ -184,7 +184,7 @@ struct MapView: View {
                     .shvilAccessibility(
                         label: "Focus mode",
                         hint: "Activates focus mode for better map navigation",
-                        traits: .button
+                        traits: AccessibilityTraitsHelper.button
                     )
                 }
                 .padding(.horizontal, DesignTokens.Spacing.lg)

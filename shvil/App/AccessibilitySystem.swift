@@ -16,13 +16,15 @@ public struct AccessibilitySystem {
     /// Get scaled font size based on Dynamic Type settings
     public static func scaledFontSize(_ baseSize: CGFloat) -> CGFloat {
         let contentSize = UIApplication.shared.preferredContentSizeCategory
-        return UIFontMetrics.default.scaledValue(for: baseSize, compatibleWith: contentSize)
+        let traitCollection = UITraitCollection(preferredContentSizeCategory: contentSize)
+        return UIFontMetrics.default.scaledValue(for: baseSize, compatibleWith: traitCollection)
     }
     
     /// Get scaled spacing based on Dynamic Type settings
     public static func scaledSpacing(_ baseSpacing: CGFloat) -> CGFloat {
         let contentSize = UIApplication.shared.preferredContentSizeCategory
-        let scaleFactor = UIFontMetrics.default.scaledValue(for: 1.0, compatibleWith: contentSize)
+        let traitCollection = UITraitCollection(preferredContentSizeCategory: contentSize)
+        let scaleFactor = UIFontMetrics.default.scaledValue(for: 1.0, compatibleWith: traitCollection)
         return baseSpacing * scaleFactor
     }
     
@@ -94,7 +96,7 @@ extension View {
         label: String,
         hint: String? = nil,
         value: String? = nil,
-        traits: AccessibilityTraits = [],
+        traits: AccessibilityTraits = AccessibilityTraits(),
         action: String? = nil
     ) -> some View {
         self
@@ -113,29 +115,21 @@ extension View {
             .frame(minWidth: AccessibilitySystem.minTouchTarget, minHeight: AccessibilitySystem.minTouchTarget)
     }
     
-    /// Apply RTL-aware padding
-    public func rtlPadding(_ edges: Edge.Set = .all, _ length: CGFloat? = nil) -> some View {
-        if AccessibilitySystem.isRTL {
-            return self.padding(edges, length)
-        } else {
-            return self.padding(edges, length)
-        }
-    }
     
     /// Apply RTL-aware alignment
     public func rtlAlignment(_ alignment: HorizontalAlignment) -> some View {
-        let rtlAlignment: HorizontalAlignment = {
+        let textAlignment: TextAlignment = {
             switch alignment {
             case .leading:
-                return AccessibilitySystem.leadingAlignment
+                return AccessibilitySystem.isRTL ? .trailing : .leading
             case .trailing:
-                return AccessibilitySystem.trailingAlignment
+                return AccessibilitySystem.isRTL ? .leading : .trailing
             default:
-                return alignment
+                return .center
             }
         }()
         
-        return self.multilineTextAlignment(rtlAlignment == .leading ? .leading : .trailing)
+        return self.multilineTextAlignment(textAlignment)
     }
     
     /// Apply reduced motion animation
@@ -164,7 +158,7 @@ extension View {
 }
 
 /// Accessibility traits for common UI elements
-public struct AccessibilityTraits {
+public struct AccessibilityTraitsHelper {
     public static let button: AccessibilityTraits = .isButton
     public static let header: AccessibilityTraits = .isHeader
     public static let image: AccessibilityTraits = .isImage
