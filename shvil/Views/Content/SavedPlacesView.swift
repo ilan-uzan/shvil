@@ -229,7 +229,7 @@ struct QuickAccessCard: View {
             )
         }
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(AppleAnimations.microInteraction, value: isPressed)
+        .animation(DesignTokens.Animation.micro, value: isPressed)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
@@ -269,7 +269,7 @@ struct FavoriteCard: View {
             )
         }
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(AppleAnimations.microInteraction, value: isPressed)
+        .animation(DesignTokens.Animation.micro, value: isPressed)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
@@ -368,7 +368,7 @@ struct CollectionCard: View {
             )
         }
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(AppleAnimations.microInteraction, value: isPressed)
+        .animation(DesignTokens.Animation.micro, value: isPressed)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
@@ -514,7 +514,7 @@ struct SavedPlaceRow: View {
             )
         }
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(AppleAnimations.microInteraction, value: isPressed)
+        .animation(DesignTokens.Animation.micro, value: isPressed)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
@@ -638,7 +638,7 @@ struct AddCollectionView: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - #Preview
 
 #Preview {
     SavedPlacesView()

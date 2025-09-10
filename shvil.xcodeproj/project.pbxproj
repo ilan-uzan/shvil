@@ -7,12 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EF0CF1D52E718AA100BB79FC /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = EF0CF1D42E718AA100BB79FC /* Algorithms */; };
 		EF209EBA2E6783070020183D /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EB92E6783070020183D /* Auth */; };
 		EF209EBC2E6783070020183D /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EBB2E6783070020183D /* Functions */; };
 		EF209EBE2E6783070020183D /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EBD2E6783070020183D /* PostgREST */; };
 		EF209EC02E6783070020183D /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EBF2E6783070020183D /* Realtime */; };
 		EF209EC22E6783070020183D /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EC12E6783070020183D /* Storage */; };
 		EF209EC72E6788830020183D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = EF209EC62E6788830020183D /* Supabase */; };
+		EF359E6E2E718C7300B71F35 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E6D2E718C7300B71F35 /* ArgumentParser */; };
+		EF359E712E718CB500B71F35 /* BitCollections in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E702E718CB500B71F35 /* BitCollections */; };
+		EF359E732E718CB500B71F35 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E722E718CB500B71F35 /* Collections */; };
+		EF359E752E718CB500B71F35 /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E742E718CB500B71F35 /* DequeModule */; };
+		EF359E772E718CB500B71F35 /* HashTreeCollections in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E762E718CB500B71F35 /* HashTreeCollections */; };
+		EF359E792E718CB500B71F35 /* HeapModule in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E782E718CB500B71F35 /* HeapModule */; };
+		EF359E7B2E718CB500B71F35 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E7A2E718CB500B71F35 /* OrderedCollections */; };
+		EF359E7D2E718CB500B71F35 /* _RopeModule in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E7C2E718CB500B71F35 /* _RopeModule */; };
+		EF359E802E718CD400B71F35 /* Crypto in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E7F2E718CD400B71F35 /* Crypto */; };
+		EF359E822E718CD400B71F35 /* _CryptoExtras in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E812E718CD400B71F35 /* _CryptoExtras */; };
+		EF359E852E718D2F00B71F35 /* HTTPTypes in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E842E718D2F00B71F35 /* HTTPTypes */; };
+		EF359E872E718D2F00B71F35 /* HTTPTypesFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E862E718D2F00B71F35 /* HTTPTypesFoundation */; };
+		EF359E8A2E718D4F00B71F35 /* ComplexModule in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E892E718D4F00B71F35 /* ComplexModule */; };
+		EF359E8C2E718D4F00B71F35 /* Numerics in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E8B2E718D4F00B71F35 /* Numerics */; };
+		EF359E8E2E718D4F00B71F35 /* RealModule in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E8D2E718D4F00B71F35 /* RealModule */; };
+		EF359E912E718D8E00B71F35 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = EF359E902E718D8E00B71F35 /* Logging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,11 +50,28 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF209EBE2E6783070020183D /* PostgREST in Frameworks */,
+				EF0CF1D52E718AA100BB79FC /* Algorithms in Frameworks */,
+				EF359E732E718CB500B71F35 /* Collections in Frameworks */,
+				EF359E7D2E718CB500B71F35 /* _RopeModule in Frameworks */,
+				EF359E712E718CB500B71F35 /* BitCollections in Frameworks */,
 				EF209EBC2E6783070020183D /* Functions in Frameworks */,
+				EF359E872E718D2F00B71F35 /* HTTPTypesFoundation in Frameworks */,
+				EF359E852E718D2F00B71F35 /* HTTPTypes in Frameworks */,
+				EF359E792E718CB500B71F35 /* HeapModule in Frameworks */,
+				EF359E802E718CD400B71F35 /* Crypto in Frameworks */,
 				EF209EC72E6788830020183D /* Supabase in Frameworks */,
+				EF359E772E718CB500B71F35 /* HashTreeCollections in Frameworks */,
 				EF209EBA2E6783070020183D /* Auth in Frameworks */,
+				EF359E8C2E718D4F00B71F35 /* Numerics in Frameworks */,
 				EF209EC22E6783070020183D /* Storage in Frameworks */,
+				EF359E6E2E718C7300B71F35 /* ArgumentParser in Frameworks */,
+				EF359E8A2E718D4F00B71F35 /* ComplexModule in Frameworks */,
 				EF209EC02E6783070020183D /* Realtime in Frameworks */,
+				EF359E912E718D8E00B71F35 /* Logging in Frameworks */,
+				EF359E8E2E718D4F00B71F35 /* RealModule in Frameworks */,
+				EF359E822E718CD400B71F35 /* _CryptoExtras in Frameworks */,
+				EF359E7B2E718CB500B71F35 /* OrderedCollections in Frameworks */,
+				EF359E752E718CB500B71F35 /* DequeModule in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +128,23 @@
 				EF209EBF2E6783070020183D /* Realtime */,
 				EF209EC12E6783070020183D /* Storage */,
 				EF209EC62E6788830020183D /* Supabase */,
+				EF0CF1D42E718AA100BB79FC /* Algorithms */,
+				EF359E6D2E718C7300B71F35 /* ArgumentParser */,
+				EF359E702E718CB500B71F35 /* BitCollections */,
+				EF359E722E718CB500B71F35 /* Collections */,
+				EF359E742E718CB500B71F35 /* DequeModule */,
+				EF359E762E718CB500B71F35 /* HashTreeCollections */,
+				EF359E782E718CB500B71F35 /* HeapModule */,
+				EF359E7A2E718CB500B71F35 /* OrderedCollections */,
+				EF359E7C2E718CB500B71F35 /* _RopeModule */,
+				EF359E7F2E718CD400B71F35 /* Crypto */,
+				EF359E812E718CD400B71F35 /* _CryptoExtras */,
+				EF359E842E718D2F00B71F35 /* HTTPTypes */,
+				EF359E862E718D2F00B71F35 /* HTTPTypesFoundation */,
+				EF359E892E718D4F00B71F35 /* ComplexModule */,
+				EF359E8B2E718D4F00B71F35 /* Numerics */,
+				EF359E8D2E718D4F00B71F35 /* RealModule */,
+				EF359E902E718D8E00B71F35 /* Logging */,
 			);
 			productName = shvil;
 			productReference = EFAB63FA2E64EAD50069887C /* shvil.app */;
@@ -126,6 +177,13 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				EF0CF1D32E718AA100BB79FC /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+				EF359E6C2E718C7300B71F35 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
+				EF359E6F2E718CB500B71F35 /* XCRemoteSwiftPackageReference "swift-collections" */,
+				EF359E7E2E718CD400B71F35 /* XCRemoteSwiftPackageReference "swift-crypto" */,
+				EF359E832E718D2F00B71F35 /* XCRemoteSwiftPackageReference "swift-http-types" */,
+				EF359E882E718D4F00B71F35 /* XCRemoteSwiftPackageReference "swift-numerics" */,
+				EF359E8F2E718D8E00B71F35 /* XCRemoteSwiftPackageReference "swift-log" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EFAB63FB2E64EAD50069887C /* Products */;
@@ -288,6 +346,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 64BG5ARK2Y;
@@ -302,6 +361,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -320,6 +380,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 64BG5ARK2Y;
@@ -334,6 +395,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -371,6 +433,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		EF0CF1D32E718AA100BB79FC /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
 		EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift";
@@ -379,9 +449,62 @@
 				minimumVersion = 2.5.1;
 			};
 		};
+		EF359E6C2E718C7300B71F35 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.1;
+			};
+		};
+		EF359E6F2E718CB500B71F35 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
+		EF359E7E2E718CD400B71F35 /* XCRemoteSwiftPackageReference "swift-crypto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-crypto.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.15.0;
+			};
+		};
+		EF359E832E718D2F00B71F35 /* XCRemoteSwiftPackageReference "swift-http-types" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-http-types";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.0;
+			};
+		};
+		EF359E882E718D4F00B71F35 /* XCRemoteSwiftPackageReference "swift-numerics" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-numerics.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+		EF359E8F2E718D8E00B71F35 /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		EF0CF1D42E718AA100BB79FC /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF0CF1D32E718AA100BB79FC /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
 		EF209EB92E6783070020183D /* Auth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */;
@@ -411,6 +534,86 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EF209EB82E6783070020183D /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
+		};
+		EF359E6D2E718C7300B71F35 /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E6C2E718C7300B71F35 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
+		EF359E702E718CB500B71F35 /* BitCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E6F2E718CB500B71F35 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = BitCollections;
+		};
+		EF359E722E718CB500B71F35 /* Collections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E6F2E718CB500B71F35 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = Collections;
+		};
+		EF359E742E718CB500B71F35 /* DequeModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E6F2E718CB500B71F35 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = DequeModule;
+		};
+		EF359E762E718CB500B71F35 /* HashTreeCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E6F2E718CB500B71F35 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = HashTreeCollections;
+		};
+		EF359E782E718CB500B71F35 /* HeapModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E6F2E718CB500B71F35 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = HeapModule;
+		};
+		EF359E7A2E718CB500B71F35 /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E6F2E718CB500B71F35 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
+		};
+		EF359E7C2E718CB500B71F35 /* _RopeModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E6F2E718CB500B71F35 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = _RopeModule;
+		};
+		EF359E7F2E718CD400B71F35 /* Crypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E7E2E718CD400B71F35 /* XCRemoteSwiftPackageReference "swift-crypto" */;
+			productName = Crypto;
+		};
+		EF359E812E718CD400B71F35 /* _CryptoExtras */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E7E2E718CD400B71F35 /* XCRemoteSwiftPackageReference "swift-crypto" */;
+			productName = _CryptoExtras;
+		};
+		EF359E842E718D2F00B71F35 /* HTTPTypes */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E832E718D2F00B71F35 /* XCRemoteSwiftPackageReference "swift-http-types" */;
+			productName = HTTPTypes;
+		};
+		EF359E862E718D2F00B71F35 /* HTTPTypesFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E832E718D2F00B71F35 /* XCRemoteSwiftPackageReference "swift-http-types" */;
+			productName = HTTPTypesFoundation;
+		};
+		EF359E892E718D4F00B71F35 /* ComplexModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E882E718D4F00B71F35 /* XCRemoteSwiftPackageReference "swift-numerics" */;
+			productName = ComplexModule;
+		};
+		EF359E8B2E718D4F00B71F35 /* Numerics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E882E718D4F00B71F35 /* XCRemoteSwiftPackageReference "swift-numerics" */;
+			productName = Numerics;
+		};
+		EF359E8D2E718D4F00B71F35 /* RealModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E882E718D4F00B71F35 /* XCRemoteSwiftPackageReference "swift-numerics" */;
+			productName = RealModule;
+		};
+		EF359E902E718D8E00B71F35 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF359E8F2E718D8E00B71F35 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

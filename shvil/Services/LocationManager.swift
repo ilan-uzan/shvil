@@ -61,7 +61,7 @@ public class LocationManager: NSObject, ObservableObject {
             locationManager.requestWhenInUseAuthorization()
         case .denied, .restricted:
             // Handle denied case - show settings alert
-            break
+            openLocationSettings()
         case .authorizedWhenInUse:
             startLocationUpdates()
         case .authorizedAlways:

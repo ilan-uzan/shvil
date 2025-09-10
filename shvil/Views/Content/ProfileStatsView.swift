@@ -377,7 +377,7 @@ struct Achievement: Identifiable {
     let color: Color
 }
 
-// MARK: - Preview
+// MARK: - #Preview
 
 #Preview {
     ProfileStatsView()

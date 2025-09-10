@@ -123,31 +123,3 @@ struct LocateMeButton: View {
     }
 }
 
-// MARK: - Preview
-
-#Preview {
-    VStack(spacing: 20) {
-        HStack(spacing: 20) {
-            LocateMeButton(isLocating: .constant(false)) {
-                print("Locate me tapped")
-            }
-            
-            LocateMeButton(isLocating: .constant(true)) {
-                print("Locate me tapped")
-            }
-        }
-        
-        HStack(spacing: 20) {
-            LocateMeButton(isLocating: .constant(false)) {
-                print("Locate me tapped")
-            }
-            
-            LocateMeButton(isLocating: .constant(true)) {
-                print("Locate me tapped")
-            }
-        }
-        .environment(\.colorScheme, .dark)
-    }
-    .padding()
-    .background(DesignTokens.Surface.background)
-}

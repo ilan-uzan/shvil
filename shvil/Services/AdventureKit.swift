@@ -17,11 +17,11 @@ public struct AdventurePlan: Codable, Identifiable {
     public let title: String
     public let description: String
     public let theme: AdventureMood
-    public let stops: [AdventureStop]
+        public let stops: [AdventureStop]
     public let totalDuration: Int // in minutes
     public let totalDistance: Double // in meters
     public let budgetLevel: BudgetLevel
-    public let status: AdventureStatus
+        public let status: AdventureStatus
     public let createdAt: Date
     public let updatedAt: Date
 
@@ -248,7 +248,7 @@ public class AdventureKit: ObservableObject {
     }
 
     /// Swap a stop in the current adventure
-    public func swapStop(stopId: UUID, with alternative: AdventureStop) async throws {
+    public func swapStop(stopId: UUID, with alternative: shvil.AdventureStop) async throws {
         guard var adventure = currentAdventure else { return }
 
         // Find and replace the stop

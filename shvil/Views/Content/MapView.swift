@@ -9,6 +9,12 @@ import CoreLocation
 import MapKit
 import SwiftUI
 
+// MARK: - Additional Dependencies for MapView
+// Note: These services are defined in their respective files
+
+// SearchResult is defined in APIModels.swift
+// PlaceDetailsView is defined in PlaceDetailsView.swift
+
 struct MapView: View {
     // Use DependencyContainer for better performance and memory management
     @StateObject private var locationManager = DependencyContainer.shared.locationManager
@@ -571,7 +577,7 @@ struct MapView: View {
                 .appleShadow(DesignTokens.Shadow.glass)
                 .padding(.horizontal, DesignTokens.Spacing.md)
                 .padding(.bottom, DesignTokens.Spacing.md)
-                .animation(reduceMotion ? .none : AppleAnimations.complex, value: isBottomSheetExpanded)
+                .animation(reduceMotion ? .none : DesignTokens.Animation.complex, value: isBottomSheetExpanded)
             }
         }
     }
@@ -843,10 +849,10 @@ struct MapView: View {
                     }
                 }
                 .padding(.horizontal, DesignTokens.Spacing.md)
-                .padding(.bottom, AppleSpacing.xxl)
+                .padding(.bottom, DesignTokens.Spacing.xxl)
             }
         }
-        .animation(reduceMotion ? .none : AppleAnimations.complex, value: showOverflowMenu)
+        .animation(reduceMotion ? .none : DesignTokens.Animation.complex, value: showOverflowMenu)
     }
 
     // MARK: - Helper Functions
@@ -1078,7 +1084,7 @@ struct MapView: View {
                 Spacer()
             }
         }
-        .animation(reduceMotion ? .none : AppleAnimations.complex, value: showSearchOverlay)
+        .animation(reduceMotion ? .none : DesignTokens.Animation.complex, value: showSearchOverlay)
     }
     
     private func searchResultRow(for result: SearchResult) -> some View {

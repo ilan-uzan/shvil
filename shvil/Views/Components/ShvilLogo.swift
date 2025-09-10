@@ -148,24 +148,3 @@ struct SCurveShape: Shape {
     }
 }
 
-// MARK: - Preview
-
-#Preview {
-    VStack(spacing: 20) {
-        // Different sizes
-        HStack(spacing: 20) {
-            ShvilLogo(size: 16)
-            ShvilLogo(size: 24)
-            ShvilLogo(size: 32)
-            ShvilLogo(size: 48)
-        }
-        
-        // With and without glow
-        HStack(spacing: 20) {
-            ShvilLogo(size: 32, showGlow: true)
-            ShvilLogo(size: 32, showGlow: false)
-        }
-    }
-    .padding()
-    .background(DesignTokens.Surface.background)
-}

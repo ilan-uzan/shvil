@@ -177,29 +177,3 @@ struct MapsSearchPill: View {
     }
 }
 
-// MARK: - Preview
-
-#Preview {
-    VStack(spacing: 20) {
-        MapsSearchPill(
-            onSearch: { text in
-                print("Search: \(text)")
-            },
-            onVoiceSearch: {
-                print("Voice search activated")
-            }
-        )
-        
-        MapsSearchPill(
-            onSearch: { text in
-                print("Search: \(text)")
-            },
-            onVoiceSearch: {
-                print("Voice search activated")
-            }
-        )
-        .environment(\.colorScheme, .dark)
-    }
-    .padding()
-    .background(DesignTokens.Surface.background)
-}

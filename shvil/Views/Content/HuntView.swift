@@ -612,7 +612,7 @@ struct LeaderboardRow: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - #Preview
 
 #Preview {
     HuntView()

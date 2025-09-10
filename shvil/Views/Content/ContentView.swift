@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+// MARK: - Import Dependencies
+import Foundation
+
 struct ContentView: View {
     @StateObject private var localizationManager = LocalizationManager.shared
     @StateObject private var appState = DependencyContainer.shared.appState
@@ -47,7 +50,7 @@ struct ContentView: View {
                     MapView()
                 }
             }
-            .animation(accessibilityManager.getAccessibleAnimation(), value: selectedTab)
+            .animation(DesignTokens.Animation.standard, value: selectedTab)
             .ignoresSafeArea(.all, edges: .bottom) // Allow content to go behind navigation
             .performanceOptimizedView()
             

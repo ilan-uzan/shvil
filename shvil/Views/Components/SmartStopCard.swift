@@ -261,7 +261,7 @@ struct SmartStopCardContainer: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - #Preview
 #Preview {
     VStack(spacing: 16) {
         SmartStopCard(

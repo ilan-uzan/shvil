@@ -154,21 +154,3 @@ struct TabButton: View {
     }
 }
 
-// MARK: - Preview
-
-#Preview {
-    ZStack {
-        DesignTokens.Surface.background
-            .ignoresSafeArea()
-        
-        FloatingNavigationPill(
-            selectedTab: .constant(0),
-            tabs: [
-                TabItem(icon: "person.3.fill", title: "Socialize"),
-                TabItem(icon: "flag.fill", title: "Hunt"),
-                TabItem(icon: "sparkles", title: "Adventure"),
-                TabItem(icon: "gearshape.fill", title: "Settings")
-            ]
-        )
-    }
-}

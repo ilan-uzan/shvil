@@ -33,14 +33,23 @@ struct AdventureSetupView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // Background
+                // Background with Landmarks-style extension
                 DesignTokens.Surface.background
                     .ignoresSafeArea()
+                    .backgroundExtensionEffect()
 
                 ScrollView {
                     VStack(spacing: DesignTokens.Spacing.xl) {
-                        // Header
+                        // Header with readability overlay
                         headerSection
+                            .overlay(
+                                ReadabilityOverlay(
+                                    cornerRadius: DesignTokens.CornerRadius.xl,
+                                    gradientColors: [.black.opacity(0.3), .clear],
+                                    startPoint: .bottom,
+                                    endPoint: .center
+                                )
+                            )
 
                         // Mood Selection
                         moodSection
@@ -225,7 +234,7 @@ struct AdventureSetupView: View {
     
     private func moodCardBackground(for mood: AdventureMood) -> some View {
         RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-            .fill(DesignTokens.Blur.light)
+            .fill(DesignTokens.Glass.light)
             .overlay(
                 RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                     .fill(selectedMood == mood ? DesignTokens.Glass.medium : DesignTokens.Surface.secondary)

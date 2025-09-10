@@ -7,6 +7,24 @@
 
 import SwiftUI
 
+// MARK: - Missing Definitions (Temporary Fix)
+// Note: applePerformanceOptimized, appleAccessibility, and appleShadow are defined in DesignSystemViewModifiers.swift
+
+public struct AppleAnimations {
+    public static let micro = Animation.easeInOut(duration: 0.15)
+    public static let microInteraction = Animation.easeInOut(duration: 0.15)
+    public static let standard = Animation.easeInOut(duration: 0.25)
+    public static let complex = Animation.easeInOut(duration: 0.4)
+}
+
+public struct AppleCornerRadius {
+    public static let sm: CGFloat = 8
+    public static let md: CGFloat = 12
+    public static let lg: CGFloat = 16
+    public static let xl: CGFloat = 20
+    public static let xxl: CGFloat = 24
+}
+
 // MARK: - Apple Glass Components Library
 // Comprehensive glassmorphism components following Apple Design Guidelines
 
@@ -14,6 +32,30 @@ import SwiftUI
 
 typealias AppleButton = AppleGlassButton
 typealias AppleTypography = DesignTokens.Typography
+
+// MARK: - Apple List Row Component
+
+struct AppleListRow<Content: View>: View {
+    let content: Content
+    
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+    
+    var body: some View {
+        content
+            .padding(.horizontal, DesignTokens.Spacing.md)
+            .padding(.vertical, DesignTokens.Spacing.sm)
+            .background(
+                RoundedRectangle(cornerRadius: DesignTokens.Layout.cornerRadius)
+                    .fill(DesignTokens.Surface.secondary)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: DesignTokens.Layout.cornerRadius)
+                    .stroke(DesignTokens.Stroke.light, lineWidth: 0.5)
+            )
+    }
+}
 
 // MARK: - Glass Button Component
 
@@ -61,7 +103,7 @@ struct AppleGlassButton: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: DesignTokens.Spacing.sm) {
+            HStack(spacing: shvil.DesignTokens.Spacing.sm) {
                 if isLoading {
                     ProgressView()
                         .scaleEffect(0.8)
@@ -86,7 +128,7 @@ struct AppleGlassButton: View {
         .buttonStyle(PlainButtonStyle())
         .disabled(isDisabled || isLoading)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-            withAnimation(AppleAnimations.micro) {
+            withAnimation(shvil.DesignTokens.Animation.micro) {
                 isPressed = pressing
             }
         }, perform: {})
@@ -99,8 +141,8 @@ struct AppleGlassButton: View {
     private var textFont: Font {
         switch size {
         case .small: AppleTypography.footnoteEmphasized
-        case .medium: DesignTokens.Typography.bodyEmphasized
-        case .large: DesignTokens.Typography.headline
+        case .medium: shvil.DesignTokens.Typography.bodyEmphasized
+        case .large: shvil.DesignTokens.Typography.headline
         }
     }
     
@@ -115,25 +157,25 @@ struct AppleGlassButton: View {
     private var textColor: Color {
         switch style {
         case .primary: .white
-        case .secondary: DesignTokens.Text.primary
+        case .secondary: shvil.DesignTokens.Text.primary
         case .destructive: .white
-        case .ghost: DesignTokens.Brand.primary
+        case .ghost: shvil.DesignTokens.Brand.primary
         }
     }
     
     private var horizontalPadding: CGFloat {
         switch size {
-        case .small: DesignTokens.Spacing.md
-        case .medium: DesignTokens.Spacing.lg
-        case .large: DesignTokens.Spacing.xl
+        case .small: shvil.DesignTokens.Spacing.md
+        case .medium: shvil.DesignTokens.Spacing.lg
+        case .large: shvil.DesignTokens.Spacing.xl
         }
     }
     
     private var verticalPadding: CGFloat {
         switch size {
-        case .small: DesignTokens.Spacing.sm
-        case .medium: DesignTokens.Spacing.md
-        case .large: DesignTokens.Spacing.lg
+        case .small: shvil.DesignTokens.Spacing.sm
+        case .medium: shvil.DesignTokens.Spacing.md
+        case .large: shvil.DesignTokens.Spacing.lg
         }
     }
     
@@ -146,7 +188,7 @@ struct AppleGlassButton: View {
     }
     
     private var backgroundView: some View {
-        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+        RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.md)
             .fill(backgroundColor)
             .overlay(overlayView)
             .appleShadow(shadow)
@@ -154,9 +196,9 @@ struct AppleGlassButton: View {
     
     private var backgroundColor: Color {
         switch style {
-        case .primary: DesignTokens.Brand.primary
-        case .secondary: DesignTokens.Surface.secondary
-        case .destructive: DesignTokens.Semantic.error
+        case .primary: shvil.DesignTokens.Brand.primary
+        case .secondary: shvil.DesignTokens.Surface.secondary
+        case .destructive: shvil.DesignTokens.Semantic.error
         case .ghost: Color.clear
         }
     }
@@ -164,21 +206,21 @@ struct AppleGlassButton: View {
     private var overlayView: some View {
         Group {
             if style == .ghost {
-                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
-                    .stroke(DesignTokens.Brand.primary, lineWidth: 1)
+                RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.md)
+                    .stroke(shvil.DesignTokens.Brand.primary, lineWidth: 1)
             } else if style == .secondary {
-                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
-                    .stroke(DesignTokens.Stroke.light, lineWidth: 1)
+                RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.md)
+                    .stroke(shvil.DesignTokens.Stroke.light, lineWidth: 1)
             }
         }
     }
     
     private var shadow: ShadowValue {
         switch style {
-        case .primary: DesignTokens.Shadow.medium
-        case .secondary: DesignTokens.Shadow.light
-        case .destructive: DesignTokens.Shadow.medium
-        case .ghost: DesignTokens.Shadow.none
+        case .primary: shvil.DesignTokens.Shadow.medium
+        case .secondary: shvil.DesignTokens.Shadow.light
+        case .destructive: shvil.DesignTokens.Shadow.medium
+        case .ghost: shvil.DesignTokens.Shadow.none
         }
     }
 }
@@ -205,14 +247,14 @@ struct AppleGlassCard<Content: View>: View {
     
     var body: some View {
         content
-            .padding(DesignTokens.Spacing.md)
+            .padding(shvil.DesignTokens.Spacing.md)
             .background(backgroundView)
             .appleShadow(shadow)
             .applePerformanceOptimized() // Add performance optimization
     }
     
     private var backgroundView: some View {
-        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+        RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.xl)
             .fill(
                 LinearGradient(
                     colors: [
@@ -227,32 +269,32 @@ struct AppleGlassCard<Content: View>: View {
             .overlay(overlayView)
             .overlay(
                 // Inner highlight for depth
-                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-                    .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 0.5)
+                RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.xl)
+                    .stroke(shvil.DesignTokens.Glass.innerHighlight, lineWidth: 0.5)
                     .offset(x: 1, y: 1)
             )
     }
     
     private var backgroundColor: Color {
         switch style {
-        case .elevated: DesignTokens.Surface.secondary
-        case .filled: DesignTokens.Surface.tertiary
+        case .elevated: shvil.DesignTokens.Surface.secondary
+        case .filled: shvil.DesignTokens.Surface.tertiary
         case .outlined: Color.clear
-        case .floating: DesignTokens.Surface.primary
+        case .floating: shvil.DesignTokens.Surface.primary
         }
     }
     
     private var overlayView: some View {
-        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
+        RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.xl)
             .stroke(strokeColor, lineWidth: strokeWidth)
     }
     
     private var strokeColor: Color {
         switch style {
-        case .elevated: DesignTokens.Glass.light
-        case .filled: DesignTokens.Stroke.light
-        case .outlined: DesignTokens.Brand.primary
-        case .floating: DesignTokens.Stroke.hairline
+        case .elevated: shvil.DesignTokens.Glass.light
+        case .filled: shvil.DesignTokens.Stroke.light
+        case .outlined: shvil.DesignTokens.Brand.primary
+        case .floating: shvil.DesignTokens.Stroke.hairline
         }
     }
     
@@ -267,10 +309,10 @@ struct AppleGlassCard<Content: View>: View {
     
     private var shadow: ShadowValue {
         switch style {
-        case .elevated: DesignTokens.Shadow.medium
-        case .filled: DesignTokens.Shadow.light
-        case .outlined: DesignTokens.Shadow.light
-        case .floating: DesignTokens.Shadow.glass
+        case .elevated: shvil.DesignTokens.Shadow.medium
+        case .filled: shvil.DesignTokens.Shadow.light
+        case .outlined: shvil.DesignTokens.Shadow.light
+        case .floating: shvil.DesignTokens.Shadow.glass
         }
     }
 }
@@ -299,7 +341,7 @@ struct AppleGlassChip: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: DesignTokens.Spacing.xs) {
+            HStack(spacing: shvil.DesignTokens.Spacing.xs) {
                 if let icon {
                     Image(systemName: icon)
                         .font(.system(size: 14, weight: .medium))
@@ -309,14 +351,14 @@ struct AppleGlassChip: View {
                     .font(AppleTypography.footnoteEmphasized)
             }
             .foregroundColor(textColor)
-            .padding(.horizontal, DesignTokens.Spacing.md)
-            .padding(.vertical, DesignTokens.Spacing.sm)
+            .padding(.horizontal, shvil.DesignTokens.Spacing.md)
+            .padding(.vertical, shvil.DesignTokens.Spacing.sm)
             .background(backgroundView)
             .scaleEffect(isPressed ? 0.95 : 1.0)
         }
         .buttonStyle(PlainButtonStyle())
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-            withAnimation(AppleAnimations.micro) {
+            withAnimation(shvil.DesignTokens.Animation.micro) {
                 isPressed = pressing
             }
         }, perform: {})
@@ -327,7 +369,7 @@ struct AppleGlassChip: View {
     }
     
     private var textColor: Color {
-        isSelected ? .white : DesignTokens.Text.primary
+        isSelected ? .white : shvil.DesignTokens.Text.primary
     }
     
     private var backgroundView: some View {
@@ -337,12 +379,12 @@ struct AppleGlassChip: View {
     }
     
     private var backgroundColor: Color {
-        isSelected ? DesignTokens.Brand.primary : DesignTokens.Surface.secondary
+        isSelected ? shvil.DesignTokens.Brand.primary : shvil.DesignTokens.Surface.secondary
     }
     
     private var overlayView: some View {
         Capsule()
-            .stroke(DesignTokens.Brand.primary, lineWidth: isSelected ? 0 : 1)
+            .stroke(shvil.DesignTokens.Brand.primary, lineWidth: isSelected ? 0 : 1)
     }
 }
 
@@ -380,7 +422,7 @@ struct AppleGlassSheet<Content: View>: View {
                 Color.black.opacity(0.3)
                     .ignoresSafeArea()
                     .onTapGesture {
-                        withAnimation(DesignTokens.Animation.standard) {
+                        withAnimation(shvil.DesignTokens.Animation.standard) {
                             isPresented.wrappedValue = false
                         }
                     }
@@ -389,36 +431,36 @@ struct AppleGlassSheet<Content: View>: View {
                 VStack(spacing: 0) {
                     // Handle
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(DesignTokens.Text.tertiary)
+                        .fill(shvil.DesignTokens.Text.tertiary)
                         .frame(width: 36, height: 4)
-                        .padding(.top, DesignTokens.Spacing.sm)
+                        .padding(.top, shvil.DesignTokens.Spacing.sm)
                     
                     // Title
                     if let title {
                         Text(title)
-                            .font(DesignTokens.Typography.title3)
-                            .foregroundColor(DesignTokens.Text.primary)
-                            .padding(.top, DesignTokens.Spacing.md)
+                            .font(shvil.DesignTokens.Typography.title3)
+                            .foregroundColor(shvil.DesignTokens.Text.primary)
+                            .padding(.top, shvil.DesignTokens.Spacing.md)
                     }
                     
                     // Content
                     content
-                        .padding(.horizontal, DesignTokens.Spacing.md)
-                        .padding(.bottom, DesignTokens.Spacing.lg)
+                        .padding(.horizontal, shvil.DesignTokens.Spacing.md)
+                        .padding(.bottom, shvil.DesignTokens.Spacing.lg)
                 }
                 .frame(maxHeight: sheetHeight)
                 .frame(maxWidth: .infinity)
                 .background(
-                    RoundedRectangle(cornerRadius: AppleCornerRadius.xxl, style: .continuous)
-                        .fill(DesignTokens.Surface.primary)
+                    RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.xxl, style: .continuous)
+                        .fill(shvil.DesignTokens.Surface.primary)
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppleCornerRadius.xxl, style: .continuous)
-                                .stroke(DesignTokens.Stroke.hairline, lineWidth: 0.5)
+                            RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.xxl, style: .continuous)
+                                .stroke(shvil.DesignTokens.Stroke.hairline, lineWidth: 0.5)
                         )
                 )
-                .appleShadow(DesignTokens.Shadow.glass)
+                .appleShadow(shvil.DesignTokens.Shadow.glass)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
-                .animation(DesignTokens.Animation.spring, value: isPresented.wrappedValue)
+                .animation(shvil.DesignTokens.Animation.spring, value: isPresented.wrappedValue)
             }
         }
     }
@@ -462,7 +504,7 @@ struct AppleGlassNavBar: View {
                 Button(action: leadingButton.action) {
                     Image(systemName: leadingButton.icon)
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(DesignTokens.Text.primary)
+                        .foregroundColor(shvil.DesignTokens.Text.primary)
                         .frame(width: 44, height: 44)
                 }
             } else {
@@ -472,8 +514,8 @@ struct AppleGlassNavBar: View {
             
             // Title
             Text(title)
-                .font(DesignTokens.Typography.title3)
-                .foregroundColor(DesignTokens.Text.primary)
+                .font(shvil.DesignTokens.Typography.title3)
+                .foregroundColor(shvil.DesignTokens.Text.primary)
                 .frame(maxWidth: .infinity)
             
             // Trailing Button
@@ -481,7 +523,7 @@ struct AppleGlassNavBar: View {
                 Button(action: trailingButton.action) {
                     Image(systemName: trailingButton.icon)
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(DesignTokens.Text.primary)
+                        .foregroundColor(shvil.DesignTokens.Text.primary)
                         .frame(width: 44, height: 44)
                 }
             } else {
@@ -489,19 +531,19 @@ struct AppleGlassNavBar: View {
                     .frame(width: 44)
             }
         }
-        .padding(.horizontal, DesignTokens.Spacing.md)
-        .padding(.vertical, DesignTokens.Spacing.sm)
+        .padding(.horizontal, shvil.DesignTokens.Spacing.md)
+        .padding(.vertical, shvil.DesignTokens.Spacing.sm)
         .background(
             Rectangle()
-                .fill(DesignTokens.Surface.primary)
+                .fill(shvil.DesignTokens.Surface.primary)
                 .overlay(
                     Rectangle()
-                        .fill(DesignTokens.Stroke.hairline)
+                        .fill(shvil.DesignTokens.Stroke.hairline)
                         .frame(height: 0.5),
                     alignment: .bottom
                 )
         )
-        .appleShadow(DesignTokens.Shadow.light)
+        .appleShadow(shvil.DesignTokens.Shadow.light)
     }
 }
 
@@ -525,7 +567,7 @@ struct AppleGlassStatusIndicator: View {
     }
     
     var body: some View {
-        HStack(spacing: DesignTokens.Spacing.sm) {
+        HStack(spacing: shvil.DesignTokens.Spacing.sm) {
             // Status Icon
             Group {
                 if status == .loading {
@@ -543,20 +585,20 @@ struct AppleGlassStatusIndicator: View {
             if let message {
                 Text(message)
                     .font(AppleTypography.footnote)
-                    .foregroundColor(DesignTokens.Text.primary)
+                    .foregroundColor(shvil.DesignTokens.Text.primary)
             }
         }
-        .padding(.horizontal, DesignTokens.Spacing.md)
-        .padding(.vertical, DesignTokens.Spacing.sm)
+        .padding(.horizontal, shvil.DesignTokens.Spacing.md)
+        .padding(.vertical, shvil.DesignTokens.Spacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
+            RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.md)
                 .fill(backgroundColor)
                 .overlay(
-                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
-                        .stroke(DesignTokens.Stroke.light, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.md)
+                        .stroke(shvil.DesignTokens.Stroke.light, lineWidth: 1)
                 )
         )
-        .appleShadow(DesignTokens.Shadow.light)
+        .appleShadow(shvil.DesignTokens.Shadow.light)
     }
     
     private var iconName: String {
@@ -571,21 +613,21 @@ struct AppleGlassStatusIndicator: View {
     
     private var iconColor: Color {
         switch status {
-        case .success: DesignTokens.Semantic.success
-        case .warning: DesignTokens.Semantic.warning
-        case .error: DesignTokens.Semantic.error
-        case .info: DesignTokens.Semantic.info
-        case .loading: DesignTokens.Brand.primary
+        case .success: shvil.DesignTokens.Semantic.success
+        case .warning: shvil.DesignTokens.Semantic.warning
+        case .error: shvil.DesignTokens.Semantic.error
+        case .info: shvil.DesignTokens.Semantic.info
+        case .loading: shvil.DesignTokens.Brand.primary
         }
     }
     
     private var backgroundColor: Color {
         switch status {
-        case .success: DesignTokens.Semantic.success.opacity(0.1)
-        case .warning: DesignTokens.Semantic.warning.opacity(0.1)
-        case .error: DesignTokens.Semantic.error.opacity(0.1)
-        case .info: DesignTokens.Semantic.info.opacity(0.1)
-        case .loading: DesignTokens.Brand.primary.opacity(0.1)
+        case .success: shvil.DesignTokens.Semantic.success.opacity(0.1)
+        case .warning: shvil.DesignTokens.Semantic.warning.opacity(0.1)
+        case .error: shvil.DesignTokens.Semantic.error.opacity(0.1)
+        case .info: shvil.DesignTokens.Semantic.info.opacity(0.1)
+        case .loading: shvil.DesignTokens.Brand.primary.opacity(0.1)
         }
     }
 }
@@ -608,22 +650,22 @@ struct AppleGlassLoadingIndicator: View {
     }
     
     var body: some View {
-        VStack(spacing: DesignTokens.Spacing.md) {
+        VStack(spacing: shvil.DesignTokens.Spacing.md) {
             // Loading Indicator
             Group {
                 switch style {
                 case .circular:
                     ProgressView()
                         .scaleEffect(1.2)
-                        .progressViewStyle(CircularProgressViewStyle(tint: DesignTokens.Brand.primary))
+                        .progressViewStyle(CircularProgressViewStyle(tint: shvil.DesignTokens.Brand.primary))
                 case .linear:
                     ProgressView()
-                        .progressViewStyle(LinearProgressViewStyle(tint: DesignTokens.Brand.primary))
+                        .progressViewStyle(LinearProgressViewStyle(tint: shvil.DesignTokens.Brand.primary))
                 case .dots:
                     HStack(spacing: 4) {
                         ForEach(0..<3) { index in
                             Circle()
-                                .fill(DesignTokens.Brand.primary)
+                                .fill(shvil.DesignTokens.Brand.primary)
                                 .frame(width: 8, height: 8)
                                 .scaleEffect(animationScale(for: index))
                                 .animation(
@@ -641,20 +683,20 @@ struct AppleGlassLoadingIndicator: View {
             if let message {
                 Text(message)
                     .font(AppleTypography.footnote)
-                    .foregroundColor(DesignTokens.Text.secondary)
+                    .foregroundColor(shvil.DesignTokens.Text.secondary)
                     .multilineTextAlignment(.center)
             }
         }
-        .padding(DesignTokens.Spacing.lg)
+        .padding(shvil.DesignTokens.Spacing.lg)
         .background(
-            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                .fill(DesignTokens.Surface.primary)
+            RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.lg)
+                .fill(shvil.DesignTokens.Surface.primary)
                 .overlay(
-                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                        .stroke(DesignTokens.Stroke.hairline, lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.lg)
+                        .stroke(shvil.DesignTokens.Stroke.hairline, lineWidth: 0.5)
                 )
         )
-        .appleShadow(DesignTokens.Shadow.light)
+        .appleShadow(shvil.DesignTokens.Shadow.light)
     }
     
     private func animationScale(for index: Int) -> CGFloat {
@@ -696,14 +738,14 @@ struct AppleGlassProgressBar: View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 // Background
-                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
-                    .fill(DesignTokens.Surface.secondary)
+                RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.sm)
+                    .fill(shvil.DesignTokens.Surface.secondary)
                 
                 // Progress
-                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.sm)
-                    .fill(DesignTokens.Brand.primary)
+                RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.sm)
+                    .fill(shvil.DesignTokens.Brand.primary)
                     .frame(width: geometry.size.width * progressRatio)
-                    .animation(DesignTokens.Animation.standard, value: progressRatio)
+                    .animation(shvil.DesignTokens.Animation.standard, value: progressRatio)
             }
         }
         .frame(height: 8)
@@ -713,17 +755,17 @@ struct AppleGlassProgressBar: View {
         ZStack {
             // Background Circle
             Circle()
-                .stroke(DesignTokens.Surface.secondary, lineWidth: 4)
+                .stroke(shvil.DesignTokens.Surface.secondary, lineWidth: 4)
             
             // Progress Circle
             Circle()
                 .trim(from: 0, to: progressRatio)
                 .stroke(
-                    DesignTokens.Brand.primary,
+                    shvil.DesignTokens.Brand.primary,
                     style: StrokeStyle(lineWidth: 4, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(DesignTokens.Animation.standard, value: progressRatio)
+                .animation(shvil.DesignTokens.Animation.standard, value: progressRatio)
         }
         .frame(width: 40, height: 40)
     }
@@ -757,24 +799,24 @@ struct AppleGlassEmptyState: View {
     }
     
     var body: some View {
-        VStack(spacing: DesignTokens.Spacing.lg) {
+        VStack(spacing: shvil.DesignTokens.Spacing.lg) {
             // Icon
             if let icon {
                 Image(systemName: icon)
                     .font(.system(size: 48, weight: .light))
-                    .foregroundColor(DesignTokens.Text.tertiary)
+                    .foregroundColor(shvil.DesignTokens.Text.tertiary)
             }
             
             // Content
-            VStack(spacing: DesignTokens.Spacing.sm) {
+            VStack(spacing: shvil.DesignTokens.Spacing.sm) {
                 Text(title)
-                    .font(DesignTokens.Typography.title3)
-                    .foregroundColor(DesignTokens.Text.primary)
+                    .font(shvil.DesignTokens.Typography.title3)
+                    .foregroundColor(shvil.DesignTokens.Text.primary)
                     .multilineTextAlignment(.center)
                 
                 Text(description)
-                    .font(DesignTokens.Typography.body)
-                    .foregroundColor(DesignTokens.Text.secondary)
+                    .font(shvil.DesignTokens.Typography.body)
+                    .foregroundColor(shvil.DesignTokens.Text.secondary)
                     .multilineTextAlignment(.center)
             }
             
@@ -788,17 +830,17 @@ struct AppleGlassEmptyState: View {
                 )
             }
         }
-        .padding(DesignTokens.Spacing.xl)
+        .padding(shvil.DesignTokens.Spacing.xl)
         .frame(maxWidth: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-                .fill(DesignTokens.Surface.primary)
+            RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.xl)
+                .fill(shvil.DesignTokens.Surface.primary)
                 .overlay(
-                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
-                        .stroke(DesignTokens.Stroke.hairline, lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.xl)
+                        .stroke(shvil.DesignTokens.Stroke.hairline, lineWidth: 0.5)
                 )
         )
-        .appleShadow(DesignTokens.Shadow.light)
+        .appleShadow(shvil.DesignTokens.Shadow.light)
     }
 }
 
@@ -871,7 +913,7 @@ struct AppleGlassFAB: View {
     private var textColor: Color {
         switch style {
         case .primary: .white
-        case .secondary: DesignTokens.Text.primary
+        case .secondary: shvil.DesignTokens.Text.primary
         case .destructive: .white
         }
     }
@@ -893,25 +935,25 @@ struct AppleGlassFAB: View {
     
     private var backgroundColor: Color {
         switch style {
-        case .primary: DesignTokens.Brand.primary
-        case .secondary: DesignTokens.Surface.secondary
-        case .destructive: DesignTokens.Semantic.error
+        case .primary: shvil.DesignTokens.Brand.primary
+        case .secondary: shvil.DesignTokens.Surface.secondary
+        case .destructive: shvil.DesignTokens.Semantic.error
         }
     }
     
     private var strokeColor: Color {
         switch style {
         case .primary: .clear
-        case .secondary: DesignTokens.Stroke.light
+        case .secondary: shvil.DesignTokens.Stroke.light
         case .destructive: .clear
         }
     }
     
     private var shadowColor: Color {
         switch style {
-        case .primary: DesignTokens.Brand.primary.opacity(0.3)
-        case .secondary: DesignTokens.Shadow.light.color
-        case .destructive: DesignTokens.Semantic.error.opacity(0.3)
+        case .primary: shvil.DesignTokens.Brand.primary.opacity(0.3)
+        case .secondary: shvil.DesignTokens.Shadow.light.color
+        case .destructive: shvil.DesignTokens.Semantic.error.opacity(0.3)
         }
     }
     
@@ -964,19 +1006,19 @@ struct AppleGlassListRow: View {
                 if let icon = icon {
                     Image(systemName: icon)
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(DesignTokens.Brand.primary)
+                        .foregroundColor(shvil.DesignTokens.Brand.primary)
                         .frame(width: 24, height: 24)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(DesignTokens.Typography.body)
-                        .foregroundColor(DesignTokens.Text.primary)
+                        .font(shvil.DesignTokens.Typography.body)
+                        .foregroundColor(shvil.DesignTokens.Text.primary)
                     
                     if let subtitle = subtitle {
                         Text(subtitle)
-                            .font(DesignTokens.Typography.caption1)
-                            .foregroundColor(DesignTokens.Text.secondary)
+                            .font(shvil.DesignTokens.Typography.caption1)
+                            .foregroundColor(shvil.DesignTokens.Text.secondary)
                     }
                 }
                 
@@ -987,17 +1029,17 @@ struct AppleGlassListRow: View {
                 } else {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(DesignTokens.Text.secondary)
+                        .foregroundColor(shvil.DesignTokens.Text.secondary)
                 }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(
-                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
-                    .fill(DesignTokens.Surface.secondary)
+                RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.md)
+                    .fill(shvil.DesignTokens.Surface.secondary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
-                            .stroke(DesignTokens.Stroke.light, lineWidth: 0.5)
+                        RoundedRectangle(cornerRadius: shvil.DesignTokens.CornerRadius.md)
+                            .stroke(shvil.DesignTokens.Stroke.light, lineWidth: 0.5)
                     )
             )
             .scaleEffect(isPressed ? 0.98 : 1.0)

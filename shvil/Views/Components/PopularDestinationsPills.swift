@@ -174,19 +174,3 @@ struct ScrollOffsetPreferenceKey: PreferenceKey {
     }
 }
 
-// MARK: - Preview
-
-#Preview {
-    VStack(spacing: 20) {
-        PopularDestinationsPills { destination in
-            print("Selected: \(destination.title)")
-        }
-        
-        PopularDestinationsPills { destination in
-            print("Selected: \(destination.title)")
-        }
-        .environment(\.colorScheme, .dark)
-    }
-    .padding()
-    .background(DesignTokens.Surface.background)
-}

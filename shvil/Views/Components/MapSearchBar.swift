@@ -86,18 +86,3 @@ struct MapSearchBar: View {
 }
 
 
-// MARK: - Preview
-
-#Preview {
-    ZStack {
-        DesignTokens.Surface.background
-            .ignoresSafeArea()
-        
-        MapSearchBar(
-            searchText: .constant(""),
-            isSearching: .constant(false),
-            onSearch: { _ in },
-            onCancel: { }
-        )
-    }
-}

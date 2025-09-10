@@ -410,7 +410,7 @@ public struct LiquidGlassListRow<Content: View>: View {
             }
             .padding(.horizontal, DesignTokens.Spacing.md)
             .padding(.vertical, DesignTokens.Spacing.sm)
-            .frame(minHeight: DesignConstants.listItemHeight)
+            .frame(minHeight: DesignTokens.Layout.minTouchTarget)
         }
         .buttonStyle(PlainButtonStyle())
         .foregroundColor(DesignTokens.Text.primary)
@@ -528,7 +528,7 @@ extension View {
     /// Adds subtle parallax effect on scroll
     public func liquidParallax() -> some View {
         self
-            .animation(DesignTokens.Animation.parallax, value: UUID())
+            .animation(DesignTokens.Animation.liquidFlow, value: UUID())
     }
 }
 

@@ -195,15 +195,3 @@ enum MapLayer: String, CaseIterable {
     }
 }
 
-// MARK: - Preview
-
-#Preview {
-    VStack(spacing: 20) {
-        MapLayersSelector(selectedLayer: .constant(.standard))
-        
-        MapLayersSelector(selectedLayer: .constant(.satellite))
-        .environment(\.colorScheme, .dark)
-    }
-    .padding()
-    .background(DesignTokens.Surface.background)
-}

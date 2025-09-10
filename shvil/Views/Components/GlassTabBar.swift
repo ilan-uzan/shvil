@@ -450,23 +450,3 @@ struct GlassTabItem: Identifiable {
     }
 }
 
-// MARK: - Preview
-
-#Preview {
-    ZStack {
-        DesignTokens.Surface.background
-            .ignoresSafeArea()
-        
-        GlassTabBar(
-            tabs: [
-                GlassTabItem(icon: "map", selectedIcon: "map.fill", title: "Map", route: "map"),
-                GlassTabItem(icon: "person.3", selectedIcon: "person.3.fill", title: "Socialize", route: "socialize"),
-                GlassTabItem(icon: "flag", selectedIcon: "flag.fill", title: "Hunt", route: "hunt"),
-                GlassTabItem(icon: "sparkles", selectedIcon: "sparkles", title: "Adventure", route: "adventure"),
-                GlassTabItem(icon: "gearshape", selectedIcon: "gearshape.fill", title: "Settings", route: "settings")
-            ],
-            selectedTab: .constant(0),
-            onSelect: { _ in }
-        )
-    }
-}

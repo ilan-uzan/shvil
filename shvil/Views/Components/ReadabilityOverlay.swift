@@ -76,7 +76,7 @@ extension ReadabilityOverlay {
     }
 }
 
-// MARK: - Preview
+// MARK: - #Preview
 
 #Preview {
     ZStack {

@@ -312,29 +312,3 @@ struct CategorySearchPill: View {
     }
 }
 
-#Preview {
-    VStack(spacing: 20) {
-        SearchPill(searchText: .constant("")) {
-            print("Search tapped")
-        }
-        
-        CompactSearchPill(searchText: .constant("")) {
-            print("Compact search tapped")
-        }
-        
-        VoiceSearchPill(searchText: .constant("")) {
-            print("Search tapped")
-        } onVoiceTap: {
-            print("Voice search tapped")
-        }
-        
-        CategorySearchPill(
-            searchText: .constant(""),
-            selectedCategory: .constant(.all)
-        ) {
-            print("Category search tapped")
-        }
-    }
-    .padding()
-    .background(DesignTokens.Surface.background)
-}

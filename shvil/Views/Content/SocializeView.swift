@@ -496,7 +496,7 @@ struct InviteSheetView: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - #Preview
 
 #Preview {
     SocializeView()

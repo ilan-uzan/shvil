@@ -186,7 +186,7 @@ extension View {
     }
 }
 
-// MARK: - Preview Helpers
+// MARK: - #Preview Helpers
 
 #if DEBUG
 struct ScrollEffects_Previews: PreviewProvider {

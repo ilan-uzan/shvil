@@ -9,7 +9,7 @@ import MapKit
 import SwiftUI
 
 struct PlaceDetailsView: View {
-    let place: SearchResult
+    let place: shvil.SearchResult
     @Binding var isPresented: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     
@@ -27,26 +27,30 @@ struct PlaceDetailsView: View {
 
     var body: some View {
         ZStack {
-            // Background overlay
+            // Background overlay with Landmarks-style blur
             Color.black.opacity(0.4)
                 .ignoresSafeArea()
                 .onTapGesture {
                     dismissModal()
                 }
 
-            // Modal content
+            // Modal content with flexible header
             VStack(spacing: 0) {
                 Spacer()
 
                 VStack(spacing: 0) {
-                    // Header section
+                    // Header section with flexible header content
                     headerSection
+                        .flexibleHeaderContent()
 
                     // Primary actions row
                     primaryActionsRow
 
-                    // Content sections
-                    contentSections
+                    // Content sections with scroll view
+                    ScrollView {
+                        contentSections
+                    }
+                    .flexibleHeaderScrollView()
                 }
                 .background(
                     RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
@@ -61,7 +65,7 @@ struct PlaceDetailsView: View {
                 .padding(.bottom, 16) // 16pt from edges
             }
         }
-        .animation(reduceMotion ? .none : AppleAnimations.complex, value: isPresented)
+        .animation(reduceMotion ? .none : DesignTokens.Animation.complex, value: isPresented)
     }
 
     // MARK: - Header Section
@@ -433,7 +437,7 @@ struct PlaceDetailsView: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - #Preview
 
 #Preview {
     PlaceDetailsView(

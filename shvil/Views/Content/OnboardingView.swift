@@ -17,7 +17,7 @@ struct OnboardingView: View {
     @State private var selectedTheme: Theme = .system
     @State private var hasCompletedOnboarding = false
     
-    private let totalSteps = 4
+    private let totalSteps = 3
     
     var body: some View {
         ZStack {
@@ -69,15 +69,12 @@ struct OnboardingView: View {
                     
                     languageStep
                         .tag(1)
-                
-                    themeStep
-                        .tag(2)
                     
                     permissionsStep
-                        .tag(3)
+                        .tag(2)
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                .animation(AppleAnimations.pageTransition, value: currentStep)
+                .animation(DesignTokens.Animation.complex, value: currentStep)
                 
                 // Navigation buttons
                 navigationButtons
@@ -100,7 +97,7 @@ struct OnboardingView: View {
     }
     
     private var welcomeStep: some View {
-        VStack(spacing: AppleSpacing.xxl) {
+        VStack(spacing: DesignTokens.Spacing.xxl) {
             Spacer()
             
             // App icon and title
@@ -137,7 +134,7 @@ struct OnboardingView: View {
     }
     
     private var languageStep: some View {
-        VStack(spacing: AppleSpacing.xxl) {
+        VStack(spacing: DesignTokens.Spacing.xxl) {
             Spacer()
             
             VStack(spacing: DesignTokens.Spacing.xl) {
@@ -168,7 +165,7 @@ struct OnboardingView: View {
     }
     
     private var themeStep: some View {
-        VStack(spacing: AppleSpacing.xxl) {
+        VStack(spacing: DesignTokens.Spacing.xxl) {
             Spacer()
             
             VStack(spacing: DesignTokens.Spacing.xl) {
@@ -199,7 +196,7 @@ struct OnboardingView: View {
     }
     
     private var permissionsStep: some View {
-        VStack(spacing: AppleSpacing.xxl) {
+        VStack(spacing: DesignTokens.Spacing.xxl) {
             Spacer()
             
             VStack(spacing: DesignTokens.Spacing.xl) {
@@ -384,7 +381,7 @@ struct OnboardingView: View {
             }
         }
         .padding(.horizontal, DesignTokens.Spacing.xl)
-        .padding(.bottom, AppleSpacing.xxl)
+        .padding(.bottom, DesignTokens.Spacing.xxl)
     }
     
     private func checkOnboardingStatus() {
@@ -401,7 +398,7 @@ struct OnboardingView: View {
         requestPermissions()
         
         // Complete onboarding
-        withAnimation(AppleAnimations.complex) {
+        withAnimation(DesignTokens.Animation.complex) {
             hasCompletedOnboarding = true
         }
     }
