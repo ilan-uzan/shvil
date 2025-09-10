@@ -14,8 +14,10 @@ struct OnboardingView: View {
     @StateObject private var locationManager = LocationManager()
     @State private var currentStep = 0
     @State private var selectedLanguage: Language = .english
-    @State private var selectedTheme: Theme = .system
     @State private var hasCompletedOnboarding = false
+    
+    // Callback to notify parent when onboarding completes
+    var onComplete: (() -> Void)?
     
     private let totalSteps = 3
     
@@ -164,36 +166,6 @@ struct OnboardingView: View {
         .padding(.horizontal, DesignTokens.Spacing.xl)
     }
     
-    private var themeStep: some View {
-        VStack(spacing: DesignTokens.Spacing.xxl) {
-            Spacer()
-            
-            VStack(spacing: DesignTokens.Spacing.xl) {
-                VStack(spacing: DesignTokens.Spacing.md) {
-                    Text("onboarding_step_2_title".localized)
-                        .font(DesignTokens.Typography.title2)
-                        .foregroundColor(DesignTokens.Text.primary)
-                        .multilineTextAlignment(.center)
-                    
-                    Text("onboarding_step_2_description".localized)
-                        .font(DesignTokens.Typography.body)
-                        .foregroundColor(DesignTokens.Text.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, DesignTokens.Spacing.xl)
-                }
-                
-                // Theme selection
-                VStack(spacing: DesignTokens.Spacing.md) {
-                    ForEach(Theme.allCases, id: \.self) { theme in
-                        themeOption(theme)
-                    }
-                }
-            }
-            
-            Spacer()
-        }
-        .padding(.horizontal, DesignTokens.Spacing.xl)
-    }
     
     private var permissionsStep: some View {
         VStack(spacing: DesignTokens.Spacing.xxl) {
@@ -269,47 +241,6 @@ struct OnboardingView: View {
         .accessibilityAddTraits(selectedLanguage == language ? .isSelected : [])
     }
     
-    private func themeOption(_ theme: Theme) -> some View {
-        AppleGlassCard(style: .elevated) {
-            HStack(spacing: DesignTokens.Spacing.md) {
-                Image(systemName: theme.icon)
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(selectedTheme == theme ? .white : DesignTokens.Brand.primary)
-                    .frame(width: 24)
-                
-                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                    Text(theme.displayName)
-                        .font(DesignTokens.Typography.bodyEmphasized)
-                        .foregroundColor(selectedTheme == theme ? .white : DesignTokens.Text.primary)
-                    
-                    Text(theme.description)
-                        .font(DesignTokens.Typography.caption1)
-                        .foregroundColor(selectedTheme == theme ? .white.opacity(0.8) : DesignTokens.Text.secondary)
-                }
-                
-                Spacer()
-                
-                if selectedTheme == theme {
-                    AppleGlassStatusIndicator(status: .success)
-                }
-            }
-        }
-        .onTapGesture {
-            selectedTheme = theme
-            HapticFeedback.shared.impact(style: .light)
-        }
-        .overlay(
-            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                .stroke(selectedTheme == theme ? DesignTokens.Brand.primary : Color.clear, lineWidth: 2)
-        )
-        .background(
-            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                .fill(selectedTheme == theme ? DesignTokens.Brand.primary : Color.clear)
-        )
-        .accessibilityLabel("Theme: \(theme.displayName)")
-        .accessibilityHint(selectedTheme == theme ? "Currently selected" : "Double tap to select this theme")
-        .accessibilityAddTraits(selectedTheme == theme ? .isSelected : [])
-    }
     
     private func permissionCard(icon: String, title: String, description: String, isRequired: Bool) -> some View {
         AppleGlassCard(style: .elevated) {
@@ -391,7 +322,6 @@ struct OnboardingView: View {
     private func completeOnboarding() {
         // Save preferences
         UserDefaults.standard.set(selectedLanguage.rawValue, forKey: "selected_language")
-        UserDefaults.standard.set(selectedTheme.rawValue, forKey: "selected_theme")
         UserDefaults.standard.set(true, forKey: "has_completed_onboarding")
         
         // Request permissions
@@ -401,6 +331,9 @@ struct OnboardingView: View {
         withAnimation(DesignTokens.Animation.complex) {
             hasCompletedOnboarding = true
         }
+        
+        // Notify parent view
+        onComplete?()
     }
     
     private func requestPermissions() {
@@ -413,35 +346,6 @@ struct OnboardingView: View {
 
 // MARK: - Theme Enum
 
-enum Theme: String, CaseIterable {
-    case light
-    case dark
-    case system
-    
-    var displayName: String {
-        switch self {
-        case .light: "light_theme".localized
-        case .dark: "dark_theme".localized
-        case .system: "system_theme".localized
-        }
-    }
-    
-    var description: String {
-        switch self {
-        case .light: "Always use light appearance"
-        case .dark: "Always use dark appearance"
-        case .system: "Follow system appearance"
-        }
-    }
-    
-    var icon: String {
-        switch self {
-        case .light: "sun.max.fill"
-        case .dark: "moon.fill"
-        case .system: "gear"
-        }
-    }
-}
 
 #Preview {
     OnboardingView()

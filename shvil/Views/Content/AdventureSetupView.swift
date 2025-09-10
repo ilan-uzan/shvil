@@ -33,10 +33,9 @@ struct AdventureSetupView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // Background with Landmarks-style extension
+                // Background with full coverage
                 DesignTokens.Surface.background
                     .ignoresSafeArea()
-                    .backgroundExtensionEffect()
 
                 ScrollView {
                     VStack(spacing: DesignTokens.Spacing.xl) {

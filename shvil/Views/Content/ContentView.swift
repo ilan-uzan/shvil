@@ -22,7 +22,12 @@ struct ContentView: View {
             if hasCompletedOnboarding {
                 mainContent
             } else {
-                OnboardingView()
+                OnboardingView { [self] in
+                    // Onboarding completed callback
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        hasCompletedOnboarding = true
+                    }
+                }
             }
         }
         .onAppear {
