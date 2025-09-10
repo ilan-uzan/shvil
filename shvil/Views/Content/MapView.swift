@@ -29,8 +29,11 @@ struct MapView: View {
                 .ignoresSafeArea()
             
             // Map
-            Map(coordinateRegion: $region)
-                .ignoresSafeArea()
+            Map {
+                // Map content will be added here
+            }
+            .mapStyle(.standard)
+            .ignoresSafeArea()
             
             // Top Search Bar
             VStack {
@@ -46,7 +49,7 @@ struct MapView: View {
                                 isSearchFocused = true
                                 showingSearchResults = true
                             }
-                            .onChange(of: searchText) { newValue in
+                            .onChange(of: searchText) { _, newValue in
                                 // Debounce search for better performance
                                 Task {
                                     try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
@@ -233,7 +236,7 @@ struct MapView: View {
         
         withAnimation(animation) {
             region = MKCoordinateRegion(
-                center: result.coordinate,
+                center: CLLocationCoordinate2D(latitude: result.latitude, longitude: result.longitude),
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             )
         }
@@ -261,17 +264,15 @@ struct SearchResultRow: View {
                     .font(.system(size: 20))
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(result.title)
+                    Text(result.name)
                         .font(DesignTokens.Typography.body)
                         .foregroundColor(DesignTokens.Text.primary)
                         .lineLimit(1)
                     
-                    if let subtitle = result.subtitle {
-                        Text(subtitle)
-                            .font(DesignTokens.Typography.caption1)
-                            .foregroundColor(DesignTokens.Text.secondary)
-                            .lineLimit(1)
-                    }
+                    Text(result.address)
+                        .font(DesignTokens.Typography.caption1)
+                        .foregroundColor(DesignTokens.Text.secondary)
+                        .lineLimit(1)
                 }
                 
                 Spacer()
