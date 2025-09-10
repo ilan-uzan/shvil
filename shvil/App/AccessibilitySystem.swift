@@ -150,9 +150,9 @@ extension View {
         fallback: Color
     ) -> some View {
         if AccessibilitySystem.prefersReducedTransparency {
-            return self.background(fallback)
+            return AnyView(self.background(fallback))
         } else {
-            return self.background(style)
+            return AnyView(self.background(style))
         }
     }
 }
@@ -167,7 +167,7 @@ public struct AccessibilityTraitsHelper {
     public static let selected: AccessibilityTraits = .isSelected
     public static let staticText: AccessibilityTraits = .isStaticText
     public static let toggle: AccessibilityTraits = .isButton
-    public static let adjustable: AccessibilityTraits = .isAdjustable
+    public static let adjustable: AccessibilityTraits = .isButton
 }
 
 /// RTL-aware layout utilities
