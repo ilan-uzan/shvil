@@ -356,6 +356,8 @@
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Shvil needs location access to provide navigation services and track your route.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Shvil needs location access to show your current position on the map and provide navigation services.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Shvil needs photo library access to save and share adventure photos.";
+				INFOPLIST_KEY_SUPABASE_URL = "https://lnniqqjaslpyljtcmkmf.supabase.co";
+				INFOPLIST_KEY_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxubmlxcWphc2xweWxqdGNta21mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NzE2MzcsImV4cCI6MjA3MjI0NzYzN30.mYHsTvpfr-jEhGnwbwt1-qw0ybdi0M_RFmsnQyIbLE0";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -390,6 +392,8 @@
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Shvil needs location access to provide navigation services and track your route.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Shvil needs location access to show your current position on the map and provide navigation services.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Shvil needs photo library access to save and share adventure photos.";
+				INFOPLIST_KEY_SUPABASE_URL = "https://lnniqqjaslpyljtcmkmf.supabase.co";
+				INFOPLIST_KEY_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxubmlxcWphc2xweWxqdGNta21mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NzE2MzcsImV4cCI6MjA3MjI0NzYzN30.mYHsTvpfr-jEhGnwbwt1-qw0ybdi0M_RFmsnQyIbLE0";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
