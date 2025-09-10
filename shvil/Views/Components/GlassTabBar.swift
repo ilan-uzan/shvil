@@ -177,11 +177,27 @@ struct GlassTabBar: View {
             .onAppear {
                 // Small delay to ensure view is fully rendered
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    updateCapsulePosition(geometry: geometry)
+                    // Use a fallback approach for initial positioning
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        capsuleOffset = 0
+                        capsuleWidth = 80
+                        isAnimating = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        isAnimating = false
+                    }
                 }
             }
             .onChange(of: selectedTab) { _ in
-                updateCapsulePosition(geometry: geometry)
+                // Use a fallback approach for tab changes
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                    capsuleOffset = CGFloat(selectedTab - 2) * 80
+                    capsuleWidth = 80
+                    isAnimating = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    isAnimating = false
+                }
                 HapticFeedback.shared.selection()
             }
         }
