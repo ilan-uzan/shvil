@@ -254,6 +254,22 @@ public struct DesignTokens {
         }
     }
     
+    // MARK: - Surface System
+    
+    /// Surface colors for backgrounds and containers
+    public struct Surface {
+        public static let background = Color(red: 0.98, green: 0.98, blue: 0.99) // #FAFAFB - Light background
+        public static let primary = Color(red: 0.95, green: 0.96, blue: 0.97)    // #F2F3F5 - Primary surface
+        public static let secondary = Color(red: 0.92, green: 0.93, blue: 0.95)  // #EBEDF2 - Secondary surface
+        public static let tertiary = Color(red: 0.88, green: 0.89, blue: 0.92)   // #E0E2E8 - Tertiary surface
+        
+        // Dark mode variants
+        public static let backgroundDark = Color(red: 0.05, green: 0.05, blue: 0.06) // #0D0D0F - Dark background
+        public static let primaryDark = Color(red: 0.08, green: 0.08, blue: 0.10)    // #141419 - Dark primary surface
+        public static let secondaryDark = Color(red: 0.12, green: 0.12, blue: 0.15)  // #1E1E26 - Dark secondary surface
+        public static let tertiaryDark = Color(red: 0.16, green: 0.16, blue: 0.20)   // #282833 - Dark tertiary surface
+    }
+    
     // MARK: - Layout Constants
     
     /// Layout and sizing constants
