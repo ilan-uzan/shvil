@@ -81,7 +81,7 @@
 	<key>SUPABASE_URL</key>
 	<string>https://lnniqqjaslpyljtcmkmf.supabase.co</string>
 	<key>SUPABASE_ANON_KEY</key>
-	<string>your-anon-key-here</string>
+	<string>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxubmlxcWphc2xweWxqdGNta21mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NzE2MzcsImV4cCI6MjA3MjI0NzYzN30.mYHsTvpfr-jEhGnwbwt1-qw0ybdi0M_RFmsnQyIbLE0</string>
 	
 	<!-- App Transport Security -->
 	<key>NSAppTransportSecurity</key>
