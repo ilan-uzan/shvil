@@ -77,7 +77,7 @@ struct OnboardingView: View {
                         .background(
                             RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                                 .fill(DesignTokens.Surface.secondary)
-                                .shadow(DesignTokens.Shadow.light)
+                                .appleShadow(DesignTokens.Shadow.light)
                         )
                     }
                     
@@ -99,7 +99,7 @@ struct OnboardingView: View {
                     .background(
                         RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                             .fill(DesignTokens.Brand.gradient)
-                            .shadow(DesignTokens.Shadow.medium)
+                            .appleShadow(DesignTokens.Shadow.medium)
                     )
                 }
                 .padding(.horizontal, 24)
@@ -119,7 +119,7 @@ struct OnboardingView: View {
                         .font(.system(size: 48))
                         .foregroundColor(.white)
                 )
-                .shadow(DesignTokens.Shadow.glass)
+                .appleShadow(DesignTokens.Shadow.glass)
             
             VStack(spacing: 16) {
                 Text("Welcome to Shvil")
@@ -219,7 +219,7 @@ struct LanguageOption: View {
         .background(
             RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                 .fill(isSelected ? DesignTokens.Surface.primary : DesignTokens.Surface.secondary)
-                .shadow(DesignTokens.Shadow.light)
+                .appleShadow(DesignTokens.Shadow.light)
         )
     }
 }

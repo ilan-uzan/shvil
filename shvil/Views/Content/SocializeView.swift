@@ -77,7 +77,7 @@ struct SocializeView: View {
                         .background(
                             RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                                 .fill(DesignTokens.Brand.gradient)
-                                .shadow(DesignTokens.Shadow.medium)
+                                .appleShadow(DesignTokens.Shadow.medium)
                         )
                     }
                     .padding(.horizontal, 20)
@@ -165,7 +165,7 @@ struct SocialGroupCard: View {
         .background(
             RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                 .fill(DesignTokens.Surface.primary)
-                .shadow(DesignTokens.Shadow.light)
+                .appleShadow(DesignTokens.Shadow.light)
         )
     }
 }

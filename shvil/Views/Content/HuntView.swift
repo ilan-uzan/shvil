@@ -99,7 +99,7 @@ struct CategoryPill: View {
                 .background(
                     RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl)
                         .fill(isSelected ? DesignTokens.Brand.primary : DesignTokens.Surface.secondary)
-                        .shadow(DesignTokens.Shadow.light)
+                        .appleShadow(DesignTokens.Shadow.light)
                 )
         }
     }
@@ -129,7 +129,7 @@ struct StatCard: View {
         .background(
             RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                 .fill(DesignTokens.Surface.primary)
-                .shadow(DesignTokens.Shadow.light)
+                .appleShadow(DesignTokens.Shadow.light)
         )
     }
 }
@@ -186,7 +186,7 @@ struct HuntCard: View {
                 .background(
                     RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.md)
                         .fill(DesignTokens.Brand.gradient)
-                        .shadow(DesignTokens.Shadow.light)
+                        .appleShadow(DesignTokens.Shadow.light)
                 )
             }
         }
@@ -194,7 +194,7 @@ struct HuntCard: View {
         .background(
             RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
                 .fill(DesignTokens.Surface.primary)
-                .shadow(DesignTokens.Shadow.light)
+                .appleShadow(DesignTokens.Shadow.light)
         )
     }
 }
