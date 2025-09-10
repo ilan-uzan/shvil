@@ -25,8 +25,8 @@ struct ContentView: View {
     }
     
     private var mainContent: some View {
-        VStack {
-            // Simple tab content
+        ZStack {
+            // Main Content - Full Screen
             Group {
                 switch selectedTab {
                 case 0:
@@ -43,31 +43,27 @@ struct ContentView: View {
                     MapView()
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .animation(DesignTokens.Animation.standard, value: selectedTab)
+            .ignoresSafeArea(.all, edges: .bottom)
             
-            // Simple bottom navigation
-            HStack {
-                ForEach(0..<5) { index in
-                    Button(action: {
+            // Floating Liquid Glass Navigation
+            VStack {
+                Spacer()
+                
+                GlassTabBar(
+                    tabs: [
+                        GlassTabItem(icon: "map", selectedIcon: "map.fill", title: "Map", route: "map"),
+                        GlassTabItem(icon: "person.3", selectedIcon: "person.3.fill", title: "Socialize", route: "socialize"),
+                        GlassTabItem(icon: "flag", selectedIcon: "flag.fill", title: "Hunt", route: "hunt"),
+                        GlassTabItem(icon: "sparkles", selectedIcon: "sparkles", title: "Adventure", route: "adventure"),
+                        GlassTabItem(icon: "gearshape", selectedIcon: "gearshape.fill", title: "Settings", route: "settings")
+                    ],
+                    selectedTab: $selectedTab,
+                    onSelect: { index in
                         selectedTab = index
-                    }) {
-                        Text(tabTitle(for: index))
-                            .foregroundColor(selectedTab == index ? .blue : .gray)
                     }
-                }
+                )
             }
-            .padding()
-        }
-    }
-    
-    private func tabTitle(for index: Int) -> String {
-        switch index {
-        case 0: return "Map"
-        case 1: return "Social"
-        case 2: return "Hunt"
-        case 3: return "Adventure"
-        case 4: return "Settings"
-        default: return "Map"
         }
     }
     
