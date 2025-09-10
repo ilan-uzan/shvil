@@ -22,12 +22,7 @@ struct ContentView: View {
             if hasCompletedOnboarding {
                 mainContent
             } else {
-                OnboardingView {
-                    // Onboarding completed callback
-                    withAnimation(.easeInOut(duration: 0.5)) {
-                        hasCompletedOnboarding = true
-                    }
-                }
+                OnboardingView()
             }
         }
         .onAppear {
@@ -48,7 +43,7 @@ struct ContentView: View {
                 case 2:
                     HuntView()
                 case 3:
-                    AdventuresView()
+                    AdventureSetupView()
                 case 4:
                     SettingsView()
                 default:

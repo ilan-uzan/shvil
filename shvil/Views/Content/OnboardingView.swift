@@ -16,8 +16,6 @@ struct OnboardingView: View {
     @State private var selectedLanguage: Language = .english
     @State private var hasCompletedOnboarding = false
     
-    // Callback to notify parent when onboarding completes
-    var onComplete: (() -> Void)?
     
     private let totalSteps = 3
     
@@ -332,8 +330,6 @@ struct OnboardingView: View {
             hasCompletedOnboarding = true
         }
         
-        // Notify parent view
-        onComplete?()
     }
     
     private func requestPermissions() {
