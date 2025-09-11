@@ -43,12 +43,22 @@ struct AdventureSetupView: View {
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(DesignTokens.Text.primary)
                         
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: DesignTokens.Spacing.sm) {
                             ForEach(moods, id: \.self) { mood in
-                                MoodCard(
-                                    title: mood,
-                                    isSelected: selectedMood == mood
-                                ) {
+                                GlassCard(style: .secondary, isInteractive: true) {
+                                    VStack(spacing: DesignTokens.Spacing.sm) {
+                                        Text(mood)
+                                            .font(DesignTokens.Typography.headline)
+                                            .foregroundColor(selectedMood == mood ? DesignTokens.Brand.primary : DesignTokens.Text.primary)
+                                        
+                                        Image(systemName: moodIcon(for: mood))
+                                            .font(.system(size: 24))
+                                            .foregroundColor(selectedMood == mood ? DesignTokens.Brand.primary : DesignTokens.Text.secondary)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(DesignTokens.Spacing.md)
+                                }
+                                .onTapGesture {
                                     selectedMood = mood
                                 }
                             }
@@ -211,6 +221,17 @@ struct TransportCard: View {
         case "Driving": return "car.fill"
         case "Public Transport": return "bus.fill"
         default: return "location.fill"
+        }
+    }
+    
+    private func moodIcon(for mood: String) -> String {
+        switch mood {
+        case "Exploration": return "location.fill"
+        case "Adventure": return "sparkles"
+        case "Relaxation": return "leaf.fill"
+        case "Culture": return "building.2.fill"
+        case "Nature": return "tree.fill"
+        default: return "star.fill"
         }
     }
 }

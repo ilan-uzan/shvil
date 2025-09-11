@@ -33,7 +33,30 @@ struct LoginView: View {
                         formSection
                         
                         // Action Buttons
-                        actionButtons
+                        VStack(spacing: DesignTokens.Spacing.md) {
+                            GlassButton(
+                                isSignUp ? "Create Account" : "Sign In",
+                                style: .primary,
+                                size: .large,
+                                isLoading: isLoading,
+                                isDisabled: email.isEmpty || password.isEmpty
+                            ) {
+                                Task {
+                                    await performAuth()
+                                }
+                            }
+                            
+                            if !isSignUp {
+                                GlassButton(
+                                    "Sign in with Apple",
+                                    icon: "applelogo",
+                                    style: .secondary,
+                                    size: .large
+                                ) {
+                                    // TODO: Implement Apple Sign In
+                                }
+                            }
+                        }
                         
                         // Toggle Sign Up/Sign In
                         toggleSection

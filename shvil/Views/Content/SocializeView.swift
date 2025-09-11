@@ -36,17 +36,17 @@ struct SocializeView: View {
                     
                     // Filter Pills
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 12) {
+                        HStack(spacing: DesignTokens.Spacing.sm) {
                             ForEach(filters, id: \.self) { filter in
-                                FilterPill(
-                                    title: filter,
+                                GlassPill(
+                                    filter,
                                     isSelected: selectedFilter == filter
                                 ) {
                                     selectedFilter = filter
                                 }
                             }
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, DesignTokens.Spacing.lg)
                     }
                     
                     // Groups List

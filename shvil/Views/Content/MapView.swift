@@ -38,52 +38,29 @@ struct MapView: View {
             // Top Search Bar
             VStack {
                 HStack {
-                    // Search Pill with glass effect
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(DesignTokens.Text.secondary)
-                        
-                        TextField("Search places...", text: $searchText)
-                            .textFieldStyle(PlainTextFieldStyle())
-                            .onTapGesture {
-                                isSearchFocused = true
-                                showingSearchResults = true
-                            }
-                            .onChange(of: searchText) { _, newValue in
-                                // Debounce search for better performance
-                                Task {
-                                    try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
-                                    if !Task.isCancelled {
-                                        if !newValue.isEmpty {
-                                            searchService.search(for: newValue)
-                                        } else {
-                                            searchService.clearSearch()
-                                        }
-                                    }
+                    // Search Bar with standardized glass styling
+                    GlassSearchBar(
+                        text: $searchText,
+                        placeholder: "Search places...",
+                        isFocused: $isSearchFocused
+                    )
+                    .onTapGesture {
+                        isSearchFocused = true
+                        showingSearchResults = true
+                    }
+                    .onChange(of: searchText) { _, newValue in
+                        // Debounce search for better performance
+                        Task {
+                            try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
+                            if !Task.isCancelled {
+                                if !newValue.isEmpty {
+                                    searchService.search(for: newValue)
+                                } else {
+                                    searchService.clearSearch()
                                 }
-                            }
-                        
-                        if !searchText.isEmpty {
-                            Button(action: {
-                                searchText = ""
-                                searchService.clearSearch()
-                            }) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(DesignTokens.Text.tertiary)
                             }
                         }
                     }
-                    .padding(.horizontal, DesignTokens.Spacing.md)
-                    .padding(.vertical, DesignTokens.Spacing.sm)
-                    .background(
-                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl, style: .continuous)
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.xl, style: .continuous)
-                                    .fill(DesignTokens.Glass.medium)
-                            )
-                    )
-                    .appleShadow(DesignTokens.Shadow.light)
                     
                     // Map Layers Button
                     Button(action: {
@@ -144,20 +121,12 @@ struct MapView: View {
                 
                 HStack {
                     // Locate Me Button
-                    Button(action: {
-                        centerOnUserLocation()
-                    }) {
-                        Image(systemName: locationManager.isLocationEnabled ? "location.fill" : "location.slash.fill")
-                            .foregroundColor(.white)
-                            .font(.system(size: 18, weight: .medium))
-                            .padding(DesignTokens.Spacing.md)
-                            .background(
-                                Circle()
-                                    .fill(DesignTokens.Brand.gradient)
-                            )
-                    }
-                    .appleShadow(DesignTokens.Shadow.medium)
-                    .minimumTouchTarget()
+                    GlassFAB(
+                        icon: locationManager.isLocationEnabled ? "location.fill" : "location.slash.fill",
+                        size: .medium,
+                        style: .primary,
+                        action: centerOnUserLocation
+                    )
                     .shvilAccessibility(
                         label: "Center on my location",
                         hint: "Centers the map on your current location",
@@ -167,20 +136,12 @@ struct MapView: View {
                     Spacer()
                     
                     // Focus Mode Button
-                    Button(action: {
-                        toggleFocusMode()
-                    }) {
-                        Image(systemName: "target")
-                            .foregroundColor(.white)
-                            .font(.system(size: 18, weight: .medium))
-                            .padding(DesignTokens.Spacing.md)
-                            .background(
-                                Circle()
-                                    .fill(DesignTokens.Brand.gradient)
-                            )
-                    }
-                    .appleShadow(DesignTokens.Shadow.medium)
-                    .minimumTouchTarget()
+                    GlassFAB(
+                        icon: "target",
+                        size: .medium,
+                        style: .primary,
+                        action: toggleFocusMode
+                    )
                     .shvilAccessibility(
                         label: "Focus mode",
                         hint: "Activates focus mode for better map navigation",

@@ -63,27 +63,27 @@ struct OnboardingView: View {
                 }
                 .padding(.bottom, 20)
                 
-                // Navigation buttons with Liquid Glass
-                HStack(spacing: 16) {
+                // Navigation buttons with standardized glass styling
+                HStack(spacing: DesignTokens.Spacing.md) {
                     if currentStep > 0 {
-                        Button("Back") {
+                        GlassButton(
+                            "Back",
+                            style: .secondary,
+                            size: .medium
+                        ) {
                             withAnimation(DesignTokens.Animation.standard) {
                                 currentStep -= 1
                             }
                         }
-                        .foregroundColor(DesignTokens.Text.secondary)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                                .fill(DesignTokens.Surface.secondary)
-                                .appleShadow(DesignTokens.Shadow.light)
-                        )
                     }
                     
                     Spacer()
                     
-                    Button(currentStep == totalSteps - 1 ? "Get Started" : "Next") {
+                    GlassButton(
+                        currentStep == totalSteps - 1 ? "Get Started" : "Next",
+                        style: .primary,
+                        size: .large
+                    ) {
                         if currentStep == totalSteps - 1 {
                             completeOnboarding()
                         } else {
@@ -92,15 +92,6 @@ struct OnboardingView: View {
                             }
                         }
                     }
-                    .foregroundColor(.white)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 32)
-                    .padding(.vertical, 16)
-                    .background(
-                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                            .fill(DesignTokens.Brand.gradient)
-                            .appleShadow(DesignTokens.Shadow.medium)
-                    )
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 40)

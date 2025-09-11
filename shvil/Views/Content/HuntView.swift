@@ -36,17 +36,17 @@ struct HuntView: View {
                     
                     // Category Pills
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 12) {
+                        HStack(spacing: DesignTokens.Spacing.sm) {
                             ForEach(categories, id: \.self) { category in
-                                CategoryPill(
-                                    title: category,
+                                GlassPill(
+                                    category,
                                     isSelected: selectedCategory == category
                                 ) {
                                     selectedCategory = category
                                 }
                             }
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, DesignTokens.Spacing.lg)
                     }
                     
                     // Stats Card
