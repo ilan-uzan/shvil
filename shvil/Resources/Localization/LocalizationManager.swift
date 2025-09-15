@@ -40,8 +40,13 @@ public class LocalizationManager: ObservableObject {
         // Save preference
         UserDefaults.standard.set(language.code, forKey: "app_language")
         
-        // Update app environment
+        // Force UI update by posting notification
         NotificationCenter.default.post(name: .languageChanged, object: language)
+        
+        // Force view refresh
+        DispatchQueue.main.async {
+            self.objectWillChange.send()
+        }
     }
     
     /// Get localized string
@@ -64,7 +69,7 @@ public class LocalizationManager: ObservableObject {
             setLanguage(language)
         } else {
             // Use system language if supported
-            let systemLanguage = Locale.current.languageCode ?? "en"
+            let systemLanguage = Locale.current.language.languageCode?.identifier ?? "en"
             if let language = Language(rawValue: systemLanguage) {
                 setLanguage(language)
             } else {

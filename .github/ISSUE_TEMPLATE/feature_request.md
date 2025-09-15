@@ -1,59 +1,49 @@
 ---
 name: Feature Request
-about: Suggest an idea for Shvil Minimal
+about: Suggest an idea for this project
 title: '[FEATURE] '
-labels: ['feature', 'needs-triage']
+labels: enhancement
 assignees: ''
 ---
 
-## Feature Summary
+## 🚀 Feature Description
 A clear and concise description of the feature you'd like to see implemented.
 
-## Problem Statement
-What problem does this feature solve? What is the current limitation?
+## 💡 Motivation
+Why is this feature important? What problem does it solve?
 
-## Proposed Solution
-Describe the solution you'd like to see implemented.
+## 📋 Detailed Requirements
+- [ ] Requirement 1
+- [ ] Requirement 2
+- [ ] Requirement 3
 
-## User Story
-As a [user type], I want [goal] so that [benefit].
+## 🎨 Design Considerations
+If applicable, describe any UI/UX considerations or provide mockups.
 
-## Acceptance Criteria
-- [ ] Clear, testable requirements
-- [ ] UI/UX follows Shvil Minimal design principles
-- [ ] Privacy considerations addressed
-- [ ] Accessibility requirements met
-- [ ] Performance impact assessed
+## 🔄 User Flow
+Describe how users would interact with this feature:
+1. User does X
+2. System responds with Y
+3. User can then do Z
 
-## Design Considerations
-- [ ] UI mockups/wireframes provided (if applicable)
-- [ ] Design tokens from DESIGN.md referenced
-- [ ] Liquid Glass design system compliance
-- [ ] Mobile-first responsive design
+## 📱 Platform Considerations
+- [ ] iOS specific
+- [ ] iPad specific
+- [ ] Accessibility considerations
+- [ ] RTL support needed
+- [ ] Dark mode support needed
 
-## Technical Considerations
-- [ ] Architecture impact assessed
-- [ ] Module boundaries respected (MapEngine, RoutingEngine, etc.)
-- [ ] Supabase integration requirements
-- [ ] Offline functionality considerations
-- [ ] Security implications reviewed
+## 🔗 Related Issues
+Link any related issues or discussions.
 
-## Test Plan
-- [ ] Manual testing steps defined
-- [ ] Unit test requirements identified
-- [ ] UI test requirements identified
-- [ ] Integration test requirements identified
-- [ ] Accessibility testing planned
+## 📝 Additional Context
+Add any other context, mockups, or examples about the feature request here.
 
-## Risk/Impact
-- **Complexity**: Low/Medium/High
-- **Timeline**: Estimated effort
-- **Dependencies**: Other features/issues required
-- **Breaking changes**: Yes/No
-- **Migration needed**: Yes/No
+## 🎯 Success Criteria
+How will we know when this feature is complete?
 
-## Additional Context
-Add any other context, mockups, or references about the feature request here.
-
-## Related Issues
-Link any related issues or PRs here.
+## 📋 Checklist
+- [ ] I have searched for existing feature requests before creating this one
+- [ ] I have provided a clear description of the feature
+- [ ] I have considered the user experience
+- [ ] I have thought about potential edge cases

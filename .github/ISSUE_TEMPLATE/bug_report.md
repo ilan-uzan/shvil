@@ -1,52 +1,43 @@
 ---
 name: Bug Report
-about: Create a report to help us improve Shvil Minimal
+about: Create a report to help us improve
 title: '[BUG] '
-labels: ['bug', 'needs-triage']
+labels: bug
 assignees: ''
 ---
 
-## Bug Description
+## 🐛 Bug Description
 A clear and concise description of what the bug is.
 
-## To Reproduce
-Steps to reproduce the behavior:
+## 🔄 Steps to Reproduce
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
-## Expected Behavior
+## ✅ Expected Behavior
 A clear and concise description of what you expected to happen.
 
-## Screenshots
-If applicable, add screenshots to help explain your problem.
+## ❌ Actual Behavior
+A clear and concise description of what actually happened.
 
-## Environment
-- **Device**: [e.g. iPhone 15 Pro, iPad Pro]
-- **iOS Version**: [e.g. 18.0]
-- **App Version**: [e.g. 1.0.0]
-- **Build**: [e.g. Debug/Release]
+## 📱 Environment
+- iOS Version: [e.g. 17.0]
+- Device: [e.g. iPhone 15 Pro, iPad Air]
+- App Version: [e.g. 1.0.0]
+- Xcode Version: [e.g. 15.0]
 
-## Additional Context
+## 📸 Screenshots/Videos
+If applicable, add screenshots or videos to help explain your problem.
+
+## 📋 Additional Context
 Add any other context about the problem here.
 
-## Acceptance Criteria
-- [ ] Bug is reproducible
-- [ ] Root cause identified
-- [ ] Fix implemented and tested
-- [ ] No regression in existing functionality
-- [ ] UI/UX follows Shvil Minimal design principles
+## 🔍 Possible Solution
+If you have ideas on how to fix this bug, please describe them here.
 
-## Test Plan
-- [ ] Manual testing steps documented
-- [ ] Unit tests added/updated (if applicable)
-- [ ] UI tests added/updated (if applicable)
-- [ ] Accessibility testing completed
-- [ ] Privacy impact assessed
-
-## Risk/Impact
-- **Low/Medium/High**: Brief description of potential impact
-- **Migration needed**: Yes/No
-- **Privacy impact**: Yes/No
-- **Performance impact**: Yes/No
+## 📝 Checklist
+- [ ] I have searched for existing issues before creating this one
+- [ ] I have provided all the required information
+- [ ] I have tested this on the latest version
+- [ ] This bug affects the main functionality of the app

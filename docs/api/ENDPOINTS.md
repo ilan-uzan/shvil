@@ -3,8 +3,8 @@
 This document describes all API endpoints used by the Shvil app, including request/response schemas and examples.
 
 ## Base URL
-- **Development**: `https://your-project-id.supabase.co`
-- **Production**: `https://your-project-id.supabase.co`
+- **Development**: `https://lnniqqjaslpyljtcmkmf.supabase.co`
+- **Production**: `https://lnniqqjaslpyljtcmkmf.supabase.co`
 
 ## Authentication
 All endpoints require authentication via Supabase Auth. Include the JWT token in the `Authorization` header:
