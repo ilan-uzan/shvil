@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - Missing Definitions (Temporary Fix)
+// MARK: - Design System Integration
 // Note: applePerformanceOptimized, appleAccessibility, and appleShadow are defined in DesignSystemViewModifiers.swift
 
 public struct AppleAnimations {

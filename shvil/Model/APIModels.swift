@@ -8,6 +8,30 @@
 import Foundation
 import CoreLocation
 
+// MARK: - Notification Settings
+
+public struct NotificationSettings: Codable {
+    public let pushEnabled: Bool
+    public let emailEnabled: Bool
+    public let adventureUpdates: Bool
+    public let socialUpdates: Bool
+    public let safetyAlerts: Bool
+    
+    public init(
+        pushEnabled: Bool = true,
+        emailEnabled: Bool = false,
+        adventureUpdates: Bool = true,
+        socialUpdates: Bool = true,
+        safetyAlerts: Bool = true
+    ) {
+        self.pushEnabled = pushEnabled
+        self.emailEnabled = emailEnabled
+        self.adventureUpdates = adventureUpdates
+        self.socialUpdates = socialUpdates
+        self.safetyAlerts = safetyAlerts
+    }
+}
+
 // MARK: - API Response Models
 
 struct APIResponse<T: Codable>: Codable {

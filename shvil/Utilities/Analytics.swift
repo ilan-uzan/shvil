@@ -17,6 +17,8 @@ class Analytics: ObservableObject {
 
     private var events: [AnalyticsEvent] = []
     private let maxEvents = 1000
+    private let supabaseService = SupabaseService.shared
+    private var sessionId: String = UUID().uuidString
 
     init() {
         loadSettings()
@@ -46,6 +48,16 @@ class Analytics: ObservableObject {
 
         // Save to local storage
         saveEvents()
+        
+        // Send to Supabase
+        Task {
+            do {
+                let supabaseEvent = SupabaseAnalyticsEvent(from: event, sessionId: sessionId)
+                try await supabaseService.sendAnalyticsEvent(supabaseEvent, userId: getCurrentUserId())
+            } catch {
+                print("Failed to send analytics event to Supabase: \(error)")
+            }
+        }
     }
 
     func logScreenView(_ screen: String) {
@@ -120,6 +132,13 @@ class Analytics: ObservableObject {
         events.removeAll()
         eventCount = 0
         saveEvents()
+    }
+    
+    /// Get current user ID for analytics events
+    private func getCurrentUserId() -> UUID? {
+        // This would typically come from your authentication service
+        // For now, return nil to indicate anonymous events
+        return nil
     }
 
     // MARK: - Private Methods

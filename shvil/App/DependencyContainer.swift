@@ -40,6 +40,7 @@ class DependencyContainer {
         locationService: locationManager,
         offlineManager: offlineManager
     )
+    lazy var adventureService: AdventureService = .init()
     lazy var aiKit: AIKit = {
         do {
             return try AIKit()
@@ -67,7 +68,6 @@ class DependencyContainer {
     lazy var hapticFeedback: HapticFeedback = .shared
     lazy var performanceMonitor: PerformanceMonitor = .shared
     lazy var contractTestingService: ContractTestingService = .shared
-    lazy var mockAPIService: MockAPIService = .shared
 
     // MARK: - Reset for Testing
 

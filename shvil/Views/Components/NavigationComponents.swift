@@ -234,7 +234,7 @@ struct NavigationGlassSurface: View {
     let content: AnyView
     let elevation: GlassElevation
     
-    init<Content: View>(elevation: GlassElevation = .medium, @ViewBuilder content: () -> Content) {
+    init<Content: View>(elevation: GlassElevation = .raised, @ViewBuilder content: () -> Content) {
         self.elevation = elevation
         self.content = AnyView(content())
     }
@@ -254,32 +254,32 @@ struct NavigationGlassSurface: View {
     
     private var glassColor: Color {
         switch elevation {
-        case .light:
+        case .flat:
             return DesignTokens.Surface.tertiary
-        case .low:
-            return DesignTokens.Surface.tertiary
-        case .medium:
+        case .raised:
             return DesignTokens.Surface.secondary
-        case .high:
+        case .floating:
+            return DesignTokens.Surface.secondary
+        case .modal:
             return DesignTokens.Surface.primary
         }
     }
     
     private var shadowRadius: CGFloat {
         switch elevation {
-        case .light: return 4
-        case .low: return 6
-        case .medium: return 8
-        case .high: return 12
+        case .flat: return 2
+        case .raised: return 6
+        case .floating: return 12
+        case .modal: return 16
         }
     }
     
     private var shadowOffset: CGFloat {
         switch elevation {
-        case .light: return 2
-        case .low: return 3
-        case .medium: return 4
-        case .high: return 6
+        case .flat: return 1
+        case .raised: return 3
+        case .floating: return 6
+        case .modal: return 8
         }
     }
 }

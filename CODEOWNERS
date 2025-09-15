@@ -1,30 +1,28 @@
-# Global ownership
+# Global owners
 * @ilan-uzan
 
-# Core architecture
-/AppCore/ @ilan-uzan
-/LocationKit/ @ilan-uzan
-/MapEngine/ @ilan-uzan
-/RoutingEngine/ @ilan-uzan
-/ContextEngine/ @ilan-uzan
+# Core app files
+/shvil/App/ @ilan-uzan
+/shvil/Model/ @ilan-uzan
+/shvil/Models/ @ilan-uzan
+/shvil/Services/ @ilan-uzan
+/shvil/Utilities/ @ilan-uzan
 
-# Social and safety features
-/SocialKit/ @ilan-uzan
-/SafetyKit/ @ilan-uzan
+# Views and UI
+/shvil/Views/ @ilan-uzan
 
-# Data and privacy
-/Persistence/ @ilan-uzan
-/PrivacyGuard/ @ilan-uzan
+# Tests
+/shvilTests/ @ilan-uzan
+/shvil/Tests/ @ilan-uzan
 
-# Design system
-/Shared/Design/ @ilan-uzan
-/Shared/Components/ @ilan-uzan
+# Configuration files
+*.xcconfig @ilan-uzan
+*.plist @ilan-uzan
+*.xcodeproj @ilan-uzan
 
 # Documentation
 *.md @ilan-uzan
 /docs/ @ilan-uzan
 
-# Configuration files
-/.github/ @ilan-uzan
-*.yml @ilan-uzan
-*.yaml @ilan-uzan
+# Supabase
+/supabase/ @ilan-uzan

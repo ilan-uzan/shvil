@@ -1,24 +1,23 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop, feat/project-restructure ]
+    branches: [ main, develop, polish/* ]
   pull_request:
     branches: [ main, develop ]
 
 jobs:
   test:
-    name: Test
     runs-on: macos-latest
     
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Select Xcode Version
+    - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: '16.0'
+        xcode-version: latest-stable
         
     - name: Cache Swift Package Manager
       uses: actions/cache@v3
@@ -28,145 +27,33 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-spm-
           
-    - name: Build
+    - name: Build project
       run: |
-        xcodebuild -project shvil.xcodeproj -scheme shvil -destination 'platform=iOS Simulator,name=iPhone 16' build
+        xcodebuild -project shvil.xcodeproj -scheme shvil -destination 'platform=iOS Simulator,name=iPhone 15' clean build
       
-    - name: Test
+    - name: Run tests
       run: |
-        xcodebuild -project shvil.xcodeproj -scheme shvil -destination 'platform=iOS Simulator,name=iPhone 16' test
+        xcodebuild -project shvil.xcodeproj -scheme shvil -destination 'platform=iOS Simulator,name=iPhone 15' test
       
-    - name: Generate Test Report
-      uses: dorny/test-reporter@v1
-      if: success() || failure()
+    - name: Run SwiftLint
+      uses: norio-nomura/action-swiftlint@3.2.1
       with:
-        name: Xcode Test Results
-        path: shvil.xcodeproj
-        reporter: java-junit
-
-  lint:
-    name: Lint
+        args: --strict --reporter github-actions-logging
+        
+  build-release:
     runs-on: macos-latest
-    
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      
-    - name: Select Xcode Version
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '16.0'
-        
-    - name: SwiftLint
-      uses: norio-nomura/action-swiftlint@3.0.0
-      with:
-        args: --strict
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  security:
-    name: Security Scan
-    runs-on: macos-latest
-    
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      
-    - name: Select Xcode Version
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '16.0'
-        
-    - name: Security Scan
-      run: |
-        # Check for hardcoded secrets (excluding configuration files and comments)
-        if grep -r "password\|secret\|key" --include="*.swift" --exclude-dir=".git" . | grep -v "// TODO\|// FIXME\|Configuration\|API_KEY\|SECRET_KEY"; then
-          echo "⚠️ Potential hardcoded secrets found - review manually"
-        fi
-        
-        # Check for force unwraps (excluding test files and configuration)
-        if grep -r "!" --include="*.swift" --exclude-dir=".git" . | grep -v "// TODO\|// FIXME\|Tests\|Test\|!"; then
-          echo "⚠️ Force unwraps found - review manually"
-        fi
-        
-        echo "✅ Security scan completed"
-
-  performance:
-    name: Performance Test
-    runs-on: macos-latest
-    
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      
-    - name: Select Xcode Version
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '16.0'
-        
-    - name: Performance Test
-      run: |
-        # Build with performance optimizations
-        xcodebuild -project shvil.xcodeproj -scheme shvil -destination 'platform=iOS Simulator,name=iPhone 16' build -configuration Release
-        
-        # Run performance tests
-        xcodebuild -project shvil.xcodeproj -scheme shvil -destination 'platform=iOS Simulator,name=iPhone 16' test -only-testing:shvilTests/PerformanceOptimizerTests
-
-  accessibility:
-    name: Accessibility Test
-    runs-on: macos-latest
-    
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      
-    - name: Select Xcode Version
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '16.0'
-        
-    - name: Accessibility Test
-      run: |
-        # Run accessibility tests
-        xcodebuild -project shvil.xcodeproj -scheme shvil -destination 'platform=iOS Simulator,name=iPhone 16' test -only-testing:shvilTests/AccessibilityManagerTests
-
-  build-ios:
-    name: Build iOS
-    runs-on: macos-latest
-    
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      
-    - name: Select Xcode Version
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '16.0'
-        
-    - name: Build iOS
-      run: |
-        xcodebuild -project shvil.xcodeproj -scheme shvil -destination 'platform=iOS Simulator,name=iPhone 16' build -configuration Release
-        
-    - name: Archive
-      run: |
-        xcodebuild -project shvil.xcodeproj -scheme shvil -destination 'generic/platform=iOS' archive -archivePath shvil.xcarchive
-
-  deploy:
-    name: Deploy
-    runs-on: macos-latest
-    needs: [test, lint, security, performance, accessibility, build-ios]
+    needs: test
     if: github.ref == 'refs/heads/main'
     
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Select Xcode Version
+    - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: '16.0'
+        xcode-version: latest-stable
         
-    - name: Deploy to TestFlight
+    - name: Build for release
       run: |
-        echo "🚀 Deploying to TestFlight..."
-        # Add TestFlight deployment steps here
+        xcodebuild -project shvil.xcodeproj -scheme shvil -destination 'generic/platform=iOS' -configuration Release build

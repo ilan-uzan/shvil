@@ -179,11 +179,52 @@ public class HuntService: ObservableObject {
                     self.hunts = hunts
                 }
             } catch {
+                // Fallback to mock data when Supabase is not configured
                 await MainActor.run {
-                    self.error = error
+                    self.hunts = generateMockHunts()
+                    self.error = nil
                 }
             }
         }
+    }
+    
+    private func generateMockHunts() -> [ScavengerHunt] {
+        let mockUserId = UUID()
+        return [
+            ScavengerHunt(
+                id: UUID(),
+                title: "Old City Treasure Hunt",
+                description: "Discover the secrets of Jerusalem's Old City",
+                createdBy: mockUserId,
+                status: .active,
+                participantCount: 24,
+                checkpointCount: 8,
+                createdAt: Date(),
+                updatedAt: Date()
+            ),
+            ScavengerHunt(
+                id: UUID(),
+                title: "Tel Aviv Street Art",
+                description: "Find the most beautiful street art in Tel Aviv",
+                createdBy: mockUserId,
+                status: .draft,
+                participantCount: 18,
+                checkpointCount: 12,
+                createdAt: Date(),
+                updatedAt: Date()
+            ),
+            ScavengerHunt(
+                id: UUID(),
+                title: "Haifa Nature Trail",
+                description: "Explore the natural beauty of Haifa's trails",
+                createdBy: mockUserId,
+                status: .completed,
+                participantCount: 15,
+                checkpointCount: 6,
+                createdAt: Date(),
+                updatedAt: Date()
+            )
+        ]
     }
     
     private func loadHuntProgress(_ hunt: ScavengerHunt) async throws {

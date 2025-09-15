@@ -7,6 +7,15 @@
 
 import SwiftUI
 
+// MARK: - Glass Elevation Types
+
+public enum GlassElevation {
+    case flat
+    case raised
+    case floating
+    case modal
+}
+
 // MARK: - Standardized Glass Components
 
 /// Unified glass card component with consistent LandmarkLiquidGlass styling
@@ -20,13 +29,6 @@ public struct GlassCard<Content: View>: View {
         case primary
         case secondary
         case tertiary
-        case floating
-        case modal
-    }
-    
-    public enum GlassElevation {
-        case flat
-        case raised
         case floating
         case modal
     }

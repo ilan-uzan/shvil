@@ -19,8 +19,30 @@ struct MapView: View {
     @State private var selectedMapLayer: MapLayer = .standard
     @State private var showingMapLayerOptions = false
     @State private var showingSearchResults = false
+    @State private var showingFilters = false
+    @State private var selectedFilter = "All"
     @StateObject private var locationManager = DependencyContainer.shared.locationManager
     @StateObject private var searchService = DependencyContainer.shared.searchService
+    @StateObject private var analytics = Analytics.shared
+    
+    private let filters = ["All", "Restaurants", "Attractions", "Hotels", "Gas Stations", "Parks"]
+    
+    private let samplePOIs = [
+        POI(id: UUID(), name: "Western Wall", coordinate: CLLocationCoordinate2D(latitude: 31.7767, longitude: 35.2345), icon: "building.columns", color: DesignTokens.Brand.primary),
+        POI(id: UUID(), name: "Dome of the Rock", coordinate: CLLocationCoordinate2D(latitude: 31.7780, longitude: 35.2354), icon: "building.columns", color: DesignTokens.Brand.primary),
+        POI(id: UUID(), name: "Church of the Holy Sepulchre", coordinate: CLLocationCoordinate2D(latitude: 31.7784, longitude: 35.2296), icon: "building.columns", color: DesignTokens.Brand.primary),
+        POI(id: UUID(), name: "Mahane Yehuda Market", coordinate: CLLocationCoordinate2D(latitude: 31.7879, longitude: 35.2133), icon: "cart", color: DesignTokens.Semantic.success),
+        POI(id: UUID(), name: "Yad Vashem", coordinate: CLLocationCoordinate2D(latitude: 31.7733, longitude: 35.1747), icon: "building.columns", color: DesignTokens.Brand.primary),
+        POI(id: UUID(), name: "Israel Museum", coordinate: CLLocationCoordinate2D(latitude: 31.7719, longitude: 35.2044), icon: "building.columns", color: DesignTokens.Brand.primary)
+    ]
+    
+    private var mapStyle: MapStyle {
+        switch selectedMapLayer {
+        case .standard: return .standard
+        case .satellite: return .satellite
+        case .hybrid: return .hybrid
+        }
+    }
     
     var body: some View {
         ZStack {
@@ -30,9 +52,33 @@ struct MapView: View {
             
             // Map
             Map {
-                // Map content will be added here
+                // Sample POIs for demonstration
+                ForEach(samplePOIs, id: \.id) { poi in
+                    Annotation(poi.name, coordinate: poi.coordinate) {
+                        VStack {
+                            Image(systemName: poi.icon)
+                                .font(.system(size: 20))
+                                .foregroundColor(.white)
+                                .frame(width: 32, height: 32)
+                                .background(
+                                    Circle()
+                                        .fill(poi.color)
+                                )
+                                .shadow(radius: 4)
+                            
+                            Text(poi.name)
+                                .font(.caption)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(.ultraThinMaterial)
+                                )
+                        }
+                    }
+                }
             }
-            .mapStyle(.standard)
+            .mapStyle(mapStyle)
             .ignoresSafeArea()
             
             // Top Search Bar
@@ -54,12 +100,38 @@ struct MapView: View {
                             try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
                             if !Task.isCancelled {
                                 if !newValue.isEmpty {
+                                    // Track search query
+                                    analytics.logSearchQuery(newValue)
                                     searchService.search(for: newValue)
                                 } else {
                                     searchService.clearSearch()
                                 }
                             }
                         }
+                    }
+                    
+                    // Filter Button
+                    Button(action: {
+                        showingFilters.toggle()
+                    }) {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
+                            .foregroundColor(DesignTokens.Text.primary)
+                            .font(.system(size: 16, weight: .medium))
+                            .padding(DesignTokens.Spacing.sm)
+                            .background(
+                                Circle()
+                                    .fill(DesignTokens.Surface.primary)
+                            )
+                    }
+                    .appleShadow(DesignTokens.Shadow.light)
+                    .confirmationDialog("Filter Results", isPresented: $showingFilters) {
+                        ForEach(filters, id: \.self) { filter in
+                            Button(filter) {
+                                selectedFilter = filter
+                                // TODO: Apply filter to search results
+                            }
+                        }
+                        Button("Cancel", role: .cancel) { }
                     }
                     
                     // Map Layers Button
@@ -89,27 +161,58 @@ struct MapView: View {
                 .padding(.top, DesignTokens.Spacing.sm)
                 
                 // Search Results
-                if showingSearchResults && !searchService.searchResults.isEmpty {
-                    ScrollView {
-                        LazyVStack(spacing: 8) {
-                            ForEach(searchService.searchResults) { result in
-                                SearchResultRow(result: result) {
-                                    selectSearchResult(result)
+                if showingSearchResults {
+                    if searchService.searchResults.isEmpty && !searchText.isEmpty {
+                        GlassEmptyState(
+                            icon: "magnifyingglass",
+                            title: "No Results",
+                            description: "Try a different search term or check your spelling.",
+                            actionTitle: "Clear Search",
+                            action: {
+                                searchText = ""
+                                searchService.clearSearch()
+                            }
+                        )
+                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                    } else if !searchService.searchResults.isEmpty {
+                        ScrollView {
+                            LazyVStack(spacing: DesignTokens.Spacing.sm) {
+                                ForEach(searchService.searchResults) { result in
+                                    GlassListRow {
+                                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                                            Text(result.name)
+                                                .font(DesignTokens.Typography.headline)
+                                                .foregroundColor(DesignTokens.Text.primary)
+                                            
+                                            Text(result.address)
+                                                .font(DesignTokens.Typography.callout)
+                                                .foregroundColor(DesignTokens.Text.secondary)
+                                        }
+                                    } action: {
+                                        selectSearchResult(result)
+                                    }
                                 }
                             }
+                            .padding(.horizontal, DesignTokens.Spacing.lg)
                         }
+                        .frame(maxHeight: 300)
+                        .background(
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg, style: .continuous)
+                                .fill(DesignTokens.Surface.adaptiveGlass)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg, style: .continuous)
+                                        .stroke(DesignTokens.Glass.innerHighlight, lineWidth: 0.5)
+                                        .blendMode(.overlay)
+                                )
+                        )
+                        .shadow(
+                            color: DesignTokens.Shadow.light.color,
+                            radius: DesignTokens.Shadow.light.radius,
+                            x: DesignTokens.Shadow.light.x,
+                            y: DesignTokens.Shadow.light.y
+                        )
                         .padding(.horizontal, DesignTokens.Spacing.lg)
                     }
-                    .frame(maxHeight: 200)
-                    .background(
-                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                            )
-                    )
-                    .padding(.horizontal, DesignTokens.Spacing.lg)
                 }
                 
                 Spacer()
@@ -191,6 +294,16 @@ struct MapView: View {
     }
     
     private func selectSearchResult(_ result: SearchResult) {
+        // Track search result selection
+        analytics.logEvent(AnalyticsEvent(
+            name: "search_result_selected",
+            properties: [
+                "result_name": result.name,
+                "result_address": result.address
+            ],
+            timestamp: Date()
+        ))
+        
         // Center map on selected search result
         let animation = AccessibilitySystem.prefersReducedMotion ? 
             Animation.linear(duration: 0.1) : DesignTokens.Animation.standard
@@ -251,6 +364,16 @@ struct SearchResultRow: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
+}
+
+// MARK: - Data Models
+
+struct POI: Identifiable {
+    let id: UUID
+    let name: String
+    let coordinate: CLLocationCoordinate2D
+    let icon: String
+    let color: Color
 }
 
 #Preview {

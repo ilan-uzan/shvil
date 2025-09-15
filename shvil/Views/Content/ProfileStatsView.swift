@@ -85,7 +85,7 @@ struct ProfileStatsView: View {
     }
     
     private var roadContributionStats: some View {
-        LiquidGlassCard {
+        GlassCard {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
                     Image(systemName: "car.fill")
@@ -134,7 +134,7 @@ struct ProfileStatsView: View {
     }
     
     private var adventureStats: some View {
-        LiquidGlassCard {
+        GlassCard {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
                     Image(systemName: "flag.fill")
@@ -183,7 +183,7 @@ struct ProfileStatsView: View {
     }
     
     private var businessContributionStats: some View {
-        LiquidGlassCard {
+        GlassCard {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
                     Image(systemName: "building.2.fill")
@@ -232,7 +232,7 @@ struct ProfileStatsView: View {
     }
     
     private var achievementBadges: some View {
-        LiquidGlassCard {
+        GlassCard {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
                     Image(systemName: "medal.fill")

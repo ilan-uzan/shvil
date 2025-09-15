@@ -42,8 +42,8 @@ struct SearchView: View {
                     }
                 }
             }
-            .appleNavigationBar()
         }
+        .appleNavigationBar()
         .sheet(isPresented: $showPlaceDetails) {
             if let result = selectedResult {
                 PlaceDetailsView(place: result, isPresented: $showPlaceDetails)

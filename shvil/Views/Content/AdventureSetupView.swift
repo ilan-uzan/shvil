@@ -12,6 +12,9 @@ struct AdventureSetupView: View {
     @State private var selectedDuration = "2 hours"
     @State private var selectedTransport = "Walking"
     @State private var showLocationPicker = false
+    @StateObject private var adventureService = DependencyContainer.shared.adventureService
+    @State private var showAdventureResult = false
+    @StateObject private var analytics = Analytics.shared
     
     private let moods = ["Exploration", "Adventure", "Relaxation", "Culture", "Nature"]
     private let durations = ["1 hour", "2 hours", "Half day", "Full day"]
@@ -105,27 +108,52 @@ struct AdventureSetupView: View {
                     .padding(.horizontal, 20)
                     
                     // Create Adventure Button
-                    Button(action: {
-                        // Create adventure action
-                    }) {
-                        HStack {
-                            Image(systemName: "sparkles")
-                                .font(.system(size: 18))
-                            Text("Create My Adventure")
-                                .font(.system(size: 18, weight: .semibold))
+                    GlassButton(
+                        adventureService.isGenerating ? "Creating Adventure..." : "Create My Adventure",
+                        icon: "sparkles",
+                        style: .primary,
+                        size: .large,
+                        isLoading: adventureService.isGenerating,
+                        isDisabled: adventureService.isGenerating
+                    ) {
+                        Task {
+                            // Track adventure creation attempt
+                            analytics.logFeatureUsage("adventure_creation")
+                            analytics.logEvent(AnalyticsEvent(
+                                name: "adventure_creation_started",
+                                properties: [
+                                    "mood": selectedMood,
+                                    "duration": selectedDuration,
+                                    "transport": selectedTransport
+                                ],
+                                timestamp: Date()
+                            ))
+                            
+                            await adventureService.createAdventure(
+                                mood: selectedMood,
+                                duration: selectedDuration,
+                                transport: selectedTransport
+                            )
+                            if adventureService.createdAdventure != nil {
+                                showAdventureResult = true
+                            }
                         }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 32)
-                        .padding(.vertical, 18)
-                        .background(
-                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.lg)
-                                .fill(DesignTokens.Brand.gradient)
-                                .appleShadow(DesignTokens.Shadow.medium)
-                        )
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 100)
                 }
+            }
+        }
+        .alert("Error", isPresented: .constant(adventureService.errorMessage != nil)) {
+            Button("OK") {
+                adventureService.errorMessage = nil
+            }
+        } message: {
+            Text(adventureService.errorMessage ?? "")
+        }
+        .sheet(isPresented: $showAdventureResult) {
+            if let adventure = adventureService.createdAdventure {
+                AdventureResultView(adventure: adventure)
             }
         }
     }

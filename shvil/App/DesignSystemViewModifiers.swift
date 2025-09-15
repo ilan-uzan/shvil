@@ -83,7 +83,17 @@ extension View {
 }
 
 // MARK: - Apple Shadow System
-// Note: appleShadow is defined in Components.swift
+extension View {
+    /// Apply shadow using ShadowValue design tokens
+    public func appleShadow(_ shadow: ShadowValue) -> some View {
+        self.shadow(
+            color: shadow.color,
+            radius: shadow.radius,
+            x: shadow.x,
+            y: shadow.y
+        )
+    }
+}
 
 // MARK: - Apple Animation System
 

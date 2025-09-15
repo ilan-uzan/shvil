@@ -11,7 +11,7 @@
 - `ContentView.swift` - Main app interface with tab navigation and onboarding flow
 - `MapView.swift` - Core map functionality with POI displays
 - `Theme.swift` - Centralized design tokens and theme management
-- `Components.swift` - Reusable UI components library
+- `StandardizedComponents.swift` - Reusable UI components library
 - `AppleGlassComponents.swift` - Liquid Glass design system components
 
 ### Architecture & Infrastructure

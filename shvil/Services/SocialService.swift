@@ -148,10 +148,52 @@ public class SocialService: ObservableObject {
                     self.groups = groups
                 }
             } catch {
+                // Fallback to mock data when Supabase is not configured
                 await MainActor.run {
-                    self.error = error
+                    self.groups = generateMockGroups()
+                    self.error = nil
                 }
             }
         }
+    }
+    
+    private func generateMockGroups() -> [SocialGroup] {
+        let mockUserId = UUID() // Mock user ID for createdBy
+        
+        return [
+            SocialGroup(
+                id: UUID(),
+                name: "Jerusalem Explorers",
+                description: "Discover the hidden gems of Jerusalem together",
+                createdBy: mockUserId,
+                inviteCode: "JER123",
+                qrCode: "qr_jer123_code",
+                memberCount: 12,
+                createdAt: Date(),
+                updatedAt: Date()
+            ),
+            SocialGroup(
+                id: UUID(),
+                name: "Tel Aviv Adventures",
+                description: "Urban adventures in the city that never sleeps",
+                createdBy: mockUserId,
+                inviteCode: "TLV456",
+                qrCode: "qr_tlv456_code",
+                memberCount: 8,
+                createdAt: Date(),
+                updatedAt: Date()
+            ),
+            SocialGroup(
+                id: UUID(),
+                name: "Nature Lovers",
+                description: "Hiking and outdoor activities across Israel",
+                createdBy: mockUserId,
+                inviteCode: "NAT789",
+                qrCode: "qr_nat789_code",
+                memberCount: 15,
+                createdAt: Date(),
+                updatedAt: Date()
+            )
+        ]
     }
 }

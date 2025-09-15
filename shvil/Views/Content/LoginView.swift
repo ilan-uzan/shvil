@@ -10,6 +10,7 @@ import SwiftUI
 struct LoginView: View {
     @StateObject private var authService = DependencyContainer.shared.authenticationService
     @Environment(\.dismiss) private var dismiss
+    @State private var showSignUp = false
     
     @State private var email = ""
     @State private var password = ""
@@ -81,6 +82,11 @@ struct LoginView: View {
             Button("OK") { }
         } message: {
             Text(errorMessage)
+        }
+        .onChange(of: authService.isAuthenticated) { _, isAuthenticated in
+            if isAuthenticated {
+                dismiss()
+            }
         }
     }
     
@@ -198,19 +204,16 @@ struct LoginView: View {
                 try await authService.signIn(email: email, password: password)
             }
             
-            // Success - dismiss the view
+            // Success - authentication service will handle state updates
             await MainActor.run {
-                dismiss()
+                isLoading = false
             }
         } catch {
             await MainActor.run {
                 errorMessage = error.localizedDescription
                 showError = true
+                isLoading = false
             }
-        }
-        
-        await MainActor.run {
-            isLoading = false
         }
     }
 }

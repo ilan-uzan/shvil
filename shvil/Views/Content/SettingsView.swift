@@ -11,6 +11,7 @@ struct SettingsView: View {
     @StateObject private var settingsService = DependencyContainer.shared.settingsService
     @StateObject private var locationManager = DependencyContainer.shared.locationManager
     @StateObject private var localizationManager = LocalizationManager.shared
+    @StateObject private var authService = DependencyContainer.shared.authenticationService
     
     private let languages = ["English", "עברית"]
 
@@ -104,6 +105,32 @@ struct SettingsView: View {
                                             .font(.system(size: 12))
                                     }
                                 }
+                            }
+                        }
+                        
+                        SettingsSection(title: "Account") {
+                            SettingsRow(
+                                icon: "person.circle.fill",
+                                title: "Profile",
+                                subtitle: authService.currentUser?.displayName ?? "User"
+                            ) {
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(DesignTokens.Text.tertiary)
+                                    .font(.system(size: 12))
+                            }
+                            
+                            SettingsRow(
+                                icon: "rectangle.portrait.and.arrow.right",
+                                title: "Sign Out",
+                                subtitle: "Sign out of your account"
+                            ) {
+                                Button("Sign Out") {
+                                    Task {
+                                        await authService.signOut()
+                                    }
+                                }
+                                .foregroundColor(DesignTokens.Semantic.error)
+                                .font(.system(size: 16, weight: .medium))
                             }
                         }
                         
