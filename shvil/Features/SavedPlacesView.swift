@@ -21,43 +21,43 @@ struct SavedPlacesView: View {
     @State private var samplePlaces: [SavedPlace] = [
         SavedPlace(
             id: UUID(),
+            userId: UUID(),
             name: "Home",
             address: "123 Main Street, San Francisco, CA",
             latitude: 37.7749,
             longitude: -122.4194,
             type: .home,
-            createdAt: Date(),
-            userId: UUID()
+            createdAt: Date()
         ),
         SavedPlace(
             id: UUID(),
+            userId: UUID(),
             name: "Work Office",
             address: "456 Market Street, San Francisco, CA",
             latitude: 37.7849,
             longitude: -122.4094,
             type: .work,
-            createdAt: Date(),
-            userId: UUID()
+            createdAt: Date()
         ),
         SavedPlace(
             id: UUID(),
+            userId: UUID(),
             name: "Blue Bottle Coffee",
             address: "789 Valencia Street, San Francisco, CA",
             latitude: 37.7649,
             longitude: -122.4294,
             type: .favorite,
-            createdAt: Date(),
-            userId: UUID()
+            createdAt: Date()
         ),
         SavedPlace(
             id: UUID(),
+            userId: UUID(),
             name: "Golden Gate Park",
             address: "Golden Gate Park, San Francisco, CA",
             latitude: 37.7694,
             longitude: -122.4862,
             type: .custom,
-            createdAt: Date(),
-            userId: UUID()
+            createdAt: Date()
         ),
     ]
 

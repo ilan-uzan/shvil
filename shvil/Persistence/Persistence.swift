@@ -440,13 +440,14 @@ extension SavedPlace {
 
         self.init(
             id: id,
+            userId: userId,
             name: String(cString: name),
             address: String(cString: address),
             latitude: latitude,
             longitude: longitude,
             type: type,
             createdAt: createdAt,
-            userId: userId
+            updatedAt: createdAt
         )
     }
 }
