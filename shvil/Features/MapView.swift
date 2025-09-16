@@ -10,9 +10,10 @@ import MapKit
 import SwiftUI
 
 struct MapView: View {
-    @StateObject private var locationService = LocationService()
-    @StateObject private var navigationService = NavigationService()
-    @StateObject private var searchService = SearchService()
+    // Use DependencyContainer for consistent service management
+    @ObservedObject private var locationService = DependencyContainer.shared.locationService
+    @ObservedObject private var navigationService = DependencyContainer.shared.navigationService
+    @ObservedObject private var searchService = DependencyContainer.shared.searchService
 
     @State private var searchText = ""
     @State private var isSearchFocused = false
@@ -69,6 +70,7 @@ struct MapView: View {
         { result in
             MapAnnotation(coordinate: result.coordinate) {
                 annotationView(for: result)
+                    .id(result.id) // Ensure proper view identity
             }
         }
         .ignoresSafeArea()
@@ -79,10 +81,11 @@ struct MapView: View {
         .onAppear {
             locationService.requestLocationPermission()
         }
+        .drawingGroup() // Optimize complex map rendering
     }
 
     private func annotationView(for result: SearchResult) -> some View {
-        VStack {
+        VStack(spacing: 2) {
             Image(systemName: "mappin.circle.fill")
                 .font(.title2)
                 .foregroundColor(LiquidGlassColors.accentText)
@@ -94,6 +97,7 @@ struct MapView: View {
             Text(result.name)
                 .font(.caption)
                 .foregroundColor(LiquidGlassColors.primaryText)
+                .lineLimit(1)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
                 .background(

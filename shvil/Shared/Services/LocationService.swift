@@ -20,6 +20,8 @@ public class LocationService: NSObject, ObservableObject {
     )
 
     private let locationManager = CLLocationManager()
+    private var lastLocationUpdate: Date = Date.distantPast
+    private let locationUpdateThrottle: TimeInterval = 1.0 // Throttle location updates to 1 second
 
     override init() {
         super.init()
@@ -64,6 +66,11 @@ public class LocationService: NSObject, ObservableObject {
 extension LocationService: CLLocationManagerDelegate {
     public func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
+        
+        // Throttle location updates to improve performance
+        let now = Date()
+        guard now.timeIntervalSince(lastLocationUpdate) >= locationUpdateThrottle else { return }
+        lastLocationUpdate = now
 
         DispatchQueue.main.async {
             self.currentLocation = location
