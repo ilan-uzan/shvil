@@ -22,49 +22,31 @@ struct ContentView: View {
                 }
                 .tag(0)
 
-            // Search Tab
-            SearchView()
+            // Adventures Tab
+            AdventuresView()
                 .tabItem {
-                    Image(systemName: "magnifyingglass")
-                    Text("Search")
+                    Image(systemName: "star.fill")
+                    Text("Adventures")
                 }
                 .tag(1)
 
-            // Saved Places Tab
-            SavedPlacesView()
+            // Hunts Tab
+            HuntsView()
                 .tabItem {
-                    Image(systemName: "heart.fill")
-                    Text("Saved")
+                    Image(systemName: "target")
+                    Text("Hunts")
                 }
                 .tag(2)
 
-            // Social Plans Tab
-            SocialPlansView()
+            // Settings Tab
+            SettingsView()
                 .tabItem {
-                    Image(systemName: "person.3.fill")
-                    Text("Plans")
+                    Image(systemName: "gearshape.fill")
+                    Text("Settings")
                 }
                 .tag(3)
-
-            // Profile Tab
-            ProfileView()
-                .tabItem {
-                    Image(systemName: "person.fill")
-                    Text("Profile")
-                }
-                .tag(4)
         }
-        .accentColor(LiquidGlassColors.accentText)
-    }
-}
-
-// MARK: - Placeholder Views (will be replaced with real implementations)
-
-// MARK: - Liquid Glass Profile View
-
-struct ProfileView: View {
-    var body: some View {
-        SettingsView()
+        .accentColor(ShvilColors.accentPrimary)
     }
 }
 

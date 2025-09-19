@@ -31,12 +31,82 @@ class SocialKit: ObservableObject {
     @Published var activeETASessions: [ETASession] = []
     @Published var groupTrips: [GroupTrip] = []
     @Published var friendsOnMap: [FriendLocation] = []
+    @Published var activeHunts: [ScavengerHunt] = []
+    @Published var availableHunts: [ScavengerHunt] = []
+    @Published var myHunts: [ScavengerHunt] = []
 
     // MARK: - Private Properties
 
     let client: SupabaseClient
     private var cancellables = Set<AnyCancellable>()
     private var realtimeChannels: [String: RealtimeChannelV2] = [:]
+    
+    // MARK: - Hunt Management
+    
+    func loadHunts() async {
+        do {
+            // Load active hunts
+            let activeHuntsResponse: [ScavengerHunt] = try await client
+                .from("scavenger_hunts")
+                .select()
+                .eq("status", value: "active")
+                .execute()
+                .value
+            
+            // Load available hunts
+            let availableHuntsResponse: [ScavengerHunt] = try await client
+                .from("scavenger_hunts")
+                .select()
+                .eq("status", value: "draft")
+                .execute()
+                .value
+            
+            // Load user's hunts
+            let myHuntsResponse: [ScavengerHunt] = try await client
+                .from("scavenger_hunts")
+                .select()
+                .eq("created_by", value: currentUser?.id.uuidString ?? "")
+                .execute()
+                .value
+            
+            await MainActor.run {
+                self.activeHunts = activeHuntsResponse
+                self.availableHunts = availableHuntsResponse
+                self.myHunts = myHuntsResponse
+            }
+        } catch {
+            print("Error loading hunts: \(error)")
+            // In demo mode, create some mock data
+            await MainActor.run {
+                self.activeHunts = createMockHunts()
+                self.availableHunts = createMockHunts()
+                self.myHunts = createMockHunts()
+            }
+        }
+    }
+    
+    private func createMockHunts() -> [ScavengerHunt] {
+        return [
+            ScavengerHunt(
+                name: "Downtown Food Hunt",
+                description: "Find the best food spots in downtown",
+                huntCode: "FOOD123",
+                createdBy: UUID(),
+                status: .active,
+                maxParticipants: 20,
+                currentParticipants: 15
+            ),
+            ScavengerHunt(
+                name: "Historical Landmarks",
+                description: "Discover the city's rich history",
+                huntCode: "HIST456",
+                createdBy: UUID(),
+                status: .draft,
+                maxParticipants: 10,
+                currentParticipants: 3
+            )
+        ]
+    }
 
     // MARK: - Initialization
 

@@ -16,6 +16,8 @@ public class AdventureService: ObservableObject {
     
     @Published public var currentAdventure: AdventurePlan?
     @Published public var adventureHistory: [AdventurePlan] = []
+    @Published public var activeAdventures: [AdventurePlan] = []
+    @Published public var recentAdventures: [AdventurePlan] = []
     @Published public var isGenerating = false
     @Published public var isTourModeActive = false
     @Published public var currentStopIndex = 0

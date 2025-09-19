@@ -74,6 +74,7 @@ public class MapEngine: NSObject, ObservableObject {
         return response.mapItems.map { item in
             SearchResult(
                 name: item.name ?? "Unknown",
+                subtitle: item.placemark.title,
                 address: item.placemark.title ?? "",
                 coordinate: item.placemark.coordinate
             )
@@ -104,6 +105,7 @@ public class MapEngine: NSObject, ObservableObject {
                 let results = response.mapItems.map { mapItem in
                     SearchResult(
                         name: mapItem.name ?? "Unknown",
+                        subtitle: mapItem.placemark.title,
                         address: mapItem.placemark.title ?? "",
                         coordinate: mapItem.placemark.coordinate,
                         mapItem: mapItem
@@ -201,6 +203,7 @@ extension MapEngine: MKLocalSearchCompleterDelegate {
         let results = completer.results.map { completion in
             SearchResult(
                 name: completion.title,
+                subtitle: completion.subtitle,
                 address: completion.subtitle,
                 coordinate: CLLocationCoordinate2D(latitude: 0, longitude: 0), // Will be filled when selected
                 mapItem: nil

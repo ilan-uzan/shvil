@@ -309,6 +309,8 @@ public enum CompanionType: String, CaseIterable, Codable {
 public class AdventureKit: ObservableObject {
     @Published public var currentAdventure: AdventurePlan?
     @Published public var adventureHistory: [AdventurePlan] = []
+    @Published public var activeAdventures: [AdventurePlan] = []
+    @Published public var recentAdventures: [AdventurePlan] = []
     @Published public var isGenerating = false
     @Published public var error: Error?
 

@@ -93,6 +93,7 @@ public struct ScavengerHunt: Codable, Identifiable {
     public let endTime: Date?
     public let maxParticipants: Int
     public let currentParticipants: Int
+    public let checkpoints: [HuntCheckpoint]
     public let createdAt: Date
     public let updatedAt: Date
     
@@ -107,6 +108,7 @@ public struct ScavengerHunt: Codable, Identifiable {
         endTime: Date? = nil,
         maxParticipants: Int = 50,
         currentParticipants: Int = 0,
+        checkpoints: [HuntCheckpoint] = [],
         createdAt: Date = Date(),
         updatedAt: Date = Date()
     ) {
@@ -120,6 +122,7 @@ public struct ScavengerHunt: Codable, Identifiable {
         self.endTime = endTime
         self.maxParticipants = maxParticipants
         self.currentParticipants = currentParticipants
+        self.checkpoints = checkpoints
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }

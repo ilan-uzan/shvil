@@ -46,7 +46,11 @@ class SearchService: ObservableObject {
         searchTask?.cancel()
         
         searchTask = Task {
-            await performSearch(query: query)
+            do {
+                _ = try await performSearch(query: query)
+            } catch {
+                // Error is already handled in performSearch
+            }
         }
     }
     
@@ -126,7 +130,7 @@ class SearchService: ObservableObject {
             .store(in: &cancellables)
     }
     
-    private func performSearch(query: String) async {
+    public func performSearch(query: String) async throws -> [SearchResult] {
         await MainActor.run {
             isSearching = true
             error = nil
@@ -150,11 +154,14 @@ class SearchService: ObservableObject {
                 self.isSearching = false
                 self.isShowingSuggestions = false
             }
+            
+            return filteredResults
         } catch {
             await MainActor.run {
                 self.error = error
                 self.isSearching = false
             }
+            throw error
         }
     }
     

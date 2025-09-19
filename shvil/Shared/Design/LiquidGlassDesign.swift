@@ -67,6 +67,10 @@ enum LiquidGlassColors {
     // Background
     static let background = Color.black
     static let surface = glassSurface1
+    
+    // Glass surface colors for components
+    static let glassSurface = glassSurface1
+    static let glassBorder = glassSurface2
 }
 
 // MARK: - Gradients
