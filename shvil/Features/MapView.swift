@@ -5,7 +5,7 @@ import CoreHaptics
 import AVFoundation
 import Combine
 
-/// Shvil Home/Map Page - Apple Maps inspired with strict design tokens
+/// Shvil Home/Map Page - Exact wireframe implementation
 /// iOS 26+ Liquid Glass, iOS 16-25 glassmorphism fallback
 struct MapView: View {
     @StateObject private var locationService = DependencyContainer.shared.locationService
@@ -41,13 +41,15 @@ struct MapView: View {
     @AppStorage("lastMapStyle") private var lastMapStyle: Int = 0
     @AppStorage("lastSelectedMode") private var lastSelectedMode: Int = 1
     
-    // MARK: - Design Tokens (STRICT)
+    // MARK: - Design Tokens (EXACT)
     private let H_PADDING: CGFloat = 16
-    private let V_STACK_SPACING: CGFloat = 8
+    private let V_RHYTHM: CGFloat = 8
     private let SEARCH_HEIGHT: CGFloat = 48
     private let PILL_HEIGHT: CGFloat = 34
     private let SEGMENTED_HEIGHT: CGFloat = 38
     private let FAB_SIZE: CGFloat = 48
+    private let FAB_SPACING: CGFloat = 12
+    private let FAB_EDGE_OFFSET: CGFloat = 16
     private let ICON_SIZE: CGFloat = 18
     private let TAB_ICON_SIZE: CGFloat = 22
     private let CORNER_SEARCH: CGFloat = 18
@@ -70,35 +72,35 @@ struct MapView: View {
     
     var body: some View {
         ZStack {
-            // MARK: - 1. MAP (Fullscreen edge-to-edge)
+            // MARK: - MAP (edge-to-edge)
             mapView
                 .ignoresSafeArea(.all)
             
-            // MARK: - 2. TOP CLUSTER
-            VStack(spacing: V_STACK_SPACING) {
-                // Search Bar
+            // MARK: - TOP CLUSTER
+            VStack(spacing: V_RHYTHM) {
+                // 1. Search Bar (48pt height, full width minus 16pt padding)
                 searchBar
                 
-                // Suggestion Pills
+                // 2. Suggestion Pills (34pt height, 8pt gap, horizontal scroll)
                 suggestionPills
                 
-                // Segmented Control
+                // 3. Navigate/Explore Toggle (native segmented, 36-40pt height)
                 segmentedControl
             }
             .padding(.horizontal, H_PADDING)
-            .padding(.top, safeAreaTop + V_STACK_SPACING)
+            .padding(.top, safeAreaTop + V_RHYTHM)
             .frame(maxWidth: .infinity, alignment: .top)
             
-            // MARK: - 3. FLOATING CONTROLS (bottom right)
-            VStack(spacing: 12) {
+            // MARK: - FLOATING MAP BUTTONS (bottom right)
+            VStack(spacing: FAB_SPACING) {
                 // Map Type Button (Top)
                 mapTypeButton
                 
                 // Locate Me Button (Bottom)
                 locateMeButton
             }
-            .padding(.trailing, H_PADDING)
-            .padding(.bottom, tabBarHeight + H_PADDING)
+            .padding(.trailing, FAB_EDGE_OFFSET)
+            .padding(.bottom, tabBarHeight + FAB_EDGE_OFFSET)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             
             // MARK: - Search Results Overlay
@@ -137,7 +139,7 @@ struct MapView: View {
         }
     }
     
-    // MARK: - 1. MAP (Fullscreen edge-to-edge)
+    // MARK: - MAP (edge-to-edge)
     private var mapView: some View {
         Map(coordinateRegion: $region,
             interactionModes: .all,
@@ -154,16 +156,16 @@ struct MapView: View {
         .animation(.easeInOut(duration: 0.2), value: isSearchFocused)
     }
     
-    // MARK: - 2.1 Search Bar (48pt height, full width minus 16pt padding)
+    // MARK: - 1. Search Bar (48pt height, full width minus 16pt padding)
     private var searchBar: some View {
         HStack(spacing: 12) {
-            // Logo (16pt max)
+            // Left: small Shvil logo (16pt max)
             Image(systemName: "star.fill")
                 .font(.system(size: 16, weight: .regular))
                 .foregroundColor(ShvilColors.accentPrimary)
                 .frame(width: 16, height: 16)
             
-            // Placeholder (Callout typography)
+            // Center: placeholder text
             TextField("Search places, adventures, hunts…", text: $searchText)
                 .textFieldStyle(PlainTextFieldStyle())
                 .font(.callout)
@@ -176,12 +178,12 @@ struct MapView: View {
                     focusSearch()
                 }
             
-            // Right Icons (Mic + Profile with 12pt spacing)
-            HStack(spacing: 12) {
+            // Right: mic + profile, spaced 8pt apart
+            HStack(spacing: 8) {
                 // Microphone
                 Button(action: toggleVoiceSearch) {
                     Image(systemName: isListening ? "waveform" : "mic.fill")
-                        .font(.system(size: ICON_SIZE, weight: .regular))
+                        .font(.system(size: 18, weight: .regular))
                         .foregroundColor(isListening ? ShvilColors.accentPrimary : ShvilColors.textSecondary)
                         .frame(width: 44, height: 44)
                         .scaleEffect(isListening ? 1.05 : 1.0)
@@ -192,7 +194,7 @@ struct MapView: View {
                 // Profile
                 Button(action: openProfile) {
                     Image(systemName: "person.circle.fill")
-                        .font(.system(size: ICON_SIZE, weight: .regular))
+                        .font(.system(size: 18, weight: .regular))
                         .foregroundColor(ShvilColors.textSecondary)
                         .frame(width: 44, height: 44)
                 }
@@ -223,7 +225,7 @@ struct MapView: View {
         .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isSearchFocused)
     }
     
-    // MARK: - 2.2 Suggestion Pills (34pt height, uniform, equal spacing)
+    // MARK: - 2. Suggestion Pills (34pt height, 8pt gap, horizontal scroll)
     private var suggestionPills: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 8) {
@@ -238,7 +240,7 @@ struct MapView: View {
         .frame(height: PILL_HEIGHT)
     }
     
-    // MARK: - 2.3 Segmented Control (true Apple segmented control, 36-40pt height)
+    // MARK: - 3. Navigate/Explore Toggle (native segmented, 36-40pt height)
     private var segmentedControl: some View {
         Picker("Mode", selection: $selectedMode) {
             Text("Navigate").tag(MapMode.navigate)
@@ -263,7 +265,7 @@ struct MapView: View {
         .accessibilityElement(children: .contain)
     }
     
-    // MARK: - 3.1 Map Type Button (48pt FAB, 18pt icon)
+    // MARK: - 4. Map Type Button (48pt circular, 18pt icon)
     private var mapTypeButton: some View {
         Button(action: {
             showingMapModeMenu = true
@@ -295,7 +297,7 @@ struct MapView: View {
         }
     }
     
-    // MARK: - 3.2 Locate Me Button (48pt FAB, 18pt icon)
+    // MARK: - 5. Locate Me Button (48pt circular, 18pt icon)
     private var locateMeButton: some View {
         Button(action: {
             locateUser()
@@ -787,7 +789,7 @@ struct SuggestionChipView: View {
                     .lineLimit(1)
             }
             .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            .padding(.vertical, 10)
             .frame(height: 34)
             .background(
                 Capsule()
