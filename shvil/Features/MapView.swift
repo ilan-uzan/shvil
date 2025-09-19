@@ -5,7 +5,7 @@ import CoreHaptics
 import AVFoundation
 import Combine
 
-/// Shvil Home/Map Page - Apple Maps inspired with clean hierarchy
+/// Shvil Home/Map Page - Apple Maps inspired with strict design tokens
 /// iOS 26+ Liquid Glass, iOS 16-25 glassmorphism fallback
 struct MapView: View {
     @StateObject private var locationService = DependencyContainer.shared.locationService
@@ -41,14 +41,20 @@ struct MapView: View {
     @AppStorage("lastMapStyle") private var lastMapStyle: Int = 0
     @AppStorage("lastSelectedMode") private var lastSelectedMode: Int = 1
     
-    // MARK: - Design Tokens
+    // MARK: - Design Tokens (STRICT)
     private let H_PADDING: CGFloat = 16
     private let V_STACK_SPACING: CGFloat = 8
-    private let GLASS_CORNER: CGFloat = 18
-    private let PILL_CORNER: CGFloat = 14
+    private let SEARCH_HEIGHT: CGFloat = 48
+    private let PILL_HEIGHT: CGFloat = 34
+    private let SEGMENTED_HEIGHT: CGFloat = 38
     private let FAB_SIZE: CGFloat = 48
-    private let ICON_SIZE: CGFloat = 17
+    private let ICON_SIZE: CGFloat = 18
+    private let TAB_ICON_SIZE: CGFloat = 22
+    private let CORNER_SEARCH: CGFloat = 18
+    private let CORNER_PILL: CGFloat = 14
+    private let CORNER_FAB: CGFloat = 24
     private let BORDER_WIDTH: CGFloat = 1
+    private let BORDER_OPACITY: Double = 0.12
     private let SHADOW_Y: CGFloat = 2
     private let SHADOW_BLUR: CGFloat = 8
     private let SHADOW_OPACITY: Double = 0.10
@@ -64,26 +70,26 @@ struct MapView: View {
     
     var body: some View {
         ZStack {
-            // MARK: - Map Background (Edge-to-Edge)
+            // MARK: - 1. MAP (Fullscreen edge-to-edge)
             mapView
                 .ignoresSafeArea(.all)
             
-            // MARK: - Top Chrome Group (Stacked)
+            // MARK: - 2. TOP CLUSTER
             VStack(spacing: V_STACK_SPACING) {
-                // Search Pill
-                searchPill
+                // Search Bar
+                searchBar
                 
-                // Smart Suggestion Pills
-                suggestionPillsScroll
+                // Suggestion Pills
+                suggestionPills
                 
-                // Mode Toggle
-                modeSegmentedControl
+                // Segmented Control
+                segmentedControl
             }
             .padding(.horizontal, H_PADDING)
             .padding(.top, safeAreaTop + V_STACK_SPACING)
             .frame(maxWidth: .infinity, alignment: .top)
             
-            // MARK: - Floating Map Controls (Right-Bottom)
+            // MARK: - 3. FLOATING CONTROLS (bottom right)
             VStack(spacing: 12) {
                 // Map Type Button (Top)
                 mapTypeButton
@@ -131,7 +137,7 @@ struct MapView: View {
         }
     }
     
-    // MARK: - Map Background
+    // MARK: - 1. MAP (Fullscreen edge-to-edge)
     private var mapView: some View {
         Map(coordinateRegion: $region,
             interactionModes: .all,
@@ -148,16 +154,16 @@ struct MapView: View {
         .animation(.easeInOut(duration: 0.2), value: isSearchFocused)
     }
     
-    // MARK: - Search Pill
-    private var searchPill: some View {
+    // MARK: - 2.1 Search Bar (48pt height, full width minus 16pt padding)
+    private var searchBar: some View {
         HStack(spacing: 12) {
-            // Shvil Logo (Left) - Reduced visual weight
+            // Logo (16pt max)
             Image(systemName: "star.fill")
-                .font(.system(size: ICON_SIZE, weight: .regular))
+                .font(.system(size: 16, weight: .regular))
                 .foregroundColor(ShvilColors.accentPrimary)
                 .frame(width: 16, height: 16)
             
-            // Search Field (Center)
+            // Placeholder (Callout typography)
             TextField("Search places, adventures, hunts…", text: $searchText)
                 .textFieldStyle(PlainTextFieldStyle())
                 .font(.callout)
@@ -170,8 +176,8 @@ struct MapView: View {
                     focusSearch()
                 }
             
-            // Right Icons (Mic + Profile) - Aligned to trailing padding
-            HStack(spacing: 8) {
+            // Right Icons (Mic + Profile with 12pt spacing)
+            HStack(spacing: 12) {
                 // Microphone
                 Button(action: toggleVoiceSearch) {
                     Image(systemName: isListening ? "waveform" : "mic.fill")
@@ -195,14 +201,14 @@ struct MapView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 12)
-        .frame(height: 50)
+        .frame(height: SEARCH_HEIGHT)
         .background(
             Capsule()
-                .fill(.ultraThinMaterial.opacity(0.75))
+                .fill(.ultraThinMaterial)
                 .overlay(
                     Capsule()
                         .stroke(
-                            isSearchFocused ? ShvilColors.accentPrimary : Color.white.opacity(0.12),
+                            isSearchFocused ? ShvilColors.accentPrimary : Color.white.opacity(BORDER_OPACITY),
                             lineWidth: isSearchFocused ? 1.5 : BORDER_WIDTH
                         )
                 )
@@ -217,10 +223,10 @@ struct MapView: View {
         .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isSearchFocused)
     }
     
-    // MARK: - Smart Suggestion Pills
-    private var suggestionPillsScroll: some View {
+    // MARK: - 2.2 Suggestion Pills (34pt height, uniform, equal spacing)
+    private var suggestionPills: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: 6) {
+            LazyHStack(spacing: 8) {
                 ForEach(suggestionChips) { chip in
                     SuggestionChipView(chip: chip) {
                         selectSuggestionChip(chip)
@@ -229,23 +235,23 @@ struct MapView: View {
             }
             .padding(.horizontal, 8)
         }
-        .frame(height: 36)
+        .frame(height: PILL_HEIGHT)
     }
     
-    // MARK: - Mode Segmented Control
-    private var modeSegmentedControl: some View {
+    // MARK: - 2.3 Segmented Control (true Apple segmented control, 36-40pt height)
+    private var segmentedControl: some View {
         Picker("Mode", selection: $selectedMode) {
             Text("Navigate").tag(MapMode.navigate)
             Text("Explore").tag(MapMode.explore)
         }
         .pickerStyle(SegmentedPickerStyle())
-        .frame(height: 38)
+        .frame(height: SEGMENTED_HEIGHT)
         .background(
-            RoundedRectangle(cornerRadius: GLASS_CORNER)
+            RoundedRectangle(cornerRadius: CORNER_SEARCH)
                 .fill(.ultraThinMaterial)
                 .overlay(
-                    RoundedRectangle(cornerRadius: GLASS_CORNER)
-                        .stroke(Color.white.opacity(0.12), lineWidth: BORDER_WIDTH)
+                    RoundedRectangle(cornerRadius: CORNER_SEARCH)
+                        .stroke(Color.white.opacity(BORDER_OPACITY), lineWidth: BORDER_WIDTH)
                 )
         )
         .shadow(
@@ -257,7 +263,7 @@ struct MapView: View {
         .accessibilityElement(children: .contain)
     }
     
-    // MARK: - Map Type Button
+    // MARK: - 3.1 Map Type Button (48pt FAB, 18pt icon)
     private var mapTypeButton: some View {
         Button(action: {
             showingMapModeMenu = true
@@ -272,7 +278,7 @@ struct MapView: View {
                         .fill(.ultraThinMaterial)
                         .overlay(
                             Circle()
-                                .stroke(Color.white.opacity(0.12), lineWidth: BORDER_WIDTH)
+                                .stroke(Color.white.opacity(BORDER_OPACITY), lineWidth: BORDER_WIDTH)
                         )
                 )
                 .shadow(
@@ -289,11 +295,11 @@ struct MapView: View {
         }
     }
     
-    // MARK: - Locate Me Button
+    // MARK: - 3.2 Locate Me Button (48pt FAB, 18pt icon)
     private var locateMeButton: some View {
         Button(action: {
             locateUser()
-            triggerHaptic(.medium)
+            triggerHaptic(.soft)
         }) {
             Image(systemName: "location.fill")
                 .font(.system(size: ICON_SIZE, weight: .regular))
@@ -333,7 +339,7 @@ struct MapView: View {
                 }) {
                     HStack(spacing: 12) {
                         Image(systemName: option.icon)
-                            .font(.title3)
+                            .font(.system(size: ICON_SIZE, weight: .regular))
                             .foregroundColor(ShvilColors.textPrimary)
                             .frame(width: 24, height: 24)
                         
@@ -598,7 +604,7 @@ struct MapView: View {
         withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
             isSearchFocused = true
         }
-        triggerHaptic(.light)
+        triggerHaptic(.soft)
     }
     
     private func dismissSearch() {
@@ -618,7 +624,7 @@ struct MapView: View {
         withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
             isListening.toggle()
         }
-        triggerHaptic(.light)
+        triggerHaptic(.soft)
         
         if isListening {
             // Start voice recognition (stub)
@@ -632,7 +638,7 @@ struct MapView: View {
     
     private func openProfile() {
         showingProfile = true
-        triggerHaptic(.light)
+        triggerHaptic(.soft)
     }
     
     private func selectSuggestionChip(_ chip: SuggestionChip) {
@@ -647,13 +653,13 @@ struct MapView: View {
                 region.center = location.coordinate
                 userTrackingMode = .follow
             }
-            triggerHaptic(.medium)
+            triggerHaptic(.soft)
         }
     }
     
     private func selectMapStyle(_ option: MapStyleOption) {
         mapStyle = option.mapType
-        triggerHaptic(.light)
+        triggerHaptic(.soft)
     }
     
     private func selectSearchResult(_ result: SearchResult) {
@@ -661,17 +667,17 @@ struct MapView: View {
             region.center = result.coordinate
             dismissSearch()
         }
-        triggerHaptic(.light)
+        triggerHaptic(.soft)
     }
     
     private func selectAdventure(_ adventure: AdventurePlan) {
         // Handle adventure selection
-        triggerHaptic(.light)
+        triggerHaptic(.soft)
     }
     
     private func selectHunt(_ hunt: ScavengerHunt) {
         // Handle hunt selection
-        triggerHaptic(.light)
+        triggerHaptic(.soft)
     }
     
     private func convertToMapPoint(_ coordinate: CLLocationCoordinate2D) -> CGPoint {
@@ -781,8 +787,8 @@ struct SuggestionChipView: View {
                     .lineLimit(1)
             }
             .padding(.horizontal, 12)
-            .padding(.vertical, 10)
-            .frame(height: 36)
+            .padding(.vertical, 8)
+            .frame(height: 34)
             .background(
                 Capsule()
                     .fill(.ultraThinMaterial)
