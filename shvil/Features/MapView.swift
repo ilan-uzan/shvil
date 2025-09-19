@@ -5,7 +5,7 @@ import CoreHaptics
 import AVFoundation
 import Combine
 
-/// Main Maps screen - Apple Maps inspired with Shvil adventure identity
+/// Shvil Home/Map Page - Apple Maps inspired with clean hierarchy
 /// iOS 26+ Liquid Glass, iOS 16-25 glassmorphism fallback
 struct MapView: View {
     @StateObject private var locationService = DependencyContainer.shared.locationService
@@ -42,14 +42,6 @@ struct MapView: View {
     @AppStorage("lastSelectedMode") private var lastSelectedMode: Int = 1
     
     // MARK: - Computed Properties
-    private var screenWidth: CGFloat {
-        UIScreen.main.bounds.width
-    }
-    
-    private var clusterWidth: CGFloat {
-        screenWidth * 0.85 // 85% of screen width
-    }
-    
     private var safeAreaTop: CGFloat {
         UIApplication.shared.windows.first?.safeAreaInsets.top ?? 0
     }
@@ -59,44 +51,44 @@ struct MapView: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // MARK: - Full-Screen Map (Edge-to-Edge)
-                mapView
-                    .ignoresSafeArea()
+        ZStack {
+            // MARK: - Map Background (Edge-to-Edge)
+            mapView
+                .ignoresSafeArea(.all)
+            
+            // MARK: - Top Chrome Group (Stacked)
+            VStack(spacing: 8) {
+                // Search Pill
+                searchPill
                 
-                // MARK: - Top Cluster (Apple Maps Style)
-                VStack(spacing: 0) {
-                    // Search Bar (Apple Maps inspired)
-                    searchBar
-                        .padding(.top, safeAreaTop + 16)
-                    
-                    // Smart Suggestions (Horizontal scrollable pills)
-                    smartSuggestions
-                        .padding(.top, 12)
-                    
-                    // Navigation Mode Switch (Apple segmented control)
-                    navigationModeSwitch
-                        .padding(.top, 16)
-                    
-                    Spacer()
-                }
-                .frame(maxWidth: .infinity)
+                // Smart Suggestion Pills
+                suggestionPillsScroll
                 
-                // MARK: - Floating Map Controls (Apple Maps Style)
-                VStack {
-                    Spacer()
-                    floatingMapControls
-                        .padding(.trailing, 16)
-                        .padding(.bottom, tabBarHeight + 120)
-                }
+                // Mode Toggle
+                modeSegmentedControl
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, safeAreaTop + 8)
+            .frame(maxWidth: .infinity, alignment: .top)
+            
+            // MARK: - Floating Map Controls (Right-Bottom)
+            VStack(spacing: 12) {
+                // Map Type Button (Top)
+                mapTypeButton
                 
-                // MARK: - Search Results Overlay
-                if showingSearchResults {
-                    searchResultsOverlay
-                }
+                // Locate Me Button (Bottom)
+                locateMeButton
+            }
+            .padding(.trailing, 16)
+            .padding(.bottom, tabBarHeight + 16)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            
+            // MARK: - Search Results Overlay
+            if showingSearchResults {
+                searchResultsOverlay
             }
         }
+        .environment(\.colorScheme, .light)
         .onAppear {
             setupInitialState()
         }
@@ -127,7 +119,7 @@ struct MapView: View {
         }
     }
     
-    // MARK: - Full-Screen Map
+    // MARK: - Map Background
     private var mapView: some View {
         Map(coordinateRegion: $region,
             interactionModes: .all,
@@ -142,19 +134,18 @@ struct MapView: View {
         )
     }
     
-    // MARK: - Search Bar (Apple Maps Style)
-    private var searchBar: some View {
-        HStack(spacing: 0) {
-            // Shvil Logo (Left) - Enhanced with better visual hierarchy
+    // MARK: - Search Pill
+    private var searchPill: some View {
+        HStack(spacing: 12) {
+            // Shvil Logo (Left)
             Image(systemName: "star.fill")
-                .font(.title2)
+                .font(.title3)
                 .fontWeight(.medium)
                 .foregroundColor(ShvilColors.accentPrimary)
-                .frame(width: 24, height: 24)
-                .padding(.leading, 16)
+                .frame(width: 20, height: 20)
             
-            // Search Field (Center) - Improved typography and spacing
-            TextField("Search places, adventures, or hunts", text: $searchText)
+            // Search Field (Center)
+            TextField("Search places, adventures, hunts…", text: $searchText)
                 .textFieldStyle(PlainTextFieldStyle())
                 .font(.subheadline)
                 .fontWeight(.regular)
@@ -165,43 +156,35 @@ struct MapView: View {
                 .onTapGesture {
                     focusSearch()
                 }
-                .padding(.horizontal, 16)
             
-            // Right Icons (Mic + Profile) - Enhanced visual consistency
+            // Right Icons (Mic + Profile)
             HStack(spacing: 16) {
-                // Microphone - Improved visual feedback
+                // Microphone
                 Button(action: toggleVoiceSearch) {
                     Image(systemName: isListening ? "waveform" : "mic.fill")
                         .font(.title3)
                         .fontWeight(.medium)
                         .foregroundColor(isListening ? ShvilColors.accentPrimary : ShvilColors.textSecondary)
                         .frame(width: 20, height: 20)
-                        .background(
-                            Circle()
-                                .fill(isListening ? ShvilColors.accentPrimary.opacity(0.12) : Color.clear)
-                        )
-                        .overlay(
-                            Circle()
-                                .stroke(isListening ? ShvilColors.accentPrimary : Color.clear, lineWidth: 1.5)
-                        )
-                        .scaleEffect(isListening ? 1.08 : 1.0)
+                        .scaleEffect(isListening ? 1.1 : 1.0)
                         .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isListening)
                 }
                 .accessibilityLabel(isListening ? "Voice search (listening)" : "Voice search")
                 
-                // Profile - Enhanced visual consistency
+                // Profile
                 Button(action: openProfile) {
                     Image(systemName: "person.circle.fill")
-                        .font(.title2)
+                        .font(.title3)
                         .fontWeight(.medium)
                         .foregroundColor(ShvilColors.textSecondary)
-                        .frame(width: 24, height: 24)
+                        .frame(width: 20, height: 20)
                 }
                 .accessibilityLabel("Open Profile")
             }
-            .padding(.trailing, 16)
         }
-        .frame(width: clusterWidth, height: 44)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .frame(height: 48)
         .background(
             Capsule()
                 .fill(.ultraThinMaterial)
@@ -209,22 +192,16 @@ struct MapView: View {
                     Capsule()
                         .stroke(
                             isSearchFocused ? ShvilColors.accentPrimary : Color.clear,
-                            lineWidth: 2
+                            lineWidth: 1.5
                         )
                 )
         )
-        .shadow(
-            color: Color.black.opacity(0.06),
-            radius: 16,
-            x: 0,
-            y: 6
-        )
-        .scaleEffect(isSearchFocused ? 1.015 : 1.0)
+        .scaleEffect(isSearchFocused ? 1.02 : 1.0)
         .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isSearchFocused)
     }
     
-    // MARK: - Smart Suggestions (Horizontal Scrollable Pills)
-    private var smartSuggestions: some View {
+    // MARK: - Smart Suggestion Pills
+    private var suggestionPillsScroll: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 8) {
                 ForEach(suggestionChips) { chip in
@@ -233,62 +210,92 @@ struct MapView: View {
                     }
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 4)
         }
-        .frame(width: clusterWidth, height: 36)
+        .frame(height: 36)
     }
     
-    // MARK: - Navigation Mode Switch (Apple Segmented Control)
-    private var navigationModeSwitch: some View {
+    // MARK: - Mode Segmented Control
+    private var modeSegmentedControl: some View {
         Picker("Mode", selection: $selectedMode) {
             Text("Navigate").tag(MapMode.navigate)
             Text("Explore").tag(MapMode.explore)
         }
         .pickerStyle(SegmentedPickerStyle())
-        .frame(width: clusterWidth, height: 36)
+        .frame(height: 36)
         .background(
             Capsule()
                 .fill(.ultraThinMaterial)
-                .overlay(
-                    Capsule()
-                        .stroke(ShvilColors.borderDivider.opacity(0.3), lineWidth: 0.5)
-                )
-        )
-        .shadow(
-            color: Color.black.opacity(0.04),
-            radius: 6,
-            x: 0,
-            y: 3
         )
         .accessibilityElement(children: .contain)
     }
     
-    // MARK: - Floating Map Controls (Apple Maps Style)
-    private var floatingMapControls: some View {
-        VStack(spacing: 16) {
-            // Locate Me Button (Top) - Fixed order per spec
-            MapControlButton(
-                icon: "location.fill",
-                color: ShvilColors.accentPrimary,
-                isSelected: userTrackingMode == .follow
-            ) {
-                locateUser()
-            }
-            .accessibilityLabel("Locate me")
-            
-            // Map Type Button (Bottom) - Fixed order per spec
-            MapControlButton(
-                icon: "map.fill",
-                color: ShvilColors.textPrimary,
-                isSelected: false
-            ) {
-                showingMapModeMenu = true
-            }
-            .accessibilityLabel("Map style: \(mapStyleName)")
-            .popover(isPresented: $showingMapModeMenu) {
-                mapModeMenu
-            }
+    // MARK: - Map Type Button
+    private var mapTypeButton: some View {
+        Button(action: {
+            showingMapModeMenu = true
+            triggerHaptic(.light)
+        }) {
+            Image(systemName: "map.fill")
+                .font(.title3)
+                .fontWeight(.medium)
+                .foregroundColor(ShvilColors.textPrimary)
+                .frame(width: 44, height: 44)
+                .background(
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            Circle()
+                                .stroke(ShvilColors.borderDivider.opacity(0.3), lineWidth: 1)
+                        )
+                )
+                .shadow(
+                    color: Color.black.opacity(0.08),
+                    radius: 8,
+                    x: 0,
+                    y: 4
+                )
         }
+        .buttonStyle(PlainButtonStyle())
+        .accessibilityLabel("Map style: \(mapStyleName)")
+        .popover(isPresented: $showingMapModeMenu) {
+            mapModeMenu
+        }
+    }
+    
+    // MARK: - Locate Me Button
+    private var locateMeButton: some View {
+        Button(action: {
+            locateUser()
+            triggerHaptic(.medium)
+        }) {
+            Image(systemName: "location.fill")
+                .font(.title3)
+                .fontWeight(.medium)
+                .foregroundColor(ShvilColors.accentPrimary)
+                .frame(width: 44, height: 44)
+                .background(
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            Circle()
+                                .stroke(
+                                    userTrackingMode == .follow ? ShvilColors.accentPrimary : ShvilColors.accentPrimary.opacity(0.3),
+                                    lineWidth: userTrackingMode == .follow ? 2 : 1
+                                )
+                        )
+                )
+                .shadow(
+                    color: userTrackingMode == .follow ? ShvilColors.accentPrimary.opacity(0.3) : Color.black.opacity(0.08),
+                    radius: userTrackingMode == .follow ? 12 : 8,
+                    x: 0,
+                    y: userTrackingMode == .follow ? 6 : 4
+                )
+                .scaleEffect(userTrackingMode == .follow ? 1.08 : 1.0)
+                .animation(.spring(response: 0.25, dampingFraction: 0.7), value: userTrackingMode == .follow)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .accessibilityLabel("Locate me")
     }
     
     // MARK: - Map Mode Menu
@@ -563,14 +570,14 @@ struct MapView: View {
     }
     
     private func focusSearch() {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+        withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
             isSearchFocused = true
         }
         triggerHaptic(.light)
     }
     
     private func dismissSearch() {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+        withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
             isSearchFocused = false
             showingSearchResults = false
         }
@@ -583,7 +590,7 @@ struct MapView: View {
     }
     
     private func toggleVoiceSearch() {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+        withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
             isListening.toggle()
         }
         triggerHaptic(.light)
@@ -770,44 +777,6 @@ struct SuggestionChipView: View {
     }
 }
 
-struct MapControlButton: View {
-    let icon: String
-    let color: Color
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            Image(systemName: icon)
-                .font(.title3)
-                .fontWeight(.medium)
-                .foregroundColor(color)
-                .frame(width: 44, height: 44)
-                .background(
-                    Circle()
-                        .fill(.ultraThinMaterial)
-                        .overlay(
-                            Circle()
-                                .stroke(
-                                    isSelected ? color : color.opacity(0.25),
-                                    lineWidth: isSelected ? 2.5 : 1
-                                )
-                        )
-                )
-                .shadow(
-                    color: isSelected ? color.opacity(0.25) : Color.black.opacity(0.08),
-                    radius: isSelected ? 12 : 6,
-                    x: 0,
-                    y: isSelected ? 6 : 3
-                )
-        }
-        .buttonStyle(PlainButtonStyle())
-        .contentShape(Rectangle())
-        .scaleEffect(isSelected ? 1.08 : 1.0)
-        .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isSelected)
-    }
-}
-
 // MARK: - Map Annotations
 
 struct AdventurePin: View {
@@ -925,88 +894,6 @@ struct SearchResultRow: View {
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundColor(ShvilColors.textSecondary)
-            }
-            .padding(.vertical, 8)
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}
-
-struct AdventureRow: View {
-    let adventure: AdventurePlan
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: "star.fill")
-                    .foregroundColor(ShvilColors.accentPrimary)
-                    .font(.title2)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(adventure.title)
-                        .font(.subheadline)
-                        .foregroundColor(ShvilColors.textPrimary)
-                        .lineLimit(1)
-                    
-                    Text(adventure.description)
-                        .font(.caption)
-                        .foregroundColor(ShvilColors.textSecondary)
-                        .lineLimit(2)
-                }
-                
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text("\(adventure.totalDuration) min")
-                        .font(.caption2)
-                        .foregroundColor(ShvilColors.textSecondary)
-                    
-                    Text("\(adventure.totalDistance, specifier: "%.1f") km")
-                        .font(.caption2)
-                        .foregroundColor(ShvilColors.textSecondary)
-                }
-            }
-            .padding(.vertical, 8)
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}
-
-struct HuntRow: View {
-    let hunt: ScavengerHunt
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: "target")
-                    .foregroundColor(ShvilColors.accentSecondary)
-                    .font(.title2)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(hunt.name)
-                        .font(.subheadline)
-                        .foregroundColor(ShvilColors.textPrimary)
-                        .lineLimit(1)
-                    
-                    Text(hunt.description)
-                        .font(.caption)
-                        .foregroundColor(ShvilColors.textSecondary)
-                        .lineLimit(2)
-                }
-                
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text("\(hunt.currentParticipants)/\(hunt.maxParticipants)")
-                        .font(.caption2)
-                        .foregroundColor(ShvilColors.textSecondary)
-                    
-                    Text(hunt.status.rawValue.capitalized)
-                        .font(.caption2)
-                        .foregroundColor(ShvilColors.accentSecondary)
-                }
             }
             .padding(.vertical, 8)
         }

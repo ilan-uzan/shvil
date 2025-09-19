@@ -294,6 +294,47 @@ struct AdventureCard: View {
 
 // MARK: - Placeholder Views
 
+struct AdventureRow: View {
+    let adventure: AdventurePlan
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: "star.fill")
+                    .foregroundColor(ShvilColors.accentPrimary)
+                    .font(.title2)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(adventure.title)
+                        .font(.subheadline)
+                        .foregroundColor(ShvilColors.textPrimary)
+                        .lineLimit(1)
+                    
+                    Text(adventure.description)
+                        .font(.caption)
+                        .foregroundColor(ShvilColors.textSecondary)
+                        .lineLimit(2)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("\(adventure.totalDuration) min")
+                        .font(.caption2)
+                        .foregroundColor(ShvilColors.textSecondary)
+                    
+                    Text("\(adventure.totalDistance, specifier: "%.1f") km")
+                        .font(.caption2)
+                        .foregroundColor(ShvilColors.textSecondary)
+                }
+            }
+            .padding(.vertical, 8)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
 struct AdventureDetailView: View {
     let adventure: AdventurePlan
     @Environment(\.dismiss) private var dismiss

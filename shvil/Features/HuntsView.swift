@@ -350,6 +350,47 @@ struct CreateHuntView: View {
     }
 }
 
+struct HuntRow: View {
+    let hunt: ScavengerHunt
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: "target")
+                    .foregroundColor(ShvilColors.accentSecondary)
+                    .font(.title2)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(hunt.name)
+                        .font(.subheadline)
+                        .foregroundColor(ShvilColors.textPrimary)
+                        .lineLimit(1)
+                    
+                    Text(hunt.description)
+                        .font(.caption)
+                        .foregroundColor(ShvilColors.textSecondary)
+                        .lineLimit(2)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("\(hunt.currentParticipants)/\(hunt.maxParticipants)")
+                        .font(.caption2)
+                        .foregroundColor(ShvilColors.textSecondary)
+                    
+                    Text(hunt.status.rawValue.capitalized)
+                        .font(.caption2)
+                        .foregroundColor(ShvilColors.accentSecondary)
+                }
+            }
+            .padding(.vertical, 8)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
 struct HuntDetailView: View {
     let hunt: ScavengerHunt
     @Environment(\.dismiss) private var dismiss
