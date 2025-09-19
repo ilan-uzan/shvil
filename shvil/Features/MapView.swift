@@ -6,7 +6,7 @@ import AVFoundation
 import Combine
 
 /// Shvil Home/Map Page - Apple Maps Parity with Liquid Glass
-/// iOS 26+ Liquid Glass (systemMaterialThick), iOS 16-25 glassmorphism fallback
+/// iOS 26+ Liquid Glass (thickMaterial), iOS 16-25 glassmorphism fallback
 struct MapView: View {
     @StateObject private var locationService = DependencyContainer.shared.locationService
     @StateObject private var searchService = DependencyContainer.shared.searchService
@@ -41,15 +41,14 @@ struct MapView: View {
     @AppStorage("lastMapStyle") private var lastMapStyle: Int = 0
     @AppStorage("lastSelectedMode") private var lastSelectedMode: Int = 1
     
-    // MARK: - Design Tokens (Apple Maps Parity)
+    // MARK: - GLOBAL CONSTANTS (STRICT PLACEMENT)
     private let H_PADDING: CGFloat = 16
-    private let V_RHYTHM: CGFloat = 8
-    private let SEARCH_HEIGHT: CGFloat = 48
-    private let PILL_HEIGHT: CGFloat = 34
-    private let SEGMENTED_HEIGHT: CGFloat = 38
+    private let V_GAP: CGFloat = 8
     private let FAB_SIZE: CGFloat = 48
-    private let FAB_SPACING: CGFloat = 12
-    private let FAB_EDGE_OFFSET: CGFloat = 16
+    private let FAB_GAP: CGFloat = 12
+    private let SEARCH_H: CGFloat = 48
+    private let PILLS_H: CGFloat = 34
+    private let SEGMENT_H: CGFloat = 38
     private let ICON_SIZE: CGFloat = 18
     private let TAB_ICON_SIZE: CGFloat = 22
     private let CORNER_SEARCH: CGFloat = 18
@@ -67,47 +66,39 @@ struct MapView: View {
         UIApplication.shared.windows.first?.safeAreaInsets.top ?? 0
     }
     
+    private var safeAreaBottom: CGFloat {
+        UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0
+    }
+    
     private var tabBarHeight: CGFloat {
-        83 // Standard iOS tab bar height
+        83 // System tab bar height
     }
     
     var body: some View {
         ZStack {
-            // MARK: - MAP (Full Screen, Edge-to-Edge)
+            // MARK: - 1) MAPVIEW (BACKGROUND) - EDGE TO EDGE
             mapView
                 .ignoresSafeArea(.all)
             
-            // MARK: - TOP CHROME CLUSTER
-            VStack(spacing: V_RHYTHM) {
-                // 1. Search Bar (48pt height, Apple Maps style)
-                searchBar
-                
-                // 2. Suggestion Pills (34pt height, clean truncation)
-                suggestionPills
-                
-                // 3. Navigate/Explore Toggle (native segmented control)
-                segmentedControl
-            }
-            .padding(.horizontal, H_PADDING)
-            .padding(.top, safeAreaTop + V_RHYTHM)
-            .frame(maxWidth: .infinity, alignment: .top)
+            // MARK: - 2) TOP CHROME (ONE VSTACK) - MUST BE TOP-ALIGNED
+            topChromeCluster
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding(.horizontal, H_PADDING)
+                .padding(.top, safeAreaTop + 8)
             
-            // MARK: - FLOATING MAP CONTROLS (Bottom Right)
-            VStack(spacing: FAB_SPACING) {
-                // Map Type Button (Top)
-                mapTypeButton
-                
-                // Locate Me Button (Bottom)
-                locateMeButton
-            }
-            .padding(.trailing, FAB_EDGE_OFFSET)
-            .padding(.bottom, tabBarHeight + FAB_EDGE_OFFSET)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            // MARK: - 3) FLOATING CONTROLS (RIGHT-BOTTOM) - MUST BE IDENTICAL & ALIGNED
+            floatingControls
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                .padding(.trailing, 16)
+                .padding(.bottom, safeAreaBottom + 16 + tabBarHeight)
             
-            // MARK: - Search Results Overlay
+            // MARK: - 4) SEARCH RESULTS OVERLAY
             if showingSearchResults {
                 searchResultsOverlay
             }
+            
+            // MARK: - DEBUG PLACEMENT OVERLAY (TEMPORARY - REMOVE BEFORE MERGE)
+            debugPlacementOverlay
         }
         .environment(\.colorScheme, .light)
         .onAppear {
@@ -140,7 +131,7 @@ struct MapView: View {
         }
     }
     
-    // MARK: - MAP (Full Screen, Edge-to-Edge)
+    // MARK: - MAPVIEW (BACKGROUND) - EDGE TO EDGE
     private var mapView: some View {
         Map(coordinateRegion: $region,
             interactionModes: .all,
@@ -155,6 +146,23 @@ struct MapView: View {
         )
         .opacity(isSearchFocused ? 0.9 : 1.0)
         .animation(.easeInOut(duration: 0.2), value: isSearchFocused)
+    }
+    
+    // MARK: - TOP CHROME CLUSTER (ONE VSTACK) - TOP-ALIGNED
+    private var topChromeCluster: some View {
+        VStack(spacing: V_GAP) {
+            // Child 1: Search bar
+            searchBar
+                .frame(height: SEARCH_H)
+            
+            // Child 2: Suggestion pills row (HorizontalScrollView)
+            suggestionPills
+                .frame(height: PILLS_H)
+            
+            // Child 3: Segmented control (Navigate | Explore)
+            segmentedControl
+                .frame(height: SEGMENT_H)
+        }
     }
     
     // MARK: - 1. Search Bar (Apple Maps Style, 48pt Height)
@@ -204,7 +212,6 @@ struct MapView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 12)
-        .frame(height: SEARCH_HEIGHT)
         .background(
             Capsule()
                 .fill(glassMaterial)
@@ -238,7 +245,6 @@ struct MapView: View {
             }
             .padding(.horizontal, 8)
         }
-        .frame(height: PILL_HEIGHT)
     }
     
     // MARK: - 3. Navigate/Explore Toggle (Native Segmented Control)
@@ -248,7 +254,6 @@ struct MapView: View {
             Text("Explore").tag(MapMode.explore)
         }
         .pickerStyle(SegmentedPickerStyle())
-        .frame(height: SEGMENTED_HEIGHT)
         .background(
             RoundedRectangle(cornerRadius: CORNER_SEARCH)
                 .fill(glassMaterial)
@@ -266,7 +271,18 @@ struct MapView: View {
         .accessibilityElement(children: .contain)
     }
     
-    // MARK: - 4. Map Type Button (48pt Circle, Top FAB)
+    // MARK: - FLOATING CONTROLS (RIGHT-BOTTOM) - IDENTICAL & ALIGNED
+    private var floatingControls: some View {
+        VStack(spacing: FAB_GAP) {
+            // Top: Map Type Button
+            mapTypeButton
+            
+            // Bottom: Locate Me Button
+            locateMeButton
+        }
+    }
+    
+    // MARK: - Map Type Button (48pt Circle, Top FAB)
     private var mapTypeButton: some View {
         Button(action: {
             showingMapModeMenu = true
@@ -299,7 +315,7 @@ struct MapView: View {
         }
     }
     
-    // MARK: - 5. Locate Me Button (48pt Circle, Bottom FAB)
+    // MARK: - Locate Me Button (48pt Circle, Bottom FAB)
     private var locateMeButton: some View {
         Button(action: {
             locateUser()
@@ -478,6 +494,59 @@ struct MapView: View {
                 }
             }
         }
+    }
+    
+    // MARK: - DEBUG PLACEMENT OVERLAY (TEMPORARY - REMOVE BEFORE MERGE)
+    private var debugPlacementOverlay: some View {
+        GeometryReader { geometry in
+            ZStack {
+                // Red line at top of TopChrome container
+                Rectangle()
+                    .fill(Color.red)
+                    .frame(height: 1)
+                    .position(x: geometry.size.width / 2, y: safeAreaTop + 8)
+                
+                // Green rectangles around Search (48pt), Pills (34pt), Segment (38pt)
+                VStack(spacing: V_GAP) {
+                    // Search bar guide
+                    Rectangle()
+                        .stroke(Color.green, lineWidth: 1)
+                        .frame(height: SEARCH_H)
+                        .padding(.horizontal, H_PADDING)
+                    
+                    // Pills guide
+                    Rectangle()
+                        .stroke(Color.green, lineWidth: 1)
+                        .frame(height: PILLS_H)
+                        .padding(.horizontal, H_PADDING)
+                    
+                    // Segment guide
+                    Rectangle()
+                        .stroke(Color.green, lineWidth: 1)
+                        .frame(height: SEGMENT_H)
+                        .padding(.horizontal, H_PADDING)
+                }
+                .position(x: geometry.size.width / 2, y: safeAreaTop + 8 + SEARCH_H/2 + V_GAP + PILLS_H/2 + V_GAP + SEGMENT_H/2)
+                
+                // Blue rectangles around both FABs (48pt)
+                VStack(spacing: FAB_GAP) {
+                    // Map Type FAB guide
+                    Rectangle()
+                        .stroke(Color.blue, lineWidth: 1)
+                        .frame(width: FAB_SIZE, height: FAB_SIZE)
+                    
+                    // Locate Me FAB guide
+                    Rectangle()
+                        .stroke(Color.blue, lineWidth: 1)
+                        .frame(width: FAB_SIZE, height: FAB_SIZE)
+                }
+                .position(
+                    x: geometry.size.width - 16 - FAB_SIZE/2,
+                    y: geometry.size.height - safeAreaBottom - 16 - tabBarHeight - FAB_SIZE/2 - FAB_GAP/2
+                )
+            }
+        }
+        .allowsHitTesting(false)
     }
     
     // MARK: - Computed Properties
