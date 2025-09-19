@@ -5,8 +5,8 @@ import CoreHaptics
 import AVFoundation
 import Combine
 
-/// Shvil Home/Map Page - Apple Maps parity with bug fixes
-/// iOS 26+ Liquid Glass, iOS 16-25 glassmorphism fallback
+/// Shvil Home/Map Page - Apple Maps Parity with Liquid Glass
+/// iOS 26+ Liquid Glass (systemMaterialThick), iOS 16-25 glassmorphism fallback
 struct MapView: View {
     @StateObject private var locationService = DependencyContainer.shared.locationService
     @StateObject private var searchService = DependencyContainer.shared.searchService
@@ -41,7 +41,7 @@ struct MapView: View {
     @AppStorage("lastMapStyle") private var lastMapStyle: Int = 0
     @AppStorage("lastSelectedMode") private var lastSelectedMode: Int = 1
     
-    // MARK: - Global Tokens (Apple Maps parity)
+    // MARK: - Design Tokens (Apple Maps Parity)
     private let H_PADDING: CGFloat = 16
     private let V_RHYTHM: CGFloat = 8
     private let SEARCH_HEIGHT: CGFloat = 48
@@ -60,6 +60,7 @@ struct MapView: View {
     private let SHADOW_Y: CGFloat = 2
     private let SHADOW_BLUR: CGFloat = 8
     private let SHADOW_OPACITY: Double = 0.10
+    private let ACCENT_COLOR = Color(red: 0.31, green: 0.83, blue: 0.81) // #4FD4CE
     
     // MARK: - Computed Properties
     private var safeAreaTop: CGFloat {
@@ -72,16 +73,16 @@ struct MapView: View {
     
     var body: some View {
         ZStack {
-            // MARK: - MAP (edge-to-edge background)
+            // MARK: - MAP (Full Screen, Edge-to-Edge)
             mapView
                 .ignoresSafeArea(.all)
             
-            // MARK: - TOP CLUSTER
+            // MARK: - TOP CHROME CLUSTER
             VStack(spacing: V_RHYTHM) {
-                // 1. Search Bar (Apple Maps style pill, 48pt height)
+                // 1. Search Bar (48pt height, Apple Maps style)
                 searchBar
                 
-                // 2. Suggestion Pills (uniform 34pt height, clean truncation)
+                // 2. Suggestion Pills (34pt height, clean truncation)
                 suggestionPills
                 
                 // 3. Navigate/Explore Toggle (native segmented control)
@@ -91,7 +92,7 @@ struct MapView: View {
             .padding(.top, safeAreaTop + V_RHYTHM)
             .frame(maxWidth: .infinity, alignment: .top)
             
-            // MARK: - FLOATING MAP CONTROLS (bottom-right, identical 48pt circles)
+            // MARK: - FLOATING MAP CONTROLS (Bottom Right)
             VStack(spacing: FAB_SPACING) {
                 // Map Type Button (Top)
                 mapTypeButton
@@ -139,7 +140,7 @@ struct MapView: View {
         }
     }
     
-    // MARK: - MAP (edge-to-edge background)
+    // MARK: - MAP (Full Screen, Edge-to-Edge)
     private var mapView: some View {
         Map(coordinateRegion: $region,
             interactionModes: .all,
@@ -156,16 +157,16 @@ struct MapView: View {
         .animation(.easeInOut(duration: 0.2), value: isSearchFocused)
     }
     
-    // MARK: - 1. Search Bar (Apple Maps style pill, 48pt height)
+    // MARK: - 1. Search Bar (Apple Maps Style, 48pt Height)
     private var searchBar: some View {
         HStack(spacing: 12) {
-            // Left: logo ≤16pt (low visual weight, purely decorative)
+            // Left: Shvil logo (≤16pt, subtle)
             Image(systemName: "star.fill")
                 .font(.system(size: 16, weight: .regular))
-                .foregroundColor(ShvilColors.accentPrimary)
+                .foregroundColor(ACCENT_COLOR)
                 .frame(width: 16, height: 16)
             
-            // Center: placeholder text (Callout typography)
+            // Center: Placeholder text (Callout typography)
             TextField("Search places, adventures, hunts…", text: $searchText)
                 .textFieldStyle(PlainTextFieldStyle())
                 .font(.callout)
@@ -178,13 +179,13 @@ struct MapView: View {
                     focusSearch()
                 }
             
-            // Right: mic and profile (8pt apart), hit areas ≥44pt
+            // Right: Mic and Profile (8pt between mic + profile)
             HStack(spacing: 8) {
                 // Microphone
                 Button(action: toggleVoiceSearch) {
                     Image(systemName: isListening ? "waveform" : "mic.fill")
-                        .font(.system(size: 18, weight: .regular))
-                        .foregroundColor(isListening ? ShvilColors.accentPrimary : ShvilColors.textSecondary)
+                        .font(.system(size: ICON_SIZE, weight: .regular))
+                        .foregroundColor(isListening ? ACCENT_COLOR : ShvilColors.textSecondary)
                         .frame(width: 44, height: 44)
                         .scaleEffect(isListening ? 1.05 : 1.0)
                         .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isListening)
@@ -194,7 +195,7 @@ struct MapView: View {
                 // Profile
                 Button(action: openProfile) {
                     Image(systemName: "person.circle.fill")
-                        .font(.system(size: 18, weight: .regular))
+                        .font(.system(size: ICON_SIZE, weight: .regular))
                         .foregroundColor(ShvilColors.textSecondary)
                         .frame(width: 44, height: 44)
                 }
@@ -206,11 +207,11 @@ struct MapView: View {
         .frame(height: SEARCH_HEIGHT)
         .background(
             Capsule()
-                .fill(.ultraThinMaterial)
+                .fill(glassMaterial)
                 .overlay(
                     Capsule()
                         .stroke(
-                            isSearchFocused ? ShvilColors.accentPrimary : Color.white.opacity(BORDER_OPACITY),
+                            isSearchFocused ? ACCENT_COLOR : Color.white.opacity(BORDER_OPACITY),
                             lineWidth: isSearchFocused ? 1.5 : BORDER_WIDTH
                         )
                 )
@@ -225,7 +226,7 @@ struct MapView: View {
         .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isSearchFocused)
     }
     
-    // MARK: - 2. Suggestion Pills (uniform 34pt height, clean truncation)
+    // MARK: - 2. Suggestion Pills (34pt Height, Clean Truncation)
     private var suggestionPills: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 8) {
@@ -240,7 +241,7 @@ struct MapView: View {
         .frame(height: PILL_HEIGHT)
     }
     
-    // MARK: - 3. Navigate/Explore Toggle (native segmented control)
+    // MARK: - 3. Navigate/Explore Toggle (Native Segmented Control)
     private var segmentedControl: some View {
         Picker("Mode", selection: $selectedMode) {
             Text("Navigate").tag(MapMode.navigate)
@@ -250,7 +251,7 @@ struct MapView: View {
         .frame(height: SEGMENTED_HEIGHT)
         .background(
             RoundedRectangle(cornerRadius: CORNER_SEARCH)
-                .fill(.ultraThinMaterial)
+                .fill(glassMaterial)
                 .overlay(
                     RoundedRectangle(cornerRadius: CORNER_SEARCH)
                         .stroke(Color.white.opacity(BORDER_OPACITY), lineWidth: BORDER_WIDTH)
@@ -265,7 +266,7 @@ struct MapView: View {
         .accessibilityElement(children: .contain)
     }
     
-    // MARK: - 4. Map Type Button (48pt circle, 18pt icon)
+    // MARK: - 4. Map Type Button (48pt Circle, Top FAB)
     private var mapTypeButton: some View {
         Button(action: {
             showingMapModeMenu = true
@@ -277,7 +278,7 @@ struct MapView: View {
                 .frame(width: FAB_SIZE, height: FAB_SIZE)
                 .background(
                     Circle()
-                        .fill(.ultraThinMaterial)
+                        .fill(glassMaterial)
                         .overlay(
                             Circle()
                                 .stroke(Color.white.opacity(BORDER_OPACITY), lineWidth: BORDER_WIDTH)
@@ -298,7 +299,7 @@ struct MapView: View {
         }
     }
     
-    // MARK: - 5. Locate Me Button (48pt circle, 18pt icon)
+    // MARK: - 5. Locate Me Button (48pt Circle, Bottom FAB)
     private var locateMeButton: some View {
         Button(action: {
             locateUser()
@@ -306,21 +307,21 @@ struct MapView: View {
         }) {
             Image(systemName: "location.fill")
                 .font(.system(size: ICON_SIZE, weight: .regular))
-                .foregroundColor(ShvilColors.accentPrimary)
+                .foregroundColor(ACCENT_COLOR)
                 .frame(width: FAB_SIZE, height: FAB_SIZE)
                 .background(
                     Circle()
-                        .fill(.ultraThinMaterial)
+                        .fill(glassMaterial)
                         .overlay(
                             Circle()
                                 .stroke(
-                                    userTrackingMode == .follow ? ShvilColors.accentPrimary : ShvilColors.accentPrimary.opacity(0.3),
+                                    userTrackingMode == .follow ? ACCENT_COLOR : ACCENT_COLOR.opacity(0.3),
                                     lineWidth: userTrackingMode == .follow ? 2 : BORDER_WIDTH
                                 )
                         )
                 )
                 .shadow(
-                    color: userTrackingMode == .follow ? ShvilColors.accentPrimary.opacity(0.2) : Color.black.opacity(SHADOW_OPACITY),
+                    color: userTrackingMode == .follow ? ACCENT_COLOR.opacity(0.2) : Color.black.opacity(SHADOW_OPACITY),
                     radius: userTrackingMode == .follow ? 8 : SHADOW_BLUR,
                     x: 0,
                     y: userTrackingMode == .follow ? 4 : SHADOW_Y
@@ -355,7 +356,7 @@ struct MapView: View {
                         if option.mapType == mapStyle {
                             Image(systemName: "checkmark")
                                 .font(.subheadline)
-                                .foregroundColor(ShvilColors.accentPrimary)
+                                .foregroundColor(ACCENT_COLOR)
                         }
                     }
                     .padding(.horizontal, 16)
@@ -373,7 +374,7 @@ struct MapView: View {
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(.ultraThinMaterial)
+                .fill(glassMaterial)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(ShvilColors.borderDivider, lineWidth: 0.5)
@@ -405,7 +406,7 @@ struct MapView: View {
                         clearSearch()
                     }
                     .font(.subheadline)
-                    .foregroundColor(ShvilColors.accentPrimary)
+                    .foregroundColor(ACCENT_COLOR)
                 }
                 
                 LazyVStack(spacing: 8) {
@@ -419,7 +420,7 @@ struct MapView: View {
             .padding(20)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
+                    .fill(glassMaterial)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(ShvilColors.borderDivider, lineWidth: 0.5)
@@ -508,6 +509,15 @@ struct MapView: View {
         case .hybridFlyover: return "Hybrid Flyover"
         case .mutedStandard: return "Muted Standard"
         @unknown default: return "Standard"
+        }
+    }
+    
+    // MARK: - Liquid Glass Material
+    private var glassMaterial: Material {
+        if #available(iOS 26.0, *) {
+            return .thickMaterial
+        } else {
+            return .ultraThinMaterial
         }
     }
     
@@ -780,7 +790,7 @@ struct SuggestionChipView: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Image(systemName: chip.icon)
-                    .font(.system(size: 14, weight: .regular))
+                    .font(.system(size: 16, weight: .regular))
                     .foregroundColor(chip.color)
                 
                 Text(chip.title)
@@ -823,13 +833,13 @@ struct AdventurePin: View {
         Button(action: action) {
             ZStack {
                 Circle()
-                    .fill(ShvilColors.accentPrimary)
+                    .fill(Color(red: 0.31, green: 0.83, blue: 0.81))
                     .frame(width: 24, height: 24)
                     .overlay(
                         Circle()
                             .stroke(Color.white, lineWidth: 2)
                     )
-                    .shadow(color: ShvilColors.accentPrimary.opacity(0.4), radius: 6, x: 0, y: 3)
+                    .shadow(color: Color(red: 0.31, green: 0.83, blue: 0.81).opacity(0.4), radius: 6, x: 0, y: 3)
                 
                 Image(systemName: "star.fill")
                     .font(.caption)
@@ -910,7 +920,7 @@ struct SearchResultRow: View {
         Button(action: action) {
             HStack(spacing: 12) {
                 Image(systemName: "mappin.circle.fill")
-                    .foregroundColor(ShvilColors.accentPrimary)
+                    .foregroundColor(Color(red: 0.31, green: 0.83, blue: 0.81))
                     .font(.title2)
                 
                 VStack(alignment: .leading, spacing: 2) {
